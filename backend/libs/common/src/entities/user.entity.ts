@@ -12,6 +12,13 @@ export class User {
     length: 256,
     nullable: false,
   })
+  email!: string;
+
+  @Column({
+    type: 'varchar',
+    length: 256,
+    nullable: false,
+  })
   password!: string;
 
   @Column({
