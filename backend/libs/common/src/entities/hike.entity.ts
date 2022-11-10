@@ -78,6 +78,20 @@ export class Hike {
   })
   gpxPath!: string | null;
 
+  @Column({
+    type: 'citext',
+    nullable: false,
+    default: '',
+  })
+  region!: string;
+
+  @Column({
+    type: 'citext',
+    nullable: false,
+    default: '',
+  })
+  province!: string;
+
   /**
    * TypeORM sql-gen only
    * @deprecated
