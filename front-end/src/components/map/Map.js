@@ -3,6 +3,7 @@ import 'leaflet/dist/leaflet.css'
 
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, ZoomControl } from 'react-leaflet'
 import L from 'leaflet';
+import HikePopup from '../hike-popup/HikePopup';
 import sampledata from '../../sample-data/sample-data.json'
 
 delete L.Icon.Default.prototype._getIconUrl;
@@ -50,6 +51,9 @@ export const Map = () => {
             <Marker
               key={elem.id}
               position={[elem.gps.latitude, elem.gps.longitude]}>
+                <Popup position={[elem.gps.latitude, elem.gps.longitude]}>
+                  <HikePopup elem={elem} />
+                </Popup>
             </Marker>
           )
         })
