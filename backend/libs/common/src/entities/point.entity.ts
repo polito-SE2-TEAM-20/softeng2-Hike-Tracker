@@ -5,7 +5,7 @@ import { PointType } from '../enums';
 @Entity('points')
 export class Point {
   @PrimaryGeneratedColumn('increment')
-  id!: string;
+  id!: number;
 
   @Column({
     type: 'smallint',

@@ -52,3 +52,5 @@ export class HikePoint {
   })
   point?: Point;
 }
+
+export type HikePointPrimaryKey = 'hikeId' | 'pointId';

@@ -2,14 +2,14 @@ module.exports = {
   settings: {
     'import/resolver': {
       typescript: {
-        project: ['./tsconfig.json']
+        project: ['./tsconfig.json', './tsconfig.eslint.json'],
       },
     },
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
     sourceType: 'module',
-    project: './tsconfig.json',
+    project: ['./tsconfig.json', './tsconfig.eslint.json'],
     tsconfigRootDir: __dirname,
   },
   plugins: ['@typescript-eslint/eslint-plugin', 'import', 'unused-imports'],
@@ -53,7 +53,11 @@ module.exports = {
         ],
         pathGroups: [
           { pattern: '@app', group: 'index' },
-          { pattern: '@app/**/*', group: 'index' }
+          { pattern: '@app/**/*', group: 'index' },
+          { pattern: '@core', group: 'index' },
+          { pattern: '@core/**/*', group: 'index' },
+          { pattern: '@test', group: 'index' },
+          { pattern: '@test/**/*', group: 'index' },
         ],
         alphabetize: { order: 'asc' },
         'newlines-between': 'always',
@@ -64,4 +68,12 @@ module.exports = {
     'arorw-parents': 0,
     'object-shorthand': ['error', 'properties'],
   },
+  overrides: [
+    {
+      files: ['*.js'],
+      rules: {
+        '@typescript-eslint/no-var-requires': 'off',
+      },
+    },
+  ],
 };

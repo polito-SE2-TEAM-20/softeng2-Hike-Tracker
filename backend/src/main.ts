@@ -3,14 +3,14 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 import { AppModule } from './app.module';
+import { prepareApp } from './prepare-app';
 
 async function bootstrap() {
   const port = process.env.PORT ? parseInt(process.env.PORT) : 3500;
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.enableCors({
-    credentials: true,
-  });
+
+  prepareApp(app);
 
   await app.listen(port);
 

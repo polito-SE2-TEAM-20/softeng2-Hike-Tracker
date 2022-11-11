@@ -13,7 +13,7 @@ import { Point } from './point.entity';
 @Entity('parking_lots')
 export class ParkingLot {
   @PrimaryGeneratedColumn('increment')
-  id!: string;
+  id!: number;
 
   @Column({
     type: 'integer',
