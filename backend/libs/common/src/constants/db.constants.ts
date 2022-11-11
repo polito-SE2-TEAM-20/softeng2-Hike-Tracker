@@ -4,6 +4,9 @@ import { ColumnNumericOptions } from 'typeorm/decorator/options/ColumnNumericOpt
 
 import { ColumnNumericTransformer } from '../transformers';
 
+export const APP_TYPEORM_OPTIONS = 'APP_TYPEORM_OPTIONS';
+export const SCHEMA = 'public';
+
 export const NUMERIC_OPTIONS: ColumnOptions &
   ColumnNumericOptions &
   ColumnCommonOptions = {

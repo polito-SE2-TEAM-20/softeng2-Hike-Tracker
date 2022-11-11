@@ -14,7 +14,7 @@ import { User } from './user.entity';
 @Entity('hikes')
 export class Hike {
   @PrimaryGeneratedColumn('increment')
-  id!: string;
+  id!: number;
 
   @Column({
     type: 'integer',
@@ -37,6 +37,7 @@ export class Hike {
   @Column({
     type: 'integer',
     nullable: false,
+    default: 0,
   })
   expectedTime!: number;
 
@@ -46,12 +47,23 @@ export class Hike {
   @Column({
     ...numericOptionsConfig(0),
     nullable: false,
+    default: 0,
   })
   ascent!: number;
+
+  /**
+   * kilometers?
+   */
+  @Column({
+    ...numericOptionsConfig(0),
+    nullable: false,
+  })
+  distance!: number;
 
   @Column({
     type: 'smallint',
     nullable: false,
+    default: HikeDifficulty.tourist,
   })
   difficulty!: HikeDifficulty;
 
@@ -75,6 +87,7 @@ export class Hike {
     type: 'varchar',
     length: 1024,
     nullable: true,
+    default: null,
   })
   gpxPath!: string | null;
 
