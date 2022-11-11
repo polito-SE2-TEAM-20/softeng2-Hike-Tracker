@@ -5,7 +5,7 @@ import { UserRole } from '../enums';
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('increment')
-  id!: string;
+  id!: number;
 
   @Column({
     type: 'varchar',

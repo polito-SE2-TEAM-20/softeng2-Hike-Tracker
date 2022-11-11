@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { entities } from '@app/common';
 
 import { HikesModule } from './hikes/hikes.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { HikesModule } from './hikes/hikes.module';
       synchronize: !!process.env.SYNCHRONIZE,
     }),
     HikesModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
