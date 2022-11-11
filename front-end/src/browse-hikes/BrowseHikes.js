@@ -14,12 +14,15 @@ import Navbar from 'react-bootstrap/Navbar';
 
 const BrowseHikes = () => {
     return (
-        <Container fluid style={{ paddingLeft: "0px", paddingRight: "0px", backgroundColor: "#303030" }}>
+        <Container fluid style={{ paddingLeft: "0px", paddingRight: "0px"}}>
             <Navbar className="is-sticky" expand="lg">
                 <Container>
                     <MainTitle color="white" size="48px" />
                     <div style={{ display: 'flex', justifyContent: "center" }}>
                         <SearchBar />
+                    </div>
+                    <div className='filtercontainer'>
+
                     </div>
                     <Button text="Login" textColor="black" color="white" size="24px" />
                 </Container>

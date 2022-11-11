@@ -1,9 +1,12 @@
+import './hikepopup-style.css'
+
 const HikePopup = (props) => {
     return(
         <div>
-            <p>{props.elem.name}</p>
-            <p>Latitude: {props.elem.gps.latitude}</p>
-            <p>Longitude: {props.elem.gps.longitude}</p>
+            <div className='popup-line'><b>{props.elem.name}</b></div>
+            <br></br>
+            <div className='popup-line'>Latitude: {props.elem.gps.latitude}</div>
+            <div className='popup-line'>Longitude: {props.elem.gps.longitude}</div>
         </div>
     );
 }
