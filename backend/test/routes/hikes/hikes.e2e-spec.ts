@@ -1,5 +1,6 @@
 import { resolve } from 'node:path';
 
+import { HikePoint } from '@app/common';
 import { finishTest } from '@app/testing';
 import { prepareTestApp, prepareVars } from '@test/base';
 
@@ -26,14 +27,17 @@ describe('Hikes (e2e)', () => {
   it('should import gpx file and parse it into hikes with points', async () => {
     const { user } = await setup();
 
-    await restService
+    const { body } = await restService
       .build(app, user)
       .request()
       .post('/hikes/import')
       .attach('gpxFile', resolve(__dirname, '../../../test-data/1.gpx'))
-      .expect(200)
-      .expect(({ body }) => {
-        expect(body.hikes).toHaveLength(1);
-      });
+      .expect(200);
+
+    expect(body.hikes).toHaveLength(1);
+
+    expect(
+      await testService.repo(HikePoint).findBy({ hikeId: body.hikes[0].id }),
+    ).toHaveLength(500);
   });
 });
