@@ -1,0 +1,35 @@
+GET  http://localhost:3500/hikes
+
+###
+POST http://localhost:3500/hikes/filteredHikes
+content-type: application/json
+
+{
+    "province": "Salerno",
+    "region": null,
+    "maxLength": 15,
+    "minLength": 5,
+    "expectedTimeMin": null,
+    "expectedTimeMax": null,
+    "difficultyMin": null,
+    "difficultyMax": null,
+    "ascentMin": null,
+    "ascentMax": null
+}
+
+###
+POST http://localhost:3500/hikes/filteredHikes
+content-type: application/json
+
+{
+    "province": null,
+    "region": "Campania",
+    "maxLength": null,
+    "minLength": 5,
+    "expectedTimeMin": 610,
+    "expectedTimeMax": null,
+    "difficultyMin": 1,
+    "difficultyMax": null,
+    "ascentMin": null,
+    "ascentMax": null
+}
