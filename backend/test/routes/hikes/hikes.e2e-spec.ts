@@ -31,7 +31,7 @@ describe('Hikes (e2e)', () => {
       .build(app, user)
       .request()
       .post('/hikes/import')
-      .attach('gpxFile', resolve(__dirname, '../../../test-data/1.gpx'))
+      .attach('gpxFile', resolve(__dirname, '../../../test-data/4.gpx'))
       .expect(200);
 
     expect(body.hikes).toHaveLength(1);
