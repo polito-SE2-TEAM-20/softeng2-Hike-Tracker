@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import 'leaflet/dist/leaflet.css'
 
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, ZoomControl } from 'react-leaflet'
 import L from 'leaflet';
 import sampledata from '../../sample-data/sample-data.json'
 
@@ -34,11 +34,14 @@ export const LocationMarker = () => {
 
 export const Map = () => {
   return (
-    <MapContainer center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false} style={{ width: "100vw", height: "80vh" }}>
+    <MapContainer center={[45.07417348802877, 7.620956240528321]} zoom={13} 
+    scrollWheelZoom={false} zoomControl={false} 
+    style={{ width: "100vw", height: "100vh" }}>
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+      <ZoomControl position='bottomright' />
 
       {
         sampledata.map((elem) => {

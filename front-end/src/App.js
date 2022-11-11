@@ -11,22 +11,24 @@ import Button from './components/buttons/Button';
 import { Row, Col, Container } from 'react-bootstrap'
 import ListElement from './components/list-element/ListElement';
 import { Map } from './components/map/Map';
+import BrowseHikes from './browse-hikes/BrowseHikes'
+import SearchBar from './components/searchbar/SearchBar'
 
-import Navbar from 'react-bootstrap/Navbar';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  useRouteMatch,
+  useParams,
+  Navigate,
+  useNavigate
+} from "react-router-dom";
+
 
 function App() {
   return (
-    <Container fluid style={{ paddingLeft: "0px", paddingRight: "0px", backgroundColor: "#303030" }}>
-      <Navbar expand="lg">
-        <Container>
-          <MainTitle color="white" size="48px" />
-          <Button text="Login" textColor="black" color="white" size="24px" />
-        </Container>
-      </Navbar>
-      <Row style={{marginLeft: "0px", marginRight: "0px"}}>
-        <Map />
-      </Row>
-    </Container>
+    <BrowseHikes />
   );
 }
 
