@@ -13,8 +13,9 @@ const FileUploader = props => {
   const hiddenFileInput = React.useRef(null);
   
 	const [selectedFile, setSelectedFile] = useState(null);
+	const [fileContents, setFileContents] = useState(null);
 	const [isFilePicked, setIsFilePicked] = useState(false);
-    const [positionsState, setPositionsState] = useState();
+    const [positionsState, setPositionsState] = useState([]);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [errorMessage, setErrorMessage]= useState('');
@@ -31,23 +32,26 @@ const FileUploader = props => {
     const fileUploaded = event.target.files[0];
     setIsFilePicked(true);
     setSelectedFile(fileUploaded);
-    console.log(event.target.files[0]);
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+        setFileContents(reader.result)
+    };
+    reader.readAsText(fileUploaded)
+    
+    console.log(fileUploaded);
     // props.handleFile(fileUploaded);
   };
 
   const handleSubmission = () => {
     const formData = new FormData();
-    console.log(selectedFile);
-
-    formData.append('File', selectedFile);
-    console.log(selectedFile);
-
+    formData.append('File', fileContents);
     formData.append('Title', title);
     props.addNewHike(formData).catch( (err) => { setErrorMessage(err); setShow(true); } )
 
     let gpxParser = require('gpxparser');
     var gpx = new gpxParser();
-    gpx.parse(selectedFile);
+    gpx.parse(fileContents);
     console.log(gpx);
     console.log(gpx.tracks[0].points.map(p => [p.lat, p.lon]));
     const positions = gpx.tracks[0].points.map(p => [p.lat, p.lon]);
@@ -86,7 +90,7 @@ const FileUploader = props => {
                 <MapContainer
                     className='map'
                     // should be changed into center={positionsState[0]}
-                    center={[40.7317535212683, -73.99685430908403]}
+                    center={positionsState.length ? positionsState[0] : [40.7317535212683, -73.99685430908403]}
 
                     zoom={9}
                     scrollWheelZoom={false}
@@ -96,10 +100,7 @@ const FileUploader = props => {
                         pathOptions={{ fillColor: 'red', color: 'blue' }}
 
                         // should be changed into postitions={positionsState}
-                        positions={[
-                            [40.689818841705, -74.04511194542516],
-                            [40.75853187779803, -73.98495720388513],
-                        ]}
+                        positions={positionsState}
                     />
                 </MapContainer>
             </div>
