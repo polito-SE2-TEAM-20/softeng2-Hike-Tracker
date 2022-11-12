@@ -39,3 +39,9 @@ export const FOREIGN_OPTIONS_CASCADE: RelationOptions = {
   eager: false,
   persistence: false,
 };
+
+export const JWT_SECRET: string = process.env.JWT_SECRET
+  ? process.env.JWT_SECRET
+  : (() => {
+      throw new Error('process.env.JWT_SECRET is not defined');
+    })();

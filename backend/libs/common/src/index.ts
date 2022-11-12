@@ -7,3 +7,4 @@ export * from './base';
 export * from './utils';
 export * from './upload-path';
 export * from './db';
+export * from './decorators';
