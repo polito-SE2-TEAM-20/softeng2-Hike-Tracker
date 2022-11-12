@@ -6,7 +6,11 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { FOREIGN_OPTIONS_CASCADE, numericOptionsConfig } from '../constants';
+import {
+  FOREIGN_OPTIONS_CASCADE,
+  HikeLimits,
+  numericOptionsConfig,
+} from '../constants';
 import { HikeDifficulty } from '../enums';
 
 import { User } from './user.entity';
@@ -69,7 +73,7 @@ export class Hike {
 
   @Column({
     type: 'varchar',
-    length: 500,
+    length: HikeLimits.title,
     nullable: false,
     default: '',
   })
@@ -77,7 +81,7 @@ export class Hike {
 
   @Column({
     type: 'varchar',
-    length: 1000,
+    length: HikeLimits.description,
     nullable: false,
     default: '',
   })
@@ -85,7 +89,7 @@ export class Hike {
 
   @Column({
     type: 'varchar',
-    length: 1024,
+    length: HikeLimits.gpxPath,
     nullable: true,
     default: null,
   })

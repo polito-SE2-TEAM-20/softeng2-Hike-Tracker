@@ -1,6 +1,6 @@
 import { resolve } from 'node:path';
 
-import { HikePoint } from '@app/common';
+import { HikePoint, ROOT, TypeID } from '@app/common';
 import { finishTest } from '@app/testing';
 import { prepareTestApp, prepareVars } from '@test/base';
 
@@ -18,9 +18,11 @@ describe('Hikes (e2e)', () => {
 
   const setup = async () => {
     const user = await testService.createUser();
+    const hike = await testService.createHike({ userId: user.id });
 
     return {
       user,
+      hike,
     };
   };
 
@@ -31,13 +33,39 @@ describe('Hikes (e2e)', () => {
       .build(app, user)
       .request()
       .post('/hikes/import')
-      .attach('gpxFile', resolve(__dirname, '../../../test-data/4.gpx'))
-      .expect(200);
+      .attach('gpxFile', resolve(ROOT, './test-data/4.gpx'))
+      .expect(201);
 
-    expect(body.hikes).toHaveLength(1);
+    expect(body).toMatchObject({ id: expect.any(TypeID) });
 
     expect(
-      await testService.repo(HikePoint).findBy({ hikeId: body.hikes[0].id }),
+      await testService.repo(HikePoint).findBy({ hikeId: body.id }),
     ).toHaveLength(500);
+  });
+
+  it('should update hike', async () => {
+    const { user, hike } = await setup();
+
+    const updateData = {
+      title: 'new hike title',
+      description: 'this is a new hike desc',
+      region: 'Torinio',
+      province: 'TO',
+      length: 5.78,
+    };
+
+    await restService
+      .build(app, user)
+      .request()
+      .put(`/hikes/${hike.id}`)
+      .send(updateData)
+      .expect(({ body }) => {
+        expect(body).not.toEqual(null);
+        expect(body).toMatchObject({
+          id: hike.id,
+          ...hike,
+          ...updateData,
+        });
+      });
   });
 });
