@@ -51,10 +51,7 @@
           backend:
             image: ghcr.io/polito-se2-team-20/backend
             env_file:
-              - /srv/env.common
               - /srv/env.backend
-            volumes:
-              - /srv/mtc-prod-data:/srv/mtc_data
             deploy:
               labels:
                 - "traefik.enable=true"

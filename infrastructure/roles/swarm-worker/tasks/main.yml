@@ -7,7 +7,7 @@
     password: "{{ ghcr_password }}"
   loop:
     - root
-    - circleci_softeng
+    - circleci
 
 - name: Join the swarm
   docker_swarm:

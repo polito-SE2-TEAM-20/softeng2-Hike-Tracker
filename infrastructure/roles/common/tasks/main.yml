@@ -10,7 +10,7 @@
     shell: /bin/bash
   loop:
     - germangorodnev
-    - circleci_softeng
+    - circleci
 
 - name: Add ssh keys
   authorized_key:
@@ -19,8 +19,8 @@
   loop:
     - username: germangorodnev
       key: "{{ lookup('file', 'keys/germangorodnev.pub') }}"
-    - username: circleci_softeng
-      key: "{{ lookup('file', 'keys/circleci_softeng.pub') }}"
+    - username: circleci
+      key: "{{ lookup('file', 'keys/circleci.pub') }}"
 
 - name: Add docker.com GPG key
   apt_key:
