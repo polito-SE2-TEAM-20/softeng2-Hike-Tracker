@@ -7,7 +7,10 @@ orbs:
 jobs:
   build-backend:
     executor: docker/docker
+    working_directory: ~/softeng2-Hike-Tracker/backend
     steps:
+      - checkout:
+          path: ~/softeng2-Hike-Tracker
       - setup_remote_docker:
           version: 19.03.13
       - checkout
@@ -24,10 +27,13 @@ jobs:
           tag: ${CIRCLE_SHA1},latest
   deploy-backend:
     executor: docker/docker
+    working_directory: ~/softeng2-Hike-Tracker/backend
     steps:
+      - checkout:
+          path: ~/softeng2-Hike-Tracker
       - add_ssh_keys:
           fingerprints:
-            - ""
+            - "44:ee:6c:d8:1a:2b:a7:e3:20:b1:a2:84:89:74:0e:b0"
       - run: ssh -o "StrictHostKeyChecking=no" ${DEPLOY_USER}@${SERVER_IP} docker service update hiking_backend --image ghcr.io/polito-SE2-TEAM-20/backend:${CIRCLE_SHA1} --with-registry-auth
 
 workflows:

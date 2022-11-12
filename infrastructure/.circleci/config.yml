@@ -38,7 +38,7 @@ jobs:
           command: ansible-galaxy install -r requirements.yml
       - add_ssh_keys:
           fingerprints:
-            - ""
+            - "44:ee:6c:d8:1a:2b:a7:e3:20:b1:a2:84:89:74:0e:b0"
       - run:
           name: Run the play
           command: ansible-playbook site.yml
@@ -50,7 +50,7 @@ workflows:
       - build
       - deploy:
           context:
-            - vpn
+            - deploy
           requires:
             - build
           filters:
