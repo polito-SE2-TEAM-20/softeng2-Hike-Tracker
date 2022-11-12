@@ -9,13 +9,13 @@ import MainTitle from './components/main-title/MainTitle'
 import MainPageLandscape from './components/main-page-landscape/MainPageLandscape';
 import Button from './components/buttons/Button';
 import { Row, Col, Container } from 'react-bootstrap'
-import ListElement from './components/list-element/ListElement';
 import { Map } from './components/map/Map';
 import BrowseHikes from './browse-hikes/BrowseHikes'
 import SearchBar from './components/searchbar/SearchBar'
+import ListOfHikes from './list-of-hikes/ListOfHikes';
 
 import {
-  BrowserRouter as Router,
+  BrowserRouter,
   Routes,
   Route,
   Link,
@@ -28,7 +28,12 @@ import {
 
 function App() {
   return (
-    <BrowseHikes />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/listofhikes" element={<ListOfHikes />} />
+        <Route path="/browsehikes" element={<BrowseHikes />} />
+      </Routes>
+    </BrowserRouter >
   );
 }
 

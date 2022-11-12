@@ -6,13 +6,13 @@ const ListElement = (props) => {
     return (
         <Row className="list-element-row" style={{ background: "white" }}>
             <Col className='list-element-item'>
-                <div>Explore me!</div>
+                <div>{props.tb1}</div>
             </Col>
             <Col className='list-element-item'>
                 <div></div>
             </Col>
             <Col className='list-element-item'>
-                <div>where??</div>
+                <div>{props.tb2}</div>
             </Col>
             <Col className='list-element-item'>
                 <div></div>
