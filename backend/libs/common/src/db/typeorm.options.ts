@@ -22,5 +22,5 @@ export const typeormOptions: PostgresConnectionOptions & TypeOrmModuleOptions =
     schema: SCHEMA,
     logging: !!process.env.SQL_LOGGING ? true : ['error'],
     synchronize: !!process.env.SYNCHRONIZE,
-    installExtensions: false,
+    installExtensions: true,
   };
