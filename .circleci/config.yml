@@ -5,7 +5,7 @@ orbs:
   docker: circleci/docker@2.0.3
 
 jobs:
-  build:
+  build-backend:
     executor: docker/docker
     steps:
       - setup_remote_docker:
@@ -22,7 +22,7 @@ jobs:
           registry: ghcr.io
           image: polito-SE2-TEAM-20/backend
           tag: ${CIRCLE_SHA1},latest
-  deploy:
+  deploy-backend:
     executor: docker/docker
     steps:
       - add_ssh_keys:
@@ -33,17 +33,17 @@ jobs:
 workflows:
   ci:
     jobs:
-      - build:
+      - build-backend:
           context:
             - deploy
           filters:
             branches:
               only: backend
-      - deploy:
+      - deploy-backend:
           context:
             - deploy
           requires:
-            - build
+            - build-backend
           filters:
             branches:
               only: backend
