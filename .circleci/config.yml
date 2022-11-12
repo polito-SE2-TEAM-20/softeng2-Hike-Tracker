@@ -18,11 +18,11 @@ jobs:
           docker-username: GITHUB_USERNAME
           docker-password: GITHUB_TOKEN
       - docker/build:
-          image: ghcr.io/polito-SE2-TEAM-20/backend
+          image: ghcr.io/polito-se2-team-20/backend
           tag: ${CIRCLE_SHA1},latest
       - docker/push:
           registry: ghcr.io
-          image: polito-SE2-TEAM-20/backend
+          image: polito-se2-team-20/backend
           tag: ${CIRCLE_SHA1},latest
   deploy-backend:
     executor: docker/docker
@@ -33,7 +33,7 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "44:ee:6c:d8:1a:2b:a7:e3:20:b1:a2:84:89:74:0e:b0"
-      - run: ssh -o "StrictHostKeyChecking=no" ${DEPLOY_USER}@${SERVER_IP} docker service update hiking_backend --image ghcr.io/polito-SE2-TEAM-20/backend:${CIRCLE_SHA1} --with-registry-auth
+      - run: ssh -o "StrictHostKeyChecking=no" ${DEPLOY_USER}@${SERVER_IP} docker service update hiking_backend --image ghcr.io/polito-se2-team-20/backend:${CIRCLE_SHA1} --with-registry-auth
 
 workflows:
   ci:
