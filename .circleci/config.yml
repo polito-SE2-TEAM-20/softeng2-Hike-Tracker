@@ -9,11 +9,10 @@ jobs:
     executor: docker/docker
     working_directory: ~/softeng2-Hike-Tracker/backend
     steps:
-      - checkout:
-          path: ~/softeng2-Hike-Tracker
       - setup_remote_docker:
           version: 19.03.13
-      - checkout
+      - checkout:
+          path: ~/softeng2-Hike-Tracker
       - docker/check:
           registry: ghcr.io
           docker-username: GITHUB_USERNAME
