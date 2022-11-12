@@ -29,14 +29,18 @@ describe('Hikes (e2e)', () => {
   it('should import gpx file and parse it into hikes with points', async () => {
     const { user } = await setup();
 
+    const hikeData = { title: 'eeee', description: 'test desc' };
+
     const { body } = await restService
       .build(app, user)
       .request()
       .post('/hikes/import')
       .attach('gpxFile', resolve(ROOT, './test-data/4.gpx'))
+      .field('title', hikeData.title)
+      .field('description', hikeData.description)
       .expect(201);
 
-    expect(body).toMatchObject({ id: expect.any(TypeID) });
+    expect(body).toMatchObject({ id: expect.any(TypeID), ...hikeData });
 
     expect(
       await testService.repo(HikePoint).findBy({ hikeId: body.id }),

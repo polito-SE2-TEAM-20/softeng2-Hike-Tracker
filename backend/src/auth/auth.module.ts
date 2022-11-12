@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
-import { JWT_SECRET } from 'libs/common/src';
+import { JWT_SECRET } from '@app/common';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';

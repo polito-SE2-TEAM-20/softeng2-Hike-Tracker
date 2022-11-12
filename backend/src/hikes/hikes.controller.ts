@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   Put,
   Param,
+  DefaultValuePipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs-extra';
@@ -93,6 +94,8 @@ export class HikesController {
         .build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY }),
     )
     file: Express.Multer.File,
+    @Body('title', new DefaultValuePipe('')) title: string,
+    @Body('description', new DefaultValuePipe('')) description: string,
   ): Promise<Hike | null> {
     const gpx = await fs.readFile(file.path);
     const gpxText = gpx.toString('utf8');
@@ -107,6 +110,7 @@ export class HikesController {
       firstName: '',
       lastName: '',
       password: '',
+      email: 'test@test.com',
       role: UserRole.localGuide,
     });
 
@@ -117,6 +121,8 @@ export class HikesController {
     }>(async (entityManager) => {
       const hike = await this.service.getRepository(entityManager).save({
         ...parsedHike.hike,
+        title,
+        description,
         userId: user.id,
       });
 
