@@ -1,0 +1,49 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.0.0
+  docker: circleci/docker@2.0.3
+
+jobs:
+  build:
+    executor: docker/docker
+    steps:
+      - setup_remote_docker:
+          version: 19.03.13
+      - checkout
+      - docker/check:
+          registry: ghcr.io
+          docker-username: GITHUB_USERNAME
+          docker-password: GITHUB_TOKEN
+      - docker/build:
+          image: ghcr.io/polito-SE2-TEAM-20/backend
+          tag: ${CIRCLE_SHA1},latest
+      - docker/push:
+          registry: ghcr.io
+          image: polito-SE2-TEAM-20/backend
+          tag: ${CIRCLE_SHA1},latest
+  deploy:
+    executor: docker/docker
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - ""
+      - run: ssh -o "StrictHostKeyChecking=no" ${DEPLOY_USER}@${SERVER_IP} docker service update hiking_backend --image ghcr.io/polito-SE2-TEAM-20/backend:${CIRCLE_SHA1} --with-registry-auth
+
+workflows:
+  ci:
+    jobs:
+      - build:
+          context:
+            - deploy
+          filters:
+            branches:
+              only: backend
+      - deploy:
+          context:
+            - deploy
+          requires:
+            - build
+          filters:
+            branches:
+              only: backend

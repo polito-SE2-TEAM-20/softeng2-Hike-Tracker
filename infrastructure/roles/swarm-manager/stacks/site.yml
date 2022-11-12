@@ -1,0 +1,66 @@
+---
+- name: Deploy traefik configuration
+  template:
+    src: traefik.toml.j2
+    dest: /srv/traefik.toml
+
+- name: Create volume directories
+  file:
+    path: /srv/{{ item }}
+    state: touch
+    owner: root
+    group: root
+    mode: '0600'
+  loop:
+    - traefik.acme.json
+
+- name: Create volume directories
+  file:
+    path: /srv/{{ item }}
+    state: directory
+    owner: root
+    group: root
+    mode: '0600'
+  loop:
+    - letsencrypt
+
+- name: Deploy site stack
+  docker_stack:
+    name: site
+    with_registry_auth: true
+    resolve_image: never
+    compose:
+      - version: "3"
+        services:
+          traefik:
+            image: traefik:{{ traefik_version }}
+
+            ports:
+              - "80:80"
+              - "443:443"
+
+            volumes:
+              - /var/run/docker.sock:/var/run/docker.sock:ro
+              - /srv/traefik.toml:/traefik.toml
+              - /srv/traefik.acme.json:/acme.json
+              - /srv/letsencrypt:/etc/letsencrypt
+              # - /srv/certs/:/certs/
+
+            deploy:
+              placement:
+                constraints:
+                  - node.role == manager
+
+            networks:
+              - traefiknet
+
+          periodic-prune:
+            image: f213/periodic-docker-prune:1.1.0
+            volumes:
+              - /var/run/docker.sock:/var/run/docker.sock
+            deploy:
+              mode: global
+
+        networks:
+          traefiknet:
+            external: true
