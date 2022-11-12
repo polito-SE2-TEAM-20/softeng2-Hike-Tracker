@@ -4,8 +4,9 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'leaflet/dist/leaflet.css'
 
-import BrowseHikes from './browse-hikes/BrowseHikes'
-import ListOfHikes from './routes/list-of-hikes/ListOfHikes';
+import BrowseHikes from './routes/browse-hikes/BrowseHikes.js'
+import ListOfHikes from './routes/list-of-hikes/ListOfHikes.js';
+import SingleHike from './components/single-hike/SingleHike.js';
 
 import {
   BrowserRouter,
@@ -20,6 +21,7 @@ function App() {
       <Routes>
         <Route path="/listofhikes" element={<ListOfHikes />} />
         <Route path="/browsehikes" element={<BrowseHikes />} />
+        <Route path="/singlehike" element={<SingleHike />} />
       </Routes>
     </BrowserRouter >
   );

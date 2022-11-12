@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css'
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, ZoomControl } from 'react-leaflet'
 import L from 'leaflet';
 import HikePopup from '../hike-popup/HikePopup';
-import sampledata from '../../sample-data/sample-data.json'
+import sampledata from '../../extra/sample-data/sample-data.json'
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
