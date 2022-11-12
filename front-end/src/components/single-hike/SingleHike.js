@@ -10,7 +10,7 @@ const SingleHike = (props) => {
             <Container style={{ backgroundColor: "#E2FFBE", borderRadius: "16px", maxWidth: "750px", boxShadow: "0 4px 32px 0 rgb(0 0 0 / 75%)" }}>
                 <Row style={{ display: "flex", placeItems: "center", marginLeft:"15px", marginRight:"15px", paddingLeft: "24px", paddingRight: "24px" }}>
                     <Col style={{ display: "flex", justifyContent: "start" }}>
-                        <div className='main-title' style={{ fontSize: "32px", color: "#1a1a1a", paddingTop: "12px" }}>Explore the greatness of Piedmont!</div>
+                        <div className='main-title' style={{ fontSize: "32px", color: "#1a1a1a", paddingTop: "12px" }}>{props.hike.title}</div>
                     </Col>
                     <Col onClick={props.closeCallback} lg={1} xm={1} xs={2} md={1} style={{ display: "flex", justifyContent: "end" }}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="#1a1a1a" class="bi bi-x-circle" viewBox="0 0 16 16">
@@ -22,14 +22,14 @@ const SingleHike = (props) => {
                 <Row>
                     <div className='main-title' style={{ fontSize: "18px", color: "#1a1a1a", display: "flex", justifyContent: "center" }}>created by Vincenzo Sagristano</div>
                 </Row>
-                <div style={{ backgroundColor: "#BDF17C", borderRadius: "24px", margin:"auto", marginTop: "12px", marginBottom: "12px", padding: "12px", maxWidth: "320px" }}>
+                <div style={{ backgroundColor: "#BDF17C", borderRadius: "24px", margin:"auto", marginTop: "12px", marginBottom: "12px", padding: "12px", maxWidth: "400px" }}>
                     <Row>
                         <Row>
                             <Col>
                                 <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>Expected time:</div>
                             </Col>
                             <Col>
-                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>2 hours</div>
+                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>{props.hike.expectedTime}</div>
                             </Col>
                         </Row>
                     </Row>
@@ -39,7 +39,7 @@ const SingleHike = (props) => {
                                 <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>Length:</div>
                             </Col>
                             <Col>
-                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>1.52km</div>
+                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>{props.hike.length}</div>
                             </Col>
                         </Row>
                     </Row>
@@ -49,7 +49,7 @@ const SingleHike = (props) => {
                                 <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>Ascent:</div>
                             </Col>
                             <Col>
-                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>+150 m</div>
+                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>{props.hike.ascent}</div>
                             </Col>
                         </Row>
                     </Row>
@@ -59,17 +59,7 @@ const SingleHike = (props) => {
                                 <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>Difficulty:</div>
                             </Col>
                             <Col>
-                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>Tourist</div>
-                            </Col>
-                        </Row>
-                    </Row>
-                    <Row>
-                        <Row>
-                            <Col>
-                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}></div>
-                            </Col>
-                            <Col>
-                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}></div>
+                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>{props.hike.difficulty}</div>
                             </Col>
                         </Row>
                     </Row>

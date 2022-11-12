@@ -11,12 +11,23 @@ import SingleHike from '../../components/single-hike/SingleHike';
 const ListOfHikes = () => {
     const [isFilterOpen, setFilterOpen] = useState(false)
     const [isHikeShown, setHikeShow] = useState(false)
+    const [hike, setHike] = useState({ title: "", expectedTime: -1, ascent: -1, difficulty: "", length: -1 })
 
     const filterButton = () => {
         setFilterOpen(!isFilterOpen)
     }
 
-    const selectHike = () => {
+    const selectHike = (hike_obj) => {
+        console.log(hike_obj)
+        setHike(
+            {
+                title: hike_obj.title,
+                expectedTime: hike_obj.expectedTime,
+                ascent: hike_obj.ascent,
+                difficulty: hike_obj.difficulty,
+                length: hike_obj.length
+            }
+        )
         setHikeShow(true)
     }
 
@@ -80,7 +91,7 @@ const ListOfHikes = () => {
                                     {
                                         sampledata.map(elem => {
                                             return (
-                                                <tr className="my-tr" key={elem.name} onClick={selectHike}>
+                                                <tr className="my-tr" key={elem.name} onClick={() => selectHike(elem)}>
                                                     <td className="my-td">{elem.title}</td>
                                                     <td className="my-td">{elem.expectedTime}</td>
                                                     <td className="my-td">{elem.ascent}m</td>
@@ -118,7 +129,7 @@ const ListOfHikes = () => {
                     </div>
                 </Col>
                 <Col hidden={!isHikeShown} style={{ paddingTop: "15px" }}>
-                    <SingleHike closeCallback={closeHike} />
+                    <SingleHike closeCallback={closeHike} hike={hike}/>
                 </Col>
             </Row>
 
