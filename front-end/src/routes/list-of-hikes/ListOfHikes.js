@@ -1,11 +1,11 @@
-import sampledata from '../sample-data/samplehikes.json'
-import UpAndDown from '../components/up-and-down-button/UpAndDown';
+import sampledata from 'front-end/src/list-of-hikes/ListOfHikes.js'
+import UpAndDown from '../../components/up-and-down-button/UpAndDown';
 import './list-of-hikes-style.css'
 
 import { useState } from 'react';
 
 import { Table, Container, Row, Col } from 'react-bootstrap';
-import MainTitle from '../components/main-title/MainTitle'
+import MainTitle from '../../components/main-title/MainTitle'
 
 const ListOfHikes = () => {
     const [isFilterOpen, setFilterOpen] = useState(false)
