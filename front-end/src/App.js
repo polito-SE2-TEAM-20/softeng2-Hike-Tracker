@@ -1,10 +1,11 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { LoginForm } from './Login/Login';
 import API_Login from './Login/API_Login';
-import { useState } from 'react';
-
+import API_NewHike from './NewHike/API_Newhike';
+import  FileUploader from './NewHike/newHike';
 function App() {
   return (
     <BrowserRouter>
@@ -46,11 +47,21 @@ function App2() {
     navigate('/');
   }
 
+  const addNewHike = async (formData) => {
+    try {
+      const newH = await API_NewHike.addHike(formData);
+    }  catch (err) {
+      throw err;
+      //setMessage({msg: err, type: 'danger'});
+    }
+  }
+
 
   return (
     <div>
       <Routes>
         <Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut} />} />
+        <Route path="/newHike2" element ={<FileUploader addNewHike={addNewHike}/>}/>
       </Routes>
     </div>
   );
