@@ -14,6 +14,10 @@ ADD . /srv
 
 RUN npm run build
 
+RUN mkdir -p /srv/uploads
+
+RUN chown node:node /srv
+
 HEALTHCHECK CMD node healthcheck.js localhost ${PORT} /healthcheck 200
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
