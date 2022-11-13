@@ -5,10 +5,10 @@ POST http://hiking-backend.germangorodnev.com/hikes/filteredHikes
 content-type: application/json
 
 {
-    "province": "Salerno",
+    "province": null,
     "region": null,
-    "maxLength": 15,
-    "minLength": 5,
+    "maxLength": null,
+    "minLength": null,
     "expectedTimeMin": null,
     "expectedTimeMax": null,
     "difficultyMin": null,
