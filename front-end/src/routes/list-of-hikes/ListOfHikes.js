@@ -9,38 +9,35 @@ import MainTitle from '../../components/main-title/MainTitle';
 import Button from '../../components/buttons/Button';
 import SingleHike from '../../components/single-hike/SingleHike';
 import Filter from '../../components/filter/Filter'
+import Sorting from '../../components/sorting/Sorting'
 import { useNavigate } from 'react-router-dom';
 import LOH_API from './LOH-API';
 
 const ListOfHikes = (props) => {
     const [isFilterOpen, setFilterOpen] = useState(false)
+    const [isSortingOpen, setSortingOpen] = useState(false)
     const [isHikeShown, setHikeShow] = useState(false)
     const [hike, setHike] = useState({ title: "", expectedTime: -1, ascent: -1, difficulty: "", length: -1 })
     const [listOfHikes, setListOfHikes] = useState([])
     const navigate = useNavigate()
-
+    const [filter, setFilter] = useState({
+        "province": null,
+        "region": null,
+        "maxLength": null,
+        "minLength": null,
+        "expectedTimeMin": null,
+        "expectedTimeMax": null,
+        "difficultyMin": null,
+        "difficultyMax": null,
+        "ascentMin": null,
+        "ascentMax": null
+    })
     const [title, setTitle] = useState(0)
     const [expectedTime, setExpectedTime] = useState(0)
     const [ascent, setAscent] = useState(0)
     const [difficulty, setDifficulty] = useState(0)
     const [length, setLength] = useState(0)
-    const [province, setProvince] = useState("")
-    const [region, setRegion] = useState("")
-    const [minAsc, setMinAsc] = useState(-1)
-    const [maxAsc, setMaxAsc] = useState(-1)
-    const [minLen, setMinLen] = useState(-1)
-    const [maxLen, setMaxLen] = useState(-1)
-    const [minDiff, setMinDiff] = useState(0)
-    const [maxDiff, setMaxDiff] = useState(3)
-    const filterStates = { setTitle, setExpectedTime, setAscent, setDifficulty, setLength, setProvince, setRegion, setMinAsc, setMaxAsc, setMinDiff, setMaxDiff, setMinLen, setMaxLen }
-
-    useEffect(() => {
-        listOfHikes.sort((x, y) => {
-            if (x < y)
-                return -1
-            else return y
-        })
-    }, [title, expectedTime, ascent, difficulty, length, province, region, minAsc, maxAsc, minLen, maxLen, minDiff, maxDiff])
+    const filterStates = { setTitle, setExpectedTime, setAscent, setDifficulty, setLength }
 
     useEffect(() => {
         var loh = []
@@ -53,8 +50,23 @@ const ListOfHikes = (props) => {
         });
     }, [])
 
+    useEffect(() => {
+        var loh = []
+        const getHikes = async () => {
+            loh = await LOH_API.getFilteredListOfHikes(filter)
+        }
+        getHikes().then(() => {
+            console.log(loh)
+            setListOfHikes(loh)
+        });
+    }, [filter])
+
     const filterButton = () => {
         setFilterOpen(!isFilterOpen)
+    }
+
+    const sortingButton = () => {
+        setSortingOpen(!isSortingOpen)
     }
 
     const selectHike = (hike_obj) => {
@@ -111,13 +123,20 @@ const ListOfHikes = (props) => {
                                                 List of hikes
                                             </div>
                                         </Col>
-                                        <Col style={{ display: "grid", justifyContent: "end", marginRight: "24px" }}>
+                                        <Col lg={1} style={{ display: "grid", justifyContent: "end", marginRight: "24px" }}>
                                             <svg onClick={filterButton} xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-filter-circle-fill" viewBox="0 0 16 16">
                                                 <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zM3.5 5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1 0-1zM5 8.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm2 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5z" />
                                             </svg>
                                         </Col>
+                                        <Col lg={1} style={{ display: "grid", justifyContent: "end", marginRight: "24px" }}>
+                                            <svg onClick={sortingButton} xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-sort-alpha-down" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371h-1.781zm1.57-.785L11 2.687h-.047l-.652 2.157h1.351z" />
+                                                <path d="M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645V14zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293V2.5z" />
+                                            </svg>
+                                        </Col>
                                     </Row>
                                     <Filter filterFunctions={filterStates} open={isFilterOpen} />
+                                    <Sorting setFilter={setFilter} open={isSortingOpen} />
                                     <div style={{ marginTop: "25px" }}>
                                         <Table className='my-table' striped hover style={{ width: "1000px", marginLeft: "auto", marginRight: "auto" }}>
                                             <thead style={{ textAlign: "center" }}>
