@@ -11,6 +11,24 @@
       "compilerOptions": {
         "tsConfigPath": "libs/common/tsconfig.lib.json"
       }
+    },
+    "gpx": {
+      "type": "library",
+      "root": "libs/gpx",
+      "entryFile": "index",
+      "sourceRoot": "libs/gpx/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/gpx/tsconfig.lib.json"
+      }
+    },
+    "testing": {
+      "type": "library",
+      "root": "libs/testing",
+      "entryFile": "index",
+      "sourceRoot": "libs/testing/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/testing/tsconfig.lib.json"
+      }
     }
   },
   "compilerOptions": {

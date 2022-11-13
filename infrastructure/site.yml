@@ -1,0 +1,11 @@
+---
+  - name: Cluster managers
+    hosts: managers
+    remote_user: root
+    vars_files:
+      - vars/main.yml
+      - vars/secrets.yml
+    roles:
+      - common
+      - name: swarm-manager
+        tags: wip

@@ -1,0 +1,17 @@
+- name: Login to github container registry
+  become: yes
+  become_user: "{{ item }}"
+  docker_login:
+    registry_url: ghcr.io
+    username: "{{ ghcr_login }}"
+    password: "{{ ghcr_password }}"
+  loop:
+    - root
+    - circleci
+
+- name: Join the swarm
+  docker_swarm:
+    state: join
+    remote_addrs: ["{{ swarm_manager_interface }}:2377"]
+    advertise_addr: eth0
+    join_token: "{{ hostvars[groups['managers'][0]]['worker_join_token'] }}"

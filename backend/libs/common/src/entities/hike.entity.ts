@@ -6,7 +6,11 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { FOREIGN_OPTIONS_CASCADE, numericOptionsConfig } from '../constants';
+import {
+  FOREIGN_OPTIONS_CASCADE,
+  HikeLimits,
+  numericOptionsConfig,
+} from '../constants';
 import { HikeDifficulty } from '../enums';
 
 import { User } from './user.entity';
@@ -14,7 +18,7 @@ import { User } from './user.entity';
 @Entity('hikes')
 export class Hike {
   @PrimaryGeneratedColumn('increment')
-  id!: string;
+  id!: number;
 
   @Column({
     type: 'integer',
@@ -37,6 +41,7 @@ export class Hike {
   @Column({
     type: 'integer',
     nullable: false,
+    default: 0,
   })
   expectedTime!: number;
 
@@ -46,18 +51,29 @@ export class Hike {
   @Column({
     ...numericOptionsConfig(0),
     nullable: false,
+    default: 0,
   })
   ascent!: number;
+
+  /**
+   * kilometers?
+   */
+  @Column({
+    ...numericOptionsConfig(0),
+    nullable: false,
+  })
+  distance!: number;
 
   @Column({
     type: 'smallint',
     nullable: false,
+    default: HikeDifficulty.tourist,
   })
   difficulty!: HikeDifficulty;
 
   @Column({
     type: 'varchar',
-    length: 500,
+    length: HikeLimits.title,
     nullable: false,
     default: '',
   })
@@ -65,7 +81,7 @@ export class Hike {
 
   @Column({
     type: 'varchar',
-    length: 1000,
+    length: HikeLimits.description,
     nullable: false,
     default: '',
   })
@@ -73,10 +89,25 @@ export class Hike {
 
   @Column({
     type: 'varchar',
-    length: 1024,
+    length: HikeLimits.gpxPath,
     nullable: true,
+    default: null,
   })
   gpxPath!: string | null;
+
+  @Column({
+    type: 'citext',
+    nullable: false,
+    default: '',
+  })
+  region!: string;
+
+  @Column({
+    type: 'citext',
+    nullable: false,
+    default: '',
+  })
+  province!: string;
 
   /**
    * TypeORM sql-gen only

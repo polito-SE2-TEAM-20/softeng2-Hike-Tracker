@@ -1,0 +1,87 @@
+---
+- name: Deploy environment files
+  template:
+    src: env/{{ item }}
+    dest: /srv/{{ item }}
+  loop:
+    - env.pg-prod
+    - env.backend
+
+- name: Create volume directories
+  file:
+    path: /srv/{{ item }}
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  loop:
+    - pg-prod-data
+
+- name: Deploy hiking stack
+  docker_stack:
+    name: hiking
+    with_registry_auth: true
+    resolve_image: never
+    prune: true
+    compose:
+      - version: "3.6"
+        x-deploy-options: &deploy
+          update_config:
+            parallelism: 2
+            delay: 3s
+            failure_action: rollback
+            order: start-first
+
+        services:
+          ####################
+          #### production ####
+          ####################
+          # frontend:
+          #   image: ghcr.io/polito-se2-team-20/frontend
+          #   deploy:
+          #     labels:
+          #       - "traefik.enable=true"
+          #       - "traefik.port=3600"
+          #       - "traefik.frontend.rule=Host:hiking.germangorodnev.com"
+          #       - "traefik.docker.network=traefiknet"
+          #   networks:
+          #     - stacknet
+          #     - traefiknet
+
+          backend:
+            image: ghcr.io/polito-se2-team-20/backend
+            env_file:
+              - /srv/env.backend
+            deploy:
+              labels:
+                - "traefik.enable=true"
+                - "traefik.port=3500"
+                - "traefik.frontend.rule=Host:hiking-backend.germangorodnev.com"
+                - "traefik.docker.network=traefiknet"
+            networks:
+              - stacknet
+              - traefiknet
+
+          ####################
+          ## infrastructure ##
+          ####################
+          postgresql:
+            image: postgis/postgis:14-3.3
+            restart: always
+            env_file:
+              - /srv/env.pg-prod
+            volumes:
+              - /srv/pg-prod-data:/var/lib/postgresql/data
+            networks:
+              - stacknet
+            ports:
+              - '5432:5432'
+            deploy:
+              placement:
+                  constraints:
+                      - node.role == manager
+
+        networks:
+          stacknet:
+          traefiknet:
+            external: true

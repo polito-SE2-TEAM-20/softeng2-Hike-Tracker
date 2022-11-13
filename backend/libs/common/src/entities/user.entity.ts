@@ -5,7 +5,15 @@ import { UserRole } from '../enums';
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('increment')
-  id!: string;
+  id!: number;
+
+  @Column({
+    type: 'varchar',
+    length: 256,
+    nullable: false,
+    unique: true,
+  })
+  email!: string;
 
   @Column({
     type: 'varchar',

@@ -13,7 +13,7 @@ import { Point } from './point.entity';
 @Entity('huts')
 export class Hut {
   @PrimaryGeneratedColumn('increment')
-  id!: string;
+  id!: number;
 
   @Column({
     type: 'integer',

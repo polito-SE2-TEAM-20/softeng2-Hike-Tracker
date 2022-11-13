@@ -4,6 +4,9 @@ import { ColumnNumericOptions } from 'typeorm/decorator/options/ColumnNumericOpt
 
 import { ColumnNumericTransformer } from '../transformers';
 
+export const APP_TYPEORM_OPTIONS = 'APP_TYPEORM_OPTIONS';
+export const SCHEMA = 'public';
+
 export const NUMERIC_OPTIONS: ColumnOptions &
   ColumnNumericOptions &
   ColumnCommonOptions = {
@@ -36,3 +39,9 @@ export const FOREIGN_OPTIONS_CASCADE: RelationOptions = {
   eager: false,
   persistence: false,
 };
+
+export const JWT_SECRET: string = process.env.JWT_SECRET
+  ? process.env.JWT_SECRET
+  : (() => {
+      throw new Error('process.env.JWT_SECRET is not defined');
+    })();

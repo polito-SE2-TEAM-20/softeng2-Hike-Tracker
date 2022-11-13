@@ -1,0 +1,9 @@
+{
+  "include": [
+    ".eslintrc.js",
+    "jest.config.e2e.js",
+    "healthcheck.js",
+    "tsconfig.json",
+    "package.json",
+  ]
+}

@@ -1,0 +1,6 @@
+---
+  swarm_manager_interface: 161.35.206.205
+  domain: hiking-backend.germangorodnev.com
+  domain_prod_frontend: hiking.germangorodnev.com
+  letsencrypt_email: germangorodnev@gmail.com
+  traefik_version: 1.7.3

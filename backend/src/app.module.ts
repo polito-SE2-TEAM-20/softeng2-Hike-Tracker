@@ -1,30 +1,28 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { entities } from '@app/common';
+import { AppTypeormOptionsModule, AppTypeormOptionsService } from '@app/common';
+import { typeormOptions } from '@app/common';
 
+import { AuthModule } from './auth/auth.module';
+import { HealthcheckModule } from './healthcheck/healthcheck.module';
 import { HikesModule } from './hikes/hikes.module';
+import { PointsModule } from './points/points.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT ? +process.env.DB_PORT : undefined,
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
-      entities,
-      connectTimeoutMS: 14 * 1000,
-      extra: {
-        max: 5,
-        connectionTimeoutMillis: 30 * 1000,
-        idleTimeoutMillis: 20 * 1000,
-      },
-      logging: !!process.env.SQL_LOGGING ? true : ['error'],
-      synchronize: !!process.env.SYNCHRONIZE,
+    TypeOrmModule.forRootAsync({
+      imports: [
+        AppTypeormOptionsModule.forRoot({
+          ...typeormOptions,
+        }),
+      ],
+      useExisting: AppTypeormOptionsService,
     }),
+    HealthcheckModule,
     HikesModule,
+    PointsModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
