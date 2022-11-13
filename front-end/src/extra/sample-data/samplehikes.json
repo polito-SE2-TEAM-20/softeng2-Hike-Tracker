@@ -1,0 +1,30 @@
+[
+    {
+        "title": "Scalata del mezzogiorno",
+        "expectedTime": 5400,
+        "ascent": "150",
+        "difficulty": "Tourist",
+        "length": "1500"
+    },
+    {
+        "title": "Magica Torino",
+        "expectedTime": 8500,
+        "ascent": "320",
+        "difficulty": "Professional Hiker",
+        "length": "2500"
+    },
+    {
+        "title": "Lago dei sogni",
+        "expectedTime": 1400,
+        "ascent": "50",
+        "difficulty": "Tourist",
+        "length": "500"
+    },
+    {
+        "title": "Notti magiche",
+        "expectedTime": 2400,
+        "ascent": "350",
+        "difficulty": "Hiker",
+        "length": "2000"
+    }
+]
