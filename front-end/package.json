@@ -17,6 +17,7 @@
     "react-router": "^6.4.3",
     "react-router-dom": "^6.4.3",
     "react-scripts": "5.0.1",
+    "react-spring": "^9.0.0-rc.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -42,5 +43,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.9.0"
   }
 }
