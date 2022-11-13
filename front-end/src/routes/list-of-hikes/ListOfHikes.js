@@ -93,8 +93,8 @@ const ListOfHikes = () => {
                                             return (
                                                 <tr className="my-tr" key={elem.name} onClick={() => selectHike(elem)}>
                                                     <td className="my-td">{elem.title}</td>
-                                                    <td className="my-td">{elem.expectedTime}</td>
-                                                    <td className="my-td">{elem.ascent}m</td>
+                                                    <td className="my-td">{elem.expectedTime} hours</td>
+                                                    <td className="my-td">{elem.ascent} m</td>
                                                     <td className="my-td">
                                                         {
                                                             elem.difficulty === "Tourist" ?
@@ -118,7 +118,7 @@ const ListOfHikes = () => {
                                                                 : <></>
                                                         }
                                                     </td>
-                                                    <td className="my-td">{elem.length}m</td>
+                                                    <td className="my-td">{elem.length} m</td>
                                                 </tr>
                                             );
                                         })

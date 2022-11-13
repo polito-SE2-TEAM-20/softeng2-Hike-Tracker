@@ -29,7 +29,7 @@ const SingleHike = (props) => {
                                 <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>Expected time:</div>
                             </Col>
                             <Col>
-                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>{props.hike.expectedTime}</div>
+                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>{props.hike.expectedTime} hours</div>
                             </Col>
                         </Row>
                     </Row>
@@ -39,7 +39,7 @@ const SingleHike = (props) => {
                                 <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>Length:</div>
                             </Col>
                             <Col>
-                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>{props.hike.length}</div>
+                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>{props.hike.length} m</div>
                             </Col>
                         </Row>
                     </Row>
@@ -49,7 +49,7 @@ const SingleHike = (props) => {
                                 <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>Ascent:</div>
                             </Col>
                             <Col>
-                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>{props.hike.ascent}</div>
+                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>{props.hike.ascent} m</div>
                             </Col>
                         </Row>
                     </Row>

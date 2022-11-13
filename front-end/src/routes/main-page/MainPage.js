@@ -2,6 +2,7 @@ import MainTitle from '../../components/main-title/MainTitle'
 import Button from '../../components/buttons/Button';
 import { Row, Container } from 'react-bootstrap'
 import Navbar from 'react-bootstrap/Navbar';
+import { useNavigate } from "react-router-dom";
 
 const MainPage = () => {
     return (
