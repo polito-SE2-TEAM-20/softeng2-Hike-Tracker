@@ -19,11 +19,11 @@ const ListOfHikes = (props) => {
     const [listOfHikes, setListOfHikes] = useState([])
     const navigate = useNavigate()
 
-    const [title, setTitle] = useState(false)
-    const [expectedTime, setExpectedTime] = useState(false)
-    const [ascent, setAscent] = useState(false)
-    const [difficulty, setDifficulty] = useState(false)
-    const [length, setLength] = useState(false)
+    const [title, setTitle] = useState(0)
+    const [expectedTime, setExpectedTime] = useState(0)
+    const [ascent, setAscent] = useState(0)
+    const [difficulty, setDifficulty] = useState(0)
+    const [length, setLength] = useState(0)
     const [province, setProvince] = useState("")
     const [region, setRegion] = useState("")
     const [minAsc, setMinAsc] = useState(-1)
@@ -98,7 +98,7 @@ const ListOfHikes = (props) => {
                                     !props.isLoggedIn ?
                                         <Button navigate={gotoLogin} text="Login" textColor="black" color="white" size="24px" />
                                         :
-                                        <Button navigate={props.doLogOut} text="Logout" textColor="black" color="white" size="24px" />                                        
+                                        <Button navigate={props.doLogOut} text="Logout" textColor="black" color="white" size="24px" />
                                 }
                             </Container>
                         </Navbar>
@@ -131,7 +131,13 @@ const ListOfHikes = (props) => {
                                             </thead>
                                             <tbody style={{ textAlign: "center" }}>
                                                 {
-                                                    listOfHikes?.map(elem => {
+                                                    listOfHikes?.sort(function (x, y) {
+                                                        if (title == -1) if (x.title < y.title) return -1; else return 1; else if (title == 1) { if (x.title < y.title) return 1; else return -1 };
+                                                        if (expectedTime == -1) if (x.expectedTime < y.expectedTime) return -1; else return 1; else if (expectedTime == 1) { if (x.expectedTime < y.expectedTime) return 1; else return -1 };
+                                                        if (ascent == -1) if (x.ascent < y.ascent) return -1; else return 1; else if (ascent == 1) { if (x.ascent < y.ascent) return 1; else return -1 };
+                                                        if (difficulty == -1) if (x.difficulty < y.difficulty) return -1; else return 1; else if (difficulty == 1) { if (x.difficulty < y.difficulty) return 1; else return -1 };
+                                                        if (length == -1) if (x.length < y.length) return -1; else return 1; else if (length == 1) { if (x.length < y.length) return 1; else return -1 };
+                                                    }).map(elem => {
                                                         return (
                                                             <tr className="my-tr" key={elem.name} onClick={() => selectHike(elem)}>
                                                                 <td className="my-td">{elem.title}</td>
