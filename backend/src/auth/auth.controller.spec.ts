@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { AuthController } from './auth.controller';
 
-describe('HikesController', () => {
+describe('AuthController', () => {
   let controller: AuthController;
 
   beforeEach(async () => {
@@ -36,7 +36,7 @@ describe('HikesController', () => {
     expect(controller.register(body)).toBe(result);
   });
 
-  it('Should return 1 token', async () => {
+  it('Should return user data and 1 token', async () => {
     const body = {
         
         email: "utente@prova.it",
