@@ -41,7 +41,7 @@ describe('Hikes (e2e)', () => {
       .expect(201);
 
     expect(body).toMatchObject({ id: expect.any(TypeID), ...hikeData });
-    expect(body.gpxPath).toMatch(/static\/gpx\/.+\.gpx/);
+    expect(body.gpxPath).toMatch(/^\/static\/gpx\/.+\.gpx$/);
 
     expect(
       await testService.repo(HikePoint).findBy({ hikeId: body.id }),
