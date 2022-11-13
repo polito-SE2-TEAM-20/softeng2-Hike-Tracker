@@ -1,3 +1,5 @@
+import { join } from 'path';
+
 import {
   Controller,
   Get,
@@ -13,9 +15,18 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs-extra';
+import { isNil } from 'ramda';
 import { DataSource } from 'typeorm';
 
-import { Hike, HikePoint, ID, Point, User, UserRole } from '@app/common';
+import {
+  GPX_FILE_PATH,
+  Hike,
+  HikePoint,
+  ID,
+  Point,
+  User,
+  UserRole,
+} from '@app/common';
 import { GpxService } from '@app/gpx';
 
 import { PointsService } from '../points/points.service';
@@ -43,42 +54,52 @@ export class HikesController {
       .getRepository(Hike)
       .createQueryBuilder('hikes');
 
-    if (body.region !== null)
-      query.where('hikes.region = :region', { region: body.region });
-    if (body.province !== null)
+    if (!isNil(body.region)) {
+      query.andWhere('hikes.region = :region', { region: body.region });
+    }
+    if (!isNil(body.province)) {
       query.andWhere('hikes.province = :province', { province: body.province });
-    if (body.maxLength !== null)
+    }
+    if (!isNil(body.maxLength)) {
       query.andWhere('hikes.length <= :maxLength', {
         maxLength: body.maxLength,
       });
-    if (body.minLength !== null)
+    }
+    if (!isNil(body.minLength)) {
       query.andWhere('hikes.length >= :minLength', {
         minLength: body.minLength,
       });
-    if (body.difficultyMax !== null)
+    }
+    if (!isNil(body.difficultyMax)) {
       query.andWhere('hikes.difficulty <= :maxDifficulty', {
         maxDifficulty: body.difficultyMax,
       });
-    if (body.difficultyMin !== null)
+    }
+    if (!isNil(body.difficultyMin)) {
       query.andWhere('hikes.difficulty >= :difficultyMin', {
         difficultyMin: body.difficultyMin,
       });
-    if (body.expectedTimeMax !== null)
+    }
+    if (!isNil(body.expectedTimeMax)) {
       query.andWhere('hikes.length <= :expectedTimeMax', {
         expectedTimeMax: body.expectedTimeMax,
       });
-    if (body.expectedTimeMin !== null)
+    }
+    if (!isNil(body.expectedTimeMin)) {
       query.andWhere('hikes.expectedTime >= :expectedTimeMin', {
         expectedTimeMin: body.expectedTimeMin,
       });
-    if (body.ascentMax !== null)
+    }
+    if (!isNil(body.ascentMax)) {
       query.andWhere('hikes.ascent <= :ascentMax', {
         ascentMax: body.ascentMax,
       });
-    if (body.ascentMin !== null)
+    }
+    if (!isNil(body.ascentMin)) {
       query.andWhere('hikes.ascent >= :ascentMin', {
         ascentMin: body.ascentMin,
       });
+    }
 
     const hikes = await query.getMany();
     console.log(hikes);
@@ -124,6 +145,7 @@ export class HikesController {
         title,
         description,
         userId: user.id,
+        gpxPath: join(GPX_FILE_PATH, file.filename),
       });
 
       const points = await this.pointsService
