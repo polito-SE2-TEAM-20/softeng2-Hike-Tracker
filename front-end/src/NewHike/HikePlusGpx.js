@@ -67,7 +67,7 @@ const hiddenFileInput = React.useRef(null);
             const positions = gpx.tracks[0].points.map(p => [p.lat, p.lon]);
             setPositionsState(positions);
             setStartPoint(positions[0]);
-            // setEndPoint(positions[length-1]);
+            setEndPoint(positions[positions.length-1]);
             console.log(positions[0]);
             console.log(positions.length);
             console.log(positions);
