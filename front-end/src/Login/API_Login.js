@@ -1,4 +1,4 @@
-const APIURL = 'http://se2-queue-backend.germangorodnev.com/';
+const APIURL = 'http://hiking-backend.germangorodnev.com/';
 
 async function logIn(credentials) {
     let response = await fetch((APIURL + 'auth/login/'), {

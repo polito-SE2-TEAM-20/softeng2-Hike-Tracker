@@ -5,7 +5,12 @@ import { useState } from 'react';
 import { LoginForm } from './Login/Login';
 import API_Login from './Login/API_Login';
 import API_NewHike from './NewHike/API_Newhike';
-import  FileUploader from './NewHike/newHike';
+import  FileUploader from './NewHike/addGpx';
+import  {FormNewHike} from './NewHike/FormNewHike';
+import {LocalGuide} from './Visuals/localGuide';
+import {NavigationBar} from './Visuals/Navbar'
+import {SignUp} from './SignUp/SignUp'
+import API_SignUp from './NewHike/API_Newhike';
 function App() {
   return (
     <BrowserRouter>
@@ -47,9 +52,31 @@ function App2() {
     navigate('/');
   }
 
-  const addNewHike = async (formData) => {
+  const doRegister = (credentials, setShow, setErrorMessage) => {
+    API_SignUp.SignUp(credentials)
+      .then(user => {
+        setShow(false);
+        console.log(user);
+        navigate('/login');
+        
+      })
+      .catch(err => {
+        console.log(err);
+        setShow(true);
+        setErrorMessage(err);
+      }
+      )
+  }
+
+  function addHike(hike){
+    API_NewHike.addHike(hike)
+      .then(()=>{})
+      .catch(err => console.log(err));
+  }
+
+  const addNewGpx = async (formData) => {
     try {
-      const newH = await API_NewHike.addHike(formData);
+      const newH = await API_NewHike.addNewGpx(formData);
     }  catch (err) {
       throw err;
       //setMessage({msg: err, type: 'danger'});
@@ -61,7 +88,12 @@ function App2() {
     <div>
       <Routes>
         <Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut} />} />
-        <Route path="/newHike2" element ={<FileUploader addNewHike={addNewHike}/>}/>
+        <Route path="/newHike2" element ={<FileUploader addNewGpx={addNewGpx}/>}/>
+        <Route path="/newHike" element ={<FormNewHike addHike={addHike}/>}/>
+        <Route path="/localGuide" element ={<LocalGuide />}/>
+        <Route path ="/navbar" element = {<NavigationBar user={user} />}/>
+        <Route path="/register" element={<SignUp doRegister={doRegister}/>}/>
+
       </Routes>
     </div>
   );
