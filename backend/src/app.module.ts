@@ -1,7 +1,13 @@
 import { Module } from '@nestjs/common';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AppTypeormOptionsModule, AppTypeormOptionsService } from '@app/common';
+import {
+  AppTypeormOptionsModule,
+  AppTypeormOptionsService,
+  STATIC_PREFIX,
+  UPLOAD_PATH,
+} from '@app/common';
 import { typeormOptions } from '@app/common';
 
 import { AuthModule } from './auth/auth.module';
@@ -19,6 +25,11 @@ import { PointsModule } from './points/points.module';
       ],
       useExisting: AppTypeormOptionsService,
     }),
+    ServeStaticModule.forRoot({
+      rootPath: UPLOAD_PATH,
+      serveRoot: `/${STATIC_PREFIX}`,
+    }),
+
     HealthcheckModule,
     HikesModule,
     PointsModule,
