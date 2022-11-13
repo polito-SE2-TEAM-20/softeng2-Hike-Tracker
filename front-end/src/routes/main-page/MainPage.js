@@ -1,8 +1,6 @@
 import MainTitle from '../../components/main-title/MainTitle'
 import Button from '../../components/buttons/Button';
 import { Row, Container } from 'react-bootstrap'
-import { Map } from '../../components/map/Map';
-import SearchBar from '../../components/searchbar/SearchBar';
 import Navbar from 'react-bootstrap/Navbar';
 
 const MainPage = () => {
