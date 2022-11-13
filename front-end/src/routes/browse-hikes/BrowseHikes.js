@@ -7,7 +7,7 @@ import './browse-hikes-style.css'
 import MainTitle from '../../components/main-title/MainTitle'
 import Button from '../../components/buttons/Button';
 import { Row, Container } from 'react-bootstrap'
-import { Map } from '../../components/map/Map';
+import { MapBrowseHike } from '../../components/map/MapBrowseHike';
 import SearchBar from '../../components/searchbar/SearchBar';
 import Navbar from 'react-bootstrap/Navbar';
 
@@ -27,7 +27,7 @@ const BrowseHikes = () => {
                 </Container>
             </Navbar>
             <Row style={{ marginLeft: "0px", marginRight: "0px" }}>
-                <Map />
+                <MapBrowseHike />
             </Row>
         </Container >
     );

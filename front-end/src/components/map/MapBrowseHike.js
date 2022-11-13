@@ -33,7 +33,7 @@ export const LocationMarker = () => {
   )
 }
 
-export const Map = () => {
+export const MapBrowseHike = () => {
   return (
     <MapContainer center={[45.07417348802877, 7.620956240528321]} zoom={13} 
     scrollWheelZoom={false} zoomControl={false} 
