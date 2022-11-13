@@ -25,6 +25,11 @@ export class UpdateHikeDto {
   @IsOptional()
   distance?: number;
 
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  expectedTime?: number;
+
   @IsEnum(HikeDifficulty)
   @IsOptional()
   difficulty?: HikeDifficulty;

@@ -83,8 +83,8 @@ const hiddenFileInput = React.useRef(null);
         event.preventDefault();
         
         const formData = new FormData();
-        formData.append('File', fileContents);
-        formData.append('Title', title);
+        formData.append('gpxFile', selectedFile);
+        formData.append('title', title);
         if(title.trim().length === 0){
             setErrorMessage('The title cannot be empty')
         }else{

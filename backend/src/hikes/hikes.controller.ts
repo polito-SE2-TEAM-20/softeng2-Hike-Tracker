@@ -4,14 +4,14 @@ import {
   Controller,
   Get,
   Body,
-  HttpStatus,
-  ParseFilePipeBuilder,
   Post,
   UploadedFile,
   UseInterceptors,
   Put,
   Param,
   DefaultValuePipe,
+  ParseFilePipeBuilder,
+  HttpStatus,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs-extra';
@@ -110,9 +110,9 @@ export class HikesController {
   @UseInterceptors(FileInterceptor('gpxFile'))
   async import(
     @UploadedFile(
-      new ParseFilePipeBuilder()
-        .addFileTypeValidator({ fileType: 'gpx' })
-        .build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY }),
+      new ParseFilePipeBuilder().build({
+        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      }),
     )
     file: Express.Multer.File,
     @Body('title', new DefaultValuePipe('')) title: string,
@@ -127,13 +127,17 @@ export class HikesController {
     }
 
     // todo: get real user
-    const user = await this.dataSource.getRepository(User).save({
-      firstName: '',
-      lastName: '',
-      password: '',
-      email: 'test@test.com',
-      role: UserRole.localGuide,
-    });
+    const user =
+      (await this.dataSource
+        .getRepository(User)
+        .findOneBy({ email: 'test@test.com' })) ??
+      (await this.dataSource.getRepository(User).save({
+        firstName: '',
+        lastName: '',
+        password: '',
+        email: 'test@test.com',
+        role: UserRole.localGuide,
+      }));
 
     // insert hike into database
     const { hike } = await this.dataSource.transaction<{

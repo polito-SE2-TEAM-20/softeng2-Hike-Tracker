@@ -104,8 +104,8 @@ function App2() {
   const addNewGpx = async (formData, hike) => {
     try {
       API_NewHike.addNewGpx(formData)
-        .then(() =>{
-          API_NewHike.addHike(hike)
+        .then((newHike) =>{
+          API_NewHike.addHike({id: newHike.id, ...hike})
              .then(()=>{})
              .catch(err=> {throw err})
         })
