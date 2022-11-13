@@ -18,11 +18,46 @@ const Filter = (props) => {
           </thead>
           <tbody>
             <tr>
-              <th><UpAndDown /></th>
-              <th><UpAndDown /></th>
-              <th><UpAndDown /></th>
-              <th><UpAndDown /></th>
-              <th><UpAndDown /></th>
+              <td><UpAndDown /></td>
+              <td><UpAndDown /></td>
+              <td><UpAndDown /></td>
+              <td><UpAndDown /></td>
+              <td><UpAndDown /></td>
+            </tr>
+          </tbody>
+        </Table>
+        <br></br>
+        <Table>
+          <thead>
+            <tr>
+              <th className='filter-name'>Province</th>
+              <th className='filter-name'>Region</th>
+              <th className='filter-name'>Minimum Ascent</th>
+              <th className='filter-name'>Maximum Ascent</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th><input type="text" style={{maxWidth: "120px"}} /></th>
+              <th><input type="text" style={{maxWidth: "120px"}} /></th>
+              <th><input type="text" style={{maxWidth: "120px"}} /></th>
+              <th><input type="text" style={{maxWidth: "120px"}} /></th>
+            </tr>
+          </tbody>
+          <thead>
+            <tr>
+              <th className='filter-name'>Minimum Length</th>
+              <th className='filter-name'>Maximum Length</th>
+              <th className='filter-name'>Minimum Difficulty</th>
+              <th className='filter-name'>Maximum Difficulty</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th><input type="text" style={{maxWidth: "120px"}} /></th>
+              <th><input type="text" style={{maxWidth: "120px"}} /></th>
+              <th><input type="text" style={{maxWidth: "120px"}} /></th>
+              <th><input type="text" style={{maxWidth: "120px"}} /></th>
             </tr>
           </tbody>
         </Table>
