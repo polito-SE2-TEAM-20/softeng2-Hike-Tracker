@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { DataSource } from 'typeorm';
 
-import { JWT_SECRET, User, UserJwtPayload } from '@app/common';
+import { JWT_SECRET, User, UserContext, UserJwtPayload } from '@app/common';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -15,16 +15,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate({ email }: any): Promise<UserJwtPayload> {
-    const _user = await this.dataSource
-      .getRepository(User)
-      .findOneBy({ email });
+  async validate({ id }: UserJwtPayload): Promise<UserContext> {
+    const _user = await this.dataSource.getRepository(User).findOneBy({ id });
 
     if (!_user) {
       throw new UnauthorizedException();
     }
 
-    const user: UserJwtPayload = { ..._user };
+    const user: User = { ..._user };
 
     delete user.password;
 

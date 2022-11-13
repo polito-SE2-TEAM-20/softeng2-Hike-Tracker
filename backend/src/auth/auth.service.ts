@@ -3,7 +3,10 @@ import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { DataSource } from 'typeorm';
 
-import { User } from '@app/common';
+import { User, UserContext, UserJwtPayload } from '@app/common';
+import { safeUser } from '@core/users/users.utils';
+
+import { RegisterDto } from './auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -21,31 +24,24 @@ export class AuthService {
     return null;
   }
 
-  async register(user: User) {
-    const hashedPassword = await this.hashPassword(user.password);
-    this.dataSource
-      .getRepository(User)
-      .createQueryBuilder()
-      .insert()
-      .into(User)
-      .values([
-        {
-          email: user.email,
-          password: hashedPassword,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          role: user.role,
-        },
-      ])
-      .execute();
+  async register({ password, ...data }: RegisterDto): Promise<UserContext> {
+    const hashedPassword = await this.hashPassword(password);
+
+    const user = await this.dataSource.getRepository(User).save({
+      ...data,
+      password: hashedPassword,
+    });
+
+    // const token = await this.jwtService.signAsync({ id: user.id });
+
+    return safeUser(user);
   }
 
   async login(user: User) {
-    const payload = { email: user.email };
+    const payload: UserJwtPayload = { id: user.id };
 
     return {
-      ...user,
-      password: '',
+      user: safeUser(user),
       token: await this.jwtService.signAsync(payload),
     };
   }

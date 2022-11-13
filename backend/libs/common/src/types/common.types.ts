@@ -4,4 +4,5 @@ export type ID = number;
 
 export const TypeID = Number;
 
-export type UserJwtPayload = Omit<User, 'password'> & { password?: string };
+export type UserJwtPayload = { id: ID };
+export type UserContext = Omit<User, 'password'>;

@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+import { UserLimits } from '../constants';
 import { UserRole } from '../enums';
 
 @Entity('users')
@@ -9,7 +10,7 @@ export class User {
 
   @Column({
     type: 'varchar',
-    length: 256,
+    length: UserLimits.email,
     nullable: false,
     unique: true,
   })
@@ -24,14 +25,14 @@ export class User {
 
   @Column({
     type: 'varchar',
-    length: 100,
+    length: UserLimits.firstName,
     nullable: false,
   })
   firstName!: string;
 
   @Column({
     type: 'varchar',
-    length: 100,
+    length: UserLimits.lasttName,
     nullable: false,
   })
   lastName!: string;

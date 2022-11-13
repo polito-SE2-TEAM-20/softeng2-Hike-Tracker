@@ -1,10 +1,11 @@
-FROM node:16.14.0-slim
+FROM node:16.14.0-alpine
 
 ENV PORT 3500
 
 WORKDIR /srv
 
-RUN apt-get update && apt-get install -y git dumb-init
+# RUN apt-get update && apt-get install -y git dumb-init
+RUN apk add --no-cache git dumb-init
 
 ADD package*.json tsconfig*.json nest-cli.json /srv/
 
