@@ -1,7 +1,7 @@
-const APIURL = 'http://se2-queue-backend.germangorodnev.com/';
+const APIURL = 'http://hiking-backend.germangorodnev.com/';
 
-async function SignUp(credentials){
-    let response = await fetch(( APIURL + 'auth/signup/'), {
+async function signUp(credentials){
+    let response = await fetch(( APIURL + 'auth/register/'), {
         method: 'POST',
         headers: {
             'Content-type': 'application/json'
@@ -11,8 +11,12 @@ async function SignUp(credentials){
 
     });
     if(response.ok){
+        const user = await response.json();
 
-        return true;
+        localStorage.setItem('token', user.token);
+        console.log(localStorage);
+        console.log(user);
+        return user;
 
     }else{
         const errDetail = await response.json();
@@ -21,6 +25,5 @@ async function SignUp(credentials){
 }
 
 
-
-const API = {SignUp};
+const API = {signUp};
 export default API;
