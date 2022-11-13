@@ -51,19 +51,16 @@ p {
 }
 
 .txt-931 {
-    position: absolute;
-    top: 636px;
-    left: 422px;
-    font-size: 78px;
+    font-size: 60px;
     font-family: Crimson Text, serif;
     font-weight: 700;
-    color: rgba(255, 255, 255, 1);
+    color: rgba(0, 0, 0, 1);
     text-align: center;
-    width: 1282px;
-    height: 184px;
     word-wrap: break-word;
 }
 
 .txt-9312 {
-    font-weight: 400;
+    font-family: Crimson Text, serif;
+    font-weight: 300;
+    color: rgba(0, 0, 0, 1);
 }
