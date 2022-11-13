@@ -9,6 +9,7 @@ import ListOfHikes from './routes/list-of-hikes/ListOfHikes.js';
 import SingleHike from './components/single-hike/SingleHike.js';
 import MainPage from './routes/main-page/MainPage';
 import {LoginForm} from './Login/Login.js'
+import {SignUp} from './SignUp/SignUp'
 
 import {
   BrowserRouter,
@@ -26,6 +27,7 @@ function App() {
         <Route path="/browsehikes" element={<BrowseHikes />} />
         <Route path="/singlehike" element={<SingleHike />} />
         <Route path="/login" element={<LoginForm />} />
+        <Route path="/signup" element={<SignUp />} />
       </Routes>
     </BrowserRouter >
   );
