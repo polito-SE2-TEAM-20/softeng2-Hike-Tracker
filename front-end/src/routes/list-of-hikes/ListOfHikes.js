@@ -4,13 +4,17 @@ import './list-of-hikes-style.css'
 
 import { useState } from 'react';
 
-import { Table, Container, Row, Col } from 'react-bootstrap';
+import { Table, Container, Row, Col, Navbar } from 'react-bootstrap';
+import MainTitle from '../../components/main-title/MainTitle';
+import Button from '../../components/buttons/Button';
 import SingleHike from '../../components/single-hike/SingleHike';
+import { useNavigate } from 'react-router-dom';
 
 const ListOfHikes = () => {
     const [isFilterOpen, setFilterOpen] = useState(false)
     const [isHikeShown, setHikeShow] = useState(false)
     const [hike, setHike] = useState({ title: "", expectedTime: -1, ascent: -1, difficulty: "", length: -1 })
+    const navigate = useNavigate()
 
     const filterButton = () => {
         setFilterOpen(!isFilterOpen)
@@ -36,9 +40,19 @@ const ListOfHikes = () => {
         setHikeShow(false)
     }
 
+    const gotoLogin = () => {
+        navigate("/login", { replace: false })
+    }
+
     return (
         <Container fluid style={{ paddingLeft: "0px", paddingRight: "0px", height: "100vh", background: "#807B73", display: "flex", justifyContent: "center" }}>
-            <Row>
+            <Navbar className="is-sticky" expand="lg">
+                <Container>
+                    <MainTitle color="white" size="48px" />
+                    <Button navigate={gotoLogin} text="Login" textColor="black" color="white" size="24px" />
+                </Container>
+            </Navbar>
+            <Row style={{marginTop: "100px"}}>
                 <Col>
                     <div style={{ backgroundColor: "#FEFBF7", height: "fit-content", width: "auto", borderRadius: "25px", marginTop: "15px", padding: "20px", boxShadow: "0 4px 32px 0 rgb(0 0 0 / 75%)" }}>
                         <Row style={{ display: "flex", placeItems: "center" }}>
