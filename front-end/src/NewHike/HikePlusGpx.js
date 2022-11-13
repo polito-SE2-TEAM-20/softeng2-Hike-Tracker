@@ -13,10 +13,12 @@ import {Map} from './Map.js'
 function FormHikeGpx(props){
 
     const [title, setTitle] = useState('');
-    const [length, setLength] = useState('lenght in km');
-    const [expectedTime, setExpectedtime] = useState('');
-    const [ascent, setAscent] = useState('');
-    const [difficulty, setDifficulty] = useState('');
+    const [lengthStr, setLengthStr] = useState('lenght in km');
+    const [expectedTimeStr, setExpectedtimeStr] = useState('');
+    const [ascentStr, setAscentStr] = useState('');
+    const [difficultyStr, setDifficultyStr] = useState('');
+    const [region, setRegion] = useState('');
+    const [province, setProvince] = useState('');
     //can ve Tourist, Hiker, Professional Hiker
      const [startPoint, setStartPoint] = useState();
      const [endPoint, setEndPoint ] = useState();
@@ -25,7 +27,7 @@ function FormHikeGpx(props){
     // const [listReferencePoint, setListReferencePoint] = useState();
     const [description, setDescription] = useState();
 
-    const hiddenFileInput = React.useRef(null);
+    
 
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileContents, setFileContents] = useState(null);
@@ -33,7 +35,7 @@ function FormHikeGpx(props){
     const [positionsState, setPositionsState] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
     const [show, setShow] = useState('');
-
+const hiddenFileInput = React.useRef(null);
     // Programatically click the hidden file input element
     // when the Button component is clicked
     const handleClick = event => {
@@ -55,71 +57,56 @@ function FormHikeGpx(props){
         console.log(fileUploaded);
         // props.handleFile(fileUploaded);
     };
-
     useEffect(() => {
         if (fileContents) {
             let gpxParser = require('gpxparser');
             var gpx = new gpxParser();
             gpx.parse(fileContents);
+            console.log(gpx);
+            console.log(gpx.tracks[0].points.map(p => [p.lat, p.lon]));
             const positions = gpx.tracks[0].points.map(p => [p.lat, p.lon]);
             setPositionsState(positions);
-            setStartPoint([positions[0]]);
-            setEndPoint([positions[positions.length-1]]);
+            setStartPoint(positions[0]);
+            // setEndPoint(positions[length-1]);
+            console.log(positions[0]);
+            console.log(positions.length);
+            console.log(positions);
         }
 
     }, [fileContents]);
 
-    const handleSubmission = () => {
-        const formData = new FormData();
-        console.log(fileContents);
-        console.log(formData.length);
-        formData.append('gpxFile', fileContents);
-        console.log(formData.length);
-        formData.append('title', fileContents.name);
-        console.log(fileContents.name);
-        formData.append('description', '');
-        console.log(formData.title);
-        props.addNewGpx(formData).catch((err) => { setErrorMessage(err); setShow(true); })
 
-
-    };
 
     const navigate = useNavigate();
 
     const handleSubmit = (event) => {
-
-        const formData = new FormData();
-        console.log(fileContents);
-        console.log(formData.length);
-        formData.append('gpxFile', fileContents);
-        console.log(formData.length);
-        formData.append('title', fileContents.name);
-        console.log(fileContents.name);
-        formData.append('description', '');
-        console.log(formData.title);
-        
         event.preventDefault();
+        
+        const formData = new FormData();
+        formData.append('File', fileContents);
+        formData.append('Title', title);
         if(title.trim().length === 0){
             setErrorMessage('The title cannot be empty')
         }else{
-            const newHike = { title: title, length: length, expectedTime: expectedTime, ascent: ascent, difficulty: difficulty, description: description}
-           
-        props.addNewGpx(formData, newHike).catch((err) => { setErrorMessage(err); setShow(true); })
+
+            const length = parseInt(lengthStr);
+            const expectedTime = parseInt(expectedTimeStr);
+
+            const ascent = parseInt(ascentStr);
+
+            const difficulty = parseInt(difficultyStr);
+
+            const newHike = { title: title, length: length, expectedTime: expectedTime, ascent: ascent, difficulty: difficulty, description: description, region: region, province: province}
+            //props.addNewHike(newHike);
+            console.log(newHike);
+            props.addNewGpx(formData, newHike).catch((err)=> {setErrorMessage(err); setShow(true)})
             Navigate('/')
         }
 
     }
 
     return (<Container className= "Container">
-        <Row>
-            <Col>
-            {
-                <h1>CREATE A NEW HIKE</h1>
-            }
-            </Col>
-        </Row>
-        <Row>
-        <Button onClick={handleClick}>
+                    <Button onClick={handleClick}>
                 Upload a file
             </Button>
             <input
@@ -131,12 +118,18 @@ function FormHikeGpx(props){
             {isFilePicked ? (
                 <div>
                     <p>Filename: {selectedFile.name}</p>
+                    <p>Size in bytes: {selectedFile.size}</p>
+                    <p>
+                        Last ModifiedDate:{' '}
+                        {selectedFile.lastModifiedDate.toLocaleDateString()}
+                    </p>
                 </div>
             ) : (
                 <p>Select a file to show details</p>
             )}
-        </Row>
+        
         <Form onSubmit={handleSubmit}>
+
             <Row>
 
             <FormGroup className="col-4" controlId = "title">
@@ -145,30 +138,41 @@ function FormHikeGpx(props){
 
             </FormGroup>
 
-            <FormGroup className="col-4" controlId = "length">
+            <FormGroup className="col-4" controlId = "lengthStr">
                 <FormLabel>Length</FormLabel>
-                <FormControl type="number" min={0} placeholder="Length in Km" value= {length} onChange={(e) => setLength(e.target.value)}></FormControl>
+                <FormControl type="number" min={0} placeholder="Length in Km" value= {lengthStr} onChange={(e) => setLengthStr(e.target.value)}></FormControl>
             </FormGroup>
 
-            <FormGroup className="col-4" controlId = "expectedTime">
+            <FormGroup className="col-4" controlId = "expectedTimeStr">
                 <FormLabel>Expected Time</FormLabel>
-                <FormControl type="number" min={0} placeholder="Expected Time" value= {expectedTime} onChange={(e) => setExpectedtime(e.target.value)}></FormControl>
+                <FormControl type="number" min={0} placeholder="Expected Time" value= {expectedTimeStr} onChange={(e) => setExpectedtimeStr(e.target.value)}></FormControl>
             </FormGroup>
 </Row>
 <Row>
-            <FormGroup className="col-4" controlId = "ascent">
+            <FormGroup className="col-4" controlId = "ascentStr">
                 <FormLabel>Ascent</FormLabel>
-                <FormControl type="number" min={0} placeholder="Ascent in meters" value= {ascent} onChange={(e) => setAscent(e.target.value)}></FormControl>
+                <FormControl type="number" min={0} placeholder="Ascent in meters" value= {ascentStr} onChange={(e) => setAscentStr(e.target.value)}></FormControl>
             </FormGroup>
-            <FormGroup className="col-4" controlId = "difficulty">
+            <FormGroup className="col-4" controlId = "difficultyStr">
                 <FormLabel>Difficulty</FormLabel>
-              <FormSelect  onChange={(e) => setDifficulty(e.target.value)}>
+              <FormSelect  onChange={(e) => setDifficultyStr(e.target.value)}>
                 <option></option>
 
-              <option value="1">Tourist</option>
-  <option value="2">Hiker</option>
-  <option value="3">Professional Hiker</option>
+              <option value="0">Tourist</option>
+  <option value="1">Hiker</option>
+  <option value="2">Professional Hiker</option>
               </FormSelect>
+              
+            </FormGroup>
+            <FormGroup className="col-4" controlId = "region">
+                <FormLabel>Region</FormLabel>
+                <FormControl required={true} type="text" placeholder="Enter Region" value= {region} onChange={(e) => setRegion(e.target.value)}></FormControl>
+
+            </FormGroup>
+            <FormGroup className="col-4" controlId = "province">
+                <FormLabel>Province</FormLabel>
+                <FormControl required={true} type="text" placeholder="Enter Province" value= {province} onChange={(e) => setProvince(e.target.value)}></FormControl>
+
             </FormGroup>
             </Row>
             <FormGroup className="mb-3" controlId = "description">

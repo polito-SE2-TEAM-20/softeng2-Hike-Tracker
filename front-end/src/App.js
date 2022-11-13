@@ -16,8 +16,8 @@ import { useState } from 'react';
 import { LoginForm } from './Login/Login';
 import API_Login from './Login/API_Login';
 import API_NewHike from './NewHike/API_Newhike';
-import  FileUploader from './NewHike/addGpx';
-import  {FormNewHike} from './NewHike/FormNewHike';
+//import  FileUploader from './NewHike/addGpx';
+// import  {FormNewHike} from './NewHike/FormNewHike';
 import {LocalGuide} from './Visuals/localGuide';
 import {NavigationBar} from './Visuals/Navbar'
 import {SignUp} from './SignUp/SignUp'
@@ -94,6 +94,12 @@ function App2() {
       )
   }
 
+  const addNewHike = async (hike) => {
+    API_NewHike.addHike(hike)
+    .then(()=>{})
+    .catch(err=> {throw err})
+}
+
 
   const addNewGpx = async (formData, hike) => {
     try {
@@ -118,7 +124,7 @@ function App2() {
         <Route path="/browsehikes" element={<BrowseHikes />} />
         <Route path="/singlehike" element={<SingleHike />} />
         <Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut} />} />
-        <Route path="/newHike2" element ={<FileUploader addNewGpx={addNewGpx}/>}/>
+        {/*<Route path="/newHike2" element ={<FileUploader addNewGpx={addNewGpx}/>}/>*/}
         {/*<Route path="/newHike" element ={<FormNewHike addHike={addHike}/>}/>*/}
         <Route path="/localGuide" element ={<LocalGuide />}/>
         <Route path ="/navbar" element = {<NavigationBar user={user} />}/>
