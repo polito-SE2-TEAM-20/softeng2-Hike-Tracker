@@ -36,7 +36,7 @@ Request is on /hikes/filteredHikes
 const APIURL = 'http://hiking-backend.germangorodnev.com/';
 
 async function getFilteredHikesList(request) {
-    let response = await fetch((APIURL + '/hikes/filteredHikes'), {
+    let response = await fetch((APIURL + '/hikes'), {
         method: 'POST',
         headers: {
             'Content-type': 'application/json'

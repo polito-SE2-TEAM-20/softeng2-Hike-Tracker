@@ -2,20 +2,33 @@ import sampledata from '../../extra/sample-data/samplehikes.json'
 import UpAndDown from '../../components/up-and-down-button/UpAndDown';
 import './list-of-hikes-style.css'
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Table, Container, Row, Col, Navbar } from 'react-bootstrap';
 import MainTitle from '../../components/main-title/MainTitle';
 import Button from '../../components/buttons/Button';
 import SingleHike from '../../components/single-hike/SingleHike';
 import { useNavigate } from 'react-router-dom';
+import LOH_API from './LOH-API';
 
 const ListOfHikes = () => {
     const [isFilterOpen, setFilterOpen] = useState(false)
     const [isHikeShown, setHikeShow] = useState(false)
     const [hike, setHike] = useState({ title: "", expectedTime: -1, ascent: -1, difficulty: "", length: -1 })
+    const [listOfHikes, setListOfHikes] = useState([])
     const navigate = useNavigate()
 
+    useEffect(() => {
+        var loh = []
+        const getHikes = async () => {
+            loh = await LOH_API.getListOfHikes()
+        }
+        getHikes().then(() => {
+            console.log(loh)
+            setListOfHikes(loh)
+        });
+    }, [])
+    
     const filterButton = () => {
         setFilterOpen(!isFilterOpen)
     }
@@ -30,7 +43,8 @@ const ListOfHikes = () => {
                 expectedTime: hike_obj.expectedTime,
                 ascent: hike_obj.ascent,
                 difficulty: difficulty,
-                length: hike_obj.length
+                length: hike_obj.length,
+                description: hike_obj.description
             }
         )
         setHikeShow(true)
@@ -108,7 +122,7 @@ const ListOfHikes = () => {
                                 </thead>
                                 <tbody style={{ textAlign: "center" }}>
                                     {
-                                        sampledata.map(elem => {
+                                        listOfHikes?.map(elem => {
                                             return (
                                                 <tr className="my-tr" key={elem.name} onClick={() => selectHike(elem)}>
                                                     <td className="my-td">{elem.title}</td>
