@@ -37,7 +37,7 @@ export class AuthService {
     return safeUser(user);
   }
 
-  async login(user: User) {
+  async login(user: UserContext) {
     const payload: UserJwtPayload = { id: user.id };
 
     return {

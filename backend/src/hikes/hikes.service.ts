@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { BaseService, Hike } from '@app/common';
+import { BaseService, Hike, User } from '@app/common';
 
 export class HikesService extends BaseService<Hike> {
   constructor(
@@ -12,5 +12,11 @@ export class HikesService extends BaseService<Hike> {
       repository: hikesRepository,
       errorMessage: 'Hike not found',
     });
+  }
+
+  async validatePermissions(hike: Hike, user: User): Promise<void> {
+    if (hike.userId !== user.id) {
+      throw new Error('Permissions error');
+    }
   }
 }

@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Post,
-  Request,
   UseGuards,
   Body,
   HttpCode,
@@ -22,9 +21,9 @@ export class AuthController {
   @Post('login')
   @HttpCode(200)
   async login(
-    @Request() req: any,
+    @CurrentUser() user: UserContext,
   ): Promise<{ token: string; user: UserContext }> {
-    return await this.service.login(req.user);
+    return await this.service.login(user);
   }
 
   @Post('register')
