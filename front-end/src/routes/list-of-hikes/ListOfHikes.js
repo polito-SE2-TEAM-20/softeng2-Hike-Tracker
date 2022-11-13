@@ -44,11 +44,15 @@ const ListOfHikes = () => {
         navigate("/login", { replace: false })
     }
 
+    const gotoHome = () => {
+        navigate("/", {replace: false})
+    }
+
     return (
         <Container fluid style={{ paddingLeft: "0px", paddingRight: "0px", height: "100vh", background: "#807B73", display: "flex", justifyContent: "center" }}>
             <Navbar className="is-sticky" expand="lg">
                 <Container>
-                    <MainTitle color="white" size="48px" />
+                    <MainTitle navigate={gotoHome} color="white" size="48px" />
                     <Button navigate={gotoLogin} text="Login" textColor="black" color="white" size="24px" />
                 </Container>
             </Navbar>
