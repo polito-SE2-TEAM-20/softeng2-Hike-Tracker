@@ -17,8 +17,6 @@ const FileUploader = props => {
     const [fileContents, setFileContents] = useState(null);
     const [isFilePicked, setIsFilePicked] = useState(false);
     const [positionsState, setPositionsState] = useState([]);
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [show, setShow] = useState('');
 
@@ -43,27 +41,25 @@ const FileUploader = props => {
         console.log(fileUploaded);
         // props.handleFile(fileUploaded);
     };
+
     useEffect(() => {
         if (fileContents) {
             let gpxParser = require('gpxparser');
             var gpx = new gpxParser();
             gpx.parse(fileContents);
-            console.log(gpx);
-            console.log(gpx.tracks[0].points.map(p => [p.lat, p.lon]));
             const positions = gpx.tracks[0].points.map(p => [p.lat, p.lon]);
             setPositionsState(positions);
-            console.log(positions[0]);
-            console.log(positions.length);
-            console.log(positions);
         }
 
     }, [fileContents]);
 
     const handleSubmission = () => {
         const formData = new FormData();
-        formData.append('File', fileContents);
-        formData.append('Title', title);
-        props.addNewHike(formData).catch((err) => { setErrorMessage(err); setShow(true); })
+        formData.append('gpxFile', fileContents);
+        formData.append('title', fileContents.name);
+        console.log(fileContents.name);
+        formData.append('description', '');
+        props.addNewGpx(formData).catch((err) => { setErrorMessage(err); setShow(true); })
 
 
     };
@@ -83,11 +79,6 @@ const FileUploader = props => {
             {isFilePicked ? (
                 <div>
                     <p>Filename: {selectedFile.name}</p>
-                    <p>Size in bytes: {selectedFile.size}</p>
-                    <p>
-                        Last ModifiedDate:{' '}
-                        {selectedFile.lastModifiedDate.toLocaleDateString()}
-                    </p>
                 </div>
             ) : (
                 <p>Select a file to show details</p>

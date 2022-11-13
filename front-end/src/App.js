@@ -99,6 +99,7 @@ function App2() {
   const addNewGpx = async (formData) => {
     try {
       const newH = await API_NewHike.addNewGpx(formData);
+      console.log(newH);
     }  catch (err) {
       throw err;
       //setMessage({msg: err, type: 'danger'});

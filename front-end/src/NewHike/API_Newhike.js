@@ -1,12 +1,16 @@
 
 const APIURL = 'http://hiking-backend.germangorodnev.com/';
 async function addNewGpx(formData) {
-    let response = await fetch('/hikes/imp', {
+    let response = await fetch((APIURL + 'hikes/import/'), {
       method: 'POST',
+      headers: {
+        'content-type': 'multipart/form-data',
+      },
       body: formData,
     });
     if(response.ok) {
       const newTrack = await response.json();
+      console.log(newTrack);
       return newTrack;
     }
     else {
@@ -19,10 +23,10 @@ async function addNewGpx(formData) {
       }
     }
   }
-
+/*
   function addHike(hike){
     return new Promise((resolve, reject)=>{
-      fetch((APIURL + 'hikes/id/'), {
+      fetch((APIURL + 'hikes/'), {
         method: 'PUT',
         credentials: 'include', 
         headers: {
@@ -40,7 +44,9 @@ async function addNewGpx(formData) {
         }
       }))
     })
-  }
+  }*/
 
-const API_NewHike = {addNewGpx, addHike};
+const API_NewHike = {addNewGpx};
 export default API_NewHike;
+
+//const API_NewHike = {addNewGpx, addHike};
