@@ -14,17 +14,17 @@ import { useNavigate } from 'react-router';
 
 
 
-const BrowseHikes = () => {
+const BrowseHikes = (props) => {
     const navigate = useNavigate()
     const gotoHome = () => {
-        navigate("/", {replace: false})
+        navigate("/", { replace: false })
     }
     const gotoLogin = () => {
         navigate("/login", { replace: false })
     }
 
     return (
-        <Container fluid style={{ paddingLeft: "0px", paddingRight: "0px"}}>
+        <Container fluid style={{ paddingLeft: "0px", paddingRight: "0px" }}>
             <Navbar className="is-sticky" expand="lg">
                 <Container>
                     <MainTitle navigate={gotoHome} color="white" size="48px" />
@@ -34,8 +34,12 @@ const BrowseHikes = () => {
                     <div className='filtercontainer'>
 
                     </div>
-                    <Button navigate={gotoLogin} text="Login" textColor="black" color="white" size="24px" />
-                </Container>
+                    {
+                        !props.isLoggedIn ?
+                            <Button navigate={gotoLogin} text="Login" textColor="black" color="white" size="24px" />
+                            :
+                            <Button navigate={() => {props.doLogOut(false)}} text="Logout" textColor="black" color="white" size="24px" />
+                    }                </Container>
             </Navbar>
             <Row style={{ marginLeft: "0px", marginRight: "0px" }}>
                 <MapBrowseHike />
