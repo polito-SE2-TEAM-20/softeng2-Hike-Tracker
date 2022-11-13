@@ -20,7 +20,6 @@ import {LocalGuide} from './Visuals/localGuide';
 import {NavigationBar} from './Visuals/Navbar'
 import {SignUp} from './SignUp/SignUp'
 import API_SignUp from './SignUp/API_SignUp';
-import {LoginForm} from './Login/Login.js'
 
 import {
   BrowserRouter,
@@ -112,8 +111,6 @@ function App2() {
         <Route path="/listofhikes" element={<ListOfHikes />} />
         <Route path="/browsehikes" element={<BrowseHikes />} />
         <Route path="/singlehike" element={<SingleHike />} />
-        <Route path="/login" element={<LoginForm />} />
-
         <Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut} />} />
         <Route path="/newHike2" element ={<FileUploader addNewGpx={addNewGpx}/>}/>
         <Route path="/newHike" element ={<FormNewHike addHike={addHike}/>}/>
