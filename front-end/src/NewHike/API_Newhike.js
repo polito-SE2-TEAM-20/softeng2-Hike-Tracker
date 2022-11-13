@@ -1,13 +1,17 @@
 
-
-// const APIURL = 'http://se2-queue-backend.germangorodnev.com/';
+const APIURL = 'http://hiking-backend.germangorodnev.com/';
 async function addNewGpx(formData) {
-    let response = await fetch('', {
+    let response = await fetch((APIURL + 'hikes/import/'), {
       method: 'POST',
-      body: formData,
+       body: formData,
+      headers: {
+        'content-type': 'multipart/form-data',
+      }
+     
     });
     if(response.ok) {
       const newTrack = await response.json();
+      console.log(newTrack);
       return newTrack;
     }
     else {
@@ -21,15 +25,14 @@ async function addNewGpx(formData) {
     }
   }
 
-  function addHike(hike){
+function addHike(hike){
     return new Promise((resolve, reject)=>{
-      fetch('', {
-        method: 'POST',
-        credentials: 'include', 
+      fetch((APIURL + 'hikes/' + hike.id), {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({title: hike.title, length: hike.length, expectedTime: hike.expectedTime, ascent: hike.ascent, difficulty: hike.difficulty, description: hike.description}),
+        body: JSON.stringify({length: hike.length,ascent: hike.ascent, title: hike.title, difficulty: hike.difficulty, expectedTime: hike.expectedTime,  description: hike.description}),
 
       }).then((response =>{
         if(response.ok){
