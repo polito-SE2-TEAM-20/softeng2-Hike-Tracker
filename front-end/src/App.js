@@ -20,6 +20,7 @@ import {LocalGuide} from './Visuals/localGuide';
 import {NavigationBar} from './Visuals/Navbar'
 import {SignUp} from './SignUp/SignUp'
 import API_SignUp from './SignUp/API_SignUp';
+import { FormHikeGpx } from './NewHike/HikePlusGpx';
 
 import {
   BrowserRouter,
@@ -27,6 +28,7 @@ import {
   Route,
 } from "react-router-dom";
 import Navbar from './components/navbar/Navbar';
+import API from './Login/API_Login';
 
 function App() {
   return (
@@ -90,16 +92,15 @@ function App2() {
       )
   }
 
-  function addHike(hike){
-    API_NewHike.addHike(hike)
-      .then(()=>{})
-      .catch(err => console.log(err));
-  }
 
-  const addNewGpx = async (formData) => {
+  const addNewGpx = async (formData, hike) => {
     try {
-      const newH = await API_NewHike.addNewGpx(formData);
-      console.log(newH);
+      API_NewHike.addNewGpx(formData)
+        .then(() =>{
+          API_NewHike.addHike(hike)
+             .then(()=>{})
+             .catch(err=> {throw err})
+        })
     }  catch (err) {
       throw err;
       //setMessage({msg: err, type: 'danger'});
@@ -114,10 +115,11 @@ function App2() {
         <Route path="/singlehike" element={<SingleHike />} />
         <Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut} />} />
         <Route path="/newHike2" element ={<FileUploader addNewGpx={addNewGpx}/>}/>
-        <Route path="/newHike" element ={<FormNewHike addHike={addHike}/>}/>
+        {/*<Route path="/newHike" element ={<FormNewHike addHike={addHike}/>}/>*/}
         <Route path="/localGuide" element ={<LocalGuide />}/>
         <Route path ="/navbar" element = {<NavigationBar user={user} />}/>
         <Route path="/register" element={<SignUp doRegister={doRegister}/>}/>
+        <Route path="/hikeGpx" element={<FormHikeGpx  addNewGpx={addNewGpx}/>}/>
       </Routes>
     </>
   );

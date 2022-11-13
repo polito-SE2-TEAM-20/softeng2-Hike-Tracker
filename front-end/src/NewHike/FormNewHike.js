@@ -1,6 +1,6 @@
 import React from 'react';
 import {useState} from 'react';
-import { Container, Form, Button, Alert, Modal, Col, Row, FormGroup, InputGroup, FormControl, FormLabel } from 'react-bootstrap';
+import { Container, Form, Button, Alert, Modal, Col, Row, FormGroup, InputGroup, FormControl, FormLabel, FormSelect } from 'react-bootstrap';
 import 'leaflet/dist/leaflet.css'
 import { MapContainer, Polyline, TileLayer } from 'react-leaflet'
 import './map.css';
@@ -72,14 +72,13 @@ function FormNewHike(props){
             </FormGroup>
             <FormGroup className="col-4" controlId = "difficulty">
                 <FormLabel>Difficulty</FormLabel>
-              <Form.Select  onChange={(e) => setDifficulty(e.target.value)}>
+              <FormSelect  onChange={(e) => setDifficulty(e.target.value)}>
                 <option></option>
 
               <option value="1">Tourist</option>
   <option value="2">Hiker</option>
   <option value="3">Professional Hiker</option>
-   <Form.Control required={true} type="text" placeholder="Difficulty" value= {difficulty}/>
-              </Form.Select>
+              </FormSelect>
             </FormGroup>
             </Row>
             <FormGroup className="mb-3" controlId = "description">

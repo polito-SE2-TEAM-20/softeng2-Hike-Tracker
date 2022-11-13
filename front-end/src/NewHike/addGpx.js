@@ -55,10 +55,14 @@ const FileUploader = props => {
 
     const handleSubmission = () => {
         const formData = new FormData();
+        console.log(fileContents);
+        console.log(formData.length);
         formData.append('gpxFile', fileContents);
+        console.log(formData.length);
         formData.append('title', fileContents.name);
         console.log(fileContents.name);
         formData.append('description', '');
+        console.log(formData.title);
         props.addNewGpx(formData).catch((err) => { setErrorMessage(err); setShow(true); })
 
 
