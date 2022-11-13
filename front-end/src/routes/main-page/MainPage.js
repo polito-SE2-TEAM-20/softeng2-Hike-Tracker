@@ -6,8 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import MainPageLandscape from '../../components/main-page-landscape/MainPageLandscape';
 import { useState } from 'react';
 
-const MainPage = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
+const MainPage = (props) => {
     const navigate = useNavigate()
 
     const gotoLogin = () => {
@@ -27,7 +26,7 @@ const MainPage = () => {
     }
 
     const gotoHome = () => {
-        navigate("/", {replace: false})
+        navigate("/", { replace: false })
     }
 
     return (
@@ -35,7 +34,12 @@ const MainPage = () => {
             <Navbar className="is-sticky" expand="lg">
                 <Container>
                     <MainTitle navigate={gotoHome} color="white" size="48px" />
-                    <Button navigate={gotoLogin} text="Login" textColor="black" color="white" size="24px" />
+                    {
+                        !props.isLoggedIn ?
+                            <Button navigate={gotoLogin} text="Login" textColor="black" color="white" size="24px" />
+                            :
+                            <Button navigate={props.doLogOut} text="Logout" textColor="black" color="white" size="24px" />
+                    }
                 </Container>
             </Navbar>
             <Row>
@@ -48,9 +52,13 @@ const MainPage = () => {
                 <Col style={{ display: "flex", justifyContent: "center" }}>
                     <Button navigate={gotoSignup} text="Create a new account" textColor="white" size="36px" color="#1a1a1a" />
                 </Col>
-                <Col style={{ display: "flex", justifyContent: "center" }}>
-                    <Button navigate={gotoListOfHikes} text="List of hikes" textColor="white" size="36px" color="#1a1a1a" />
-                </Col>
+                {
+                    props.isLoggedIn ?
+                        <Col style={{ display: "flex", justifyContent: "center" }}>
+                            <Button navigate={gotoListOfHikes} text="List of hikes" textColor="white" size="36px" color="#1a1a1a" />
+                        </Col>
+                        :<></>
+                }
             </Row>
         </Container >
     );

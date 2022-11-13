@@ -18,9 +18,9 @@ import API_Login from './Login/API_Login';
 import API_NewHike from './NewHike/API_Newhike';
 //import  FileUploader from './NewHike/addGpx';
 // import  {FormNewHike} from './NewHike/FormNewHike';
-import {LocalGuide} from './Visuals/localGuide';
-import {NavigationBar} from './Visuals/Navbar'
-import {SignUp} from './SignUp/SignUp'
+import { LocalGuide } from './Visuals/localGuide';
+import { NavigationBar } from './Visuals/Navbar'
+import { SignUp } from './SignUp/SignUp'
 import API_SignUp from './SignUp/API_SignUp';
 import { FormHikeGpx } from './NewHike/HikePlusGpx';
 
@@ -41,9 +41,8 @@ function App() {
 }
 
 function App2() {
-
-   
   const [loggedIn, setLoggedIn] = useState(false);
+  console.log(loggedIn)
   const [user, setUser] = useState({});
   const navigate = useNavigate();
 
@@ -66,13 +65,13 @@ function App2() {
       )
   }
 
-  const doLogOut = async () => {
+  const doLogOut = async (returnToHome="true") => {
     await API_Login.logOut();
     setLoggedIn(false);
     setUser({});
     console.log(user);
     console.log(localStorage);
-    navigate('/');
+    if(returnToHome)  navigate('/');
   }
 
   const doRegister = (credentials, setShow, setErrorMessage) => {
@@ -82,7 +81,7 @@ function App2() {
         console.log(user);
         navigate('/login');
         console.log(credentials.role);
-        
+
       })
       .catch(err => {
         console.log(err);
@@ -96,20 +95,20 @@ function App2() {
 
   const addNewHike = async (hike) => {
     API_NewHike.addHike(hike)
-    .then(()=>{})
-    .catch(err=> {throw err})
-}
+      .then(() => { })
+      .catch(err => { throw err })
+  }
 
 
   const addNewGpx = async (formData, hike) => {
     try {
       API_NewHike.addNewGpx(formData)
-        .then((newHike) =>{
-          API_NewHike.addHike({id: newHike.id, ...hike})
-             .then(()=>{})
-             .catch(err=> {throw err})
+        .then((newHike) => {
+          API_NewHike.addHike({ id: newHike.id, ...hike })
+            .then(() => { })
+            .catch(err => { throw err })
         })
-    }  catch (err) {
+    } catch (err) {
       throw err;
       //setMessage({msg: err, type: 'danger'});
     }
@@ -118,18 +117,17 @@ function App2() {
   return (
     <>
       <Routes>
-
-      <Route path="/" element={<MainPage />} />
-        <Route path="/listofhikes" element={<ListOfHikes />} />
-        <Route path="/browsehikes" element={<BrowseHikes />} />
+        <Route path="/" element={<MainPage isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
+        <Route path="/listofhikes" element={<ListOfHikes isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
+        <Route path="/browsehikes" element={<BrowseHikes isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/singlehike" element={<SingleHike />} />
         <Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut} />} />
         {/*<Route path="/newHike2" element ={<FileUploader addNewGpx={addNewGpx}/>}/>*/}
         {/*<Route path="/newHike" element ={<FormNewHike addHike={addHike}/>}/>*/}
-        <Route path="/localGuide" element ={<LocalGuide />}/>
-        <Route path ="/navbar" element = {<NavigationBar user={user} />}/>
-        <Route path="/signup" element={<SignUp doRegister={doRegister}/>}/>
-        <Route path="/hikeGpx" element={<FormHikeGpx  addNewGpx={addNewGpx}/>}/>
+        <Route path="/localGuide" element={<LocalGuide />} />
+        <Route path="/navbar" element={<NavigationBar user={user} />} />
+        <Route path="/signup" element={<SignUp doRegister={doRegister} />} />
+        <Route path="/hikeGpx" element={<FormHikeGpx addNewGpx={addNewGpx} />} />
       </Routes>
     </>
   );
