@@ -5,7 +5,6 @@ import './list-of-hikes-style.css'
 import { useState } from 'react';
 
 import { Table, Container, Row, Col } from 'react-bootstrap';
-import MainTitle from '../../components/main-title/MainTitle'
 import SingleHike from '../../components/single-hike/SingleHike';
 
 const ListOfHikes = () => {
@@ -18,13 +17,15 @@ const ListOfHikes = () => {
     }
 
     const selectHike = (hike_obj) => {
-        console.log(hike_obj)
+        var difficulty = "Professional hiker"
+        if(hike_obj.difficulty == 0)    difficulty = "Tourist"
+        else if(hike_obj.difficulty == 1) difficulty = "Hiker"
         setHike(
             {
                 title: hike_obj.title,
                 expectedTime: hike_obj.expectedTime,
                 ascent: hike_obj.ascent,
-                difficulty: hike_obj.difficulty,
+                difficulty: difficulty,
                 length: hike_obj.length
             }
         )
@@ -97,23 +98,23 @@ const ListOfHikes = () => {
                                                     <td className="my-td">{elem.ascent} m</td>
                                                     <td className="my-td">
                                                         {
-                                                            elem.difficulty === "Tourist" ?
+                                                            elem.difficulty === 0 ?
                                                                 <div style={{ backgroundColor: "#1EE35F", borderRadius: "6px", textAlign: "center", maxWidth: "fit-content", paddingLeft: "10px", paddingRight: "10px", marginLeft: "auto", marginRight: "auto" }}>
-                                                                    <b>{elem.difficulty}</b>
+                                                                    <b>Tourist</b>
                                                                 </div>
                                                                 : <></>
                                                         }
                                                         {
-                                                            elem.difficulty === "Hiker" ?
+                                                            elem.difficulty === 1 ?
                                                                 <div style={{ backgroundColor: "#2B86E3", borderRadius: "6px", textAlign: "center", maxWidth: "fit-content", paddingLeft: "10px", paddingRight: "10px", marginLeft: "auto", marginRight: "auto" }}>
-                                                                    <b>{elem.difficulty}</b>
+                                                                    <b>Hiker</b>
                                                                 </div>
                                                                 : <></>
                                                         }
                                                         {
-                                                            elem.difficulty === "Professional Hiker" ?
+                                                            elem.difficulty === 2 ?
                                                                 <div style={{ backgroundColor: "#E33D19", borderRadius: "6px", textAlign: "center", maxWidth: "fit-content", paddingLeft: "10px", paddingRight: "10px", marginLeft: "auto", marginRight: "auto" }}>
-                                                                    <b>{elem.difficulty}</b>
+                                                                    <b>Professional hiker</b>
                                                                 </div>
                                                                 : <></>
                                                         }
