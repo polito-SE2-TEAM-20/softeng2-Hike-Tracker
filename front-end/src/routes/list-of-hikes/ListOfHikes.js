@@ -19,6 +19,29 @@ const ListOfHikes = () => {
     const [listOfHikes, setListOfHikes] = useState([])
     const navigate = useNavigate()
 
+    const [title, setTitle] = useState(false)
+    const [expectedTime, setExpectedTime] = useState(false)
+    const [ascent, setAscent] = useState(false)
+    const [difficulty, setDifficulty] = useState(false)
+    const [length, setLength] = useState(false)
+    const [province, setProvince] = useState("")
+    const [region, setRegion] = useState("")
+    const [minAsc, setMinAsc] = useState(-1)
+    const [maxAsc, setMaxAsc] = useState(-1)
+    const [minLen, setMinLen] = useState(-1)
+    const [maxLen, setMaxLen] = useState(-1)
+    const [minDiff, setMinDiff] = useState(0)
+    const [maxDiff, setMaxDiff] = useState(3)
+    const filterStates = { setTitle, setExpectedTime, setAscent, setDifficulty, setLength, setProvince, setRegion, setMinAsc, setMaxAsc, setMinDiff, setMaxDiff, setMinLen, setMaxLen }
+
+    useEffect(() => {
+        listOfHikes.sort((x, y) => {
+            if (x < y)
+                return -1
+            else return y
+        })
+    }, [title, expectedTime, ascent, difficulty, length, province, region, minAsc, maxAsc, minLen, maxLen, minDiff, maxDiff])
+
     useEffect(() => {
         var loh = []
         const getHikes = async () => {
@@ -29,15 +52,15 @@ const ListOfHikes = () => {
             setListOfHikes(loh)
         });
     }, [])
-    
+
     const filterButton = () => {
         setFilterOpen(!isFilterOpen)
     }
 
     const selectHike = (hike_obj) => {
         var difficulty = "Professional hiker"
-        if(hike_obj.difficulty == 0)    difficulty = "Tourist"
-        else if(hike_obj.difficulty == 1) difficulty = "Hiker"
+        if (hike_obj.difficulty == 0) difficulty = "Tourist"
+        else if (hike_obj.difficulty == 1) difficulty = "Hiker"
         setHike(
             {
                 title: hike_obj.title,
@@ -60,7 +83,7 @@ const ListOfHikes = () => {
     }
 
     const gotoHome = () => {
-        navigate("/", {replace: false})
+        navigate("/", { replace: false })
     }
 
     return (
@@ -71,7 +94,7 @@ const ListOfHikes = () => {
                     <Button navigate={gotoLogin} text="Login" textColor="black" color="white" size="24px" />
                 </Container>
             </Navbar>
-            <Row style={{marginTop: "100px"}}>
+            <Row style={{ marginTop: "100px" }}>
                 <Col>
                     <div style={{ backgroundColor: "#FEFBF7", height: "fit-content", width: "auto", borderRadius: "25px", marginTop: "15px", padding: "20px", boxShadow: "0 4px 32px 0 rgb(0 0 0 / 75%)" }}>
                         <Row style={{ display: "flex", placeItems: "center" }}>
@@ -86,7 +109,7 @@ const ListOfHikes = () => {
                                 </svg>
                             </Col>
                         </Row>
-                        <Filter open={isFilterOpen} />
+                        <Filter filterFunctions={filterStates} open={isFilterOpen} />
                         <div style={{ marginTop: "25px" }}>
                             <Table className='my-table' striped hover style={{ width: "1000px", marginLeft: "auto", marginRight: "auto" }}>
                                 <thead style={{ textAlign: "center" }}>
@@ -140,7 +163,7 @@ const ListOfHikes = () => {
                     </div>
                 </Col>
                 <Col hidden={!isHikeShown} style={{ paddingTop: "15px" }}>
-                    <SingleHike closeCallback={closeHike} hike={hike}/>
+                    <SingleHike closeCallback={closeHike} hike={hike} />
                 </Col>
             </Row>
 

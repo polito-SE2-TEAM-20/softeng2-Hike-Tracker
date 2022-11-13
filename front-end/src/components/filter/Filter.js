@@ -1,4 +1,5 @@
 import { Row } from "react-bootstrap"
+import { useState } from "react"
 import { Table } from "react-bootstrap"
 import UpAndDown from "../up-and-down-button/UpAndDown"
 
@@ -18,11 +19,11 @@ const Filter = (props) => {
           </thead>
           <tbody>
             <tr>
-              <td><UpAndDown /></td>
-              <td><UpAndDown /></td>
-              <td><UpAndDown /></td>
-              <td><UpAndDown /></td>
-              <td><UpAndDown /></td>
+              <td><UpAndDown fun={props.filterFunctions} properFun={props.filterFunctions.setTitle} /></td>
+              <td><UpAndDown fun={props.filterFunctions} properFun={props.filterFunctions.setExpectedTime} /></td>
+              <td><UpAndDown fun={props.filterFunctions} properFun={props.filterFunctions.setAscent} /></td>
+              <td><UpAndDown fun={props.filterFunctions} properFun={props.filterFunctions.setDifficulty} /></td>
+              <td><UpAndDown fun={props.filterFunctions} properFun={props.filterFunctions.setLength} /></td>
             </tr>
           </tbody>
         </Table>
