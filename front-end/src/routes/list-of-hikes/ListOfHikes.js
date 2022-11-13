@@ -8,6 +8,7 @@ import { Table, Container, Row, Col, Navbar } from 'react-bootstrap';
 import MainTitle from '../../components/main-title/MainTitle';
 import Button from '../../components/buttons/Button';
 import SingleHike from '../../components/single-hike/SingleHike';
+import Filter from '../../components/filter/Filter'
 import { useNavigate } from 'react-router-dom';
 import LOH_API from './LOH-API';
 
@@ -85,30 +86,7 @@ const ListOfHikes = () => {
                                 </svg>
                             </Col>
                         </Row>
-                        <Row hidden={!isFilterOpen} style={{ marginTop: "18px", backgroundColor: "#1a1a1a", borderRadius: "10px" }}>
-                            <div style={{ textAlign: "center" }}>
-                                <Table>
-                                    <thead>
-                                        <tr>
-                                            <th className='filter-name'>Title</th>
-                                            <th className='filter-name'>Expected time</th>
-                                            <th className='filter-name'>Ascent</th>
-                                            <th className='filter-name'>Difficulty</th>
-                                            <th className='filter-name'>Length</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <th><UpAndDown /></th>
-                                            <th><UpAndDown /></th>
-                                            <th><UpAndDown /></th>
-                                            <th><UpAndDown /></th>
-                                            <th><UpAndDown /></th>
-                                        </tr>
-                                    </tbody>
-                                </Table>
-                            </div>
-                        </Row>
+                        <Filter open={isFilterOpen} />
                         <div style={{ marginTop: "25px" }}>
                             <Table className='my-table' striped hover style={{ width: "1000px", marginLeft: "auto", marginRight: "auto" }}>
                                 <thead style={{ textAlign: "center" }}>
