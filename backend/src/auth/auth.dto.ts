@@ -1,9 +1,10 @@
-import { IsIn, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsIn, IsString, MaxLength, MinLength, IsEmail } from 'class-validator';
 
 import { UserLimits, UserRole } from '@app/common';
 
 export class RegisterDto {
   @IsString()
+  @IsEmail()
   @MinLength(1)
   @MaxLength(UserLimits.email)
   email!: string;
