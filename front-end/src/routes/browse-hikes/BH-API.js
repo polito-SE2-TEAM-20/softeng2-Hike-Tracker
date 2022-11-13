@@ -33,7 +33,7 @@ Where tourist = 0,
 
 Request is on /hikes/filteredHikes
 */
-const APIURL = 'http://hiking-backend.germangorodnev.com/';
+const APIURL = 'https://hiking-backend.germangorodnev.com/';
 
 async function getFilteredHikesList(request) {
     let response = await fetch((APIURL + '/hikes'), {

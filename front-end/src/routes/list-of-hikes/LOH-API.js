@@ -1,4 +1,4 @@
-const APIURL = 'http://hiking-backend.germangorodnev.com';
+const APIURL = 'https://hiking-backend.germangorodnev.com';
 
 async function getListOfHikes(request) {
   let response = await fetch((APIURL + '/hikes'), {

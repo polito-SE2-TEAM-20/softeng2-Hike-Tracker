@@ -1,7 +1,7 @@
-GET  http://hiking-backend.germangorodnev.com/hikes
+GET  https://hiking-backend.germangorodnev.com/hikes
 
 ###
-POST http://hiking-backend.germangorodnev.com/hikes/filteredHikes
+POST https://hiking-backend.germangorodnev.com/hikes/filteredHikes
 content-type: application/json
 
 {
@@ -18,7 +18,7 @@ content-type: application/json
 }
 
 ###
-POST http://hiking-backend.germangorodnev.com/hikes/import
+POST https://hiking-backend.germangorodnev.com/hikes/import
 content-type: multipart/form-data
 
 {
