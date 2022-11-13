@@ -36,17 +36,17 @@
           ####################
           #### production ####
           ####################
-          # frontend:
-          #   image: ghcr.io/polito-se2-team-20/frontend
-          #   deploy:
-          #     labels:
-          #       - "traefik.enable=true"
-          #       - "traefik.port=3600"
-          #       - "traefik.frontend.rule=Host:hiking.germangorodnev.com"
-          #       - "traefik.docker.network=traefiknet"
-          #   networks:
-          #     - stacknet
-          #     - traefiknet
+          frontend:
+            image: ghcr.io/polito-se2-team-20/frontend
+            deploy:
+              labels:
+                - "traefik.enable=true"
+                - "traefik.port=3600"
+                - "traefik.frontend.rule=Host:hiking.germangorodnev.com"
+                - "traefik.docker.network=traefiknet"
+            networks:
+              - stacknet
+              - traefiknet
 
           backend:
             image: ghcr.io/polito-se2-team-20/backend

@@ -5,6 +5,35 @@ orbs:
   docker: circleci/docker@2.0.3
 
 jobs:
+  build-frontend:
+    executor: docker/docker
+    working_directory: ~/softeng2-Hike-Tracker/front-end
+    steps:
+      - setup_remote_docker:
+          version: 19.03.13
+      - checkout:
+          path: ~/softeng2-Hike-Tracker
+      - docker/check:
+          registry: ghcr.io
+          docker-username: GITHUB_USERNAME
+          docker-password: GITHUB_TOKEN
+      - docker/build:
+          image: ghcr.io/polito-se2-team-20/frontend
+          tag: ${CIRCLE_SHA1},latest
+      - docker/push:
+          registry: ghcr.io
+          image: polito-se2-team-20/frontend
+          tag: ${CIRCLE_SHA1},latest
+  deploy-frontend:
+    executor: docker/docker
+    working_directory: ~/softeng2-Hike-Tracker/front-end
+    steps:
+      - checkout:
+          path: ~/softeng2-Hike-Tracker
+      - add_ssh_keys:
+          fingerprints:
+            - "44:ee:6c:d8:1a:2b:a7:e3:20:b1:a2:84:89:74:0e:b0"
+      - run: ssh -o "StrictHostKeyChecking=no" ${DEPLOY_USER}@${SERVER_IP} docker service update hiking_frontend --image ghcr.io/polito-se2-team-20/frontend:${CIRCLE_SHA1} --with-registry-auth
   build-backend:
     executor: docker/docker
     working_directory: ~/softeng2-Hike-Tracker/backend
@@ -36,7 +65,7 @@ jobs:
       - run: ssh -o "StrictHostKeyChecking=no" ${DEPLOY_USER}@${SERVER_IP} docker service update hiking_backend --image ghcr.io/polito-se2-team-20/backend:${CIRCLE_SHA1} --with-registry-auth
 
 workflows:
-  ci:
+  ci-backend:
     jobs:
       - build-backend:
           context:
@@ -52,3 +81,19 @@ workflows:
           filters:
             branches:
               only: backend
+  ci-frontend:
+    jobs:
+      - build-frontend:
+          context:
+            - deploy
+          filters:
+            branches:
+              only: frontend
+      - deploy-frontend:
+          context:
+            - deploy
+          requires:
+            - build-frontend
+          filters:
+            branches:
+              only: frontend
