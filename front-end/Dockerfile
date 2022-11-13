@@ -8,9 +8,11 @@ RUN apt-get update && apt-get install -y git dumb-init
 
 ADD package*.json /srv/
 
-RUN npm run build
+RUN npm run install
 
 ADD . /srv
+
+RUN npm run build
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
