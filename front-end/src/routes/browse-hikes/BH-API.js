@@ -14,6 +14,18 @@
       ascentMax: float || null
     }
 
+    {
+      "province": null,
+      "region": null,
+      "maxLength": null,
+      "minLength": null,
+      "expectedTimeMin": null,
+      "expectedTimeMax": null,
+      "difficultyMin": null,
+      "difficultyMax": null,
+      "ascentMin": null,
+      "ascentMax": null
+    }
 
 Where tourist = 0,
   hiker = 1,
@@ -21,7 +33,7 @@ Where tourist = 0,
 
 Request is on /hikes/filteredHikes
 */
-const APIURL = 'http://se2-queue-backend.germangorodnev.com/';
+const APIURL = 'http://hiking-backend.germangorodnev.com/';
 
 async function getFilteredHikesList(request) {
     let response = await fetch((APIURL + '/hikes/filteredHikes'), {
