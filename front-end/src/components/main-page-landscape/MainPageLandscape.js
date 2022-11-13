@@ -3,7 +3,7 @@ import './mpl-style.css'
 
 const MainPageLandscape = () => {
     return (
-        <div style={{ display: "flex", justifyContent: "center", backgroundColor: "#bababa" }}>
+        <div style={{ display: "flex", justifyContent: "center" }}>
             <Row style={{ marginTop: "120px", marginLeft: "auto", marginRight: "auto", display: "flex", justifyContent: "center"}}>
                 <p className="txt-931" style={{
                     width: "1000px", color: "#1a1a1a", paddingBottom: "25px",
