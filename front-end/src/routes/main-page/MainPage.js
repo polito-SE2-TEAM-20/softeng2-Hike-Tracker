@@ -22,6 +22,10 @@ const MainPage = () => {
         navigate("/browsehikes", { replace: false })
     }
 
+    const gotoListOfHikes = () => {
+        navigate("/listofhikes", { replace: false })
+    }
+
     return (
         <Container fluid style={{ paddingLeft: "0px", paddingRight: "0px", backgroundColor: "#bababa", height: "100vh" }}>
             <Navbar className="is-sticky" expand="lg">
@@ -34,11 +38,14 @@ const MainPage = () => {
                 <MainPageLandscape />
             </Row>
             <Row>
-                <Col style={{ display: "flex", justifyContent: "end" }}>
+                <Col style={{ display: "flex", justifyContent: "center" }}>
                     <Button navigate={gotoBrowseHikes} text="Browse our hikes" textColor="white" size="36px" color="#1a1a1a" />
                 </Col>
-                <Col style={{ display: "flex", justifyContent: "start" }}>
+                <Col style={{ display: "flex", justifyContent: "center" }}>
                     <Button navigate={gotoSignup} text="Create a new account" textColor="white" size="36px" color="#1a1a1a" />
+                </Col>
+                <Col style={{ display: "flex", justifyContent: "center" }}>
+                    <Button navigate={gotoListOfHikes} text="List of hikes" textColor="white" size="36px" color="#1a1a1a" />
                 </Col>
             </Row>
         </Container >
