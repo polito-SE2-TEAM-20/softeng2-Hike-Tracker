@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y git dumb-init
 
 ADD package*.json /srv/
 
-RUN npm run install
+RUN npm install
 
 ADD . /srv
 
