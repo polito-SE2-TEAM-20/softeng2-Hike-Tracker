@@ -5,7 +5,7 @@ import 'leaflet/dist/leaflet.css'
 import './browse-hikes-style.css'
 
 import MainTitle from '../../components/main-title/MainTitle'
-import Button from '../../components/buttons/Button';
+import HTButton from '../../components/buttons/Button'
 import { Row, Container } from 'react-bootstrap'
 import { MapBrowseHike } from '../../components/map/MapBrowseHike';
 import SearchBar from '../../components/searchbar/SearchBar';
@@ -52,10 +52,11 @@ const BrowseHikes = (props) => {
                                 </div>
                                 {
                                     !props.isLoggedIn ?
-                                        <Button navigate={gotoLogin} text="Login" textColor="black" color="white" size="24px" />
+                                        <HTButton text="Login" color="white" textColor="black" size="24px" variant="contained" />
                                         :
-                                        <Button navigate={() => { props.doLogOut(false) }} text="Logout" textColor="black" color="white" size="24px" />
-                                }                </Container>
+                                        <HTButton navigate={props.doLogOut} text="Logout" color="white" textColor="black" size="24px" variant="contained" />
+                                }
+                            </Container>
                         </Navbar>
                         <Row style={{ marginLeft: "0px", marginRight: "0px" }}>
                             <MapBrowseHike />

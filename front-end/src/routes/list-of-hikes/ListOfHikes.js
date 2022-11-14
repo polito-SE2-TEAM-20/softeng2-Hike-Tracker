@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { Table, Container, Row, Col, Navbar } from 'react-bootstrap';
 import MainTitle from '../../components/main-title/MainTitle';
-import Button from '../../components/buttons/Button';
+import HTButton from '../../components/buttons/Button';
 import SingleHike from '../../components/single-hike/SingleHike';
 import Filter from '../../components/filter/Filter'
 import Sorting from '../../components/sorting/Sorting'
@@ -109,9 +109,9 @@ const ListOfHikes = (props) => {
                         <MainTitle navigate={gotoHome} color="white" size="48px" />
                         {
                             !props.isLoggedIn ?
-                                <Button navigate={gotoLogin} text="Login" textColor="black" color="white" size="24px" />
+                                <HTButton navigate={gotoLogin} text="Login" textColor="black" color="white" size="24px" />
                                 :
-                                <Button navigate={props.doLogOut} text="Logout" textColor="black" color="white" size="24px" />
+                                <HTButton navigate={props.doLogOut} text="Logout" textColor="black" color="white" size="24px" />
                         }
                     </Container>
                 </Navbar>
