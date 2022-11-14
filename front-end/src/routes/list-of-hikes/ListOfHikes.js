@@ -102,7 +102,7 @@ const ListOfHikes = (props) => {
         <div>
             {
                 props.isLoggedIn ?
-                    <Container fluid style={{ paddingLeft: "0px", paddingRight: "0px", height: "100%", background: "#807B73", display: "flex", justifyContent: "center", paddingBottom:"42px" }}>
+                    <Container fluid style={{ paddingLeft: "0px", paddingRight: "0px", height: "100%", minHeight: "100vh", background: "#807B73", display: "flex", justifyContent: "center", paddingBottom:"42px" }}>
                         <Navbar className="is-sticky" expand="lg">
                             <Container>
                                 <MainTitle navigate={gotoHome} color="white" size="48px" />
