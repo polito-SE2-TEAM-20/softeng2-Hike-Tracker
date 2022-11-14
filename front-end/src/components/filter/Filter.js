@@ -1,5 +1,4 @@
 import { Row } from "react-bootstrap"
-import { useState } from "react"
 import { Table } from "react-bootstrap"
 import UpAndDown from "../up-and-down-button/UpAndDown"
 
@@ -24,41 +23,6 @@ const Filter = (props) => {
               <td><UpAndDown fun={props.filterFunctions} properFun={props.filterFunctions.setAscent} /></td>
               <td><UpAndDown fun={props.filterFunctions} properFun={props.filterFunctions.setDifficulty} /></td>
               <td><UpAndDown fun={props.filterFunctions} properFun={props.filterFunctions.setLength} /></td>
-            </tr>
-          </tbody>
-        </Table>
-        <br></br>
-        <Table>
-          <thead>
-            <tr>
-              <th className='filter-name'>Province</th>
-              <th className='filter-name'>Region</th>
-              <th className='filter-name'>Minimum Ascent</th>
-              <th className='filter-name'>Maximum Ascent</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th><input type="text" style={{maxWidth: "120px"}} /></th>
-              <th><input type="text" style={{maxWidth: "120px"}} /></th>
-              <th><input type="text" style={{maxWidth: "120px"}} /></th>
-              <th><input type="text" style={{maxWidth: "120px"}} /></th>
-            </tr>
-          </tbody>
-          <thead>
-            <tr>
-              <th className='filter-name'>Minimum Length</th>
-              <th className='filter-name'>Maximum Length</th>
-              <th className='filter-name'>Minimum Difficulty</th>
-              <th className='filter-name'>Maximum Difficulty</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th><input type="text" style={{maxWidth: "120px"}} /></th>
-              <th><input type="text" style={{maxWidth: "120px"}} /></th>
-              <th><input type="text" style={{maxWidth: "120px"}} /></th>
-              <th><input type="text" style={{maxWidth: "120px"}} /></th>
             </tr>
           </tbody>
         </Table>

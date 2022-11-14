@@ -1,4 +1,4 @@
-import './button-style.css'
+import '../components/buttons/button-style.css';
 import { useNavigate } from "react-router-dom";
 
 const Button = (props) => {
