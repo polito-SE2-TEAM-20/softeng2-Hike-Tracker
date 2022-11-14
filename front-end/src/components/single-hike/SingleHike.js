@@ -36,7 +36,7 @@ const SingleHike = (props) => {
                                 <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>Length:</div>
                             </Col>
                             <Col>
-                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>{props.hike.length} m</div>
+                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>{props.hike.length} km</div>
                             </Col>
                         </Row>
                     </Row>
