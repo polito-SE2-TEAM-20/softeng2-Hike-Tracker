@@ -1,6 +1,6 @@
 import React from 'react';
 import {useState, useEffect} from 'react';
-import { Container, Form, Button, Col, Row, FormGroup, FormControl, FormLabel, FormSelect } from 'react-bootstrap';
+import { Container, Form, Button, Col, Row, FormGroup, FormControl, FormLabel, FormSelect, Alert } from 'react-bootstrap';
 import 'leaflet/dist/leaflet.css'
 import './GuideHike.css';
 import { useNavigate } from 'react-router';
@@ -121,6 +121,14 @@ function FormHikeGpx(props){
                 
             </Row>
         </div >
+        {/*}
+        <Alert
+            dismissible
+            show={show}
+            onClose={() => setShow(false)}
+            variant="danger">
+            {errorMessage}
+                </Alert>*/}
         <div className="Container">
             <Button onClick={handleClick}>
                 Upload a file
