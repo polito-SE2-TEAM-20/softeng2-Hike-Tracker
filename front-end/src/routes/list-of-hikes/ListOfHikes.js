@@ -70,6 +70,7 @@ const ListOfHikes = (props) => {
     }
 
     const selectHike = (hike_obj) => {
+        console.log(hike_obj)
         var difficulty = "Professional hiker"
         if (hike_obj.difficulty == 0) difficulty = "Tourist"
         else if (hike_obj.difficulty == 1) difficulty = "Hiker"
@@ -80,7 +81,9 @@ const ListOfHikes = (props) => {
                 ascent: hike_obj.ascent,
                 difficulty: difficulty,
                 length: hike_obj.length,
-                description: hike_obj.description
+                description: hike_obj.description,
+                province: hike_obj.province,
+                region: hike_obj.region
             }
         )
         setHikeShow(true)

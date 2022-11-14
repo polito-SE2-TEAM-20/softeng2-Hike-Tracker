@@ -23,6 +23,26 @@ const SingleHike = (props) => {
                     <Row>
                         <Row>
                             <Col>
+                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>Province:</div>
+                            </Col>
+                            <Col>
+                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>{props.hike.province}</div>
+                            </Col>
+                        </Row>
+                    </Row>
+                    <Row>
+                        <Row>
+                            <Col>
+                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>Region:</div>
+                            </Col>
+                            <Col>
+                                <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>{props.hike.region}</div>
+                            </Col>
+                        </Row>
+                    </Row>
+                    <Row>
+                        <Row>
+                            <Col>
                                 <div className='main-title' style={{ fontSize: "20px", color: "#1a1a1a" }}>Expected time:</div>
                             </Col>
                             <Col>
