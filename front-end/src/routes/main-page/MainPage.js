@@ -46,52 +46,19 @@ const MainPage = (props) => {
                 <MainPageLandscape />
             </Row>
             <Row>
-                <Col style={{ display: "flex", justifyContent: "center" }}>
-                    <Button navigate={gotoBrowseHikes} text="Browse our hikes" textColor="white" size="36px" color="#1a1a1a" />
-                </Col>
-                {
-                    !props.isLoggedIn ?
-                    <Col style={{ display: "flex", justifyContent: "center" }}>
-                    <Button navigate={gotoSignup} text="Create a new account" textColor="white" size="36px" color="#1a1a1a" />
-                </Col>
-                   :
-                   <></>
-                }
-                
                 {
                     props.isLoggedIn ?
                         <Col style={{ display: "flex", justifyContent: "center" }}>
-                            <Button navigate={gotoListOfHikes} text="List of hikes" textColor="white" size="36px" color="#1a1a1a" />
+                            <Button navigate={gotoBrowseHikes} text="Browse our hikes" textColor="white" size="36px" color="#1a1a1a" />
+                        </Col> : <Col style={{ display: "flex", justifyContent: "center" }}>
+                            <Button navigate={gotoSignup} text="Create a new account" textColor="white" size="36px" color="#1a1a1a" />
                         </Col>
-                        :<></>
                 }
-            </Row>
-            {/* it should be */}
-            {/*
-            <Row>
-                {
-                    props.isLoggedIn?
-                    <Col style={{ display: "flex", justifyContent: "center" }}>
-                    <Button navigate={gotoBrowseHikes} text="Browse our hikes" textColor="white" size="36px" color="#1a1a1a" />
-                </Col> : <></>
-                }
-               
-                {
-                    !props.isLoggedIn ?
-                    <Col style={{ display: "flex", justifyContent: "center" }}>
-                    <Button navigate={gotoSignup} text="Create a new account" textColor="white" size="36px" color="#1a1a1a" />
+
+                <Col style={{ display: "flex", justifyContent: "center" }}>
+                    <Button navigate={gotoListOfHikes} text="List of hikes" textColor="white" size="36px" color="#1a1a1a" />
                 </Col>
-                   :
-                   <></>
-                }
-                
-                        <Col style={{ display: "flex", justifyContent: "center" }}>
-                            <Button navigate={gotoListOfHikes} text="List of hikes" textColor="white" size="36px" color="#1a1a1a" />
-                        </Col>
-                        :<></>
             </Row>
-            */}
-    
         </Container >
     );
 }
