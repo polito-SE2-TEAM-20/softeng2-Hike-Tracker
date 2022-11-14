@@ -8,9 +8,6 @@ import BrowseHikes from './routes/browse-hikes/BrowseHikes.js'
 import ListOfHikes from './routes/list-of-hikes/ListOfHikes.js';
 import SingleHike from './components/single-hike/SingleHike.js';
 import MainPage from './routes/main-page/MainPage';
-
-
-
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { LoginForm } from './Login/Login';
@@ -29,8 +26,6 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
-import Navbar from './components/navbar/Navbar';
-import API from './Login/API_Login';
 
 function App() {
   return (
