@@ -1,6 +1,6 @@
 import React from 'react'
 import './Login.css'
-import { Form, Button, Alert, Modal, Col, Row, FormGroup } from 'react-bootstrap';
+import { Form, Button, Alert, Modal, Col, Row, FormGroup, NavLink } from 'react-bootstrap';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 function LoginForm(props) {
@@ -84,7 +84,8 @@ function LoginForm(props) {
         
         </Row>
         <Row>
-        <div className='DonthaveanaccountyetCreateone'>Don’t have an account yet? Create one</div>
+        <div className='DonthaveanaccountyetCreateone'>Don’t have an account yet? <NavLink href="/signup">Create one</NavLink></div>
+        
         </Row>
         </div></>);
 }

@@ -1,9 +1,10 @@
 import React from 'react'
 import { useState } from 'react';
 import './SignUp.css'
+
 import { useNavigate } from 'react-router-dom';
 
-import { Form, Button, Alert, Col, Row, FormGroup } from 'react-bootstrap';
+import { Form, Button, Alert, Col, Row, FormGroup, NavLink, FormSelect } from 'react-bootstrap';
 function SignUp(props) {
 
     const [show, setShow] = useState(false);
@@ -90,40 +91,45 @@ function SignUp(props) {
                                 {errorMessage}
                             </Alert>
                             <div className='InputForm'>
-                                <Form.Group controlId='firstName'>
-                                    <Form.Label className='Email'>First Name</Form.Label>
-                                    <Form.Control type='text' placeholder="Insert name" className='InputEmail' required value={firstName} onChange={(ev) => setFirstName(ev.target.value)} />
+                                <Row>
+                                
+                                <Form.Group className="col-6" controlId='firstName'>
+                                    <Form.Label className='Name'>First Name</Form.Label>
+                                    <Form.Control type='text' placeholder="Insert name" className='InputName' required value={firstName} onChange={(ev) => setFirstName(ev.target.value)} />
                                 </Form.Group>
-                                <Form.Group controlId='lastName'>
-                                    <Form.Label className='Email'>Last Name</Form.Label>
-                                    <Form.Control type='text' className='InputEmail' value={lastName} onChange={(ev) => setLastName(ev.target.value)} />
+                               
+                                <Form.Group className="col-6" controlId='lastName'>
+                                    <Form.Label className='Name'>Last Name</Form.Label>
+                                    <Form.Control type='text' placeholder="Insert last name" className='InputName' value={lastName} onChange={(ev) => setLastName(ev.target.value)} />
                                 </Form.Group>
+                                </Row>
                                 <Form.Group controlId='roleStr'>
-                                    <Form.Label className='Email'>Role</Form.Label>
-
-                                    <Form.Select aria-label="Type of Iscription"  required={true} onChange={(e) => { setRoleStr(e.target.value); console.log(e.target.value) }}>
-                                        <option></option>
+                                    <Form.Label className='Name'>Role</Form.Label>
+                                    <div className="form-row">
+                                    <FormSelect aria-label="Type of Iscription" className='InputName'  required={true} onChange={(e) => { setRoleStr(e.target.value); console.log(e.target.value) }}>
+                                        <option>Open to choose the type of Iscription</option>
 
                                         <option value="0">Hiker</option>
                                         <option value="2">Local Guide</option>
                                         <option value="3">Platform Manager</option>
                                         <option value="4">Hut worker</option>
                                         <option value="5">Emergency Operator</option>
-                                    </Form.Select>
+                                    </FormSelect>
+                                    </div>
                                 </Form.Group>
 
                                 <Form.Group controlId='email'>
-                                    <Form.Label className='Email'>Email</Form.Label>
-                                    <Form.Control type='text' className='InputEmail' value={email} onChange={(ev) => setEmail(ev.target.value)} />
+                                    <Form.Label className='Name'>Email</Form.Label>
+                                    <Form.Control type='text' placeholder="Insert email" className='InputName' value={email} onChange={(ev) => setEmail(ev.target.value)} />
                                 </Form.Group>
                                 <Form.Group controlId='password'>
-                                    <Form.Label className='Password' >Password</Form.Label>
-                                    <Form.Control type='password' className='InputPassword' value={password} onChange={ev => setPassword(ev.target.value)} />
+                                    <Form.Label className='Name' >Password</Form.Label>
+                                    <Form.Control type='password' placeholder="Insert password" className='InputName' value={password} onChange={ev => setPassword(ev.target.value)} />
 
                                 </Form.Group>
                                 <Form.Group controlId='confirmPassword'>
-                                    <Form.Label className='Password' >Repeat Password</Form.Label>
-                                    <Form.Control type='password' className='InputPassword' value={confirmPassword} onChange={ev => setConfirmPassword(ev.target.value)} />
+                                    <Form.Label className='Name' >Repeat Password</Form.Label>
+                                    <Form.Control type='password'  placeholder="Repeat Password" className='InputName' value={confirmPassword} onChange={ev => setConfirmPassword(ev.target.value)} />
 
                                 </Form.Group>
                             </div>
@@ -140,7 +146,7 @@ function SignUp(props) {
 
             </Row>
             <Row>
-                <div className='DonthaveanaccountyetCreateone'>Already have an account? Sign In</div>
+                <div className='DonthaveanaccountyetCreateone'>Already have an account? <NavLink href="/login">Sign in</NavLink></div>
             </Row>
         </div>
     );

@@ -21,7 +21,7 @@ const Map = props => {
                     className='map'
                     // should be changed into center={positionsState[0]}
                     // center= {props.positionsState[0]}
-                     center={props.positionsState.length ? props.positionsState[0] : [40.7317535212683, -73.99685430908403]}
+                     center={props.positionsState.length ? props.positionsState[0] : [45.4408474, 12.3155151]}
 
                     zoom={9}
                     scrollWheelZoom={false}
