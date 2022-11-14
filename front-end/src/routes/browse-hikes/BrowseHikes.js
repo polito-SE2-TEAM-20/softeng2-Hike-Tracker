@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'leaflet/dist/leaflet.css'
@@ -11,17 +11,30 @@ import { MapBrowseHike } from '../../components/map/MapBrowseHike';
 import SearchBar from '../../components/searchbar/SearchBar';
 import Navbar from 'react-bootstrap/Navbar';
 import { useNavigate } from 'react-router';
+import BH_API from './BH-API';
 
 
 
 const BrowseHikes = (props) => {
     const navigate = useNavigate()
+    const [listOfGPXFiles, setListOfGPXFiles] = useState([]) 
     const gotoHome = () => {
         navigate("/", { replace: false })
     }
     const gotoLogin = () => {
         navigate("/login", { replace: false })
     }
+
+    useEffect(() => {
+        var gpxList = []
+        const getGPXFiles = async () => {
+            gpxList = await BH_API.getListOfGPXFiles()
+        }
+        getGPXFiles().then(() => {
+            console.log(gpxList)
+            setListOfGPXFiles(gpxList)
+        });
+    }, [])
 
     return (
         <Container fluid style={{ paddingLeft: "0px", paddingRight: "0px" }}>
@@ -38,7 +51,7 @@ const BrowseHikes = (props) => {
                         !props.isLoggedIn ?
                             <Button navigate={gotoLogin} text="Login" textColor="black" color="white" size="24px" />
                             :
-                            <Button navigate={() => {props.doLogOut(false)}} text="Logout" textColor="black" color="white" size="24px" />
+                            <Button navigate={() => { props.doLogOut(false) }} text="Logout" textColor="black" color="white" size="24px" />
                     }                </Container>
             </Navbar>
             <Row style={{ marginLeft: "0px", marginRight: "0px" }}>

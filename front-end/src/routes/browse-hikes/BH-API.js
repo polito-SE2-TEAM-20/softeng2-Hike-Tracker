@@ -33,4 +33,21 @@ Where tourist = 0,
 
 Request is on /hikes/filteredHikes
 */
-const APIURL = 'https://hiking-backend.germangorodnev.com/';
+const APIURL = 'https://hiking-backend.germangorodnev.com';
+
+async function getListOfGPXFiles() {
+  let response = await fetch((APIURL + '/hikes'), {
+    method: 'GET'
+  });
+  if (response.ok) {
+    const listOfHikes = await response.json();
+    return listOfHikes.map(e => e.gpxPath)
+  } else {
+    console.log("greve zì")
+    const errDetail = await response.json();
+    throw errDetail.message;
+  }
+}
+
+const BH_API = { getListOfGPXFiles }
+export default BH_API
