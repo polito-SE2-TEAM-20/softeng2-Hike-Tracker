@@ -35,7 +35,7 @@ export const LocationMarker = () => {
 
 export const MapBrowseHike = (props) => {
   return (
-    <MapContainer center={[43.046182, 12.407823]} zoom={6} 
+    <MapContainer center={[43.046182, 12.407823]} zoom={7} 
     scrollWheelZoom={false} zoomControl={false} 
     style={{ width: "100vw", height: "100vh" }}>
       <TileLayer
