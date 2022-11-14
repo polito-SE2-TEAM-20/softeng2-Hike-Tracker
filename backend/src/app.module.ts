@@ -5,8 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   AppTypeormOptionsModule,
   AppTypeormOptionsService,
+  SERVE_FOLDER,
   STATIC_PREFIX,
-  UPLOAD_PATH,
 } from '@app/common';
 import { typeormOptions } from '@app/common';
 
@@ -26,7 +26,7 @@ import { PointsModule } from './points/points.module';
       useExisting: AppTypeormOptionsService,
     }),
     ServeStaticModule.forRoot({
-      rootPath: UPLOAD_PATH,
+      rootPath: SERVE_FOLDER,
       serveRoot: `/${STATIC_PREFIX}`,
     }),
 

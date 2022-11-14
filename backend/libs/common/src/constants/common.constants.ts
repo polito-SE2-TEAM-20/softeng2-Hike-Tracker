@@ -2,6 +2,8 @@ import { join, resolve } from 'path';
 
 export const ROOT = resolve(process.cwd());
 
+export const SERVE_FOLDER = resolve(process.cwd(), './uploads');
+
 export const UPLOAD_PATH = resolve(process.cwd(), './uploads/gpx');
 export const UPLOAD_PATH_VALUE = Symbol('UPLOAD_PATH_VALUE');
 
