@@ -19,7 +19,7 @@ import { LocalGuide } from './Visuals/localGuide';
 import { NavigationBar } from './Visuals/Navbar'
 import { SignUp } from './SignUp/SignUp'
 import API_SignUp from './SignUp/API_SignUp';
-import { FormHikeGpx } from './NewHike/HikePlusGpx';
+import { AddHike } from './NewHike/AddHike';
 
 import {
   BrowserRouter,
@@ -53,10 +53,10 @@ function App2() {
         if(user.user.role === 0){
           navigate('/browsehikes')
         }else if(user.user.role=== 2){
-          //local guide
           navigate('/localGuide');
-        setRole(user.user.role);
         }
+
+        setRole(user.user.role);
       })
       .catch(err => {
         console.log(err);
@@ -122,7 +122,7 @@ function App2() {
         <Route path="/navbar" element={<NavigationBar user={user} />} />
         <Route path="/signup" element={<SignUp doRegister={doRegister} />} />
 
-        <Route path="/hikeGpx" element={<FormHikeGpx addNewGpx={addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
+        <Route path="/hikeGpx" element={<AddHike addNewGpx={addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
       </Routes>
     </>
   );

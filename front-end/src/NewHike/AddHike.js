@@ -9,19 +9,20 @@ import MainTitle from '../components/main-title/MainTitle';
 import ButtonHeader from '../components/buttons/Button';
 import Navbar from 'react-bootstrap/Navbar';
 
-function FormHikeGpx(props){
+function AddHike(props){
 
     const [title, setTitle] = useState('');
     const [lengthStr, setLengthStr] = useState('lenght in km');
     const [expectedTimeStr, setExpectedtimeStr] = useState('');
     const [ascentStr, setAscentStr] = useState('');
     const [difficultyStr, setDifficultyStr] = useState('');
+    const [country, setCountry] =useState('');
     const [region, setRegion] = useState('');
     const [province, setProvince] = useState('');
-    //can ve Tourist, Hiker, Professional Hiker
-     const [startPoint, setStartPoint] = useState();
-     const [endPoint, setEndPoint ] = useState();
-    // const [referencePoints, setReferencePoints] = useState();
+    const [city, setCity] = useState('');
+    const [startPoint, setStartPoint] = useState();
+    const [endPoint, setEndPoint ] = useState();
+    const [referencePoints, setReferencePoints] = useState();
     //points can be: address, name of location, GPS coordinates, hut, parking lot
     // const [listReferencePoint, setListReferencePoint] = useState();
     const [description, setDescription] = useState();
@@ -62,6 +63,11 @@ function FormHikeGpx(props){
             setPositionsState(positions);
             setStartPoint(positions[0]);
             setEndPoint(positions[positions.length-1]);
+            console.log(gpx);
+            console.log(gpx.tracks[0].points.map(p => [p.lat, p.lon]));
+            console.log("distance: " + gpx.tracks[0].distance.total);
+
+            console.log("distance: " + gpx.tracks[0].distance.total);
         }
 
     }, [fileContents]);
@@ -230,4 +236,4 @@ function FormHikeGpx(props){
 
 }
 
-export {FormHikeGpx}
+export {AddHike}
