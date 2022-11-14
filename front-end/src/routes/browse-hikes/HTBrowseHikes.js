@@ -16,7 +16,7 @@ import LOH_API from '../list-of-hikes/LOH-API';
 import { Grid } from '@mui/material';
 import HTNavbar from '../../components/HTNavbar/HTNavbar';
 
-const BrowseHikes = (props) => {
+const HTBrowseHikes = (props) => {
   const navigate = useNavigate()
   const [listOfHikes, setListOfHikes] = useState([])
   const gotoHome = () => {
@@ -38,7 +38,7 @@ const BrowseHikes = (props) => {
   }, [])
 
   return (
-    <Grid container spacing={1}>
+    <Grid container spacing={0}>
       <HTNavbar />
       <Grid item xs={8}>
         <MapBrowseHike />
@@ -47,4 +47,4 @@ const BrowseHikes = (props) => {
   );
 }
 
-export default BrowseHikes;
+export default HTBrowseHikes;

@@ -4,10 +4,10 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'leaflet/dist/leaflet.css'
 
-import BrowseHikes from './routes/browse-hikes/BrowseHikes2.js'
+import HTBrowseHikes from './routes/browse-hikes/HTBrowseHikes.js'
 import ListOfHikes from './routes/list-of-hikes/ListOfHikes.js';
 import SingleHike from './components/single-hike/SingleHike.js';
-import MainPage from './routes/main-page/MainPage';
+import HTMainPage from './routes/main-page/HTMainPage';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { LoginForm } from './Login/Login';
@@ -111,9 +111,9 @@ function App2() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<MainPage isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
+        <Route path="/" element={<HTMainPage isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/listofhikes" element={<ListOfHikes isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
-        <Route path="/browsehikes" element={<BrowseHikes isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
+        <Route path="/browsehikes" element={<HTBrowseHikes isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/singlehike" element={<SingleHike />} />
         <Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut} />} />
         {/*<Route path="/newHike2" element ={<FileUploader addNewGpx={addNewGpx}/>}/>*/}
