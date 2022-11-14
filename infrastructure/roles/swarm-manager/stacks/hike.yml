@@ -17,6 +17,16 @@
   loop:
     - pg-prod-data
 
+- name: Create volume for uploads
+  file:
+    path: /srv/{{ item }}
+    state: directory
+    owner: root
+    group: root
+    mode: '0777'
+  loop:
+    - uploads/gpx
+
 - name: Deploy hiking stack
   docker_stack:
     name: hiking
@@ -52,6 +62,8 @@
             image: ghcr.io/polito-se2-team-20/backend
             env_file:
               - /srv/env.backend
+            volumes:
+              - /srv/uploads:/srv/uploads
             deploy:
               labels:
                 - "traefik.enable=true"

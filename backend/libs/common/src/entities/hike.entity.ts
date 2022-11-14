@@ -125,4 +125,6 @@ export class Hike {
    * @deprecated
    */
   __joiner?: any;
+
+  gpx?: string | null;
 }
