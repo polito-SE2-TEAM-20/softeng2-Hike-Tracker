@@ -99,10 +99,10 @@ const ListOfHikes = (props) => {
     }
 
     return (
-        <>
+        <div>
             {
                 props.isLoggedIn ?
-                    <Container fluid style={{ paddingLeft: "0px", paddingRight: "0px", height: "100vh", background: "#807B73", display: "flex", justifyContent: "center" }}>
+                    <Container fluid style={{ paddingLeft: "0px", paddingRight: "0px", height: "100%", background: "#807B73", display: "flex", justifyContent: "center", paddingBottom:"42px" }}>
                         <Navbar className="is-sticky" expand="lg">
                             <Container>
                                 <MainTitle navigate={gotoHome} color="white" size="48px" />
@@ -215,7 +215,7 @@ const ListOfHikes = (props) => {
                         </Row>
                     </Container>
             }
-        </>
+        </div>
     );
 }
 
