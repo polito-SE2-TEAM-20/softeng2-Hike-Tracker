@@ -39,6 +39,7 @@ function App2() {
   const [loggedIn, setLoggedIn] = useState(false);
   console.log(loggedIn)
   const [user, setUser] = useState({});
+  const [role, setRole] = useState();
   const navigate = useNavigate();
 
   const doLogIn = (credentials, setShow, setErrorMessage) => {
@@ -48,9 +49,14 @@ function App2() {
         setUser(user);
         setShow(false);
         console.log(user);
-        navigate('/');
-        //if user.role==...
-
+        console.log(user.user.role);
+        if(user.user.role === 0){
+          navigate('/browsehikes')
+        }else if(user.user.role=== 2){
+          //local guide
+          navigate('/localGuide');
+        setRole(user.user.role);
+        }
       })
       .catch(err => {
         console.log(err);
@@ -64,9 +70,8 @@ function App2() {
     await API_Login.logOut();
     setLoggedIn(false);
     setUser({});
-    console.log(user);
-    console.log(localStorage);
-    if(returnToHome)  navigate('/');
+    setRole();
+    navigate('/');
   }
 
   const doRegister = (credentials, setShow, setErrorMessage) => {
@@ -75,7 +80,6 @@ function App2() {
         setShow(false);
         console.log(user);
         navigate('/login');
-        console.log(credentials.role);
 
       })
       .catch(err => {
@@ -88,17 +92,12 @@ function App2() {
       )
   }
 
-  const addNewHike = async (hike) => {
-    API_NewHike.addHike(hike)
-      .then(() => { })
-      .catch(err => { throw err })
-  }
-
-
   const addNewGpx = async (formData, hike) => {
     try {
       API_NewHike.addNewGpx(formData)
         .then((newHike) => {
+          console.log((newHike));
+          console.log((newHike.gpxPath));
           API_NewHike.addHike({ id: newHike.id, ...hike })
             .then(() => { })
             .catch(err => { throw err })
@@ -119,10 +118,11 @@ function App2() {
         <Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut} />} />
         {/*<Route path="/newHike2" element ={<FileUploader addNewGpx={addNewGpx}/>}/>*/}
         {/*<Route path="/newHike" element ={<FormNewHike addHike={addHike}/>}/>*/}
-        <Route path="/localGuide" element={<LocalGuide />} />
+        <Route path="/localGuide" element={<LocalGuide isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
         <Route path="/navbar" element={<NavigationBar user={user} />} />
         <Route path="/signup" element={<SignUp doRegister={doRegister} />} />
-        <Route path="/hikeGpx" element={<FormHikeGpx addNewGpx={addNewGpx} />} />
+
+        <Route path="/hikeGpx" element={<FormHikeGpx addNewGpx={addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
       </Routes>
     </>
   );

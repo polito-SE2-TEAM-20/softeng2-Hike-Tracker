@@ -90,18 +90,7 @@ function LoginForm(props) {
         </div></>);
 }
 
-function LoginButton() {
-    const navigate = useNavigate();
-    return(
-        <Button type="button" className="btn btn-primary btn-lg" onClick={()=> navigate('/login')}>Login</Button>
-    )
-  }
-
-function LogoutButton(props) {
-  return(
-    <Button type="button" className="btn btn-primary btn-lg" onClick={props.logout}>Logout</Button>
-  )
-}
 
 
-export { LoginForm, LoginButton, LogoutButton };
+
+export { LoginForm };

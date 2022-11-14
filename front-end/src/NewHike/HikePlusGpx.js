@@ -1,14 +1,13 @@
 import React from 'react';
 import {useState, useEffect} from 'react';
-import { Container, Form, Button, Alert, Modal, Col, Row, FormGroup, InputGroup, FormControl, FormLabel, FormSelect } from 'react-bootstrap';
+import { Container, Form, Button, Col, Row, FormGroup, FormControl, FormLabel, FormSelect } from 'react-bootstrap';
 import 'leaflet/dist/leaflet.css'
-import { MapContainer, Polyline, TileLayer } from 'react-leaflet'
-import './map.css';
 import './GuideHike.css';
-import { Navigate, useNavigate } from 'react-router';
-import './map.css';
-import {Map} from './Map.js'
-
+import { useNavigate } from 'react-router';
+import {Map} from './Map.js';
+import MainTitle from '../components/main-title/MainTitle';
+import ButtonHeader from '../components/buttons/Button';
+import Navbar from 'react-bootstrap/Navbar';
 
 function FormHikeGpx(props){
 
@@ -26,16 +25,15 @@ function FormHikeGpx(props){
     //points can be: address, name of location, GPS coordinates, hut, parking lot
     // const [listReferencePoint, setListReferencePoint] = useState();
     const [description, setDescription] = useState();
-
-    
-
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileContents, setFileContents] = useState(null);
     const [isFilePicked, setIsFilePicked] = useState(false);
     const [positionsState, setPositionsState] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
     const [show, setShow] = useState('');
-const hiddenFileInput = React.useRef(null);
+
+
+    const hiddenFileInput = React.useRef(null);
     // Programatically click the hidden file input element
     // when the Button component is clicked
     const handleClick = event => {
@@ -53,8 +51,6 @@ const hiddenFileInput = React.useRef(null);
             setFileContents(reader.result)
         };
         reader.readAsText(fileUploaded)
-
-        console.log(fileUploaded);
         // props.handleFile(fileUploaded);
     };
     useEffect(() => {
@@ -62,20 +58,13 @@ const hiddenFileInput = React.useRef(null);
             let gpxParser = require('gpxparser');
             var gpx = new gpxParser();
             gpx.parse(fileContents);
-            console.log(gpx);
-            console.log(gpx.tracks[0].points.map(p => [p.lat, p.lon]));
             const positions = gpx.tracks[0].points.map(p => [p.lat, p.lon]);
             setPositionsState(positions);
             setStartPoint(positions[0]);
             setEndPoint(positions[positions.length-1]);
-            console.log(positions[0]);
-            console.log(positions.length);
-            console.log(positions);
         }
 
     }, [fileContents]);
-
-
 
     const navigate = useNavigate();
 
@@ -97,16 +86,43 @@ const hiddenFileInput = React.useRef(null);
             const difficulty = parseInt(difficultyStr);
 
             const newHike = { title: title, length: length, expectedTime: expectedTime, ascent: ascent, difficulty: difficulty, description: description, region: region, province: province}
-            //props.addNewHike(newHike);
             console.log(newHike);
             props.addNewGpx(formData, newHike).catch((err)=> {setErrorMessage(err); setShow(true)})
-            Navigate('/')
+            navigate('/localGuide');
         }
 
     }
 
-    return (<Container className= "Container">
-                    <Button onClick={handleClick}>
+    const gotoHomeLocal = () => {
+        navigate("/localGuide", { replace: false })
+    }
+    const gotoLogin = () => {
+        navigate("/login", { replace: false })
+    }
+
+
+    return (
+        <>
+        <Row>
+            <Navbar className="is-sticky" expand="lg">
+                <Container>
+                    <MainTitle navigate={gotoHomeLocal} color="white" size="48px" />
+                    {
+                        !props.isLoggedIn ?
+                            <ButtonHeader navigate={gotoLogin} text="Login" textColor="black" color="white" size="24px" />
+                            :
+                            <ButtonHeader navigate={props.doLogOut} text="Logout" textColor="black" color="white" size="24px" />
+                    }
+                </Container>
+            </Navbar>
+        </Row>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+            <Row style={{ marginTop: "150px", marginLeft: "auto", marginRight: "auto", display: "flex", justifyContent: "center"}}>
+                
+            </Row>
+        </div >
+        <div className="Container">
+            <Button onClick={handleClick}>
                 Upload a file
             </Button>
             <input
@@ -118,14 +134,9 @@ const hiddenFileInput = React.useRef(null);
             {isFilePicked ? (
                 <div>
                     <p>Filename: {selectedFile.name}</p>
-                    <p>Size in bytes: {selectedFile.size}</p>
-                    <p>
-                        Last ModifiedDate:{' '}
-                        {selectedFile.lastModifiedDate.toLocaleDateString()}
-                    </p>
                 </div>
             ) : (
-                <p>Select a file to show details</p>
+                <p className='Text'>Select a file to show details</p>
             )}
         
         <Form onSubmit={handleSubmit}>
@@ -133,69 +144,69 @@ const hiddenFileInput = React.useRef(null);
             <Row>
 
             <FormGroup className="col-4" controlId = "title">
-                <FormLabel>Title</FormLabel>
-                <FormControl required={true} type="text" placeholder="Enter Title" value= {title} onChange={(e) => setTitle(e.target.value)}></FormControl>
+                <FormLabel className="Text">Title</FormLabel>
+                <FormControl className="InputBox" required={true} type="text" placeholder="Enter Title" value= {title} onChange={(e) => setTitle(e.target.value)}></FormControl>
 
             </FormGroup>
 
             <FormGroup className="col-4" controlId = "lengthStr">
-                <FormLabel>Length</FormLabel>
-                <FormControl type="number" min={0} placeholder="Length in Km" value= {lengthStr} onChange={(e) => setLengthStr(e.target.value)}></FormControl>
+                <FormLabel className="Text">Length</FormLabel>
+                <FormControl className="InputBox" type="number" min={0} placeholder="Length in Km" value= {lengthStr} onChange={(e) => setLengthStr(e.target.value)}></FormControl>
             </FormGroup>
 
             <FormGroup className="col-4" controlId = "expectedTimeStr">
-                <FormLabel>Expected Time</FormLabel>
-                <FormControl type="number" min={0} placeholder="Expected Time" value= {expectedTimeStr} onChange={(e) => setExpectedtimeStr(e.target.value)}></FormControl>
+                <FormLabel className="Text">Expected Time</FormLabel>
+                <FormControl className="InputBox" type="number" min={0} placeholder="Expected Time" value= {expectedTimeStr} onChange={(e) => setExpectedtimeStr(e.target.value)}></FormControl>
             </FormGroup>
 </Row>
 <Row>
             <FormGroup className="col-4" controlId = "ascentStr">
-                <FormLabel>Ascent</FormLabel>
-                <FormControl type="number" min={0} placeholder="Ascent in meters" value= {ascentStr} onChange={(e) => setAscentStr(e.target.value)}></FormControl>
+                <FormLabel className="Text">Ascent</FormLabel>
+                <FormControl className="InputBox" type="number" min={0} placeholder="Ascent in meters" value= {ascentStr} onChange={(e) => setAscentStr(e.target.value)}></FormControl>
             </FormGroup>
             <FormGroup className="col-4" controlId = "difficultyStr">
-                <FormLabel>Difficulty</FormLabel>
-              <FormSelect  onChange={(e) => setDifficultyStr(e.target.value)}>
+                <FormLabel className="Text">Difficulty</FormLabel>
+              <FormSelect className="InputBox" onChange={(e) => setDifficultyStr(e.target.value)}>
                 <option></option>
 
               <option value="0">Tourist</option>
-  <option value="1">Hiker</option>
-  <option value="2">Professional Hiker</option>
+              <option value="1">Hiker</option>
+              <option value="2">Professional Hiker</option>
               </FormSelect>
               
             </FormGroup>
             <FormGroup className="col-4" controlId = "region">
-                <FormLabel>Region</FormLabel>
-                <FormControl required={true} type="text" placeholder="Enter Region" value= {region} onChange={(e) => setRegion(e.target.value)}></FormControl>
+                <FormLabel className="Text">Region</FormLabel>
+                <FormControl className="InputBox" required={true} type="text" placeholder="Enter Region" value= {region} onChange={(e) => setRegion(e.target.value)}></FormControl>
 
             </FormGroup>
             <FormGroup className="col-4" controlId = "province">
-                <FormLabel>Province</FormLabel>
-                <FormControl required={true} type="text" placeholder="Enter Province" value= {province} onChange={(e) => setProvince(e.target.value)}></FormControl>
+                <FormLabel className="Text">Province</FormLabel>
+                <FormControl className="InputBox" required={true} type="text" placeholder="Enter Province" value= {province} onChange={(e) => setProvince(e.target.value)}></FormControl>
 
             </FormGroup>
             </Row>
             <FormGroup className="mb-3" controlId = "description">
-                <FormLabel>Description</FormLabel>
-                <FormControl  as="textarea" required = {true} placeholder="Enter A Description for the Hike" value= {description} onChange={(e) => setDescription(e.target.value)}></FormControl>
+                <FormLabel className="Text">Description</FormLabel>
+                <FormControl  className="InputBox" as="textarea" required = {true} placeholder="Enter A Description for the Hike" value= {description} onChange={(e) => setDescription(e.target.value)}></FormControl>
 
             </FormGroup>
             <FormGroup>
                 <Row>
                     <Col>
-                    <FormLabel>Start Point</FormLabel>
-                    <FormControl value={startPoint} onChange={(e) => setStartPoint(e.target.value)}></FormControl>
+                    <FormLabel className="Text">Start Point</FormLabel>
+                    <FormControl className="InputBox" value={startPoint} onChange={(e) => setStartPoint(e.target.value)}></FormControl>
                     </Col>
                 </Row>
                 <Row>
                     <Col>
-                    <FormLabel>End Point</FormLabel>
-                    <FormControl value={endPoint} onChange={(e) => setEndPoint(e.target.value)}></FormControl>
+                    <FormLabel className="Text">End Point</FormLabel>
+                    <FormControl className="InputBox" value={endPoint} onChange={(e) => setEndPoint(e.target.value)}></FormControl>
                     </Col>
                 </Row>
             </FormGroup>
             <Button type = 'submit'>SAVE</Button>
-            <Button colore = 'red' onClick= {()=> Navigate('/')}>CANCEL</Button>
+            <Button colore = 'red' onClick= {()=> navigate('/localGuide')}>CANCEL</Button>
             
         </Form>
         <>
@@ -206,7 +217,8 @@ const hiddenFileInput = React.useRef(null);
             </div>
         </>
 
-    </Container>)
+    </div>
+    </>)
 
 }
 

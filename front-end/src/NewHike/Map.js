@@ -23,7 +23,7 @@ const Map = props => {
                     // center= {props.positionsState[0]}
                      center={props.positionsState.length ? props.positionsState[0] : [45.4408474, 12.3155151]}
 
-                    zoom={9}
+                    zoom={30}
                     scrollWheelZoom={false}
                 >
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
