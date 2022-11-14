@@ -13,8 +13,6 @@ import Navbar from 'react-bootstrap/Navbar';
 import { useNavigate } from 'react-router';
 import BH_API from './BH-API';
 
-
-
 const BrowseHikes = (props) => {
     const navigate = useNavigate()
     const [listOfGPXFiles, setListOfGPXFiles] = useState([]) 
