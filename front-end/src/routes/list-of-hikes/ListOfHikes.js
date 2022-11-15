@@ -3,17 +3,88 @@ import UpAndDown from '../../components/up-and-down-button/UpAndDown';
 import './list-of-hikes-style.css'
 
 import { useEffect, useState } from 'react';
-
-import { Table, Container, Row, Col, Navbar } from 'react-bootstrap';
 import MainTitle from '../../components/main-title/MainTitle';
 import HTButton from '../../components/buttons/Button';
+import HTNavbar from '../../components/HTNavbar/HTNavbar';
+import { DataGrid } from '@mui/x-data-grid';
+import { Grid } from '@mui/material';
+import { Box } from '@mui/material';
 import SingleHike from '../../components/single-hike/SingleHike';
 import Filter from '../../components/filter/Filter'
 import Sorting from '../../components/sorting/Sorting'
 import { useNavigate } from 'react-router-dom';
 import LOH_API from './LOH-API';
+import HTSideFilter from '../../components/side-filter/HTSideFilter';
+import { Paper } from '@mui/material';
+import HTTable from '../../components/table/HTTable';
 
 const ListOfHikes = (props) => {
+    const columns = [
+        {
+            field: 'name',
+            headerName: 'Name',
+            type: 'any',
+            width: 150,
+            editable: true,
+        },
+        {
+            field: 'expTime',
+            headerName: 'Expected Time',
+            type: 'any',
+            width: 150,
+            editable: true,
+        },
+        {
+            field: 'ascent',
+            headerName: 'Ascent',
+            type: 'any',
+            width: 110,
+            editable: true,
+        },
+        {
+            field: 'difficulty',
+            headerName: 'Diffuculty',
+            type: 'any',
+            width: 110,
+            editable: true,
+        },
+        {
+            field: 'length',
+            headerName: 'Length',
+            type: 'any',
+            width: 110,
+            editable: true,
+        }
+    ];
+
+    const rows = [
+        { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
+        { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
+        { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
+        { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
+        { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
+        { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
+        { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
+        { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
+        { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+    ];
+
+    const [region, setRegion] = useState('')
+    const [province, setProvince] = useState('')
+    const [minAsc, setMinAsc] = useState('')
+    const [maxAsc, setMaxAsc] = useState('')
+    const [minDiff, setMinDiff] = useState('')
+    const [maxDiff, setMaxDiff] = useState('')
+    const [minLen, setMinLen] = useState('')
+    const [maxLen, setMaxLen] = useState('')
+    const [minExT, setMinExT] = useState('')
+    const [maxExT, setMaxExT] = useState('')
+
+    const values = [region, setRegion, province, setProvince, minAsc,
+        setMinAsc, maxAsc, setMaxAsc, minDiff, setMinDiff,
+        maxDiff, setMaxDiff, minLen, setMinLen, maxLen, setMaxLen,
+        minExT, setMinExT, maxExT, setMaxExT]
+
     const [isFilterOpen, setFilterOpen] = useState(false)
     const [isSortingOpen, setSortingOpen] = useState(false)
     const [isHikeShown, setHikeShow] = useState(false)
@@ -53,7 +124,7 @@ const ListOfHikes = (props) => {
     useEffect(() => {
         var loh = []
         const getHikes = async () => {
-            loh = await LOH_API.getFilteredListOfHikes(filter)
+            loh = await LOH_API.getFilteredListOfHikes({ filter })
         }
         getHikes().then(() => {
             console.log(loh)
@@ -102,105 +173,32 @@ const ListOfHikes = (props) => {
     }
 
     return (
-        <div>
-            <Container fluid style={{ paddingLeft: "0px", paddingRight: "0px", height: "100%", minHeight: "100vh", background: "#807B73", display: "flex", justifyContent: "center", paddingBottom: "42px" }}>
-                <Navbar className="is-sticky" expand="lg">
-                    <Container>
-                        <MainTitle navigate={gotoHome} color="white" size="48px" />
-                        {
-                            !props.isLoggedIn ?
-                                <HTButton navigate={gotoLogin} text="Login" textColor="black" color="white" size="24px" />
-                                :
-                                <HTButton navigate={props.doLogOut} text="Logout" textColor="black" color="white" size="24px" />
-                        }
-                    </Container>
-                </Navbar>
-                <Row style={{ marginTop: "100px" }}>
-                    <Col>
-                        <div style={{ backgroundColor: "#FEFBF7", height: "fit-content", width: "auto", borderRadius: "25px", marginTop: "15px", padding: "20px", boxShadow: "0 4px 32px 0 rgb(0 0 0 / 75%)" }}>
-                            <Row style={{ display: "flex", placeItems: "center" }}>
-                                <Col style={{ display: "grid", justifyContent: "start", marginLeft: "24px" }}>
-                                    <div className="main-title" style={{ color: "#1a1a1a", fontSize: "48px" }}>
-                                        List of hikes
-                                    </div>
-                                </Col>
-                                <Col lg={1} style={{ display: "grid", justifyContent: "end", marginRight: "24px" }}>
-                                    <svg onClick={filterButton} xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-filter-circle-fill" viewBox="0 0 16 16">
-                                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zM3.5 5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1 0-1zM5 8.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm2 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1-.5-.5z" />
-                                    </svg>
-                                </Col>
-                                <Col lg={1} style={{ display: "grid", justifyContent: "end", marginRight: "24px" }}>
-                                    <svg onClick={sortingButton} xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-sort-alpha-down" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371h-1.781zm1.57-.785L11 2.687h-.047l-.652 2.157h1.351z" />
-                                        <path d="M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645V14zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293V2.5z" />
-                                    </svg>
-                                </Col>
-                            </Row>
-                            <Filter filterFunctions={filterStates} open={isFilterOpen} />
-                            <Sorting setFilter={setFilter} open={isSortingOpen} />
-                            <div style={{ marginTop: "25px" }}>
-                                <Table className='my-table' striped hover style={{ width: "1000px", marginLeft: "auto", marginRight: "auto" }}>
-                                    <thead style={{ textAlign: "center" }}>
-                                        <tr className="my-tr">
-                                            <th>Title</th>
-                                            <th>Expected time</th>
-                                            <th>Ascent</th>
-                                            <th>Difficulty</th>
-                                            <th>Length</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody style={{ textAlign: "center" }}>
-                                        {
-                                            listOfHikes?.sort(function (x, y) {
-                                                if (title == -1) if (x.title < y.title) return -1; else return 1; else if (title == 1) { if (x.title < y.title) return 1; else return -1 };
-                                                if (expectedTime == -1) if (x.expectedTime < y.expectedTime) return -1; else return 1; else if (expectedTime == 1) { if (x.expectedTime < y.expectedTime) return 1; else return -1 };
-                                                if (ascent == -1) if (x.ascent < y.ascent) return -1; else return 1; else if (ascent == 1) { if (x.ascent < y.ascent) return 1; else return -1 };
-                                                if (difficulty == -1) if (x.difficulty < y.difficulty) return -1; else return 1; else if (difficulty == 1) { if (x.difficulty < y.difficulty) return 1; else return -1 };
-                                                if (length == -1) if (x.length < y.length) return -1; else return 1; else if (length == 1) { if (x.length < y.length) return 1; else return -1 };
-                                            }).map(elem => {
-                                                return (
-                                                    <tr className="my-tr" key={elem.name} onClick={() => selectHike(elem)}>
-                                                        <td className="my-td">{elem.title}</td>
-                                                        <td className="my-td">{elem.expectedTime} hours</td>
-                                                        <td className="my-td">{elem.ascent} m</td>
-                                                        <td className="my-td">
-                                                            {
-                                                                elem.difficulty === 0 ?
-                                                                    <div style={{ backgroundColor: "#1EE35F", borderRadius: "6px", textAlign: "center", maxWidth: "fit-content", paddingLeft: "10px", paddingRight: "10px", marginLeft: "auto", marginRight: "auto" }}>
-                                                                        <b>Tourist</b>
-                                                                    </div>
-                                                                    : <></>
-                                                            }
-                                                            {
-                                                                elem.difficulty === 1 ?
-                                                                    <div style={{ backgroundColor: "#2B86E3", borderRadius: "6px", textAlign: "center", maxWidth: "fit-content", paddingLeft: "10px", paddingRight: "10px", marginLeft: "auto", marginRight: "auto" }}>
-                                                                        <b>Hiker</b>
-                                                                    </div>
-                                                                    : <></>
-                                                            }
-                                                            {
-                                                                elem.difficulty === 2 ?
-                                                                    <div style={{ backgroundColor: "#E33D19", borderRadius: "6px", textAlign: "center", maxWidth: "fit-content", paddingLeft: "10px", paddingRight: "10px", marginLeft: "auto", marginRight: "auto" }}>
-                                                                        <b>Professional hiker</b>
-                                                                    </div>
-                                                                    : <></>
-                                                            }
-                                                        </td>
-                                                        <td className="my-td">{elem.length} km</td>
-                                                    </tr>
-                                                );
-                                            })
-                                        }
-                                    </tbody>
-                                </Table>
-                            </div>
-                        </div>
-                    </Col>
-                    <Col hidden={!isHikeShown} style={{ paddingTop: "15px" }}>
-                        <SingleHike closeCallback={closeHike} hike={hike} />
-                    </Col>
-                </Row>
-            </Container>
+        <div style={{ backgroundColor: "#f2f2f2" }}>
+            <HTNavbar isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} navigate={props.navigate} />
+            <Grid container spacing={0} style={{ backgroundColor: "#F2F2F2", height: "100%", minHeight: "100vh" }}>
+                <Grid container>
+                    {
+                        isFilterOpen ?
+                            <>
+                                <Grid item lg={4} style={{ backgroundColor: "#A6A6A6", paddingTop: "60px" }} >
+                                    <Box sx={{ height: 400, width: '100%', paddingRight: "42px", paddingLeft: "42px" }}>
+                                        <HTSideFilter values={values} />
+                                    </Box>
+                                </Grid>
+                                <Grid item lg={8} style={{ paddingTop: "60px" }} sx={{ display: "flex", justifyContent: "center" }}>
+                                    <Box sx={{ height: 500, width: '100%', paddingRight: "42px", paddingLeft: "42px" }}>
+                                        <HTTable openFilter={filterButton} />
+                                    </Box>
+                                </Grid>
+                            </>
+                            : <Grid item lg={12} style={{ paddingTop: "60px" }} sx={{ display: "flex", justifyContent: "center" }}>
+                                <Box sx={{ height: 500, width: '100%', paddingRight: "42px", paddingLeft: "42px" }}>
+                                    <HTTable openFilter={filterButton} />
+                                </Box>
+                            </Grid>
+                    }
+                </Grid>
+            </Grid >
         </div>
     );
 }

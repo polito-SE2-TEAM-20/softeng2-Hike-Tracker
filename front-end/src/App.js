@@ -111,7 +111,7 @@ function App2() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<HTMainPage isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
+        <Route path="/" element={<HTMainPage isLoggedIn={loggedIn} doLogOut={doLogOut} navigate={navigate}/>} />
         <Route path="/listofhikes" element={<ListOfHikes isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/browsehikes" element={<HTBrowseHikes isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/singlehike" element={<SingleHike />} />

@@ -40,7 +40,7 @@ function HTNavbar(props) {
     return (
         <AppBar position="sticky" style={{
             backgroundColor: "#202020", marginBottom: "auto", paddingLeft: "35px",
-            paddingRight: "35px", borderRadius: "0px 0px 120px 120px"
+            paddingRight: "35px", borderRadius: "0px 0px 120px 0px"
         }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>

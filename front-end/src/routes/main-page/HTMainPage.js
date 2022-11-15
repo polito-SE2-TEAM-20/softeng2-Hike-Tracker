@@ -38,7 +38,7 @@ const HTMainPage = (props) => {
 
     return (
         <Grid container spacing={0} style={{ backgroundColor: "#A6A6A6", height: "100%", minHeight: "100vh" }}>
-            <HTNavbar isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
+            <HTNavbar isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} navigate={props.navigate} />
             <Grid display={responsiveContentStyleBig}
                 justifyContent="center"
                 item xs={12} sm={12} md={12} lg={12} xl={12}>
