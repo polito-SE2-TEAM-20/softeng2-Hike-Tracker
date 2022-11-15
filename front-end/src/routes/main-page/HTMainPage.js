@@ -37,13 +37,23 @@ const HTMainPage = (props) => {
     }
 
     return (
-        <Grid container spacing={0}>
-            <HTNavbar />
-            <Grid display={responsiveContentStyleBig} justifyContent="center" item xs={12} sm={12} md={12} lg={12} xl={12}>
+        <Grid container spacing={0} style={{ backgroundColor: "#A6A6A6", height: "100%", minHeight: "100vh" }}>
+            <HTNavbar isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
+            <Grid display={responsiveContentStyleBig}
+                justifyContent="center"
+                item xs={12} sm={12} md={12} lg={12} xl={12}>
                 <img
                     src={"https://cdn.pixabay.com/photo/2019/06/08/17/40/landscape-4260630_960_720.jpg"}
                     alt="main-page-image"
                     style={{ borderRadius: "62px", }}
+                    loading="lazy"
+                />
+            </Grid>
+            <Grid display={responsiveContentStyleEnd} justifyContent="center" item xs={12} sm={12} md={12} lg={12} xl={12}>
+                <img
+                    src={"https://cdn.pixabay.com/photo/2019/06/08/17/40/landscape-4260630_960_720.jpg"}
+                    alt="main-page-image"
+                    style={{ borderRadius: "62px", heigth: "auto", width: { xs: "415px", lg: "500px" } }}
                     loading="lazy"
                 />
             </Grid>

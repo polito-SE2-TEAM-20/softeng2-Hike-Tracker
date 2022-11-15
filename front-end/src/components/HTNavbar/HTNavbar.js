@@ -15,9 +15,10 @@ import AdbIcon from '@mui/icons-material/Adb';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const pages = ['Browse hikes', 'List of hikes'];
-const settings = ['Logout'];
+const settings = ['Login', 'Logout'];
 
-function HTNavbar() {
+function HTNavbar(props) {
+    React.useEffect(() => {console.log(props.isLoggedIn)})
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -37,7 +38,10 @@ function HTNavbar() {
     };
 
     return (
-        <AppBar position="sticky" style={{backgroundColor:"#202020", marginBottom: "25px", paddingLeft: "35px", paddingRight: "35px", borderRadius: "0px 0px 120px 120px"}}>
+        <AppBar position="sticky" style={{
+            backgroundColor: "#202020", marginBottom: "auto", paddingLeft: "35px",
+            paddingRight: "35px", borderRadius: "0px 0px 120px 120px"
+        }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Typography
@@ -48,7 +52,7 @@ function HTNavbar() {
                         sx={{
                             mr: 12,
                             display: { xs: 'none', md: 'flex' },
-                            fontFamily: "Bakbak One, display", 
+                            fontFamily: "Bakbak One, display",
                             fontWeight: 700,
                             color: 'inherit',
                             textDecoration: 'none',
@@ -100,9 +104,9 @@ function HTNavbar() {
                         component="a"
                         href=""
                         sx={{
-                            mr: 12,
+                            mr: 4,
                             display: { xs: 'flex', md: 'none' },
-                            fontFamily: "Bakbak One, display", 
+                            fontFamily: "Bakbak One, display",
                             fontWeight: 700,
                             color: 'inherit',
                             textDecoration: 'none',
@@ -125,7 +129,7 @@ function HTNavbar() {
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Profile">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <AccountCircleIcon style={{color:"white", fontSize:"42px"}} />
+                                <AccountCircleIcon style={{ color: "white", fontSize: "42px" }} />
                             </IconButton>
                         </Tooltip>
                         <Menu
@@ -144,11 +148,20 @@ function HTNavbar() {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
-                            {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                    <Typography textAlign="center">{setting}</Typography>
-                                </MenuItem>
-                            ))}
+                            {
+                                props.isLoggedIn ?
+                                    <MenuItem key={settings[1]} onClick={handleCloseUserMenu}>
+                                        <Typography onClick={props.doLogOut} textAlign="center">
+                                            {settings[1]}
+                                        </Typography>
+                                    </MenuItem>
+                                    :
+                                    <MenuItem key={settings[0]} onClick={handleCloseUserMenu}>
+                                        <Typography onClick={props.gotoLogin} textAlign="center">
+                                            {settings[0]}
+                                        </Typography>
+                                    </MenuItem>
+                            }
                         </Menu>
                     </Box>
                 </Toolbar>
