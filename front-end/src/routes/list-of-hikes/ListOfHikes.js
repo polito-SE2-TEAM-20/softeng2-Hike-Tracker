@@ -1,6 +1,7 @@
 import sampledata from '../../extra/sample-data/samplehikes.json'
 import UpAndDown from '../../components/up-and-down-button/UpAndDown';
 import './list-of-hikes-style.css'
+import pages from '../../extra/pages.json'
 
 import { useEffect, useState } from 'react';
 import MainTitle from '../../components/main-title/MainTitle';

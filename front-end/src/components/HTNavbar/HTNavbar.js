@@ -15,6 +15,7 @@ import AdbIcon from '@mui/icons-material/Adb';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const pages = ['Browse hikes', 'List of hikes'];
+
 const settings = ['Login', 'Logout'];
 
 function HTNavbar(props) {

@@ -1,0 +1,10 @@
+[
+  {
+    "pageName": "Browse hikes",
+    "URL": "/browse-hikes"
+  },
+  {
+    "pageName": "List of hikes",
+    "URL": "/listofhikes"
+  }
+]
