@@ -13,6 +13,8 @@ import HTNavbar from '../../components/HTNavbar/HTNavbar'
 
 const HTMainPage = (props) => {
     const navigate = useNavigate()
+    const responsiveContentStyleBig = { xs: "none", sm: "none", md: "flex", lg: "flex", xl: "flex" }
+    const responsiveContentStyleEnd = { xs: "flex", sm: "flex", md: "none", lg: "none", xl: "none" }
 
     const gotoLogin = () => {
         navigate("/login", { replace: false })
@@ -37,26 +39,20 @@ const HTMainPage = (props) => {
     return (
         <Grid container spacing={0}>
             <HTNavbar />
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                <div style={{
-                    display: { xs: "none", sm: "flex", md: "flex", lg: "flex", xl: "flex" },
-                    justifyContent: "center"
-                }}>
-                    <img
-                        src={"https://cdn.pixabay.com/photo/2019/06/08/17/40/landscape-4260630_960_720.jpg"}
-                        alt="main-page-image"
-
-                        style={{ borderRadius: "62px" }}
-                        loading="lazy"
-                    />
-                </div>
+            <Grid display={responsiveContentStyleBig} justifyContent="center" item xs={12} sm={12} md={12} lg={12} xl={12}>
+                <img
+                    src={"https://cdn.pixabay.com/photo/2019/06/08/17/40/landscape-4260630_960_720.jpg"}
+                    alt="main-page-image"
+                    style={{ borderRadius: "62px", }}
+                    loading="lazy"
+                />
             </Grid>
             <Grid item xs={12}>
                 <Typography
                     variant="h2"
                     noWrap className="unselectable"
                     sx={{
-                        display: { xs: 'none', sm: "flex", md: 'flex', lg: 'flex', xl: 'flex' },
+                        display: responsiveContentStyleBig,
                         fontFamily: "Crimson Text, serif",
                         fontWeight: 700, justifyContent: "center",
                         textAlign: "center",
@@ -70,7 +66,7 @@ const HTMainPage = (props) => {
                     variant="h4"
                     noWrap className="unselectable"
                     sx={{
-                        display: { xs: 'flex', md: 'none' },
+                        display: responsiveContentStyleEnd,
                         fontFamily: "Crimson Text, serif",
                         fontWeight: 700, justifyContent: "center",
                         textAlign: "center",

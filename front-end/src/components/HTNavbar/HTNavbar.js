@@ -37,7 +37,7 @@ function HTNavbar() {
     };
 
     return (
-        <AppBar position="sticky" style={{backgroundColor:"#202020"}}>
+        <AppBar position="sticky" style={{backgroundColor:"#202020", marginBottom: "25px", paddingLeft: "35px", paddingRight: "35px", borderRadius: "0px 0px 120px 120px"}}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Typography
