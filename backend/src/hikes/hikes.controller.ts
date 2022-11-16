@@ -15,14 +15,16 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs-extra';
-import { isNil } from 'ramda';
-import { DataSource } from 'typeorm';
+import { propEq } from 'ramda';
+import { DataSource, In } from 'typeorm';
 
 import {
   GPX_FILE_PATH,
   Hike,
   HikePoint,
   ID,
+  mapToId,
+  orderEntities,
   Point,
   User,
   UserRole,
@@ -31,7 +33,8 @@ import { GpxService } from '@app/gpx';
 
 import { PointsService } from '../points/points.service';
 
-import { UpdateHikeDto } from './hikes.dto';
+import { hikeFilters } from './hikes.constants';
+import { FilteredHikesDto, UpdateHikeDto } from './hikes.dto';
 import { HikesService } from './hikes.service';
 
 @Controller('hikes')
@@ -49,61 +52,71 @@ export class HikesController {
   }
 
   @Post('/filteredHikes')
-  async getFilteredHikes(@Body() body: any): Promise<Hike[]> {
-    const query = this.dataSource
-      .getRepository(Hike)
-      .createQueryBuilder('hikes');
+  async getFilteredHikes(
+    @Body()
+    { inPointRadius, ...body }: FilteredHikesDto,
+  ): Promise<Hike[]> {
+    let joins = '';
+    const whereConditions: string[] = [];
+    let paramIndex = 1;
+    const params: unknown[] = [];
 
-    if (!isNil(body.region)) {
-      query.andWhere('hikes.region = :region', { region: body.region });
-    }
-    if (!isNil(body.province)) {
-      query.andWhere('hikes.province = :province', { province: body.province });
-    }
-    if (!isNil(body.maxLength)) {
-      query.andWhere('hikes.length <= :maxLength', {
-        maxLength: body.maxLength,
-      });
-    }
-    if (!isNil(body.minLength)) {
-      query.andWhere('hikes.length >= :minLength', {
-        minLength: body.minLength,
-      });
-    }
-    if (!isNil(body.difficultyMax)) {
-      query.andWhere('hikes.difficulty <= :maxDifficulty', {
-        maxDifficulty: body.difficultyMax,
-      });
-    }
-    if (!isNil(body.difficultyMin)) {
-      query.andWhere('hikes.difficulty >= :difficultyMin', {
-        difficultyMin: body.difficultyMin,
-      });
-    }
-    if (!isNil(body.expectedTimeMax)) {
-      query.andWhere('hikes.length <= :expectedTimeMax', {
-        expectedTimeMax: body.expectedTimeMax,
-      });
-    }
-    if (!isNil(body.expectedTimeMin)) {
-      query.andWhere('hikes.expectedTime >= :expectedTimeMin', {
-        expectedTimeMin: body.expectedTimeMin,
-      });
-    }
-    if (!isNil(body.ascentMax)) {
-      query.andWhere('hikes.ascent <= :ascentMax', {
-        ascentMax: body.ascentMax,
-      });
-    }
-    if (!isNil(body.ascentMin)) {
-      query.andWhere('hikes.ascent >= :ascentMin', {
-        ascentMin: body.ascentMin,
-      });
+    if (inPointRadius) {
+      whereConditions.push(
+        `ST_DWithin(ST_MakePoint($${paramIndex++}, $${paramIndex++}), p."position", $${paramIndex++})`,
+      );
+      params.push(
+        inPointRadius.lon,
+        inPointRadius.lat,
+        inPointRadius.radiusKms * 1000,
+      );
+
+      joins += `
+        inner join (
+          select spq.*
+          from (
+              select
+                hp."pointId",
+                hp."hikeId",
+                ROW_NUMBER() OVER(PARTITION BY hp."hikeId" ORDER BY hp."index" ASC) AS rank
+              from hike_points hp
+          ) spq
+          where spq.rank = 1
+        ) sq on sq."hikeId" = h.id
+        inner join points p on p.id = sq."pointId"
+      `;
     }
 
-    const hikes = await query.getMany();
-    console.log(hikes);
-    return hikes;
+    // apply dynamic filters
+    Object.keys(body).forEach((filterKey) => {
+      const maybeFilter = hikeFilters[filterKey as keyof FilteredHikesDto];
+
+      if (maybeFilter) {
+        whereConditions.push(
+          `hikes."${maybeFilter.entityField}" ${
+            maybeFilter.operator
+          } $${paramIndex++}`,
+        );
+        params.push(body[filterKey]);
+      }
+    });
+
+    const queryRaw = `
+      select h.*
+      from hikes h
+      ${joins}
+      where ${whereConditions.length ? whereConditions.join(',') : 'true'}
+      order by h.id asc
+    `;
+
+    const rawHikes = await this.service.getRepository().query(queryRaw, params);
+    const hikeIds = mapToId(rawHikes);
+    const hikes = await this.service
+      .getRepository()
+      .findBy({ id: In(hikeIds) });
+    const orderedHikes = orderEntities(hikes, hikeIds, propEq('id'));
+
+    return orderedHikes;
   }
 
   @Post('import')

@@ -1,5 +1,6 @@
 
-const APIURL = 'http://hiking-backend.germangorodnev.com/';
+const APIURL = 'http://hiking-backend.germangorodnev.com/'; // 'http://localhost:3500/'
+
 async function addNewGpx(formData) {
   console.log({formData})
     let response = await fetch((APIURL + 'hikes/import/'), {
