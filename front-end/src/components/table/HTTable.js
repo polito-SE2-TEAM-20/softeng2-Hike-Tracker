@@ -209,8 +209,8 @@ function EnhancedTableToolbar(props) {
         </Tooltip>
       ) : (
         <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon onClick={props.openFilter} />
+          <IconButton onClick={props.openFilter} >
+            <FilterListIcon />
           </IconButton>
         </Tooltip>
       )}

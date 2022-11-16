@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'leaflet/dist/leaflet.css'
 
 import HTBrowseHikes from './routes/browse-hikes/HTBrowseHikes.js'
-import ListOfHikes from './routes/list-of-hikes/ListOfHikes.js';
+import HTListOfHikes from './routes/list-of-hikes/ListOfHikes.js';
 import SingleHike from './components/single-hike/SingleHike.js';
 import HTMainPage from './routes/main-page/HTMainPage';
 import { useNavigate } from 'react-router-dom';
@@ -117,7 +117,7 @@ function App2() {
     <>
       <Routes>
         <Route path="/" element={<HTMainPage isLoggedIn={loggedIn} doLogOut={doLogOut} navigate={navigate}/>} />
-        <Route path="/listofhikes" element={<ListOfHikes isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
+        <Route path="/listofhikes" element={<HTListOfHikes isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/browsehikes" element={<HTBrowseHikes isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/singlehike" element={<SingleHike />} />
         {/*<Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut} />} />*/}

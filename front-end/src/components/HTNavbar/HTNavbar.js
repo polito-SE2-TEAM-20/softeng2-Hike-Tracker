@@ -13,15 +13,16 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-
-const pages = ['Browse hikes', 'List of hikes'];
-
-const settings = ['Login', 'Logout'];
+import pages from '../../extra/pages.json'
+import { useNavigate } from 'react-router';
 
 function HTNavbar(props) {
     React.useEffect(() => {console.log(props.isLoggedIn)})
+
+    const settings = ['Login', 'Logout'];
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const navigate = useNavigate()
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -92,8 +93,8 @@ function HTNavbar(props) {
                             }}
                         >
                             {pages.map((page) => (
-                                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                    <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Bakbak One, display" }}>{page}</Typography>
+                                <MenuItem key={page.title} onClick={handleCloseNavMenu}>
+                                    <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Bakbak One, display" }}>{page.title}</Typography>
                                 </MenuItem>
                             ))}
                         </Menu>
@@ -118,11 +119,11 @@ function HTNavbar(props) {
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         {pages.map((page) => (
                             <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "24px" }}
-                                key={page}
-                                onClick={handleCloseNavMenu}
+                                key={page.title}
+                                onClick={() => {handleCloseNavMenu(); navigate(page.URL)}}
                                 sx={{ my: 2, color: 'white', display: 'block' }}
                             >
-                                {page}
+                                {page.title}
                             </Button>
                         ))}
                     </Box>

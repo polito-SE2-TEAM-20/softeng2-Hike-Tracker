@@ -1,10 +1,10 @@
 [
   {
-    "pageName": "Browse hikes",
+    "title": "Browse hikes",
     "URL": "/browse-hikes"
   },
   {
-    "pageName": "List of hikes",
+    "title": "List of hikes",
     "URL": "/listofhikes"
   }
 ]
