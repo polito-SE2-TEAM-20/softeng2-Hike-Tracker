@@ -4,6 +4,7 @@ import { PointType } from '../enums';
 import { GPoint } from '../types';
 
 @Entity('points')
+@Index('points_position_idx', ['position'], { spatial: true })
 export class Point {
   @PrimaryGeneratedColumn('increment')
   id!: number;
@@ -15,7 +16,6 @@ export class Point {
   })
   type!: PointType;
 
-  @Index({ spatial: true })
   @Column({
     type: 'geography',
     spatialFeatureType: 'Point',
