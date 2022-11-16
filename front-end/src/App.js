@@ -9,7 +9,7 @@ import ListOfHikes from './routes/list-of-hikes/ListOfHikes.js';
 import SingleHike from './components/single-hike/SingleHike.js';
 import HTMainPage from './routes/main-page/HTMainPage';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { LoginForm } from './Login/Login';
 import API_Login from './Login/API_Login';
 import API_NewHike from './NewHike/API_Newhike';
@@ -19,7 +19,8 @@ import { LocalGuide } from './Visuals/localGuide';
 import { NavigationBar } from './Visuals/Navbar'
 import { SignUp } from './SignUp/SignUp'
 import API_SignUp from './SignUp/API_SignUp';
-import { AddHike } from './NewHike/AddHike';
+import { AddHike } from './NewHike/proveAddHike';
+import SignInSide from './Login/LoginM';
 
 import {
   BrowserRouter,
@@ -37,10 +38,16 @@ function App() {
 
 function App2() {
   const [loggedIn, setLoggedIn] = useState(false);
-  console.log(loggedIn)
   const [user, setUser] = useState({});
   const [role, setRole] = useState();
   const navigate = useNavigate();
+
+  useEffect(()=>{
+    if(localStorage.length!==0){
+      setLoggedIn(true);
+    }
+  }, []);
+
 
   const doLogIn = (credentials, setShow, setErrorMessage) => {
     API_Login.logIn(credentials)
@@ -48,14 +55,11 @@ function App2() {
         setLoggedIn(true);
         setUser(user);
         setShow(false);
-        console.log(user);
-        console.log(user.user.role);
         if(user.user.role === 0){
           navigate('/browsehikes')
         }else if(user.user.role=== 2){
           navigate('/localGuide');
         }
-
         setRole(user.user.role);
       })
       .catch(err => {
@@ -65,6 +69,7 @@ function App2() {
       }
       )
   }
+
 
   const doLogOut = async (returnToHome="true") => {
     await API_Login.logOut();
@@ -115,13 +120,13 @@ function App2() {
         <Route path="/listofhikes" element={<ListOfHikes isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/browsehikes" element={<HTBrowseHikes isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/singlehike" element={<SingleHike />} />
-        <Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut} />} />
+        {/*<Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut} />} />*/}
         {/*<Route path="/newHike2" element ={<FileUploader addNewGpx={addNewGpx}/>}/>*/}
         {/*<Route path="/newHike" element ={<FormNewHike addHike={addHike}/>}/>*/}
         <Route path="/localGuide" element={<LocalGuide isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
         <Route path="/navbar" element={<NavigationBar user={user} />} />
         <Route path="/signup" element={<SignUp doRegister={doRegister} />} />
-
+        <Route path="/login" element={<SignInSide login={doLogIn} user={user} logout={doLogOut}/>} />
         <Route path="/hikeGpx" element={<AddHike addNewGpx={addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
       </Routes>
     </>
