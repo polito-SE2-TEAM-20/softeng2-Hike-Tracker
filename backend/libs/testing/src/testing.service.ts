@@ -13,6 +13,7 @@ import {
   HikePoint,
   HikePointPrimaryKey,
   Hut,
+  ID,
   ParkingLot,
   Point,
   User,
@@ -62,8 +63,19 @@ export class TestingService {
   //   return authData.token;
   // }
 
-  async createHut(data: DeepPartial<Hut>): Promise<Hut> {
-    return await this.createBase(Hut, data);
+  async createHut(
+    data: DeepPartial<Hut>,
+    pointData?: Partial<Point>,
+  ): Promise<Hut> {
+    let pointId: ID | undefined;
+    if (pointData) {
+      const point = await this.createPoint(pointData);
+      pointId = point.id;
+    }
+
+    const hut = await this.createBase<Hut>(Hut, { ...data, pointId });
+
+    return hut;
   }
 
   async createParkingLot(data: DeepPartial<ParkingLot>): Promise<ParkingLot> {

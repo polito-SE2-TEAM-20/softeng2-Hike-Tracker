@@ -13,6 +13,7 @@ import { typeormOptions } from '@app/common';
 import { AuthModule } from './auth/auth.module';
 import { HealthcheckModule } from './healthcheck/healthcheck.module';
 import { HikesModule } from './hikes/hikes.module';
+import { HutsModule } from './huts/huts.module';
 import { PointsModule } from './points/points.module';
 
 @Module({
@@ -31,9 +32,10 @@ import { PointsModule } from './points/points.module';
     }),
 
     HealthcheckModule,
+    AuthModule,
     HikesModule,
     PointsModule,
-    AuthModule,
+    HutsModule,
   ],
   controllers: [],
   providers: [],

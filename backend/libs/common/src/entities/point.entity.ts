@@ -1,6 +1,7 @@
 import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
 import { PointType } from '../enums';
+import { GPoint } from '../types';
 
 @Entity('points')
 export class Point {
@@ -21,7 +22,7 @@ export class Point {
     srid: 4326,
     nullable: false,
   })
-  position!: any;
+  position!: GPoint;
 
   @Column({
     type: 'varchar',

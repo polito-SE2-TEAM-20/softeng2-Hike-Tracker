@@ -1,4 +1,4 @@
-import path, { join } from 'path';
+import { join } from 'path';
 
 import {
   Controller,
@@ -182,21 +182,21 @@ export class HikesController {
     return await this.service.findByIdOrThrow(id);
   }
 
-  @Get(':id')
-  async getHike(@Param('id') id: ID): Promise<Hike | null> {
-    const hike = await this.service.findById(id);
+  // @Get(':id')
+  // async getHike(@Param('id') id: ID): Promise<Hike | null> {
+  //   const hike = await this.service.findById(id);
 
-    if (!hike) {
-      return null;
-    }
+  //   if (!hike) {
+  //     return null;
+  //   }
 
-    return {
-      ...hike,
-      gpx: hike.gpxPath
-        ? (
-            await fs.readFile(join(GPX_FILE_PATH, path.basename(hike.gpxPath)))
-          ).toString()
-        : null,
-    };
-  }
+  //   return {
+  //     ...hike,
+  //     gpx: hike.gpxPath
+  //       ? (
+  //           await fs.readFile(join(GPX_FILE_PATH, path.basename(hike.gpxPath)))
+  //         ).toString()
+  //       : null,
+  //   };
+  // }
 }
