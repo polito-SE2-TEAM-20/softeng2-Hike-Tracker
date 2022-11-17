@@ -1,6 +1,6 @@
 import { resolve } from 'node:path';
 
-import { HikePoint, ROOT, TypeID } from '@app/common';
+import { HikeDifficulty, HikePoint, ROOT, TypeID } from '@app/common';
 import { finishTest } from '@app/testing';
 import { prepareTestApp, prepareVars } from '@test/base';
 
@@ -29,15 +29,23 @@ describe('Hikes (e2e)', () => {
   it('should import gpx file and parse it into hikes with points', async () => {
     const { user } = await setup();
 
-    const hikeData = { title: 'eeee', description: 'test desc' };
+    const hikeData = {
+      title: 'eeee',
+      description: 'test desc',
+      region: 'Torinio',
+      province: 'TO',
+      length: 100.56,
+      ascent: 5.71,
+      expectedTime: 1020,
+      difficulty: HikeDifficulty.professionalHiker,
+    };
 
     const { body } = await restService
       .build(app, user)
       .request()
       .post('/hikes/import')
       .attach('gpxFile', resolve(ROOT, './test-data/4.gpx'))
-      .field('title', hikeData.title)
-      .field('description', hikeData.description)
+      .field(hikeData)
       .expect(201);
 
     expect(body).toMatchObject({ id: expect.any(TypeID), ...hikeData });
