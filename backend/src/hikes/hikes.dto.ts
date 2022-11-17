@@ -123,7 +123,7 @@ export class UpdateHikeDto {
   province?: string;
 
   @IsOptional()
-  referencePoints: Point[];
+  referencePoints?: Point[];
 }
 
 export class Point {
