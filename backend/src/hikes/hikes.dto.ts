@@ -121,4 +121,19 @@ export class UpdateHikeDto {
   @MaxLength(HikeLimits.province)
   @IsOptional()
   province?: string;
+
+  @IsOptional()
+  referencePoints: Point[];
+}
+
+export class Point {
+  @IsLatitude()
+  lat!: number;
+
+  @IsLongitude()
+  lon!: number;
+
+  @IsString()
+  @IsOptional()
+  label?: string;
 }

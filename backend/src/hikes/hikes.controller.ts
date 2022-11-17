@@ -195,6 +195,7 @@ export class HikesController {
     return await this.service.findByIdOrThrow(id);
   }
 
+  
   // @Get(':id')
   // async getHike(@Param('id') id: ID): Promise<Hike | null> {
   //   const hike = await this.service.findById(id);
