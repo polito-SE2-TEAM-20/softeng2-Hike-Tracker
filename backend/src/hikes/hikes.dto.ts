@@ -1,4 +1,5 @@
-import { Type } from 'class-transformer';
+import { PartialType } from '@nestjs/mapped-types';
+import { Type, Transform } from 'class-transformer';
 import {
   IsEnum,
   IsInt,
@@ -77,45 +78,37 @@ export class FilteredHikesDto {
   inPointRadius?: PointWithRadius;
 }
 
-export class UpdateHikeDto {
+export class HikeDto {
   @IsNumber()
   @Min(0)
-  @IsOptional()
-  length?: number;
+  @Transform(({ value }) => +value)
+  length!: number;
 
   @IsNumber()
   @Min(0)
-  @IsOptional()
-  ascent?: number;
+  @Transform(({ value }) => +value)
+  ascent!: number;
 
   @IsNumber()
   @Min(0)
-  @IsOptional()
-  distance?: number;
-
-  @IsNumber()
-  @Min(0)
-  @IsOptional()
-  expectedTime?: number;
+  @Transform(({ value }) => +value)
+  expectedTime!: number;
 
   @IsEnum(HikeDifficulty)
-  @IsOptional()
-  difficulty?: HikeDifficulty;
+  @Transform(({ value }) => parseInt(value))
+  difficulty!: HikeDifficulty;
 
   @IsString()
   @MaxLength(HikeLimits.title)
-  @IsOptional()
-  title?: string;
+  title!: string;
 
   @IsString()
   @MaxLength(HikeLimits.description)
-  @IsOptional()
-  description?: string;
+  description!: string;
 
   @IsString()
   @MaxLength(HikeLimits.region)
-  @IsOptional()
-  region?: string;
+  region!: string;
 
   @IsString()
   @MaxLength(HikeLimits.province)
@@ -137,3 +130,4 @@ export class Point {
   @IsOptional()
   label?: string;
 }
+export class UpdateHikeDto extends PartialType(HikeDto) {}

@@ -9,9 +9,9 @@ import {
   UseInterceptors,
   Put,
   Param,
-  DefaultValuePipe,
   ParseFilePipeBuilder,
   HttpStatus,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs-extra';
@@ -19,6 +19,8 @@ import { propEq } from 'ramda';
 import { DataSource, In } from 'typeorm';
 
 import {
+  AuthenticatedOnly,
+  CurrentUser,
   GPX_FILE_PATH,
   Hike,
   HikePoint,
@@ -26,15 +28,14 @@ import {
   mapToId,
   orderEntities,
   Point,
-  User,
-  UserRole,
+  UserContext,
 } from '@app/common';
 import { GpxService } from '@app/gpx';
 
 import { PointsService } from '../points/points.service';
 
 import { hikeFilters } from './hikes.constants';
-import { FilteredHikesDto, UpdateHikeDto } from './hikes.dto';
+import { FilteredHikesDto, HikeDto, UpdateHikeDto } from './hikes.dto';
 import { HikesService } from './hikes.service';
 
 @Controller('hikes')
@@ -105,7 +106,7 @@ export class HikesController {
       select h.*
       from hikes h
       ${joins}
-      where ${whereConditions.length ? whereConditions.join(',') : 'true'}
+      where ${whereConditions.length ? whereConditions.join(' AND ') : 'true'}
       order by h.id asc
     `;
 
@@ -120,6 +121,7 @@ export class HikesController {
   }
 
   @Post('import')
+  @AuthenticatedOnly()
   @UseInterceptors(FileInterceptor('gpxFile'))
   async import(
     @UploadedFile(
@@ -128,8 +130,8 @@ export class HikesController {
       }),
     )
     file: Express.Multer.File,
-    @Body('title', new DefaultValuePipe('')) title: string,
-    @Body('description', new DefaultValuePipe('')) description: string,
+    @Body() body: HikeDto,
+    @CurrentUser() user: UserContext,
   ): Promise<Hike | null> {
     const gpx = await fs.readFile(file.path);
     const gpxText = gpx.toString('utf8');
@@ -139,30 +141,16 @@ export class HikesController {
       return null;
     }
 
-    // todo: get real user
-    const user =
-      (await this.dataSource
-        .getRepository(User)
-        .findOneBy({ email: 'test@test.com' })) ??
-      (await this.dataSource.getRepository(User).save({
-        firstName: '',
-        lastName: '',
-        password: '',
-        email: 'test@test.com',
-        role: UserRole.localGuide,
-      }));
-
     // insert hike into database
     const { hike } = await this.dataSource.transaction<{
       hike: Hike;
       points: Point[];
     }>(async (entityManager) => {
       const hike = await this.service.getRepository(entityManager).save({
-        ...parsedHike.hike,
-        title,
-        description,
         userId: user.id,
         gpxPath: join(GPX_FILE_PATH, file.filename),
+        ...parsedHike.hike,
+        ...body,
       });
 
       const points = await this.pointsService
@@ -184,6 +172,7 @@ export class HikesController {
   }
 
   @Put(':id')
+  @AuthenticatedOnly()
   async updateHike(
     @Param('id') id: ID,
     @Body() data: UpdateHikeDto,
@@ -195,7 +184,16 @@ export class HikesController {
     return await this.service.findByIdOrThrow(id);
   }
 
+<<<<<<< HEAD
   
+=======
+  @Get(':id')
+  @AuthenticatedOnly()
+  async getHike(@Param('id', new ParseIntPipe()) id: ID): Promise<Hike> {
+    return await this.service.findByIdOrThrow(id);
+  }
+
+>>>>>>> df4a3f5ecb1416330b2eeff2d74dd0589cdd4f75
   // @Get(':id')
   // async getHike(@Param('id') id: ID): Promise<Hike | null> {
   //   const hike = await this.service.findById(id);
