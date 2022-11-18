@@ -4,14 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'leaflet/dist/leaflet.css'
 import './browse-hikes-style.css'
 
-import MainTitle from '../../components/main-title/MainTitle'
-import HTButton from '../../components/buttons/Button'
-import { Row, Container } from 'react-bootstrap'
 import { MapBrowseHike } from '../../components/map/MapBrowseHike';
-import SearchBar from '../../components/searchbar/SearchBar';
-import Navbar from 'react-bootstrap/Navbar';
 import { useNavigate } from 'react-router';
-import BH_API from './BH-API';
 import LOH_API from '../list-of-hikes/LOH-API';
 import { Grid } from '@mui/material';
 import HTNavbar from '../../components/HTNavbar/HTNavbar';
@@ -19,9 +13,6 @@ import HTNavbar from '../../components/HTNavbar/HTNavbar';
 const HTBrowseHikes = (props) => {
   const navigate = useNavigate()
   const [listOfHikes, setListOfHikes] = useState([])
-  const gotoHome = () => {
-    navigate("/", { replace: false })
-  }
   const gotoLogin = () => {
     navigate("/login", { replace: false })
   }
@@ -40,7 +31,7 @@ const HTBrowseHikes = (props) => {
   return (
     <Grid container spacing={0} sx={{ backgroundColor: "#f2f2f2", minHeight: "100vh", height: "100%", minWidth: "100vw", width: "100%" }}>
       <HTNavbar isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
-      <Grid item lg={12}>
+      <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
           <MapBrowseHike />
       </Grid>
     </Grid>

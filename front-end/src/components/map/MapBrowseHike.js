@@ -36,11 +36,10 @@ export const LocationMarker = () => {
 
 export const MapBrowseHike = (props) => {
   return (
-    <div style={{ margin: "50px", marginTop:"0px" }}>
-      <Paper elevation={8} sx={{ borderRadius: "50px", borderStyle: "solid" }}>
+    <div style={{ marginTop:"0px" }}>
         <MapContainer center={[43.046182, 12.407823]} zoom={7}
           scrollWheelZoom={false} zoomControl={false}
-          style={{ width: "auto", maxHeight: "100vh", height: "65vh", borderRadius: "50px" }}>
+          style={{ width: "auto", minHeight: "100vh", height: "100%" }}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url={"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}
@@ -61,7 +60,6 @@ export const MapBrowseHike = (props) => {
             })
           }
         </MapContainer>
-      </Paper>
     </div>
   );
 }
