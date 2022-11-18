@@ -87,12 +87,12 @@ export class ReferencePointDto extends LatLonDto {
   @IsString()
   @IsOptional()
   @MaxLength(PointLimits.name)
-  name!: string;
+  name?: string;
 
   @IsString()
   @IsOptional()
   @MaxLength(PointLimits.address)
-  address!: string;
+  address?: string;
 }
 
 export class HikeDto {
