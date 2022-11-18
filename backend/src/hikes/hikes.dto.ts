@@ -136,15 +136,4 @@ export class HikeDto {
   referencePoints!: ReferencePointDto[];
 }
 
-export class Point {
-  @IsLatitude()
-  lat!: number;
-
-  @IsLongitude()
-  lon!: number;
-
-  @IsString()
-  @IsOptional()
-  label?: string;
-}
 export class UpdateHikeDto extends PartialType(HikeDto) {}

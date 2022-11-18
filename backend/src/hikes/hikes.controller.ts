@@ -21,6 +21,7 @@ import { DataSource, In } from 'typeorm';
 import {
   AuthenticatedOnly,
   CurrentUser,
+  GPoint,
   GPX_FILE_PATH,
   Hike,
   HikePoint,
@@ -153,7 +154,40 @@ export class HikesController {
         ...body,
       });
 
+      //Antonio's code for refPoint insertion starts here 
       const referencePointsArray = body.referencePoints;
+
+      const refPointsForDB = referencePointsArray.map((refPoint) => {
+        const pointObject :GPoint = {
+          type: 'Point',
+          coordinates: [refPoint.lon, refPoint.lat]
+        }
+
+        const refPointForDB = {
+          name: refPoint.name,
+          address: refPoint.address,
+          point: pointObject, 
+        }
+        return refPointForDB;
+      });
+      
+      const insertedRefP = await entityManager.getRepository(Point).save(
+        refPointsForDB.map<Partial<Point>>((point) => ({ 
+          type: 0,
+          position: point.point,
+          address: point.address,
+          name: point.name,
+        }))
+      );
+
+      await entityManager.getRepository(HikePoint).save(
+        insertedRefP.map<HikePoint>((point, index) => ({
+          hikeId: hike.id,
+          pointId: point.id,
+          index,
+        })),
+      );
+      //Antonio's code ends here
 
       const points = await this.pointsService
         .getRepository(entityManager)
