@@ -17,8 +17,6 @@ import HTButton from '../buttons/Button';
 import { Paper } from '@mui/material';
 
 function HTSidefilter(props) {
-
-
   return (
     <Paper elevation={5} sx={{ width: '100%', mb: 2 }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>

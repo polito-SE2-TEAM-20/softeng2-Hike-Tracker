@@ -18,6 +18,7 @@ import API_SignUp from './SignUp/API_SignUp';
 import { AddHike } from './NewHike/proveAddHike';
 import LoginForm from './Login/Login';
 import {SignUpForm} from './SignUp/SignUp';
+import HTHutPage from './routes/hut-page/HTHutPage';
 
 
 import {
@@ -123,6 +124,7 @@ function App2() {
         <Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut}/>} />
         <Route path="/hikeGpx" element={<AddHike addNewGpx={addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
         <Route path="/signup" element={<SignUpForm doRegister={doRegister} />} />
+        <Route path="/hutpage" element={<HTHutPage isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
       </Routes>
     </>
   );

@@ -1,0 +1,41 @@
+.my-table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.my-td {
+    border-style: none solid solid none;
+    padding: 10px;
+}
+
+.my-tr {
+    margin-bottom: 16px;
+}
+
+.my-tr:first-child .my-td:first-child {
+    border-top-left-radius: 10px;
+}
+
+.my-tr:first-child .my-td:last-child {
+    border-top-right-radius: 10px;
+}
+
+.my-tr:last-child .my-td:first-child {
+    border-bottom-left-radius: 10px;
+}
+
+.my-tr:last-child .my-td:last-child {
+    border-bottom-right-radius: 10px;
+}
+
+.my-tr:first-child .my-td {
+    border-top-style: solid;
+}
+
+.my-tr .my-td:first-child {
+    border-left-style: solid;
+}
+
+.filter-name {
+    color: white
+}

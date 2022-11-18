@@ -1,21 +1,12 @@
-import sampledata from '../../extra/sample-data/samplehikes.json'
-import UpAndDown from '../../components/up-and-down-button/UpAndDown';
 import './list-of-hikes-style.css'
 
 import { useEffect, useState } from 'react';
-import MainTitle from '../../components/main-title/MainTitle';
-import HTButton from '../../components/buttons/Button';
 import HTNavbar from '../../components/HTNavbar/HTNavbar';
-import { DataGrid } from '@mui/x-data-grid';
 import { Grid } from '@mui/material';
 import { Box } from '@mui/material';
-import SingleHike from '../../components/single-hike/SingleHike';
-import Filter from '../../components/filter/Filter'
-import Sorting from '../../components/sorting/Sorting'
 import { useNavigate } from 'react-router-dom';
 import LOH_API from './LOH-API';
 import HTSideFilter from '../../components/side-filter/HTSideFilter';
-import { Paper } from '@mui/material';
 import HTTable from '../../components/table/HTTable';
 
 const HTListOfHikes = (props) => {
