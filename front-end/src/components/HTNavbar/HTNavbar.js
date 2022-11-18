@@ -14,10 +14,9 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import pages from '../../extra/pages.json'
 import { useNavigate } from 'react-router';
 import { Divider } from '@mui/material';
+import { useEffect } from 'react';
 
 function HTNavbar(props) {
-    React.useEffect(() => {console.log(props.isLoggedIn)})
-
     const settings = ['Login', 'Logout'];
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -39,7 +38,7 @@ function HTNavbar(props) {
     };
 
     return (
-        <AppBar style={{
+        <AppBar position="fixed" style={{
             backgroundColor: "#202020", marginBottom: "auto", paddingLeft: "35px",
             paddingRight: "35px", borderRadius: "0px 0px 0px 0px"
         }}>
