@@ -11,6 +11,7 @@ import {
   Param,
   ParseFilePipeBuilder,
   HttpStatus,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs-extra';
@@ -189,6 +190,11 @@ export class HikesController {
 
     await this.service.getRepository().update({ id }, data);
 
+    return await this.service.findByIdOrThrow(id);
+  }
+
+  @Get(':id')
+  async getHike(@Param('id', new ParseIntPipe()) id: ID): Promise<Hike> {
     return await this.service.findByIdOrThrow(id);
   }
 
