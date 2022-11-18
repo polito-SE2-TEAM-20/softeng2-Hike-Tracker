@@ -1,14 +1,6 @@
-import MainTitle from '../../components/main-title/MainTitle'
-import Button from '../../components/buttons/Button';
-import { Row, Col, Container } from 'react-bootstrap'
-import Navbar from 'react-bootstrap/Navbar';
-import { Link, useNavigate } from "react-router-dom";
-import MainPageLandscape from '../../components/main-page-landscape/MainPageLandscape';
-import { useState } from 'react';
-
+import { useNavigate } from "react-router-dom";
 import { Grid } from '@mui/material';
 import { Typography } from '@mui/material';
-import HTButton from '../../components/buttons/Button';
 import HTNavbar from '../../components/HTNavbar/HTNavbar'
 
 const HTMainPage = (props) => {
@@ -19,23 +11,7 @@ const HTMainPage = (props) => {
     const gotoLogin = () => {
         navigate("/login", { replace: false })
     }
-
-    const gotoSignup = () => {
-        navigate("/signup", { replace: false })
-    }
-
-    const gotoBrowseHikes = () => {
-        navigate("/browsehikes", { replace: false })
-    }
-
-    const gotoListOfHikes = () => {
-        navigate("/listofhikes", { replace: false })
-    }
-
-    const gotoHome = () => {
-        navigate("/", { replace: false })
-    }
-
+    
     return (
         <Grid container spacing={0} style={{ backgroundColor: "#A6A6A6", height: "100%", minHeight: "100vh" }}>
             <HTNavbar isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} navigate={props.navigate} />
@@ -45,7 +21,7 @@ const HTMainPage = (props) => {
                 <img
                     src={"https://cdn.pixabay.com/photo/2019/06/08/17/40/landscape-4260630_960_720.jpg"}
                     alt="main-page-image"
-                    style={{ borderRadius: "62px", }}
+                    style={{ borderRadius: "62px", marginTop: "120px" }}
                     loading="lazy"
                 />
             </Grid>
@@ -53,7 +29,7 @@ const HTMainPage = (props) => {
                 <img
                     src={"https://cdn.pixabay.com/photo/2019/06/08/17/40/landscape-4260630_960_720.jpg"}
                     alt="main-page-image"
-                    style={{ borderRadius: "62px", heigth: "auto", width: { xs: "415px", lg: "500px" } }}
+                    style={{ borderRadius: "62px", heigth: "auto", width: { xs: "415px", lg: "500px" }, marginTop: "120px" }}
                     loading="lazy"
                 />
             </Grid>
