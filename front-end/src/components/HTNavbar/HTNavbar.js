@@ -156,7 +156,7 @@ function HTNavbar(props) {
                         )}
                     </Box>
 
-                    <Box sx={{ flexGrow: 0 }}>
+                    <Box sx={{ flexGrow: 0, display: { xs: "none", sm: "none", md: "flex", lg: "flex", xl: "flex" } }}>
                         {
                             !props.isLoggedIn ?
                                 <>
@@ -184,10 +184,50 @@ function HTNavbar(props) {
                                     </Tooltip>
                                 </>
                         }
+                    </Box>
+
+                    <Box sx={{ flexGrow: 0, display: { xs: "flex", sm: "flex", md: "none", lg: "none", xl: "none" } }}>
+                        <Tooltip title="Profile">
+                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                                <AccountCircleIcon style={{ color: "white", fontSize: "42px" }} />
+                            </IconButton>
+                        </Tooltip>
 
 
                         <Menu
-                            sx={{ mt: '45px' }}
+                            sx={{ mt: '45px', display: { xs: "flex", sm: "flex", md: "none", lg: "none", xl: "none" } }}
+                            id="menu-appbar"
+                            anchorEl={anchorElUser}
+                            anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            keepMounted
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            open={Boolean(anchorElUser)}
+                            onClose={handleCloseUserMenu}
+                        >
+                            {
+                                props.isLoggedIn ?
+                                    <MenuItem key={settings[1]} onClick={handleCloseUserMenu}>
+                                        <Typography onClick={props.doLogOut} textAlign="center">
+                                            {settings[1]}
+                                        </Typography>
+                                    </MenuItem>
+                                    :
+                                    <MenuItem key={settings[0]} onClick={handleCloseUserMenu}>
+                                        <Typography onClick={props.gotoLogin} textAlign="center">
+                                            {settings[0]}
+                                        </Typography>
+                                    </MenuItem>
+                            }
+                        </Menu>
+
+                        <Menu
+                            sx={{ mt: '45px', display: { xs: "none", sm: "none", md: "flex", lg: "flex", xl: "flex" } }}
                             id="menu-appbar"
                             anchorEl={anchorElUser}
                             anchorOrigin={{
