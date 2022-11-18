@@ -38,10 +38,10 @@ const HTBrowseHikes = (props) => {
   }, [])
 
   return (
-    <Grid container spacing={0}>
+    <Grid container spacing={0} sx={{ backgroundColor: "#f2f2f2", minHeight: "100vh", height: "100%", minWidth: "100vw", width: "100%" }}>
       <HTNavbar isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
-      <Grid item xs={8}>
-        <MapBrowseHike />
+      <Grid item lg={12}>
+          <MapBrowseHike />
       </Grid>
     </Grid>
   );

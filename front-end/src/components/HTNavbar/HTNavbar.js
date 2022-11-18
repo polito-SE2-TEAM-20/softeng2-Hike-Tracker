@@ -7,11 +7,9 @@ import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import pages from '../../extra/pages.json'
 import { useNavigate } from 'react-router';
@@ -42,7 +40,7 @@ function HTNavbar(props) {
     return (
         <AppBar position="sticky" style={{
             backgroundColor: "#202020", marginBottom: "auto", paddingLeft: "35px",
-            paddingRight: "35px", borderRadius: "0px 0px 120px 0px"
+            paddingRight: "35px", borderRadius: "0px 0px 0px 0px"
         }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
@@ -93,7 +91,7 @@ function HTNavbar(props) {
                             }}
                         >
                             {pages.map((page) => (
-                                <MenuItem key={page.title} onClick={handleCloseNavMenu}>
+                                <MenuItem key={page.title} onClick={() => {handleCloseNavMenu();  navigate(page.url)}}>
                                     <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Bakbak One, display" }}>{page.title}</Typography>
                                 </MenuItem>
                             ))}
