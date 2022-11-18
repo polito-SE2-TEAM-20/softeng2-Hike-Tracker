@@ -15,6 +15,7 @@ import { HealthcheckModule } from './healthcheck/healthcheck.module';
 import { HikesModule } from './hikes/hikes.module';
 import { HutsModule } from './huts/huts.module';
 import { PointsModule } from './points/points.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { PointsModule } from './points/points.module';
     AuthModule,
     HikesModule,
     PointsModule,
+    UsersModule,
     HutsModule,
   ],
   controllers: [],
