@@ -1,10 +1,12 @@
 [
   {
     "title": "Browse hikes",
-    "URL": "/browsehikes"
+    "URL": "/browsehikes",
+    "reqLogin": true
   },
   {
     "title": "List of hikes",
-    "URL": "/listofhikes"
+    "URL": "/listofhikes",
+    "reqLogin": false
   }
 ]

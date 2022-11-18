@@ -90,11 +90,22 @@ function HTNavbar(props) {
                                 display: { xs: 'block', md: 'none' },
                             }}
                         >
-                            {pages.map((page) => (
-                                <MenuItem key={page.title} onClick={() => {handleCloseNavMenu();  navigate(page.url)}}>
-                                    <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Bakbak One, display" }}>{page.title}</Typography>
-                                </MenuItem>
-                            ))}
+                            {pages.map((page) => {
+                                if (props.isLoggedIn) {
+                                    return (
+                                        <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.url) }}>
+                                            <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Bakbak One, display" }}>{page.title}</Typography>
+                                        </MenuItem>
+                                    )
+                                }
+                                if (!props.isLoggedIn && !page.reqLogin) {
+                                    return (
+                                        <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.url) }}>
+                                            <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Bakbak One, display" }}>{page.title}</Typography>
+                                        </MenuItem>
+                                    )
+                                }
+                            })}
                         </Menu>
                     </Box>
                     <Typography
@@ -114,17 +125,35 @@ function HTNavbar(props) {
                     >
                         Hike Tracker
                     </Typography>
+
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        {pages.map((page) => (
-                            <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "24px" }}
-                                key={page.title}
-                                onClick={() => {handleCloseNavMenu(); navigate(page.URL)}}
-                                sx={{ my: 2, color: 'white', display: 'block' }}
-                            >
-                                {page.title}
-                                <Divider orientation='vertical' flexItem />
-                            </Button>
-                        ))}
+                        {pages.map((page) => {
+                            if (props.isLoggedIn) {
+                                return (
+                                    <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "24px" }}
+                                        key={page.title}
+                                        onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}
+                                        sx={{ my: 2, color: 'white', display: 'block' }}
+                                    >
+                                        {page.title}
+                                        <Divider orientation='vertical' flexItem />
+                                    </Button>
+                                )
+                            }
+                            if (!props.isLoggedIn && !page.reqLogin) {
+                                return (
+                                    <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "24px" }}
+                                        key={page.title}
+                                        onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}
+                                        sx={{ my: 2, color: 'white', display: 'block' }}
+                                    >
+                                        {page.title}
+                                        <Divider orientation='vertical' flexItem />
+                                    </Button>
+                                )
+                            }
+                        }
+                        )}
                     </Box>
 
                     <Box sx={{ flexGrow: 0 }}>
