@@ -22,7 +22,7 @@ function AddHike(props){
     const [city, setCity] = useState('');
     const [startPoint, setStartPoint] = useState();
     const [endPoint, setEndPoint ] = useState();
-    const [referencePoints, setReferencePoints] = useState();
+    const [referencePoints, setReferencePoints] = useState([]);
     //points can be: address, name of location, GPS coordinates, hut, parking lot
     // const [listReferencePoint, setListReferencePoint] = useState();
     const [description, setDescription] = useState();
@@ -32,7 +32,7 @@ function AddHike(props){
     const [positionsState, setPositionsState] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
     const [show, setShow] = useState('');
-
+    //{ name: "prova1", address: "provaAdd", lon: "4.5" ,  lat: "4.3"
 
     const hiddenFileInput = React.useRef(null);
     // Programatically click the hidden file input element
@@ -60,6 +60,7 @@ function AddHike(props){
             var gpx = new gpxParser();
             gpx.parse(fileContents);
             const positions = gpx.tracks[0].points.map(p => [p.lat, p.lon]);
+            // controllare perchè se non ci sono i punti da errore
             setPositionsState(positions);
             setStartPoint(positions[0]);
             setEndPoint(positions[positions.length-1]);
@@ -76,24 +77,33 @@ function AddHike(props){
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        
-        const formData = new FormData();
-        formData.append('gpxFile', selectedFile);
-        formData.append('title', title);
+
+
+
         if(title.trim().length === 0){
             setErrorMessage('The title cannot be empty')
         }else{
+            const length = parseFloat(lengthStr);
+            const expectedTime = parseFloat(expectedTimeStr);
+            const ascent = parseFloat(ascentStr);
+            const difficulty = parseFloat(difficultyStr);
+            const formData = new FormData();
+                formData.append('gpxFile', selectedFile);
+                formData.append('title', title);
+                formData.append('length', length);
+                formData.append('expectedTime', expectedTime);
+                formData.append('ascent', ascent);
+                formData.append('difficulty', difficulty);
+                formData.append('description', description);
+                formData.append('region', region);
+                formData.append('province', province);
+                console.log(formData.items);
+            
+            props.addNewGpx(formData).catch((err)=> {setErrorMessage(err); setShow(true)})
 
-            const length = parseInt(lengthStr);
-            const expectedTime = parseInt(expectedTimeStr);
-
-            const ascent = parseInt(ascentStr);
-
-            const difficulty = parseInt(difficultyStr);
-
-            const newHike = { title: title, length: length, expectedTime: expectedTime, ascent: ascent, difficulty: difficulty, description: description, region: region, province: province}
-            console.log(newHike);
-            props.addNewGpx(formData, newHike).catch((err)=> {setErrorMessage(err); setShow(true)})
+            // const newHike = { title: title, length: length, expectedTime: expectedTime, ascent: ascent, difficulty: difficulty, description: description, region: region, province: province}
+            // console.log(newHike);
+            //props.addNewGpx(formData, newHike).catch((err)=> {setErrorMessage(err); setShow(true)})
             navigate('/localGuide');
         }
 
