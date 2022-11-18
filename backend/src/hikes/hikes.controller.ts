@@ -19,6 +19,8 @@ import { propEq } from 'ramda';
 import { DataSource, In } from 'typeorm';
 
 import {
+  AuthenticatedOnly,
+  CurrentUser,
   GPX_FILE_PATH,
   Hike,
   HikePoint,
@@ -26,8 +28,7 @@ import {
   mapToId,
   orderEntities,
   Point,
-  User,
-  UserRole,
+  UserContext,
 } from '@app/common';
 import { GpxService } from '@app/gpx';
 
@@ -120,6 +121,7 @@ export class HikesController {
   }
 
   @Post('import')
+  @AuthenticatedOnly()
   @UseInterceptors(FileInterceptor('gpxFile'))
   async import(
     @UploadedFile(
@@ -129,6 +131,7 @@ export class HikesController {
     )
     file: Express.Multer.File,
     @Body() body: HikeDto,
+    @CurrentUser() user: UserContext,
   ): Promise<Hike | null> {
     const gpx = await fs.readFile(file.path);
     const gpxText = gpx.toString('utf8');
@@ -137,19 +140,6 @@ export class HikesController {
     if (!parsedHike) {
       return null;
     }
-
-    // todo: get real user
-    const user =
-      (await this.dataSource
-        .getRepository(User)
-        .findOneBy({ email: 'test@test.com' })) ??
-      (await this.dataSource.getRepository(User).save({
-        firstName: '',
-        lastName: '',
-        password: '',
-        email: 'test@test.com',
-        role: UserRole.localGuide,
-      }));
 
     // insert hike into database
     const { hike } = await this.dataSource.transaction<{
@@ -182,6 +172,7 @@ export class HikesController {
   }
 
   @Put(':id')
+  @AuthenticatedOnly()
   async updateHike(
     @Param('id') id: ID,
     @Body() data: UpdateHikeDto,
@@ -194,6 +185,7 @@ export class HikesController {
   }
 
   @Get(':id')
+  @AuthenticatedOnly()
   async getHike(@Param('id', new ParseIntPipe()) id: ID): Promise<Hike> {
     return await this.service.findByIdOrThrow(id);
   }
