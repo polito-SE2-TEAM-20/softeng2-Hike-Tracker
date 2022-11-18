@@ -13,6 +13,7 @@ import MenuItem from '@mui/material/MenuItem';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import pages from '../../extra/pages.json'
 import { useNavigate } from 'react-router';
+import { Divider } from '@mui/material';
 
 function HTNavbar(props) {
     React.useEffect(() => {console.log(props.isLoggedIn)})
@@ -38,7 +39,7 @@ function HTNavbar(props) {
     };
 
     return (
-        <AppBar position="sticky" style={{
+        <AppBar style={{
             backgroundColor: "#202020", marginBottom: "auto", paddingLeft: "35px",
             paddingRight: "35px", borderRadius: "0px 0px 0px 0px"
         }}>
@@ -122,6 +123,7 @@ function HTNavbar(props) {
                                 sx={{ my: 2, color: 'white', display: 'block' }}
                             >
                                 {page.title}
+                                <Divider orientation='vertical' flexItem />
                             </Button>
                         ))}
                     </Box>
