@@ -1,5 +1,6 @@
 import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
+import { PointLimits } from '../constants';
 import { PointType } from '../enums';
 import { GPoint } from '../types';
 
@@ -26,14 +27,14 @@ export class Point {
 
   @Column({
     type: 'varchar',
-    length: 256,
+    length: PointLimits.address,
     nullable: true,
   })
   address!: string | null;
 
   @Column({
     type: 'varchar',
-    length: 256,
+    length: PointLimits.name,
     nullable: true,
   })
   name!: string | null;

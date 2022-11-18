@@ -13,7 +13,12 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-import { HikeDifficulty, HikeLimits } from '@app/common';
+import {
+  HikeDifficulty,
+  HikeLimits,
+  LatLonDto,
+  PointLimits,
+} from '@app/common';
 
 export class PointWithRadius {
   @IsLatitude()
@@ -78,6 +83,18 @@ export class FilteredHikesDto {
   inPointRadius?: PointWithRadius;
 }
 
+export class ReferencePointDto extends LatLonDto {
+  @IsString()
+  @IsOptional()
+  @MaxLength(PointLimits.name)
+  name!: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(PointLimits.address)
+  address!: string;
+}
+
 export class HikeDto {
   @IsNumber()
   @Min(0)
@@ -112,11 +129,11 @@ export class HikeDto {
 
   @IsString()
   @MaxLength(HikeLimits.province)
-  @IsOptional()
-  province?: string;
+  province!: string;
 
-  @IsOptional()
-  referencePoints?: Point[];
+  @ValidateNested({ each: true })
+  @Type(() => ReferencePointDto)
+  referencePoints!: ReferencePointDto[];
 }
 
 export class Point {

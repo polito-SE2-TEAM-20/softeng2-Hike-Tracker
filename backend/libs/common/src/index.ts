@@ -8,3 +8,4 @@ export * from './utils';
 export * from './upload-path';
 export * from './db';
 export * from './decorators';
+export * from './dto';

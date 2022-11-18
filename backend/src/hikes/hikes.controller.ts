@@ -153,6 +153,8 @@ export class HikesController {
         ...body,
       });
 
+      const referencePointsArray = body.referencePoints;
+
       const points = await this.pointsService
         .getRepository(entityManager)
         .save(parsedHike.points);
@@ -184,16 +186,12 @@ export class HikesController {
     return await this.service.findByIdOrThrow(id);
   }
 
-<<<<<<< HEAD
-  
-=======
   @Get(':id')
   @AuthenticatedOnly()
   async getHike(@Param('id', new ParseIntPipe()) id: ID): Promise<Hike> {
     return await this.service.findByIdOrThrow(id);
   }
 
->>>>>>> df4a3f5ecb1416330b2eeff2d74dd0589cdd4f75
   // @Get(':id')
   // async getHike(@Param('id') id: ID): Promise<Hike | null> {
   //   const hike = await this.service.findById(id);
