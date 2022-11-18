@@ -14,7 +14,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import pages from '../../extra/pages.json'
 import { useNavigate } from 'react-router';
 import { Divider } from '@mui/material';
-import { useEffect } from 'react';
+import './navbar-style.css'
 
 function HTNavbar(props) {
     const settings = ['Login', 'Logout'];
@@ -45,10 +45,10 @@ function HTNavbar(props) {
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Typography
-                        variant="h2"
+                        className="unselectable"
+                        variant="h3"
                         noWrap
-                        component="a"
-                        href="/"
+                        onClick={() => { navigate("/") }}
                         sx={{
                             mr: 12,
                             display: { xs: 'none', md: 'flex' },
@@ -109,11 +109,11 @@ function HTNavbar(props) {
                         </Menu>
                     </Box>
                     <Typography
+                        className="unselectable"
                         style={{ fontFamily: "Bakbak One, display" }}
                         variant="h5"
                         noWrap
-                        component="a"
-                        href=""
+                        onClick={() => { navigate("/") }}
                         sx={{
                             mr: 4,
                             display: { xs: 'flex', md: 'none' },
@@ -130,7 +130,7 @@ function HTNavbar(props) {
                         {pages.map((page) => {
                             if (props.isLoggedIn) {
                                 return (
-                                    <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "24px" }}
+                                    <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "18px", marginRight: "24px" }}
                                         key={page.title}
                                         onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}
                                         sx={{ my: 2, color: 'white', display: 'block' }}
@@ -142,7 +142,7 @@ function HTNavbar(props) {
                             }
                             if (!props.isLoggedIn && !page.reqLogin) {
                                 return (
-                                    <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "24px" }}
+                                    <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "18px", marginRight: "24px" }}
                                         key={page.title}
                                         onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}
                                         sx={{ my: 2, color: 'white', display: 'block' }}
@@ -157,11 +157,35 @@ function HTNavbar(props) {
                     </Box>
 
                     <Box sx={{ flexGrow: 0 }}>
-                        <Tooltip title="Profile">
-                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <AccountCircleIcon style={{ color: "white", fontSize: "42px" }} />
-                            </IconButton>
-                        </Tooltip>
+                        {
+                            !props.isLoggedIn ?
+                                <>
+                                    <Tooltip>
+                                        <IconButton onClick={() => { navigate("/login") }} sx={{ p: 0 }}>
+                                            <Button variant="outlined" sx={{ borderRadius: "24px", color: "white", textTransform: "none", borderColor: "white" }}><b>Sign in</b></Button>
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip style={{ marginLeft: "20px" }}>
+                                        <IconButton onClick={() => { navigate("/signup") }} sx={{ p: 0 }}>
+                                            <Button variant="outlined" sx={{
+                                                borderRadius: "24px", color: "white", textTransform: "none", borderColor: "white"
+                                            }}><b>Sign up</b></Button>
+                                        </IconButton>
+                                    </Tooltip>
+                                </>
+                                :
+                                <>
+                                    <Tooltip style={{ marginLeft: "20px" }}>
+                                        <IconButton onClick={() => { props.doLogOut() }} sx={{ p: 0 }}>
+                                            <Button variant="outlined" sx={{
+                                                borderRadius: "24px", color: "white", textTransform: "none", borderColor: "white"
+                                            }}><b>Log out</b></Button>
+                                        </IconButton>
+                                    </Tooltip>
+                                </>
+                        }
+
+
                         <Menu
                             sx={{ mt: '45px' }}
                             id="menu-appbar"
