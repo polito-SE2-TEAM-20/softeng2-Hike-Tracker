@@ -174,7 +174,7 @@ const HTListOfHikes = (props) => {
 
     return (
         <div style={{ backgroundColor: "#f2f2f2" }}>
-            <HTNavbar isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} navigate={props.navigate} />
+            <HTNavbar isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
             <Grid container spacing={0} style={{ backgroundColor: "#F2F2F2", height: "100%", minHeight: "100vh" }}>
                 <Grid container>
                     {
