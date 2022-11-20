@@ -13,8 +13,8 @@ import MenuItem from '@mui/material/MenuItem';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import pages from '../../extra/pages.json'
 import { useNavigate } from 'react-router';
-import { Divider } from '@mui/material';
 import './navbar-style.css'
+import { Divider } from '@mui/material';
 
 function HTNavbar(props) {
     const settings = ['Login', 'Logout'];
@@ -36,6 +36,8 @@ function HTNavbar(props) {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
+
+    console.log(props.user)
 
     return (
         <AppBar position="fixed" style={{
@@ -175,11 +177,26 @@ function HTNavbar(props) {
                                 </>
                                 :
                                 <>
+                                    <Tooltip>
+                                        <div style={{ marginRight: "15px" }}>
+                                            <Typography color="white" className='unselectable' fontFamily={"Bakbak One, display"} fontSize="24px">
+                                                {props.user?.firstName} {props.user?.lastName}
+                                            </Typography>
+                                            <Typography color="white" className='unselectable' fontFamily={"Bakbak One, display"} fontSize="14px">
+                                                {props.user?.role == 0 ? "Hiker" : ""}
+                                                {props.user?.role == 1 ? "Friend" : ""}
+                                                {props.user?.role == 2 ? "Local guide" : ""}
+                                                {props.user?.role == 3 ? "Platform manager" : ""}
+                                                {props.user?.role == 4 ? "Hut worker" : ""}
+                                                {props.user?.role == 5 ? "Emergency operator" : ""}
+                                            </Typography>
+                                        </div>
+                                    </Tooltip>
                                     <Tooltip style={{ marginLeft: "20px" }}>
                                         <IconButton onClick={() => { props.doLogOut() }} sx={{ p: 0 }}>
                                             <Button variant="outlined" sx={{
                                                 borderRadius: "24px", color: "white", textTransform: "none", borderColor: "white"
-                                            }}><b>Log out</b></Button>
+                                            }}><b>Sign out</b></Button>
                                         </IconButton>
                                     </Tooltip>
                                 </>
@@ -212,11 +229,27 @@ function HTNavbar(props) {
                         >
                             {
                                 props.isLoggedIn ?
-                                    <MenuItem key={settings[1]} onClick={handleCloseUserMenu}>
-                                        <Typography onClick={props.doLogOut} textAlign="center">
-                                            {settings[1]}
-                                        </Typography>
-                                    </MenuItem>
+                                    <>
+                                        <div className='unselectable' style={{marginLeft: "12px", marginRight: "12px"}} key={settings[1]}>
+                                            <Typography color="black" fontFamily={"Bakbak One, display"} fontSize="20px" style={{display: "flex", justifyContent: "center"}}>
+                                                {props.user?.firstName} {props.user?.lastName}
+                                            </Typography>
+                                            <Typography color="black" fontFamily={"Bakbak One, display"} fontSize="16px">
+                                                {props.user?.role == 0 ? " Hiker" : ""}
+                                                {props.user?.role == 1 ? " Friend" : ""}
+                                                {props.user?.role == 2 ? " Local guide" : ""}
+                                                {props.user?.role == 3 ? " Platform manager" : ""}
+                                                {props.user?.role == 4 ? " Hut worker" : ""}
+                                                {props.user?.role == 5 ? " Emergency operator" : ""}
+                                            </Typography>
+                                        </div>
+                                        <Divider />
+                                        <MenuItem key={settings[1]} onClick={handleCloseUserMenu}>
+                                            <Typography onClick={props.doLogOut} textAlign="center">
+                                                {settings[1]}
+                                            </Typography>
+                                        </MenuItem>
+                                    </>
                                     :
                                     <MenuItem key={settings[0]} onClick={handleCloseUserMenu}>
                                         <Typography onClick={props.gotoLogin} textAlign="center">
@@ -245,6 +278,17 @@ function HTNavbar(props) {
                             {
                                 props.isLoggedIn ?
                                     <MenuItem key={settings[1]} onClick={handleCloseUserMenu}>
+                                        <Typography className='unselectable' color="black" fontFamily={"Bakbak One, display"} fontSize="24px">
+                                            {props.user?.firstName} {props.user?.lastName}
+                                        </Typography>
+                                        <Typography color="black" fontFamily={"Bakbak One, display"} fontSize="14px">
+                                            {props.user?.role == 0 ? "Hiker" : ""}
+                                            {props.user?.role == 1 ? "Friend" : ""}
+                                            {props.user?.role == 2 ? "Local guide" : ""}
+                                            {props.user?.role == 3 ? "Platform manager" : ""}
+                                            {props.user?.role == 4 ? "Hut worker" : ""}
+                                            {props.user?.role == 5 ? "Emergency operator" : ""}
+                                        </Typography>
                                         <Typography onClick={props.doLogOut} textAlign="center">
                                             {settings[1]}
                                         </Typography>
@@ -259,8 +303,8 @@ function HTNavbar(props) {
                         </Menu>
                     </Box>
                 </Toolbar>
-            </Container>
-        </AppBar>
+            </Container >
+        </AppBar >
     );
 }
 export default HTNavbar;
