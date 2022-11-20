@@ -51,6 +51,7 @@ const gotoHomeLocal = () => {
     </Navbar>
     <Row>
         <PageLandscape />
+        {console.log(props.user)}
     </Row>
 
     <Row>

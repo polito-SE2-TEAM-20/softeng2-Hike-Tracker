@@ -15,6 +15,8 @@ async function logIn(credentials) {
 
         const user = await response.json();
         localStorage.setItem('token', user.token);
+
+        localStorage.setItem('user', JSON.stringify(user));
         console.log(localStorage);
         console.log(user);
         return user;

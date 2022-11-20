@@ -48,6 +48,7 @@ function App2() {
   useEffect(()=>{
     if(localStorage.length!==0){
       setLoggedIn(true);
+      setUser(JSON.parse(localStorage.getItem('user')));
     }
   }, []);
 
