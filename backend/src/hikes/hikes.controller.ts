@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs-extra';
-import { propEq } from 'ramda';
+import { isNil, propEq } from 'ramda';
 import { DataSource, In } from 'typeorm';
 
 import {
@@ -215,7 +215,30 @@ export class HikesController {
   ): Promise<Hike> {
     await this.service.ensureExistsOrThrow(id);
 
-    await this.service.getRepository().update({ id }, data);
+    //Antonio's code on Ref Points Update starts here
+      /*
+        OPERATIONS TO DO:
+        - SELECT all Ref Points Id in HikePoint table;
+        - DELETE all Ref Points associated to a certain hike in Point table by IDs previously selected;
+        - INSERT new Ref Points in Points;
+        - INSERT new Ref Points in HikePoints;
+      */
+     if(!isNil(data.referencePoints)){
+
+        let points = await this.dataSource.getRepository(HikePoint).findBy({
+          hikeId: id
+        });
+
+        let pointsToDelete = points.map((hikePoint) => hikePoint.pointId);
+
+        await this.pointsService.getRepository().delete({
+          id: In(pointsToDelete)
+        })
+     } 
+    //Antonio's code ends here
+
+    await this.service.getRepository().update({ id }, data); //Is it updating what?
+
 
     return await this.service.findByIdOrThrow(id);
   }
