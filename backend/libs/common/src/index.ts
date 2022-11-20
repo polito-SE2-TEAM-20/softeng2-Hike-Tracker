@@ -9,3 +9,4 @@ export * from './upload-path';
 export * from './db';
 export * from './decorators';
 export * from './dto';
+export * from './guards';

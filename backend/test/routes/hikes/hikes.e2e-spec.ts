@@ -1,6 +1,17 @@
-import { resolve } from 'node:path';
+import { constants } from 'node:fs';
+import path, { resolve } from 'node:path';
 
-import { HikeDifficulty, HikePoint, ROOT, TypeID } from '@app/common';
+import * as fs from 'fs-extra';
+import { omit } from 'ramda';
+
+import {
+  HikeDifficulty,
+  HikePoint,
+  ROOT,
+  TypeID,
+  UPLOAD_PATH,
+  UserRole,
+} from '@app/common';
 import { finishTest } from '@app/testing';
 import { prepareTestApp, prepareVars } from '@test/base';
 
@@ -17,7 +28,7 @@ describe('Hikes (e2e)', () => {
   });
 
   const setup = async () => {
-    const user = await testService.createUser();
+    const user = await testService.createUser({ role: UserRole.localGuide });
     const hike = await testService.createHike({ userId: user.id });
 
     return {
@@ -26,7 +37,7 @@ describe('Hikes (e2e)', () => {
     };
   };
 
-  it('should import gpx file and parse it into hikes with points', async () => {
+  it('should import gpx file, save reference points into db', async () => {
     const { user } = await setup();
 
     const hikeData = {
@@ -38,22 +49,38 @@ describe('Hikes (e2e)', () => {
       ascent: 5.71,
       expectedTime: 1020,
       difficulty: HikeDifficulty.professionalHiker,
+      referencePoints: [
+        {
+          name: 'Small fountain',
+          address: 'Some test address 1/1',
+          lat: 45.18,
+          lon: 7.084,
+        },
+      ],
     };
 
-    const { body } = await restService
+    const { body: hike } = await restService
       .build(app, user)
       .request()
       .post('/hikes/import')
       .attach('gpxFile', resolve(ROOT, './test-data/4.gpx'))
-      .field(hikeData)
+      .field(omit(['referencePoints'], hikeData))
+      .field('referencePoints', JSON.stringify(hikeData.referencePoints))
       .expect(201);
 
-    expect(body).toMatchObject({ id: expect.any(TypeID), ...hikeData });
-    expect(body.gpxPath).toMatch(/^\/static\/gpx\/.+\.gpx$/);
+    expect(hike).toMatchObject({ id: expect.any(TypeID), ...hikeData });
+    expect(hike.gpxPath).toMatch(/^\/static\/gpx\/.+\.gpx$/);
 
     expect(
-      await testService.repo(HikePoint).findBy({ hikeId: body.id }),
-    ).toHaveLength(500);
+      fs.access(
+        resolve(UPLOAD_PATH, path.basename(hike.gpxPath)),
+        constants.F_OK,
+      ),
+    ).not.toReject();
+
+    expect(
+      await testService.repo(HikePoint).findBy({ hikeId: hike.id }),
+    ).toHaveLength(1);
   });
 
   it('should update hike', async () => {

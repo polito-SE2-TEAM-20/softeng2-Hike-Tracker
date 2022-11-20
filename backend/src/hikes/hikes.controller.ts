@@ -19,13 +19,13 @@ import { isNil, propEq } from 'ramda';
 import { DataSource, In } from 'typeorm';
 
 import {
-  AuthenticatedOnly,
   CurrentUser,
   GPoint,
-  GPX_FILE_PATH,
+  GPX_FILE_URI,
   Hike,
   HikePoint,
   ID,
+  LocalGuideOnly,
   mapToId,
   orderEntities,
   Point,
@@ -122,7 +122,7 @@ export class HikesController {
   }
 
   @Post('import')
-  @AuthenticatedOnly()
+  @LocalGuideOnly()
   @UseInterceptors(FileInterceptor('gpxFile'))
   async import(
     @UploadedFile(
@@ -149,39 +149,39 @@ export class HikesController {
     }>(async (entityManager) => {
       const hike = await this.service.getRepository(entityManager).save({
         userId: user.id,
-        gpxPath: join(GPX_FILE_PATH, file.filename),
+        gpxPath: join(GPX_FILE_URI, file.filename),
         ...parsedHike.hike,
         ...body,
       });
 
-      //Antonio's code for refPoint insertion starts here 
+      //Antonio's code for refPoint insertion starts here
       const referencePointsArray = body.referencePoints;
 
       const refPointsForDB = referencePointsArray.map((refPoint) => {
-        const pointObject :GPoint = {
+        const pointObject: GPoint = {
           type: 'Point',
-          coordinates: [refPoint.lon, refPoint.lat]
-        }
+          coordinates: [refPoint.lon, refPoint.lat],
+        };
 
         const refPointForDB = {
           name: refPoint.name,
           address: refPoint.address,
-          point: pointObject, 
-        }
+          point: pointObject,
+        };
         return refPointForDB;
       });
-      
-      const insertedRefP = await entityManager.getRepository(Point).save(
-        refPointsForDB.map<Partial<Point>>((point) => ({ 
+
+      const referencePoints = await entityManager.getRepository(Point).save(
+        refPointsForDB.map<Partial<Point>>((point) => ({
           type: 0,
           position: point.point,
           address: point.address,
           name: point.name,
-        }))
+        })),
       );
 
       await entityManager.getRepository(HikePoint).save(
-        insertedRefP.map<HikePoint>((point, index) => ({
+        referencePoints.map<HikePoint>((point, index) => ({
           hikeId: hike.id,
           pointId: point.id,
           index,
@@ -189,26 +189,26 @@ export class HikesController {
       );
       //Antonio's code ends here
 
-      const points = await this.pointsService
-        .getRepository(entityManager)
-        .save(parsedHike.points);
+      // const points = await this.pointsService
+      //   .getRepository(entityManager)
+      //   .save(parsedHike.points);
 
-      await entityManager.getRepository(HikePoint).save(
-        points.map<HikePoint>((point, index) => ({
-          hikeId: hike.id,
-          pointId: point.id,
-          index,
-        })),
-      );
+      // await entityManager.getRepository(HikePoint).save(
+      //   points.map<HikePoint>((point, index) => ({
+      //     hikeId: hike.id,
+      //     pointId: point.id,
+      //     index,
+      //   })),
+      // );
 
-      return { hike, points };
+      return { hike, points: referencePoints };
     });
 
     return hike;
   }
 
   @Put(':id')
-  @AuthenticatedOnly()
+  @LocalGuideOnly()
   async updateHike(
     @Param('id') id: ID,
     @Body() data: UpdateHikeDto,
@@ -244,7 +244,6 @@ export class HikesController {
   }
 
   @Get(':id')
-  @AuthenticatedOnly()
   async getHike(@Param('id', new ParseIntPipe()) id: ID): Promise<Hike> {
     return await this.service.findByIdOrThrow(id);
   }
