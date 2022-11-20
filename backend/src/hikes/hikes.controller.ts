@@ -218,8 +218,8 @@ export class HikesController {
     //Antonio's code on Ref Points Update starts here
       /*
         OPERATIONS TO DO:
-        - SELECT all Ref Points Id in HikePoint table;
-        - DELETE all Ref Points associated to a certain hike in Point table by IDs previously selected;
+        - SELECT all Ref Points Id in HikePoint table; ✓
+        - DELETE all Ref Points associated to a certain hike in Point table by IDs previously selected; ✓
         - INSERT new Ref Points in Points;
         - INSERT new Ref Points in HikePoints;
       */
@@ -234,6 +234,8 @@ export class HikesController {
         await this.pointsService.getRepository().delete({
           id: In(pointsToDelete)
         })
+
+        //INSERT in Points
      } 
     //Antonio's code ends here
 
