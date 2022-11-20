@@ -6,60 +6,13 @@ import { Grid } from '@mui/material';
 import { Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import LOH_API from './LOH-API';
-import HTSideFilter from '../../components/side-filter/HTSideFilter';
+import HTSideFilter from '../../components/side-filter/HTFilter';
 import HTTable from '../../components/table/HTTable';
+import HikeCard from '../../components/hike-card/HikeCard';
+import HTTopBarFilter from '../../components/side-filter/HTTopBarFilter';
+import Skeleton from '@mui/material/Skeleton';
 
 const HTListOfHikes = (props) => {
-    const columns = [
-        {
-            field: 'name',
-            headerName: 'Name',
-            type: 'any',
-            width: 150,
-            editable: true,
-        },
-        {
-            field: 'expTime',
-            headerName: 'Expected Time',
-            type: 'any',
-            width: 150,
-            editable: true,
-        },
-        {
-            field: 'ascent',
-            headerName: 'Ascent',
-            type: 'any',
-            width: 110,
-            editable: true,
-        },
-        {
-            field: 'difficulty',
-            headerName: 'Diffuculty',
-            type: 'any',
-            width: 110,
-            editable: true,
-        },
-        {
-            field: 'length',
-            headerName: 'Length',
-            type: 'any',
-            width: 110,
-            editable: true,
-        }
-    ];
-
-    const rows = [
-        { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-        { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-        { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-        { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-        { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-        { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-        { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-        { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-        { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-    ];
-
     const [region, setRegion] = useState('')
     const [province, setProvince] = useState('')
     const [minAsc, setMinAsc] = useState('')
@@ -76,7 +29,7 @@ const HTListOfHikes = (props) => {
         maxDiff, setMaxDiff, minLen, setMinLen, maxLen, setMaxLen,
         minExT, setMinExT, maxExT, setMaxExT]
 
-    const [isFilterOpen, setFilterOpen] = useState(false)
+    const [isFilterOpen, setFilterOpen] = useState(true)
     const [isSortingOpen, setSortingOpen] = useState(false)
     const [isHikeShown, setHikeShow] = useState(false)
     const [hike, setHike] = useState({ title: "", expectedTime: -1, ascent: -1, difficulty: "", length: -1 })
@@ -166,30 +119,23 @@ const HTListOfHikes = (props) => {
     return (
         <div style={{ backgroundColor: "#f2f2f2" }}>
             <HTNavbar isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
-            <Grid container spacing={0} style={{ backgroundColor: "#F2F2F2", height: "100%", minHeight: "100vh" }}>
-                <Grid container style={{marginTop: "80px"}}>
+            <div style={{ backgroundColor: "#F2F2F2", height: "100%", minHeight: "100vh" }}>
+                <Grid container style={{ marginTop: "75px", marginBottom: "20px", display: "flex", justifyContent: "center" }}>
+                    <HTTopBarFilter />
+                </Grid>
+                <Grid container columns={5} style={{ marginTop: "90px", display: "flex", justifyContent: "center" }}>
                     {
-                        isFilterOpen ?
-                            <>
-                                <Grid item lg={4} style={{ backgroundColor: "#A6A6A6", paddingTop: "60px" }} >
-                                    <Box sx={{ height: 400, width: '100%', paddingRight: "42px", paddingLeft: "42px" }}>
-                                        <HTSideFilter values={values} />
-                                    </Box>
+                        listOfHikes.map(hike => {
+                            return (
+                                <Grid item lg={1} style={{ marginLeft: "15px", marginRight: "15px", marginBottom: "15px" }}>
+                                    <HikeCard hike={hike} />
                                 </Grid>
-                                <Grid item lg={8} style={{ paddingTop: "60px" }} sx={{ display: "flex", justifyContent: "center" }}>
-                                    <Box sx={{ height: 500, width: '100%', paddingRight: "42px", paddingLeft: "42px" }}>
-                                        <HTTable openFilter={filterButton} />
-                                    </Box>
-                                </Grid>
-                            </>
-                            : <Grid item lg={12} style={{ paddingTop: "60px" }} sx={{ display: "flex", justifyContent: "center" }}>
-                                <Box sx={{ height: 500, width: '100%', paddingRight: "42px", paddingLeft: "42px" }}>
-                                    <HTTable openFilter={filterButton} />
-                                </Box>
-                            </Grid>
+                            );
+                        })
                     }
                 </Grid>
-            </Grid >
+
+            </div>
         </div>
     );
 }

@@ -6,7 +6,7 @@ import { Grid } from '@mui/material';
 import { Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import LOH_API from './LOH-API';
-import HTSideFilter from '../../components/side-filter/HTSideFilter';
+import HTSideFilter from '../../components/side-filter/HTFilter';
 import HTTable from '../../components/table/HTTable';
 
 const HTHutPage = (props) => {
