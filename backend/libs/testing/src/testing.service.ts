@@ -69,11 +69,14 @@ export class TestingService {
   // }
 
   async createHut(
-    data: DeepPartial<Hut>,
-    pointData?: Partial<Point>,
+    data?: DeepPartial<Hut>,
+    pointData: Partial<Point> = {
+      position: { type: 'Point', coordinates: [49, 7] },
+    },
   ): Promise<Hut> {
-    let pointId: ID | undefined;
-    if (pointData) {
+    let pointId: ID | undefined = data?.pointId;
+
+    if (pointData || !pointId) {
       const point = await this.createPoint(pointData);
       pointId = point.id;
     }
@@ -83,8 +86,20 @@ export class TestingService {
     return hut;
   }
 
-  async createParkingLot(data: DeepPartial<ParkingLot>): Promise<ParkingLot> {
-    return await this.createBase(ParkingLot, data);
+  async createParkingLot(
+    data: DeepPartial<ParkingLot>,
+    pointData: Partial<Point> = {
+      position: { type: 'Point', coordinates: [49, 7] },
+    },
+  ): Promise<ParkingLot> {
+    let pointId: ID | undefined = data?.pointId;
+
+    if (pointData || !pointId) {
+      const point = await this.createPoint(pointData);
+      pointId = point.id;
+    }
+
+    return await this.createBase<ParkingLot>(ParkingLot, { ...data, pointId });
   }
 
   async createHikePoint(

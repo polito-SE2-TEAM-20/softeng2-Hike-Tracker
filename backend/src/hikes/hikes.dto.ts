@@ -15,8 +15,11 @@ import {
 } from 'class-validator';
 
 import {
+  DtoWithGroups,
   HikeDifficulty,
   HikeLimits,
+  ID,
+  IsIdentifier,
   PointLimits,
   valToNumber,
 } from '@app/common';
@@ -172,4 +175,35 @@ export class UpdateHikeDto extends OmitType(PartialType(HikeDto), [
   @ValidateNested({ each: true })
   @Type(() => ReferencePointDto)
   referencePoints?: ReferencePointDto[];
+}
+
+class LinkedPointDto extends DtoWithGroups {
+  protected generateGroups() {
+    if (this.hutId) {
+      return ['hut'];
+    }
+    if (this.parkingLotId) {
+      return ['parkingLot'];
+    }
+
+    throw new Error('hutId or parkingLotId should be defined');
+  }
+
+  @IsIdentifier({ groups: ['hut'] })
+  @IsOptional({ groups: ['parkingLot'] })
+  hutId!: ID;
+
+  @IsIdentifier({ groups: ['parkingLot'] })
+  @IsOptional({ groups: ['hut'] })
+  parkingLotId!: ID;
+}
+
+export class LinkHutToHikeDto {
+  @IsIdentifier()
+  hikeId!: ID;
+
+  @ValidateNested({ each: true })
+  @IsArray()
+  @Type(() => LinkedPointDto)
+  linkedPoints!: LinkedPointDto[];
 }

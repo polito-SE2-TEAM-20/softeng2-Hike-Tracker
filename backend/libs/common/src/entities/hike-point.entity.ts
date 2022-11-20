@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 
 import { FOREIGN_OPTIONS_CASCADE } from '../constants';
+import { PointType } from '../enums';
 
 import { Hike } from './hike.entity';
 import { Point } from './point.entity';
@@ -37,6 +38,13 @@ export class HikePoint {
     nullable: false,
   })
   index!: number;
+
+  @Column({
+    type: 'smallint',
+    nullable: false,
+    default: PointType.point,
+  })
+  type!: PointType;
 
   /**
    * TypeORM sql-gen only

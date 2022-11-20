@@ -12,6 +12,7 @@ import {
   ParseFilePipeBuilder,
   HttpStatus,
   ParseIntPipe,
+  HttpCode,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs-extra';
@@ -22,13 +23,18 @@ import {
   CurrentUser,
   GPoint,
   GPX_FILE_URI,
+  GroupValidationPipe,
   Hike,
+  HikeFull,
   HikePoint,
+  Hut,
   ID,
   LocalGuideOnly,
   mapToId,
   orderEntities,
+  ParkingLot,
   Point,
+  PointType,
   UserContext,
 } from '@app/common';
 import { GpxService } from '@app/gpx';
@@ -36,7 +42,12 @@ import { GpxService } from '@app/gpx';
 import { PointsService } from '../points/points.service';
 
 import { hikeFilters } from './hikes.constants';
-import { FilteredHikesDto, HikeDto, UpdateHikeDto } from './hikes.dto';
+import {
+  FilteredHikesDto,
+  HikeDto,
+  LinkHutToHikeDto,
+  UpdateHikeDto,
+} from './hikes.dto';
 import { HikesService } from './hikes.service';
 
 @Controller('hikes')
@@ -185,6 +196,7 @@ export class HikesController {
           hikeId: hike.id,
           pointId: point.id,
           index,
+          type: PointType.referencePoint,
         })),
       );
       //Antonio's code ends here
@@ -207,6 +219,70 @@ export class HikesController {
     return hike;
   }
 
+  @Post('linkPoints')
+  @LocalGuideOnly()
+  @HttpCode(200)
+  async linkPoints(
+    @Body(new GroupValidationPipe()) { hikeId, linkedPoints }: LinkHutToHikeDto,
+  ): Promise<HikeFull> {
+    await this.service.ensureExistsOrThrow(hikeId);
+
+    // get points of these entities
+    const hutIds = linkedPoints.filter((v) => !!v.hutId).map((v) => v.hutId);
+    const parkingLotIds = linkedPoints
+      .filter((v) => !!v.parkingLotId)
+      .map((v) => v.parkingLotId);
+
+    const points = await this.dataSource
+      .getRepository(Point)
+      .createQueryBuilder('p')
+      .orWhere((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select(['h.pointId'])
+          .from(Hut, 'h')
+          .andWhere('h.id IN (:...hutIds)', {
+            hutIds,
+          })
+          .getQuery();
+
+        return `p.id IN ${subQuery}`;
+      })
+      .orWhere((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select(['pl.pointId'])
+          .from(ParkingLot, 'pl')
+          .andWhere('pl.id IN (:...parkingLotIds)', {
+            parkingLotIds,
+          })
+          .getQuery();
+
+        return `p.id IN ${subQuery}`;
+      })
+      .getMany();
+
+    await this.dataSource.transaction(async (entityManager) => {
+      // remove all existing links
+      await entityManager.getRepository(HikePoint).delete({
+        hikeId,
+        type: PointType.linkedPoint,
+      });
+
+      // save new links
+      await entityManager.getRepository(HikePoint).save(
+        points.map<Partial<HikePoint>>(({ id: pointId }, index) => ({
+          index,
+          hikeId,
+          pointId,
+          type: PointType.linkedPoint,
+        })),
+      );
+    });
+
+    return await this.service.getFullHike(hikeId);
+  }
+
   @Put(':id')
   @LocalGuideOnly()
   async updateHike(
@@ -221,8 +297,8 @@ export class HikesController {
   }
 
   @Get(':id')
-  async getHike(@Param('id', new ParseIntPipe()) id: ID): Promise<Hike> {
-    return await this.service.findByIdOrThrow(id);
+  async getHike(@Param('id', new ParseIntPipe()) id: ID): Promise<HikeFull> {
+    return await this.service.getFullHike(id);
   }
 
   // @Get(':id')
