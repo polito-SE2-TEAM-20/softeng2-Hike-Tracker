@@ -38,12 +38,16 @@ export class AuthService {
   }
 
   async login(user: UserContext) {
-    const payload: UserJwtPayload = { id: user.id };
-
     return {
       user: safeUser(user),
-      token: await this.jwtService.signAsync(payload),
+      token: await this.signUserJwt(user),
     };
+  }
+
+  async signUserJwt(user: UserContext): Promise<string> {
+    const payload: UserJwtPayload = { id: user.id };
+
+    return await this.jwtService.signAsync(payload);
   }
 
   async validatePassword(password: string, hash: string): Promise<boolean> {

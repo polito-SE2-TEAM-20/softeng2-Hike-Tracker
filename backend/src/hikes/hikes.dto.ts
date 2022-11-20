@@ -1,6 +1,7 @@
-import { PartialType } from '@nestjs/mapped-types';
+import { OmitType, PartialType } from '@nestjs/mapped-types';
 import { Type, Transform } from 'class-transformer';
 import {
+  IsArray,
   IsEnum,
   IsInt,
   IsLatitude,
@@ -16,8 +17,8 @@ import {
 import {
   HikeDifficulty,
   HikeLimits,
-  LatLonDto,
   PointLimits,
+  valToNumber,
 } from '@app/common';
 
 export class PointWithRadius {
@@ -83,7 +84,7 @@ export class FilteredHikesDto {
   inPointRadius?: PointWithRadius;
 }
 
-export class ReferencePointDto extends LatLonDto {
+export class ReferencePointDto {
   @IsString()
   @IsOptional()
   @MaxLength(PointLimits.name)
@@ -93,22 +94,30 @@ export class ReferencePointDto extends LatLonDto {
   @IsOptional()
   @MaxLength(PointLimits.address)
   address?: string;
+
+  @IsLatitude()
+  @Transform(({ value }) => valToNumber(value))
+  lat!: number;
+
+  @IsLongitude()
+  @Transform(({ value }) => valToNumber(value))
+  lon!: number;
 }
 
 export class HikeDto {
   @IsNumber()
   @Min(0)
-  @Transform(({ value }) => +value)
+  @Transform(({ value }) => valToNumber(value))
   length!: number;
 
   @IsNumber()
   @Min(0)
-  @Transform(({ value }) => +value)
+  @Transform(({ value }) => valToNumber(value))
   ascent!: number;
 
   @IsNumber()
   @Min(0)
-  @Transform(({ value }) => +value)
+  @Transform(({ value }) => valToNumber(value))
   expectedTime!: number;
 
   @IsEnum(HikeDifficulty)
@@ -131,9 +140,36 @@ export class HikeDto {
   @MaxLength(HikeLimits.province)
   province!: string;
 
+  @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ReferencePointDto)
+  @Transform(
+    ({ value }) => {
+      if (typeof value !== 'string') {
+        return value;
+      }
+
+      return JSON.parse(value).map((entry: any) => {
+        const dto = new ReferencePointDto();
+
+        Object.entries(entry).forEach(([key, v]) => {
+          dto[key] = v;
+        });
+
+        return dto;
+      });
+    },
+    { toClassOnly: true },
+  )
   referencePoints!: ReferencePointDto[];
 }
 
-export class UpdateHikeDto extends PartialType(HikeDto) {}
+export class UpdateHikeDto extends OmitType(PartialType(HikeDto), [
+  'referencePoints',
+] as const) {
+  @IsArray()
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => ReferencePointDto)
+  referencePoints?: ReferencePointDto[];
+}
