@@ -29,6 +29,8 @@ export class AuthController {
   @Post('register')
   @HttpCode(201)
   async register(@Body() body: RegisterDto): Promise<UserContext> {
+    if(body.role == 1)
+      throw new Error("Friend is not a valid role to register")
     return await this.service.register(body);
   }
 
