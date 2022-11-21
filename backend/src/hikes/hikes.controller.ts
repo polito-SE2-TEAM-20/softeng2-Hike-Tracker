@@ -106,7 +106,7 @@ export class HikesController {
 
       if (maybeFilter) {
         whereConditions.push(
-          `hikes."${maybeFilter.entityField}" ${
+          `h."${maybeFilter.entityField}" ${
             maybeFilter.operator
           } $${paramIndex++}`,
         );
