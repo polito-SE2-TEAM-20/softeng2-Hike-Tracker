@@ -10,7 +10,7 @@ export class ParkingLotController {
     constructor(private parkingLot: ParkingLotService){}
 
     @Post('insertLot')
-    //@LocalGuideOnly()
+    @LocalGuideOnly()
     @HttpCode(201)
     async insertParkingLot(@Body() body: ParkingLotDto): Promise<ParkingLot> {
         return await this.parkingLot.insertParkingLot(body)   
