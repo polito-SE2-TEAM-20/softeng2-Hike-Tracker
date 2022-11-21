@@ -2,7 +2,7 @@ import './list-of-hikes-style.css'
 
 import { useEffect, useState } from 'react';
 import HTNavbar from '../../components/HTNavbar/HTNavbar';
-import { Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import LOH_API from './LOH-API';
@@ -146,16 +146,20 @@ const HTListOfHikes = (props) => {
     }
 
     return (
-        <>
-            <div display={displayType.pc} style={{ backgroundColor: "#f2f2f2" }}>
-                <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
-                <div style={{ backgroundColor: "#F2F2F2", height: "100%", minHeight: "100vh", marginLeft: "200px", marginRight: "200px" }}>
-                    <Grid container style={{ marginTop: "75px", marginBottom: "20px", display: "flex", justifyContent: "center" }}>
-                        <HTTopBarFilter listOfHikes={listOfHikes} loading={loading} setFilter={setFilter} />
-                    </Grid>
-                    <Grid container columns={5} style={{ marginTop: "180px", display: "flex", justifyContent: "center" }}>
-                        {
-                            loading ?
+        <div display={displayType.pc} style={{ backgroundColor: "#f2f2f2" }}>
+            <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
+            <div style={{ backgroundColor: "#F2F2F2", height: "100%", minHeight: "100vh", marginLeft: "200px", marginRight: "200px" }}>
+                <Grid container style={{ marginTop: "75px", marginBottom: "20px", display: "flex", justifyContent: "center" }}>
+                    <HTTopBarFilter listOfHikes={listOfHikes} loading={loading} setFilter={setFilter} />
+                </Grid>
+                <Grid container columns={5} style={{ marginTop: "180px", display: "flex", justifyContent: "center" }}>
+                    {
+                        loading ?
+                            listOfHikes.length == 0 ?
+                                <Typography fontFamily={"Bakbak One, display"} fontWeight="600" fontSize="32px">
+                                    No matching hikes.
+                                </Typography>
+                                :
                                 listOfHikes.map(hike => {
                                     return (
                                         <Grid item lg={1} style={{ marginLeft: "15px", marginRight: "15px", marginBottom: "15px" }}>
@@ -163,59 +167,54 @@ const HTListOfHikes = (props) => {
                                         </Grid>
                                     );
                                 })
-                                :
-                                <>
-                                    <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
-                                        <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
-                                    </Grid>
-                                    <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
-                                        <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
-                                    </Grid>
-                                    <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
-                                        <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
-                                    </Grid>
-                                    <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
-                                        <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
-                                    </Grid>
-                                    <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
-                                        <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
-                                    </Grid>
-                                    <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
-                                        <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
-                                    </Grid>
-                                    <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
-                                        <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
-                                    </Grid>
-                                    <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
-                                        <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
-                                    </Grid>
-                                </>
-                        }
-                    </Grid>
+                            :
+                            <>
+                                <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
+                                    <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
+                                </Grid>
+                                <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
+                                    <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
+                                </Grid>
+                                <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
+                                    <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
+                                </Grid>
+                                <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
+                                    <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
+                                </Grid>
+                                <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
+                                    <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
+                                </Grid>
+                                <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
+                                    <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
+                                </Grid>
+                                <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
+                                    <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
+                                </Grid>
+                                <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
+                                    <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
+                                </Grid>
+                            </>
+                    }
+                </Grid>
 
-                </div>
             </div>
-            <div display={displayType.mobile} style={{ backgroundColor: "#f2f2f2" }}>
-                <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
-                
-            </div>
-        </>
+        </div>
     );
 }
 
