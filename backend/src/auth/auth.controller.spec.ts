@@ -36,26 +36,4 @@ describe('AuthController', () => {
     expect(controller.register(body)).toBe(result);
   });
 
-  it('Should return user data and 1 token', async () => {
-    const body = {
-        
-        email: "utente@prova.it",
-        password: "password"
-        
-    };
-    const result = [
-        {
-            user: {
-                id: 1,
-                email: "utente@prova.it",
-                firstName: "Utente",
-                lastName: "Di Prova",
-                role: 0
-            },
-            token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjY4MzYyNDQ0fQ.Iijf5rzdqQhXjE8-oSB5EzFL7IkAo1gMvbO7Ug3LXbQ"
-        }
-    ];
-
-    expect(controller.login(body)).toBe(result);
-  });
 });
