@@ -123,9 +123,9 @@ const HTListOfHikes = (props) => {
             <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
             <div style={{ backgroundColor: "#F2F2F2", height: "100%", minHeight: "100vh", marginLeft: "200px", marginRight: "200px" }}>
                 <Grid container style={{ marginTop: "75px", marginBottom: "20px", display: "flex", justifyContent: "center" }}>
-                    <HTTopBarFilter />
+                    <HTTopBarFilter listOfHikes={listOfHikes} loading={loading} />
                 </Grid>
-                <Grid container columns={5} style={{ marginTop: "90px", display: "flex", justifyContent: "center" }}>
+                <Grid container columns={5} style={{ marginTop: "150px", display: "flex", justifyContent: "center" }}>
                     {
                         loading ?
                             listOfHikes.map(hike => {
