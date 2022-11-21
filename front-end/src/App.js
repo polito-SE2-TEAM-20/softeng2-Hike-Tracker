@@ -132,9 +132,9 @@ const addNewGpx = (formData) =>{
   return (
     <>
       <Routes>
-        <Route path="/" element={<HTMainPage user={user.user} isLoggedIn={loggedIn} doLogOut={doLogOut} navigate={navigate}/>} />
-        <Route path="/listofhikes" element={<HTListOfHikes user={user.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
-        <Route path="/browsehikes" element={<HTBrowseHikes user={user.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
+        <Route path="/" element={<HTMainPage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} navigate={navigate}/>} />
+        <Route path="/listofhikes" element={<HTListOfHikes user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
+        <Route path="/browsehikes" element={<HTBrowseHikes user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/singlehike" element={<SingleHike />} />
         <Route path="/localGuide" element={<LocalGuide isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
         <Route path="/navbar" element={<NavigationBar user={user} />} />
