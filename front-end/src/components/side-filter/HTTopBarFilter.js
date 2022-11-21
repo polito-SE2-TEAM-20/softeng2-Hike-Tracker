@@ -39,16 +39,26 @@ const HTTopBarFilter = (props) => {
   }
 
   if (props.loading) {
-    regions = Array.from(props?.listOfHikes.filter(x => { if (province != "") return x.province === province; return true }).map(x => x.region).filter(x => x !== undefined && x !== '').reduce((set, x) => set.add(x), new Set()))
+    regions = Array.from(
+      props?.listOfHikes.filter(x => { if (province != "") return x.province === province; return true })
+        .map(x => x.region).filter(x => x !== undefined && x !== '')
+        .reduce((set, x) => set.add(x), new Set()))
   }
   if (props.loading) {
-    provinces = Array.from(props?.listOfHikes.filter(x => { if (region != "") return x.region === region; return true }).map(x => x.province).filter(x => x !== undefined && x !== '').reduce((set, x) => set.add(x), new Set()))
+    provinces = Array.from(
+      props?.listOfHikes.filter(x => { if (region != "") return x.region === region; return true })
+        .map(x => x.province).filter(x => x !== undefined && x !== '')
+        .reduce((set, x) => set.add(x), new Set()))
   }
   useEffect(() => {
     setMaxLen(props?.listOfHikes.map(x => x.length).reduce(getMax, 0))
     setMaxExpTime(props?.listOfHikes.map(x => x.expectedTime).reduce(getMax, 0))
     setMaxDiff(props?.listOfHikes.map(x => x.difficulty).reduce(getMax, 0))
     setMaxAsc(props?.listOfHikes.map(x => x.ascent).reduce(getMax, 0))
+    setLength([0, maxLen])
+    setExpTime([0, maxExpTime])
+    setDiff([0, maxDiff])
+    setAsc([0, maxAsc])
   }, [props.listOfHikes])
 
   return (
@@ -57,28 +67,47 @@ const HTTopBarFilter = (props) => {
       paddingTop: "15px", paddingBottom: "15px", position: "fixed", zIndex: "1"
     }}>
       <Grid lg={2} item style={{ display: "flex", justifyContent: "center" }}>
-        <HTDropdown dataset={regions} hint="Region" setFun={setRegion} val={region} />
+        <Grid container>
+          <Grid item>
+            <HTDropdown dataset={regions} hint="Region" setFun={setRegion} val={region} />
+          </Grid>
+          <Grid item style={{ marginTop: "12px" }}>
+            <HTDropdown dataset={provinces} hint="Province" setFun={setProvince} val={province} />
+          </Grid>
+        </Grid>
       </Grid>
+
       <Grid lg={2} item style={{ display: "flex", justifyContent: "center" }}>
-        <HTDropdown dataset={provinces} hint="Province" setFun={setProvince} val={province} />
+        <Grid container>
+          <Grid item>
+            <HTSlider value={length} setFun={setLength} max={maxLen} text="Length" />
+          </Grid>
+          <Grid item style={{ marginTop: "12px" }}>
+            <HTSlider value={expTime} setFun={setExpTime} max={maxExpTime} text="Expected time" />
+          </Grid>
+        </Grid>
       </Grid>
+
       <Grid lg={2} item style={{ display: "flex", justifyContent: "center" }}>
-        <HTSlider value={length} setFun={setLength} max={maxLen} text="Length" />
+        <Grid container>
+          <Grid item>
+            <HTSlider value={diff} setFun={setDiff} max={maxDiff} text="Difficulty" />
+          </Grid>
+          <Grid item style={{ marginTop: "12px" }}>
+            <HTSlider value={asc} setFun={setAsc} max={maxAsc} text="Ascent" />
+          </Grid>
+        </Grid>
       </Grid>
-      <Grid lg={2} item style={{ display: "flex", justifyContent: "center" }}>
-        <HTSlider value={expTime} setFun={setExpTime} max={maxExpTime} text="Expected time" />
-      </Grid>
-      <Grid lg={2} item style={{ display: "flex", justifyContent: "center" }}>
-        <HTSlider value={diff} setFun={setDiff} max={maxDiff} text="Difficulty" />
-      </Grid>
-      <Grid lg={2} item style={{ display: "flex", justifyContent: "center" }}>
-        <HTSlider value={asc} setFun={setAsc} max={maxAsc} text="Ascent" />
-      </Grid>
-      <Grid lg={3} item style={{ display: "flex", justifyContent: "center" }}>
-        <Button text="Apply filters" size="16px" textColor="white" />
-      </Grid>
-      <Grid lg={3} item style={{ display: "flex", justifyContent: "center" }}>
-        <Button text="Reset filters" size="16px" textColor="white" navigate={() => { resetAllFields() }} />
+
+      <Grid lg={1} item style={{ display: "flex", justifyContent: "center" }}>
+        <Grid container>
+          <Grid item>
+            <Button text="Apply filters" size="16px" textColor="white" />
+          </Grid>
+          <Grid item>
+            <Button text="Reset filters" size="16px" textColor="white" navigate={() => { resetAllFields() }} />
+          </Grid>
+        </Grid>
       </Grid>
     </Grid>
   );

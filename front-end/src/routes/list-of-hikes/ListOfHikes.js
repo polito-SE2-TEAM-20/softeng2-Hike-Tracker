@@ -125,7 +125,7 @@ const HTListOfHikes = (props) => {
                 <Grid container style={{ marginTop: "75px", marginBottom: "20px", display: "flex", justifyContent: "center" }}>
                     <HTTopBarFilter listOfHikes={listOfHikes} loading={loading} />
                 </Grid>
-                <Grid container columns={5} style={{ marginTop: "150px", display: "flex", justifyContent: "center" }}>
+                <Grid container columns={5} style={{ marginTop: "180px", display: "flex", justifyContent: "center" }}>
                     {
                         loading ?
                             listOfHikes.map(hike => {
