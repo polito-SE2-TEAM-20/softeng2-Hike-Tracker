@@ -296,8 +296,8 @@ export class HikesController {
         OPERATIONS TO DO:
         - SELECT all Ref Points Id in HikePoint table; ✓
         - DELETE all Ref Points associated to a certain hike in Point table by IDs previously selected; ✓
-        - INSERT new Ref Points in Points;
-        - INSERT new Ref Points in HikePoints;
+        - INSERT new Ref Points in Points; ✓
+        - INSERT new Ref Points in HikePoints; ✓
       */
      if(!isNil(data.referencePoints)){
 
@@ -311,7 +311,40 @@ export class HikesController {
           id: In(pointsToDelete)
         })
 
-        //INSERT in Points
+        //Creation of proper ref points
+        const refPointsForDB = data.referencePoints.map((refPoint) => {
+          const pointObject: GPoint = {
+            type: 'Point',
+            coordinates: [refPoint.lon, refPoint.lat],
+          };
+  
+          const refPointForDB = {
+            name: refPoint.name,
+            address: refPoint.address,
+            point: pointObject,
+          };
+          return refPointForDB;
+        });
+  
+        //INSERT into Points table of the RefPoints
+        const referencePoints = await this.pointsService.getRepository().save(
+          refPointsForDB.map<Partial<Point>>((point) => ({
+            type: 0,
+            position: point.point,
+            address: point.address,
+            name: point.name,
+          })),
+        );
+  
+        //INSERT into HikePoints table of the RefPoints
+        await this.service.getRepository().save(
+          referencePoints.map<HikePoint>((point, index) => ({
+            hikeId: id,
+            pointId: point.id,
+            index,
+            type: PointType.referencePoint,
+          })),
+        );
      } 
     //Antonio's code ends here
 
