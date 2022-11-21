@@ -36,6 +36,20 @@ const HTTopBarFilter = (props) => {
         setExpTime([0, maxExpTime])
         setDiff([0, maxDiff])
         setAsc([0, maxAsc])
+        props.setFilter(
+            {
+                "province": null,
+                "region": null,
+                "minLength": null,
+                "maxLength": null,
+                "expectedTimeMin": null,
+                "expectedTimeMax": null,
+                "difficultyMin": null,
+                "difficultyMax": null,
+                "ascentMin": null,
+                "ascentMax": null
+            }
+        )
     }
 
     if (props.loading) {
@@ -121,20 +135,7 @@ const HTTopBarFilter = (props) => {
                     </Grid>
                     <Grid item>
                         <Button text="Reset filters" size="16px" textColor="white" navigate={() => {
-                            resetAllFields(); props.setFilter(
-                                {
-                                    "province": null,
-                                    "region": null,
-                                    "minLength": null,
-                                    "maxLength": null,
-                                    "expectedTimeMin": null,
-                                    "expectedTimeMax": null,
-                                    "difficultyMin": null,
-                                    "difficultyMax": null,
-                                    "ascentMin": null,
-                                    "ascentMax": null
-                                }
-                            )
+                            resetAllFields();
                         }} />
                     </Grid>
                 </Grid>
