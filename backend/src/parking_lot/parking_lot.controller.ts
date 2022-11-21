@@ -9,12 +9,10 @@ export class ParkingLotController {
     constructor(private parkingLot: ParkingLotService){}
 
     @Post('insertLot')
-    @LocalGuideOnly()
+    //@LocalGuideOnly()
     @HttpCode(200)
     async insertParkingLot(@Body() body: any) {
-        return {
-            LotInserted: await this.parkingLot.insertParkingLot(body)
-        }
+        return await this.parkingLot.insertParkingLot(body)   
     }
 
 

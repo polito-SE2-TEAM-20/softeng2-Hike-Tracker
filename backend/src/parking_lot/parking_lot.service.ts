@@ -1,28 +1,29 @@
-import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
-import { ParkingLot } from '@app/common';
+import { ParkingLot,BaseService } from '@app/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
-@Injectable()
-export class ParkingLotService {
 
-    constructor(
-        private dataSource :DataSource
-    ){};
+export class ParkingLotService extends BaseService<ParkingLot> {
+  constructor(
+    @InjectRepository(ParkingLot)
+    private parkingLotRepository: Repository<ParkingLot>,
+  ) {
+    super(ParkingLot, {
+      repository: parkingLotRepository,
+      errorMessage: 'Parking Lot not found',
+    });
+  }
 
-    async insertParkingLot(lot: ParkingLot) {
-        const parkingLot = this.dataSource.getRepository(ParkingLot).createQueryBuilder()
-        .insert()
-        .into(ParkingLot)
-        .values(
-            [{
-                pointId: lot.pointId,
-                maxCars: lot.maxCars
-            }]   
-        )
-        .execute();
-
-        return parkingLot;
-    }
+  async insertParkingLot(lot: ParkingLot, entityManager?: EntityManager) {
+    const parkingLot = await this.getRepository(entityManager).save(
+        {
+            pointId: lot.pointId,
+            maxCars: lot.maxCars
+        }
+    )
+    
+    return parkingLot;
+  }
 
 
 }
