@@ -60,7 +60,7 @@ function HTNavbar(props) {
                             textDecoration: 'none',
                         }}
                     >
-                        Hike Tracker
+                        HackTheHike
                     </Typography>
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -125,7 +125,7 @@ function HTNavbar(props) {
                             textDecoration: 'none',
                         }}
                     >
-                        Hike Tracker
+                        HackTheHike
                     </Typography>
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
