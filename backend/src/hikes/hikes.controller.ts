@@ -16,7 +16,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs-extra';
-import { propEq } from 'ramda';
+import { isNil, propEq } from 'ramda';
 import { DataSource, In } from 'typeorm';
 
 import {
@@ -104,7 +104,7 @@ export class HikesController {
     Object.keys(body).forEach((filterKey) => {
       const maybeFilter = hikeFilters[filterKey as keyof FilteredHikesDto];
 
-      if (maybeFilter) {
+      if (maybeFilter && !isNil(body[filterKey])) {
         whereConditions.push(
           `h."${maybeFilter.entityField}" ${
             maybeFilter.operator
