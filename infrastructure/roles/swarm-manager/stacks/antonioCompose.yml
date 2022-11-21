@@ -1,0 +1,42 @@
+compose:
+      - version: "3.6"
+        x-deploy-options: &deploy
+          update_config:
+            parallelism: 2
+            delay: 3s
+            failure_action: rollback
+            order: start-first
+
+        services:
+          ####################
+          #### production ####
+          ####################
+          frontend:
+            image: dontKnowYet/something:frontend
+            ports:
+                - "3000:3000"
+
+          backend:
+            ports:
+                - "3500:3500"
+            image: dontKnowYet/something:backend
+
+          ####################
+          ## infrastructure ##
+          ####################
+
+          postgresql:
+            image: postgis/postgis:14-3.3
+            restart: always
+            env_file:
+              - /srv/env.pg-prod
+            volumes:
+              - /srv/pg-prod-data:/var/lib/postgresql/data
+            networks:
+              - stacknet
+            ports:
+              - '5432:5432'
+            deploy:
+              placement:
+                  constraints:
+                      - node.role == manager
