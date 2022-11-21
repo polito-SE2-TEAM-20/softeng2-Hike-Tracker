@@ -1,6 +1,6 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { ParkingLotService } from './parking_lot.service';
-import { LocalGuideOnly } from '@app/common';
+import { LocalGuideOnly, ParkingLot } from '@app/common';
 
 
 @Controller('parkingLot')
@@ -11,7 +11,7 @@ export class ParkingLotController {
     @Post('insertLot')
     @LocalGuideOnly()
     @HttpCode(200)
-    async insertParkingLot(@Body() body: any) {
+    async insertParkingLot(@Body() body: any): Promise<ParkingLot> {
         return await this.parkingLot.insertParkingLot(body)   
     }
 
