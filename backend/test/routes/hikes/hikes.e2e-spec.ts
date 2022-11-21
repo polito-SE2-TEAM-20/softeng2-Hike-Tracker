@@ -1,3 +1,4 @@
+import { randomInt } from 'node:crypto';
 import { constants } from 'node:fs';
 import path, { resolve } from 'node:path';
 
@@ -13,7 +14,7 @@ import {
   UserRole,
 } from '@app/common';
 import { finishTest } from '@app/testing';
-import { prepareTestApp, prepareVars } from '@test/base';
+import { mapArray, prepareTestApp, prepareVars } from '@test/base';
 
 describe('Hikes (e2e)', () => {
   let { dbName, app, restService, moduleRef, testService } = prepareVars();
@@ -28,17 +29,33 @@ describe('Hikes (e2e)', () => {
   });
 
   const setup = async () => {
-    const user = await testService.createUser({ role: UserRole.localGuide });
-    const hike = await testService.createHike({ userId: user.id });
+    const localGuide = await testService.createUser({
+      role: UserRole.localGuide,
+    });
+    const hike = await testService.createHike({ userId: localGuide.id });
+    const huts = await mapArray(10, (i) =>
+      testService.createHut({
+        numberOfBeds: i,
+        price: randomInt(10, 100),
+        title: `Hut ${i}`,
+      }),
+    );
+    const parkingLots = await mapArray(10, (i) =>
+      testService.createParkingLot({
+        maxCars: (i + 1) * 5,
+      }),
+    );
 
     return {
-      user,
+      localGuide,
       hike,
+      huts,
+      parkingLots,
     };
   };
 
   it('should import gpx file, save reference points into db', async () => {
-    const { user } = await setup();
+    const { localGuide } = await setup();
 
     const hikeData = {
       title: 'eeee',
@@ -60,7 +77,7 @@ describe('Hikes (e2e)', () => {
     };
 
     const { body: hike } = await restService
-      .build(app, user)
+      .build(app, localGuide)
       .request()
       .post('/hikes/import')
       .attach('gpxFile', resolve(ROOT, './test-data/4.gpx'))
@@ -84,7 +101,7 @@ describe('Hikes (e2e)', () => {
   });
 
   it('should update hike', async () => {
-    const { user, hike } = await setup();
+    const { localGuide, hike } = await setup();
 
     const updateData = {
       title: 'new hike title',
@@ -95,7 +112,7 @@ describe('Hikes (e2e)', () => {
     };
 
     await restService
-      .build(app, user)
+      .build(app, localGuide)
       .request()
       .put(`/hikes/${hike.id}`)
       .send(updateData)
@@ -106,6 +123,50 @@ describe('Hikes (e2e)', () => {
           ...hike,
           ...updateData,
         });
+      });
+  });
+
+  it('should link huts to a hike', async () => {
+    const { localGuide, hike, huts, parkingLots } = await setup();
+
+    const linkedHuts = huts.slice(0, 3);
+    const linkedLots = parkingLots.slice(0, 3);
+    await restService
+      .build(app, localGuide)
+      .request()
+      .post('/hikes/linkPoints')
+      .send({
+        hikeId: hike.id,
+        linkedPoints: [
+          ...linkedHuts.map(({ id: hutId }) => ({ hutId })),
+          ...linkedLots.map(({ id: parkingLotId }) => ({ parkingLotId })),
+        ],
+      })
+
+      .expect(({ body }) => {
+        expect(body).toMatchObject({
+          id: hike.id,
+        });
+        expect(body.linkedPoints).toIncludeSameMembers([
+          ...linkedLots.map((entity) =>
+            expect.objectContaining({
+              type: 'parkingLot',
+              entity: expect.objectContaining({
+                ...entity,
+                point: expect.objectContaining({ id: expect.any(Number) }),
+              }),
+            }),
+          ),
+          ...linkedHuts.map((entity) =>
+            expect.objectContaining({
+              type: 'hut',
+              entity: expect.objectContaining({
+                ...entity,
+                point: expect.objectContaining({ id: expect.any(Number) }),
+              }),
+            }),
+          ),
+        ]);
       });
   });
 });
