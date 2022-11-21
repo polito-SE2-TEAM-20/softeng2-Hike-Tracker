@@ -13,7 +13,7 @@ export default function RangeSlider(props) {
   };
 
   return (
-    <Box sx={{ width: 250, marginTop: "4px" }}>
+    <Box sx={{ width: 180}}>
       <Typography>{props.text}</Typography>
       <Slider
         getAriaLabel={() => 'Length range'}
