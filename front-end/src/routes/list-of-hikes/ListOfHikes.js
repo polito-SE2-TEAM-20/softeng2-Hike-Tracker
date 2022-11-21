@@ -53,7 +53,7 @@ const HTListOfHikes = (props) => {
     const [difficulty, setDifficulty] = useState(0)
     const [length, setLength] = useState(0)
     const filterStates = { setTitle, setExpectedTime, setAscent, setDifficulty, setLength }
-    var { loading = true } = props == undefined;
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         var loh = []
@@ -63,6 +63,7 @@ const HTListOfHikes = (props) => {
         getHikes().then(() => {
             console.log(loh)
             setListOfHikes(loh)
+            setLoading(true)
         });
     }, [])
 
