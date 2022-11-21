@@ -18,7 +18,7 @@ const HTMainPage = (props) => {
     return (
         <Grid container spacing={0} style={{ backgroundColor: "#1a1a1a", height: "100%", minHeight: "100vh" }}>
             <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} navigate={props.navigate} />
-            <div style={{display: "grid", gridTemplateRows:"repeat(5, 1fr)", width: "100%"}}>
+            <div style={{display: "grid", gridTemplateRows:"repeat(2, 0.5fr)", width: "100%"}}>
                 <CardMedia display={responsiveContentStyleBig} component="img"
                     height="540px"
                     style={{gridRow: "1/2"}}
