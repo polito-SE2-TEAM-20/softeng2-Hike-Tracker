@@ -1,13 +1,19 @@
 
+const APIURL = 'http://hiking-backend.germangorodnev.com/'; // 'http://localhost:3500/'
 
-// const APIURL = 'http://se2-queue-backend.germangorodnev.com/';
-async function addHike(formData) {
-    let response = await fetch('', {
+async function addNewGpx(formData) {
+  console.log({formData})
+    let response = await fetch((APIURL + 'hikes/import/'), {
       method: 'POST',
-      body: formData,
+       body: formData,
+      headers: {
+        'Accept': '*/*',
+      }
+     
     });
     if(response.ok) {
       const newTrack = await response.json();
+      console.log(newTrack);
       return newTrack;
     }
     else {
@@ -21,5 +27,26 @@ async function addHike(formData) {
     }
   }
 
-const API_NewHike = {addHike};
+function addHike(hike){
+    return new Promise((resolve, reject)=>{
+      fetch((APIURL + 'hikes/' + hike.id), {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({length: hike.length,ascent: hike.ascent, title: hike.title, difficulty: hike.difficulty, expectedTime: hike.expectedTime,  description: hike.description}),
+
+      }).then((response =>{
+        if(response.ok){
+          resolve(null);
+        }else{
+          response.json()
+            .then((message) =>{reject(message);})
+            .catch(()=> {reject({error: "Cannot communicate with the server"})});
+        }
+      }))
+    })
+  }
+
+const API_NewHike = {addNewGpx, addHike};
 export default API_NewHike;

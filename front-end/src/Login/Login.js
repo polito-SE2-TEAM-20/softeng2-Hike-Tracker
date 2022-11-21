@@ -1,11 +1,11 @@
 import React from 'react'
 import './Login.css'
-import { Form, Button, Alert, Modal, Col, Row, FormGroup } from 'react-bootstrap';
+import { Form, Button, Alert, Modal, Col, Row, FormGroup, NavLink } from 'react-bootstrap';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 function LoginForm(props) {
 
-	const [username, setUsername] = useState('');
+	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [show, setShow] = useState(false);
 	const [errorMessage, setErrorMessage] = useState('');
@@ -15,9 +15,9 @@ function LoginForm(props) {
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 		setErrorMessage('');
-		const credentials = { username, password };
+		const credentials = { email, password };
 		let valid = true;
-		if (username === '' || password === '') {
+		if (email === '' || password === '') {
 			valid = false;
 			setErrorMessage('Wrong username or password');
 			setShow(true);
@@ -63,7 +63,7 @@ function LoginForm(props) {
           <div className='InputForm'>
             <Form.Group controlId='username'>
                 <Form.Label className='Email'>Email</Form.Label>
-                <Form.Control type='text' className='InputEmail' value={username} onChange={(ev) => setUsername(ev.target.value)} />
+                <Form.Control type='text' className='InputEmail' value={email} onChange={(ev) => setEmail(ev.target.value)} />
             </Form.Group>
             <Form.Group controlId='password'>
                 <Form.Label className='Password' >Password</Form.Label>
@@ -84,10 +84,13 @@ function LoginForm(props) {
         
         </Row>
         <Row>
-        <div className='DonthaveanaccountyetCreateone'>Don’t have an account yet? Create one</div>
+        <div className='DonthaveanaccountyetCreateone'>Don’t have an account yet? <NavLink href="/signup">Create one</NavLink></div>
+        
         </Row>
         </div></>);
 }
 
-export { LoginForm };
 
+
+
+export { LoginForm };

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { mergeDeepRight } from 'ramda';
 import type {
   DataSource,
   DeepPartial,
@@ -13,6 +12,7 @@ import {
   HikePoint,
   HikePointPrimaryKey,
   Hut,
+  ID,
   ParkingLot,
   Point,
   User,
@@ -21,8 +21,14 @@ import {
 
 import { CONNECTION_NAME } from './testing.constants';
 
+export interface IJwtService {
+  signUserJwt(user: User): Promise<string>;
+}
+
 @Injectable()
 export class TestingService {
+  jwtService?: IJwtService;
+
   constructor(
     @InjectDataSource(CONNECTION_NAME) private dataSource: DataSource,
   ) {}
@@ -62,12 +68,38 @@ export class TestingService {
   //   return authData.token;
   // }
 
-  async createHut(data: DeepPartial<Hut>): Promise<Hut> {
-    return await this.createBase(Hut, data);
+  async createHut(
+    data?: DeepPartial<Hut>,
+    pointData: Partial<Point> = {
+      position: { type: 'Point', coordinates: [49, 7] },
+    },
+  ): Promise<Hut> {
+    let pointId: ID | undefined = data?.pointId;
+
+    if (pointData || !pointId) {
+      const point = await this.createPoint(pointData);
+      pointId = point.id;
+    }
+
+    const hut = await this.createBase<Hut>(Hut, { ...data, pointId });
+
+    return hut;
   }
 
-  async createParkingLot(data: DeepPartial<ParkingLot>): Promise<ParkingLot> {
-    return await this.createBase(ParkingLot, data);
+  async createParkingLot(
+    data: DeepPartial<ParkingLot>,
+    pointData: Partial<Point> = {
+      position: { type: 'Point', coordinates: [49, 7] },
+    },
+  ): Promise<ParkingLot> {
+    let pointId: ID | undefined = data?.pointId;
+
+    if (pointData || !pointId) {
+      const point = await this.createPoint(pointData);
+      pointId = point.id;
+    }
+
+    return await this.createBase<ParkingLot>(ParkingLot, { ...data, pointId });
   }
 
   async createHikePoint(
@@ -86,23 +118,23 @@ export class TestingService {
 
   async createUser(
     data: DeepPartial<User> = {},
-  ): Promise<User & { token: string }> {
+  ): Promise<User & { token?: string }> {
     // todo: generate token for future auth
     const password = Math.random().toString().slice(2);
     const email = `${Math.random().toString().slice(2)}@gmail.com`;
 
-    const user = (await this.createBase(
-      User,
-      mergeDeepRight(data, {
-        firstName: 'test',
-        lastName: 'test',
-        role: UserRole.hiker,
-        email,
-        password, // todo: await this.passwordService.hashPassword(password),
-      }) as User,
-    )) as unknown as User;
+    const user = (await this.createBase(User, {
+      firstName: 'test',
+      lastName: 'test',
+      role: UserRole.hiker,
+      email,
+      password,
+      ...data,
+    })) as unknown as User;
 
-    const token = ''; // await this.getToken(user);
+    const token = this.jwtService
+      ? await this.jwtService.signUserJwt(user)
+      : undefined;
 
     return {
       ...user,
@@ -129,5 +161,9 @@ export class TestingService {
 
   repo<T>(t: EntityTarget<T>) {
     return this.getRepository(t);
+  }
+
+  setJwtService<T extends IJwtService>(jwtService: T) {
+    this.jwtService = jwtService;
   }
 }

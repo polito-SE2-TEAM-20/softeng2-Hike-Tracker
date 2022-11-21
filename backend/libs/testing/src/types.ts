@@ -14,7 +14,7 @@ export interface CreateWrapperOptions {
   user?: User | string;
 }
 
-export type UserAuthData = { token: string };
+export type UserAuthData = { token?: string };
 
 export type MockType<T> = {
   [P in keyof T]: jest.Mock<Record<string, unknown>>;

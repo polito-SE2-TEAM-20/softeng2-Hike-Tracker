@@ -1,4 +1,4 @@
-const APIURL = 'http://se2-queue-backend.germangorodnev.com/';
+const APIURL = 'http://hiking-backend.germangorodnev.com/';
 
 async function logIn(credentials) {
     let response = await fetch((APIURL + 'auth/login/'), {
@@ -16,6 +16,7 @@ async function logIn(credentials) {
         const user = await response.json();
         localStorage.setItem('token', user.token);
         console.log(localStorage);
+        console.log(user);
         return user;
 
     } else {

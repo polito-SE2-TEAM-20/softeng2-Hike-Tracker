@@ -15,9 +15,9 @@ ADD . /srv
 
 RUN npm run build
 
-RUN mkdir -p /srv/uploads
+RUN mkdir -p /srv/uploads/gpx
 
-RUN chown node:node /srv
+RUN chown -R node:node /srv/uploads
 
 HEALTHCHECK CMD node healthcheck.js localhost ${PORT} /healthcheck 200
 

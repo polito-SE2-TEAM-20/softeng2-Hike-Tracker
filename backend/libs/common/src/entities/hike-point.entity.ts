@@ -1,11 +1,20 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+} from 'typeorm';
 
 import { FOREIGN_OPTIONS_CASCADE } from '../constants';
+import { PointType } from '../enums';
 
 import { Hike } from './hike.entity';
 import { Point } from './point.entity';
 
 @Entity('hike_points')
+@Index('hike_points_hikeId_index_idx', ['hikeId', 'index'])
 export class HikePoint {
   @PrimaryColumn({
     type: 'integer',
@@ -29,6 +38,13 @@ export class HikePoint {
     nullable: false,
   })
   index!: number;
+
+  @Column({
+    type: 'smallint',
+    nullable: false,
+    default: PointType.point,
+  })
+  type!: PointType;
 
   /**
    * TypeORM sql-gen only

@@ -37,13 +37,17 @@ export class AuthService {
     return safeUser(user);
   }
 
-  async login(user: User) {
-    const payload: UserJwtPayload = { id: user.id };
-
+  async login(user: UserContext) {
     return {
       user: safeUser(user),
-      token: await this.jwtService.signAsync(payload),
+      token: await this.signUserJwt(user),
     };
+  }
+
+  async signUserJwt(user: UserContext): Promise<string> {
+    const payload: UserJwtPayload = { id: user.id };
+
+    return await this.jwtService.signAsync(payload);
   }
 
   async validatePassword(password: string, hash: string): Promise<boolean> {

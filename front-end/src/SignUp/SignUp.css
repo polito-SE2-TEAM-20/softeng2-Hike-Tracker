@@ -1,0 +1,30 @@
+.LoginPage .LogInBox .InputForm {
+    position: relative;
+    flex: none;
+    margin-bottom: 43px;
+}
+
+.LoginPage .LogInBox .InputForm .Name {
+    position: relative;
+    left: 0px;
+    top: 0px;
+    margin-bottom: 0px;
+    display: flex;
+    justify-content: left;
+    text-align: center;
+    color: rgba(255, 255, 255, 1.00);
+    font-family: Athiti;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 30px;
+}
+
+
+
+.LoginPage .LogInBox .InputForm .InputName {
+    position: relative;
+    left: 0px;
+    top: 2px;
+    margin-bottom: 10px;
+    background: rgba(133, 133, 133, 1.00);
+}

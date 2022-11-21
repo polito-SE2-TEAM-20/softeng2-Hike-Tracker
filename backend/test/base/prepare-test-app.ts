@@ -11,6 +11,7 @@ import {
 import { TestingRestService, TestingService } from '@app/testing';
 
 import { AppModule } from '../../src/app.module';
+import { AuthService } from '../../src/auth/auth.service';
 import { prepareApp } from '../../src/prepare-app';
 
 interface PrepareAppConfig {
@@ -59,6 +60,9 @@ export async function prepareTestApp({
     const restService = moduleRef.get(TestingRestService);
 
     // pass jwtService to testing service
+    const jwtService = moduleRef.get(AuthService);
+    testService.setJwtService(jwtService);
+
     try {
       // const jwtService = moduleRef.get(JwtAuthService);
       // testService.setJwtService(jwtService);

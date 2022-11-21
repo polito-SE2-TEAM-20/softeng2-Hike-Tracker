@@ -6,7 +6,11 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { FOREIGN_OPTIONS_CASCADE, numericOptionsConfig } from '../constants';
+import {
+  FOREIGN_OPTIONS_CASCADE,
+  HutLimits,
+  numericOptionsConfig,
+} from '../constants';
 
 import { Point } from './point.entity';
 
@@ -14,6 +18,14 @@ import { Point } from './point.entity';
 export class Hut {
   @PrimaryGeneratedColumn('increment')
   id!: number;
+
+  @Column({
+    type: 'varchar',
+    length: HutLimits.title,
+    nullable: false,
+    default: '',
+  })
+  title!: string;
 
   @Column({
     type: 'integer',

@@ -1,0 +1,28 @@
+GET  https://hiking-backend.germangorodnev.com/hikes
+
+###
+POST https://hiking-backend.germangorodnev.com/hikes/filteredHikes
+content-type: application/json
+
+{
+    "province": null,
+    "region": null,
+    "maxLength": null,
+    "minLength": null,
+    "expectedTimeMin": null,
+    "expectedTimeMax": null,
+    "difficultyMin": null,
+    "difficultyMax": null,
+    "ascentMin": null,
+    "ascentMax": null
+}
+
+###
+POST https://hiking-backend.germangorodnev.com/hikes/import
+content-type: multipart/form-data
+
+{
+    "gpxFile": null,
+    "title": "test",
+    "description": "loremipsum"
+}
