@@ -53,6 +53,7 @@ const HTListOfHikes = (props) => {
     const [difficulty, setDifficulty] = useState(0)
     const [length, setLength] = useState(0)
     const filterStates = { setTitle, setExpectedTime, setAscent, setDifficulty, setLength }
+    var { loading = true } = props == undefined;
 
     useEffect(() => {
         var loh = []
@@ -125,13 +126,57 @@ const HTListOfHikes = (props) => {
                 </Grid>
                 <Grid container columns={5} style={{ marginTop: "90px", display: "flex", justifyContent: "center" }}>
                     {
-                        listOfHikes.map(hike => {
-                            return (
-                                <Grid item lg={1} style={{ marginLeft: "15px", marginRight: "15px", marginBottom: "15px" }}>
-                                    <HikeCard hike={hike} />
+                        loading ?
+                            listOfHikes.map(hike => {
+                                return (
+                                    <Grid item lg={1} style={{ marginLeft: "15px", marginRight: "15px", marginBottom: "15px" }}>
+                                        <HikeCard hike={hike} />
+                                    </Grid>
+                                );
+                            })
+                            :
+                            <>
+                                <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
+                                    <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
                                 </Grid>
-                            );
-                        })
+                                <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
+                                    <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
+                                </Grid>
+                                <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
+                                    <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
+                                </Grid>
+                                <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
+                                    <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
+                                </Grid>
+                                <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
+                                    <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
+                                </Grid>
+                                <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
+                                    <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
+                                </Grid>
+                                <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
+                                    <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
+                                </Grid>
+                                <Grid lg={1} item sx={{ width: 210, marginRight: 0.5, my: 5 }}>
+                                    <Skeleton variant='rectangular' height={150} width={300} style={{ marginBottom: "10px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
+                                    <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
+                                </Grid>
+                            </>
                     }
                 </Grid>
 
