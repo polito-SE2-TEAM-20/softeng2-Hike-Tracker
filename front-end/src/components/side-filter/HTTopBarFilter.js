@@ -59,7 +59,7 @@ const HTTopBarFilter = (props) => {
     setExpTime([0, maxExpTime])
     setDiff([0, maxDiff])
     setAsc([0, maxAsc])
-  }, [props.listOfHikes])
+  }, [])
 
   return (
     <Grid container columns={12} spacing={0} style={{
@@ -102,10 +102,38 @@ const HTTopBarFilter = (props) => {
       <Grid lg={1} item style={{ display: "flex", justifyContent: "center" }}>
         <Grid container>
           <Grid item>
-            <Button text="Apply filters" size="16px" textColor="white" />
+            <Button text="Apply filters" size="16px" textColor="white" navigate={() => {
+              props.setFilter(
+                {
+                  "province": province === "" ? null : province,
+                  "region": region === "" ? null : region,
+                  "minLength": length[0],
+                  "maxLength": length[1],
+                  "expectedTimeMin": expTime[0],
+                  "expectedTimeMax": expTime[1],
+                  "difficultyMin": diff[0],
+                  "difficultyMax": diff[1],
+                  "ascentMin": asc[0],
+                  "ascentMax": asc[1]
+                }
+              )
+            }} />
           </Grid>
           <Grid item>
-            <Button text="Reset filters" size="16px" textColor="white" navigate={() => { resetAllFields() }} />
+            <Button text="Reset filters" size="16px" textColor="white" navigate={() => { resetAllFields(); props.setFilter(
+                {
+                  "province":null,
+                  "region":null,
+                  "minLength":null,
+                  "maxLength":null,
+                  "expectedTimeMin":null,
+                  "expectedTimeMax":null,
+                  "difficultyMin":null,
+                  "difficultyMax":null,
+                  "ascentMin":null,
+                  "ascentMax":null
+                }
+              ) }} />
           </Grid>
         </Grid>
       </Grid>

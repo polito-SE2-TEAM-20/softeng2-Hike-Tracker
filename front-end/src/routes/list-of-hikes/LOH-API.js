@@ -21,7 +21,7 @@ async function getFilteredListOfHikes(request) {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(request)
+    body: JSON.stringify(request.filter)
   });
   if (response.ok) {
     const listOfHikes = await response.json();
