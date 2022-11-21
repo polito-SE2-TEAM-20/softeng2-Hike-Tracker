@@ -12,7 +12,7 @@ import HikeCard from '../../components/hike-card/HikeCard';
 import HTTopBarFilter from '../../components/side-filter/HTTopBarFilter';
 import Skeleton from '@mui/material/Skeleton';
 
-const HTListOfHikes = (props) => {
+const BACKUPHTListOfHikes = (props) => {
     const displayType = [
         {
             mobile: {
@@ -146,7 +146,7 @@ const HTListOfHikes = (props) => {
     }
 
     return (
-        <div display={displayType.pc} style={{ backgroundColor: "#f2f2f2" }}>
+        <Grid display={displayType.pc} style={{ backgroundColor: "#f2f2f2" }}>
             <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
             <div style={{ backgroundColor: "#F2F2F2", height: "100%", minHeight: "100vh", marginLeft: "200px", marginRight: "200px" }}>
                 <Grid container style={{ marginTop: "75px", marginBottom: "20px", display: "flex", justifyContent: "center" }}>
@@ -214,8 +214,8 @@ const HTListOfHikes = (props) => {
                 </Grid>
 
             </div>
-        </div>
+        </Grid>
     );
 }
 
-export default HTListOfHikes
+export default BACKUPHTListOfHikes

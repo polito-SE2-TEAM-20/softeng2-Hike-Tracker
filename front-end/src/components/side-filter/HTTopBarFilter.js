@@ -76,68 +76,53 @@ const HTTopBarFilter = (props) => {
     }, [props.listOfHikes])
 
     return (
-        <Grid container columns={12} spacing={0} style={{
-            backgroundColor: "#f2f2f2", width: "100vw", display: "flex", justifyContent: "center",
-            paddingTop: "15px", paddingBottom: "15px", position: "fixed", zIndex: "1"
+        <Grid container item lg={3} columns={12} spacing={0} style={{
+            borderStyle: "solid", borderColor: "#f2f2f2", width: "100vw", display: "flex", justifyContent: "center",
+            paddingTop: "15px", paddingBottom: "15px", position: "fixed", zIndex: "1", height: "70vh", marginTop: "25px", marginLeft: "25px",
+            borderRadius: "8px", backgroundColor: "#fbfbfb"
         }}>
-            <Grid lg={2} item style={{ display: "flex", justifyContent: "center" }}>
-                <Grid container>
-                    <Grid item>
-                        <HTDropdown dataset={regions} hint="Region" setFun={setRegion} val={region} />
-                    </Grid>
-                    <Grid item style={{ marginTop: "12px" }}>
-                        <HTDropdown dataset={provinces} hint="Province" setFun={setProvince} val={province} />
-                    </Grid>
-                </Grid>
+            <Grid item lg={12} style={{ display: "flex", justifyContent: "center" }}>
+                <HTDropdown dataset={regions} hint="Region" setFun={setRegion} val={region} />
+            </Grid>
+            <Grid item lg={12} style={{ display: "flex", justifyContent: "center" }}>
+                <HTDropdown dataset={provinces} hint="Province" setFun={setProvince} val={province} />
+            </Grid>
+            <Grid item lg={12} style={{ display: "flex", justifyContent: "center" }}>
+                <HTSlider value={length} setFun={setLength} max={maxLen} text="Length" />
+            </Grid>
+            <Grid item lg={12} style={{ display: "flex", justifyContent: "center" }}>
+                <HTSlider value={expTime} setFun={setExpTime} max={maxExpTime} text="Expected time" />
+            </Grid>
+            <Grid item lg={12} style={{ display: "flex", justifyContent: "center" }}>
+                <HTSlider value={diff} setFun={setDiff} max={maxDiff} text="Difficulty" />
+            </Grid>
+            <Grid item lg={12} style={{ display: "flex", justifyContent: "center" }}>
+                <HTSlider value={asc} setFun={setAsc} max={maxAsc} text="Ascent" />
             </Grid>
 
-            <Grid lg={2} item style={{ display: "flex", justifyContent: "center" }}>
-                <Grid container>
-                    <Grid item>
-                        <HTSlider value={length} setFun={setLength} max={maxLen} text="Length" />
-                    </Grid>
-                    <Grid item style={{ marginTop: "12px" }}>
-                        <HTSlider value={expTime} setFun={setExpTime} max={maxExpTime} text="Expected time" />
-                    </Grid>
+            <Grid lg={12} item style={{ display: "flex", justifyContent: "center" }}>
+                <Grid item>
+                    <Button text="Apply filters" size="16px" textColor="white" navigate={() => {
+                        props.setFilter(
+                            {
+                                "province": province === "" ? null : province,
+                                "region": region === "" ? null : region,
+                                "minLength": length[0],
+                                "maxLength": length[1],
+                                "expectedTimeMin": expTime[0],
+                                "expectedTimeMax": expTime[1],
+                                "difficultyMin": diff[0],
+                                "difficultyMax": diff[1],
+                                "ascentMin": asc[0],
+                                "ascentMax": asc[1]
+                            }
+                        )
+                    }} />
                 </Grid>
-            </Grid>
-
-            <Grid lg={2} item style={{ display: "flex", justifyContent: "center" }}>
-                <Grid container>
-                    <Grid item>
-                        <HTSlider value={diff} setFun={setDiff} max={maxDiff} text="Difficulty" />
-                    </Grid>
-                    <Grid item style={{ marginTop: "12px" }}>
-                        <HTSlider value={asc} setFun={setAsc} max={maxAsc} text="Ascent" />
-                    </Grid>
-                </Grid>
-            </Grid>
-
-            <Grid lg={1} item style={{ display: "flex", justifyContent: "center" }}>
-                <Grid container>
-                    <Grid item>
-                        <Button text="Apply filters" size="16px" textColor="white" navigate={() => {
-                            props.setFilter(
-                                {
-                                    "province": province === "" ? null : province,
-                                    "region": region === "" ? null : region,
-                                    "minLength": length[0],
-                                    "maxLength": length[1],
-                                    "expectedTimeMin": expTime[0],
-                                    "expectedTimeMax": expTime[1],
-                                    "difficultyMin": diff[0],
-                                    "difficultyMax": diff[1],
-                                    "ascentMin": asc[0],
-                                    "ascentMax": asc[1]
-                                }
-                            )
-                        }} />
-                    </Grid>
-                    <Grid item>
-                        <Button text="Reset filters" size="16px" textColor="white" navigate={() => {
-                            resetAllFields();
-                        }} />
-                    </Grid>
+                <Grid item style={{marginLeft: "12px"}}>
+                    <Button text="Reset filters" size="16px" textColor="white" navigate={() => {
+                        resetAllFields();
+                    }} />
                 </Grid>
             </Grid>
         </Grid>

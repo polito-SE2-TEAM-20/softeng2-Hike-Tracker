@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'leaflet/dist/leaflet.css'
 
 import HTBrowseHikes from './routes/browse-hikes/HTBrowseHikes.js'
-import HTListOfHikes from './routes/list-of-hikes/ListOfHikes.js';
+import BACKUPHTListOfHikes from './routes/list-of-hikes/BACKUPListOfHikes.js';
 import SingleHike from './components/single-hike/SingleHike.js';
 import HTMainPage from './routes/main-page/HTMainPage';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +15,7 @@ import API_NewHike from './NewHike/API_Newhike';
 import { LocalGuide } from './Visuals/localGuide';
 import { NavigationBar } from './Visuals/Navbar'
 import API_SignUp from './SignUp/API_SignUp';
+import HTListOfHikes from './routes/list-of-hikes/HTListOfHikes';
 
 // import { AddHike } from './NewHike/proveAddHike';
 
