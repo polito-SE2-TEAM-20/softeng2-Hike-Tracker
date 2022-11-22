@@ -11,7 +11,7 @@ import { isNil } from 'ramda';
 
 import { Hut, ID, Point } from '@app/common';
 
-import { FilterHutsDto } from './huts.dto';
+import { CreateHutDto, FilterHutsDto } from './huts.dto';
 import { HutsService } from './huts.service';
 
 @Controller('huts')
@@ -61,5 +61,12 @@ export class HutsController {
     }
 
     return hut;
+  }
+
+  @Post('createHut')
+  async createHut(
+    @Body() body: CreateHutDto
+    ) : Promise<Hut> {
+      return await this.service.createNewHut(body);
   }
 }
