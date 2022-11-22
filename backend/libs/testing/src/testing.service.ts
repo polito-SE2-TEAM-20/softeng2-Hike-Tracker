@@ -19,6 +19,8 @@ import {
   UserRole,
 } from '@app/common';
 
+import { ParkingLotDto } from '@core/parking_lot/parking_lot.dto';
+
 import { CONNECTION_NAME } from './testing.constants';
 
 export interface IJwtService {
@@ -87,7 +89,7 @@ export class TestingService {
   }
 
   async createParkingLot(
-    data: DeepPartial<ParkingLot>,
+    data: DeepPartial<ParkingLotDto>,
     pointData: Partial<Point> = {
       position: { type: 'Point', coordinates: [49, 7] },
     },
@@ -126,7 +128,7 @@ export class TestingService {
     const user = (await this.createBase(User, {
       firstName: 'test',
       lastName: 'test',
-      role: UserRole.hiker,
+      role: UserRole.localGuide,
       email,
       password,
       ...data,
