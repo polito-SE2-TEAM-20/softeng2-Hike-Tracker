@@ -9,10 +9,11 @@ import {
 } from '@nestjs/common';
 import { isNil } from 'ramda';
 
-import { Hut, ID, Point } from '@app/common';
+import { CurrentUser, Hut, HutWorkerOnly, ID, Point, UserContext } from '@app/common';
 
 import { CreateHutDto, FilterHutsDto } from './huts.dto';
 import { HutsService } from './huts.service';
+import { Logger } from '@nestjs/common/services/logger.service';
 
 @Controller('huts')
 export class HutsController {
@@ -64,9 +65,11 @@ export class HutsController {
   }
 
   @Post('createHut')
+  @HutWorkerOnly()
   async createHut(
-    @Body() body: CreateHutDto
+    @Body() body: CreateHutDto,
+    @CurrentUser() user: UserContext,
     ) : Promise<Hut> {
-      return await this.service.createNewHut(body);
+      return await this.service.createNewHut(body, user.id);
   }
 }

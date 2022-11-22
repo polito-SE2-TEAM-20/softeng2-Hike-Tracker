@@ -2,8 +2,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { propEq } from 'ramda';
 import { EntityManager, In, Repository } from 'typeorm';
 
-import { BaseService, GPoint, Hut, ID, orderEntities, Point, PointType } from '@app/common';
+import { BaseService, CurrentUser, GPoint, Hut, ID, orderEntities, Point, PointType, User, UserContext } from '@app/common';
 import { CreateHutDto } from './huts.dto';
+import { Logger } from '@nestjs/common/services/logger.service';
 
 export class HutsService extends BaseService<Hut> {
   constructor(
@@ -30,10 +31,17 @@ export class HutsService extends BaseService<Hut> {
     orderEntities(huts, ids, propEq('id'));
   }
 
+
+  async validatePermissions(hut: Hut, user: User): Promise<void> {
+    if (hut.userId !== user.id) {
+      throw new Error('Permissions error');
+    }
+  }
+
   /**
    * Create a new hut
    */
-  async createNewHut({...data}: CreateHutDto): Promise<Hut> {
+  async createNewHut({...data}: CreateHutDto, userId : number): Promise<Hut> {
 
     //Create hut point
     const position : GPoint = {
@@ -50,6 +58,7 @@ export class HutsService extends BaseService<Hut> {
 
     //Create a new hut in the DB
     const hut = await this.hutsRepository.save({
+        userId: userId,
         title : data.title,
         pointId : point.id,
         numberOfBeds: data.numberOfBeds,
