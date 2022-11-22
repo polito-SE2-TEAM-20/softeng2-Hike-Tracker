@@ -35,10 +35,10 @@ import { ParkingLotModule } from './parking_lot/parking_lot.module';
       }),
       MailerModule.forRoot({
         transport: {
-          host: 'smtp.sendgrid.net',
+          host: 'in-v3.mailjet.com',
           auth: {
-            user: 'apikey',
-            pass: '',
+            user: '47db18f553e8840696f204e9b37b6978',
+            pass: '45ad1cf87fb6d35d829c4a6a449cda0f',
           },
         }
       }),

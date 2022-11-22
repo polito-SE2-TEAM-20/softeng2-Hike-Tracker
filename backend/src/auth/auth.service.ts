@@ -8,6 +8,7 @@ import { safeUser } from '@core/users/users.utils';
 
 import { RegisterDto } from './auth.dto';
 import { MailerService } from '@nestjs-modules/mailer';
+import { randomBytes } from 'crypto'; 
 
 @Injectable()
 export class AuthService {
@@ -27,17 +28,19 @@ export class AuthService {
 
   async register({ password, ...data }: RegisterDto): Promise<UserContext> {
     const hashedPassword = await this.hashPassword(password);
+    const randomHash = randomBytes(128).toString('hex');
 
     const user = await this.dataSource.getRepository(User).save({
       ...data,
       password: hashedPassword,
+      verificationHash: randomHash
     });
 
     await this.mailService.sendMail({
       to:data.email,
       from:"hikingofficial@protonmail.com",
       subject: 'E-mail verification ✔',
-      text: 'Hi '+data.firstName+', please confirm your e-mail clicking on this link: ', 
+      text: 'Hi '+data.firstName+', please confirm your e-mail clicking on this link: http://localhost.com/verify/'+randomHash 
     });
 
     // const token = await this.jwtService.signAsync({ id: user.id });

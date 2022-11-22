@@ -43,6 +43,20 @@ export class User {
   })
   role!: UserRole;
 
+  @Column({
+    type: 'boolean',
+    nullable: false,
+    default: false
+  })
+  verified!: boolean;
+
+  @Column({
+    type: 'varchar',
+    length: 256,
+    nullable: false,
+  })
+  verificationHash!: string;
+
   /**
    * For TypeORM metadata only
    * @deprecated
