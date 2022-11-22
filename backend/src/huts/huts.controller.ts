@@ -57,7 +57,7 @@ export class HutsController {
       .getOne();
 
     if (!hut) {
-      new Error(`Hut ${id} not found`);
+      throw new Error(`Hut ${id} not found`);
     }
 
     return hut;

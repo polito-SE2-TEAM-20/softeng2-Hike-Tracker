@@ -8,13 +8,27 @@ import { omit } from 'ramda';
 import {
   HikeDifficulty,
   HikePoint,
+  latLonToGisPoint,
+  Point,
+  PointType,
   ROOT,
-  TypeID,
   UPLOAD_PATH,
   UserRole,
 } from '@app/common';
 import { finishTest } from '@app/testing';
-import { mapArray, prepareTestApp, prepareVars } from '@test/base';
+import {
+  anyId,
+  mapArray,
+  prepareTestApp,
+  prepareVars,
+  withoutLatLon,
+} from '@test/base';
+
+const withoutCompositeFields = omit([
+  'referencePoints',
+  'startPoint',
+  'endPoint',
+]);
 
 describe('Hikes (e2e)', () => {
   let { dbName, app, restService, moduleRef, testService } = prepareVars();
@@ -54,7 +68,7 @@ describe('Hikes (e2e)', () => {
     };
   };
 
-  it('should import gpx file, save reference points into db', async () => {
+  it('should import gpx file, save reference points, start and end points to db', async () => {
     const { localGuide } = await setup();
 
     const hikeData = {
@@ -74,6 +88,14 @@ describe('Hikes (e2e)', () => {
           lon: 7.084,
         },
       ],
+      startPoint: {
+        name: 'That small building near garage entrance',
+      },
+      endPoint: {
+        address: 'Turin, Via Torino 130',
+        lat: 45.181,
+        lon: 7.083,
+      },
     };
 
     const { body: hike } = await restService
@@ -81,11 +103,33 @@ describe('Hikes (e2e)', () => {
       .request()
       .post('/hikes/import')
       .attach('gpxFile', resolve(ROOT, './test-data/4.gpx'))
-      .field(omit(['referencePoints'], hikeData))
+      .field(withoutCompositeFields(hikeData))
       .field('referencePoints', JSON.stringify(hikeData.referencePoints))
+      .field('startPoint', JSON.stringify(hikeData.startPoint))
+      .field('endPoint', JSON.stringify(hikeData.endPoint))
       .expect(201);
 
-    expect(hike).toMatchObject({ id: expect.any(TypeID), ...hikeData });
+    expect(hike).toMatchObject({
+      id: anyId(),
+      ...hikeData,
+      referencePoints: hikeData.referencePoints.map<Point>((refPoint) => ({
+        ...withoutLatLon(refPoint),
+        id: anyId(),
+        position: latLonToGisPoint(refPoint),
+        type: PointType.point,
+      })),
+      startPoint: {
+        ...withoutLatLon(hikeData.startPoint),
+        id: anyId(),
+        address: null,
+        position: null,
+      },
+      endPoint: {
+        ...withoutLatLon(hikeData.endPoint),
+        id: anyId(),
+        name: null,
+      },
+    });
     expect(hike.gpxPath).toMatch(/^\/static\/gpx\/.+\.gpx$/);
 
     expect(
@@ -95,9 +139,10 @@ describe('Hikes (e2e)', () => {
       ),
     ).not.toReject();
 
+    // 3 in total: 2 start/end, 1 ref
     expect(
       await testService.repo(HikePoint).findBy({ hikeId: hike.id }),
-    ).toHaveLength(1);
+    ).toHaveLength(3);
   });
 
   it('should update hike', async () => {
@@ -119,7 +164,6 @@ describe('Hikes (e2e)', () => {
       .expect(({ body }) => {
         expect(body).not.toEqual(null);
         expect(body).toMatchObject({
-          id: hike.id,
           ...hike,
           ...updateData,
         });
@@ -153,7 +197,7 @@ describe('Hikes (e2e)', () => {
               type: 'parkingLot',
               entity: expect.objectContaining({
                 ...entity,
-                point: expect.objectContaining({ id: expect.any(Number) }),
+                point: expect.objectContaining({ id: anyId() }),
               }),
             }),
           ),
@@ -162,7 +206,7 @@ describe('Hikes (e2e)', () => {
               type: 'hut',
               entity: expect.objectContaining({
                 ...entity,
-                point: expect.objectContaining({ id: expect.any(Number) }),
+                point: expect.objectContaining({ id: anyId() }),
               }),
             }),
           ),

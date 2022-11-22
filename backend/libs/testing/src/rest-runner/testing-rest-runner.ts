@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { INestApplication } from '@nestjs/common';
+import { isNil } from 'ramda';
 import request from 'supertest';
 
 import { UserAuthData } from '../types';
@@ -38,7 +39,7 @@ export class TestingRestRunner {
   auth(_user: UserAuthData): this {
     if (typeof _user === 'string') {
       this.bearerToken = _user;
-    } else if ('token' in _user) {
+    } else if ('token' in _user && !isNil(_user.token)) {
       this.bearerToken = _user.token;
     }
 

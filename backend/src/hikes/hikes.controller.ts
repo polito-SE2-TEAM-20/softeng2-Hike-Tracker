@@ -16,12 +16,11 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs-extra';
-import { isNil, propEq } from 'ramda';
-import { DataSource, In } from 'typeorm';
+import { isNil, pick, propEq } from 'ramda';
+import { DataSource, DeepPartial, In } from 'typeorm';
 
 import {
   CurrentUser,
-  GPoint,
   GPX_FILE_URI,
   GroupValidationPipe,
   Hike,
@@ -29,6 +28,7 @@ import {
   HikePoint,
   Hut,
   ID,
+  latLonToGisPoint,
   LocalGuideOnly,
   mapToId,
   orderEntities,
@@ -122,7 +122,9 @@ export class HikesController {
       order by h.id asc
     `;
 
-    const rawHikes = await this.service.getRepository().query(queryRaw, params);
+    const rawHikes: Hike[] = await this.service
+      .getRepository()
+      .query(queryRaw, params);
     const hikeIds = mapToId(rawHikes);
     const hikes = await this.service
       .getRepository()
@@ -158,6 +160,9 @@ export class HikesController {
       hike: Hike;
       points: Point[];
     }>(async (entityManager) => {
+      const hikePointsRepo = entityManager.getRepository(HikePoint);
+      const pointsRepo = entityManager.getRepository(Point);
+
       const hike = await this.service.getRepository(entityManager).save({
         userId: user.id,
         gpxPath: join(GPX_FILE_URI, file.filename),
@@ -169,20 +174,14 @@ export class HikesController {
       const referencePointsArray = body.referencePoints;
 
       const refPointsForDB = referencePointsArray.map((refPoint) => {
-        const pointObject: GPoint = {
-          type: 'Point',
-          coordinates: [refPoint.lon, refPoint.lat],
-        };
-
-        const refPointForDB = {
+        return {
           name: refPoint.name,
           address: refPoint.address,
-          point: pointObject,
+          point: latLonToGisPoint(refPoint),
         };
-        return refPointForDB;
       });
 
-      const referencePoints = await entityManager.getRepository(Point).save(
+      const referencePoints = await pointsRepo.save(
         refPointsForDB.map<Partial<Point>>((point) => ({
           type: 0,
           position: point.point,
@@ -191,7 +190,7 @@ export class HikesController {
         })),
       );
 
-      await entityManager.getRepository(HikePoint).save(
+      await hikePointsRepo.save(
         referencePoints.map<HikePoint>((point, index) => ({
           hikeId: hike.id,
           pointId: point.id,
@@ -201,22 +200,46 @@ export class HikesController {
       );
       //Antonio's code ends here
 
-      // const points = await this.pointsService
-      //   .getRepository(entityManager)
-      //   .save(parsedHike.points);
+      // insert start/end points
+      let startPoint: Point | null = null;
+      let endPoint: Point | null = null;
+      const hikePointsToInsert: DeepPartial<HikePoint>[] = [];
 
-      // await entityManager.getRepository(HikePoint).save(
-      //   points.map<HikePoint>((point, index) => ({
-      //     hikeId: hike.id,
-      //     pointId: point.id,
-      //     index,
-      //   })),
-      // );
+      if (body.startPoint) {
+        startPoint = await pointsRepo.save({
+          ...pick(['address', 'name'], body.startPoint),
+          position: latLonToGisPoint(body.startPoint),
+          type: PointType.point,
+        });
+
+        hikePointsToInsert.push({
+          index: 0,
+          hikeId: hike.id,
+          pointId: startPoint.id,
+          type: PointType.startPoint,
+        });
+      }
+      if (body.endPoint) {
+        endPoint = await pointsRepo.save({
+          ...pick(['address', 'name'], body.endPoint),
+          position: latLonToGisPoint(body.endPoint),
+          type: PointType.point,
+        });
+
+        hikePointsToInsert.push({
+          index: 10000,
+          hikeId: hike.id,
+          pointId: endPoint.id,
+          type: PointType.endPoint,
+        });
+      }
+
+      await hikePointsRepo.save(hikePointsToInsert);
 
       return { hike, points: referencePoints };
     });
 
-    return hike;
+    return await this.service.getFullHike(hike.id);
   }
 
   @Post('linkPoints')

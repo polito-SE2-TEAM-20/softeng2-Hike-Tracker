@@ -1,4 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
+import { head } from 'ramda';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 
 import {
@@ -12,6 +13,7 @@ import {
   ParkingLot,
   Point,
   PointType,
+  StartEndPoint,
   User,
   WithPoint,
 } from '@app/common';
@@ -56,6 +58,8 @@ export class HikesService extends BaseService<Hike> {
     if (!hike) {
       throw new Error(this.errorMessage);
     }
+
+    console.log('hike with refs', hike);
 
     // get linked points
     const linkedHuts = (await (entityManager || this.dataSource)
@@ -105,9 +109,25 @@ export class HikesService extends BaseService<Hike> {
       })),
     ];
 
+    // get start and end point
+    const startEndPoints = (await (entityManager || this.dataSource)
+      .getRepository(Point)
+      .createQueryBuilder('p')
+      .innerJoinAndMapOne('p.hikePoint', HikePoint, 'hp', 'hp.pointId = p.id')
+      .getMany()) as StartEndPoint[];
+
+    const startPoint = head(
+      startEndPoints.filter((p) => p.hikePoint.type === PointType.startPoint),
+    );
+    const endPoint = head(
+      startEndPoints.filter((p) => p.hikePoint.type === PointType.endPoint),
+    );
+
     return {
       ...hike,
       linkedPoints,
+      startPoint,
+      endPoint,
     };
   }
 }

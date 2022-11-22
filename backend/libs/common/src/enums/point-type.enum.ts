@@ -5,7 +5,7 @@ export enum PointType {
   referencePoint,
   linkedPoint,
   startPoint,
-  arrivalPoint,
+  endPoint,
 }
 
 /**
