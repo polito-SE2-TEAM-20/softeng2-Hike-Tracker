@@ -2,9 +2,11 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   UseGuards,
   Body,
   HttpCode,
+  Param
 } from '@nestjs/common';
 
 import { AuthenticatedOnly, CurrentUser, UserContext } from '@app/common';
@@ -34,9 +36,16 @@ export class AuthController {
     return await this.service.register(body);
   }
 
+  @Put('verify/:hash')
+  @HttpCode(200)
+  async verifyMail(@Param('hash') hash: string) {
+    return await this.service.validateRegistration(hash);
+  }
+
   @AuthenticatedOnly()
   @Get('me')
   async me(@CurrentUser() user: UserContext) {
     return user;
   }
+
 }
