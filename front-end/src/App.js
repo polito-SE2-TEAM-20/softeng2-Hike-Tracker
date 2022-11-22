@@ -20,6 +20,8 @@ import HTListOfHikes from './routes/list-of-hikes/HTListOfHikes';
 // import { AddHike } from './NewHike/proveAddHike';
 
 import { AddHike } from './NewHike/AddHike';
+import { HTAddHike } from './NewHike/HTAddHike';
+
 
 import LoginForm from './Login/Login';
 import {SignUpForm} from './SignUp/SignUp';
@@ -142,6 +144,8 @@ const addNewGpx = (formData) =>{
         <Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut}/>} />
         {/*<Route path="/hikeGpx" element={<AddHike addNewGpx={addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />*/}
         <Route path="/hikeGpx" element={<AddHike addNewGpx={addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
+        <Route path="/hikeGpxHT" element={<HTAddHike addNewGpx={addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
+
         <Route path="/signup" element={<SignUpForm doRegister={doRegister} />} />
         <Route path="/hutpage" element={<HTHutPage isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
       </Routes>

@@ -9,6 +9,8 @@ import MainTitle from '../components/main-title/MainTitle';
 import ButtonHeader from '../components/buttons/Button';
 import Navbar from 'react-bootstrap/Navbar';
 
+
+
 function AddHike(props){
 
     const [title, setTitle] = useState('');
@@ -32,7 +34,13 @@ function AddHike(props){
     const [positionsState, setPositionsState] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
     const [show, setShow] = useState('');
-    //{ name: "prova1", address: "provaAdd", lon: "4.5" ,  lat: "4.3"
+
+    const [listReferencePoint, setListReferencePoint] = useState();
+    //{ [name: "prova1", address: "provaAdd", lon: 4.5 ,  lat: 4.3]
+
+    const [presenceWayPoints, setPresenceWaypoints] = useState(false);
+
+    const [puntiDaTrack, setPuntiDaTrack] = useState([]);
 
     const hiddenFileInput = React.useRef(null);
     // Programatically click the hidden file input element
@@ -53,7 +61,13 @@ function AddHike(props){
         };
         reader.readAsText(fileUploaded)
         // props.handleFile(fileUploaded);
+
     };
+
+
+
+
+
     useEffect(() => {
         if (fileContents) {
             let gpxParser = require('gpxparser');
@@ -62,24 +76,56 @@ function AddHike(props){
             const positions = gpx.tracks[0].points.map(p => [p.lat, p.lon]);
             // controllare perchè se non ci sono i punti da errore
             setPositionsState(positions);
+            console.log(positionsState);
             setStartPoint(positions[0]);
             setEndPoint(positions[positions.length-1]);
             console.log(gpx);
             console.log(gpx.tracks[0].points.map(p => [p.lat, p.lon]));
             console.log("distance: " + gpx.tracks[0].distance.total);
+            for(const i in gpx.waypoints){
+                let listOfWaypoints = {};
+                // listOfWaypoints.push(gpx.waypoints[i]);
+                console.log(listOfWaypoints);
+                console.log(`${i}: ${gpx.waypoints[i].name}`)
+                setListReferencePoint(listOfWaypoints);
+                {/*}
+                if(listOfWaypoints.length()!==0){
+                    setPresenceWaypoints(true);
+                }*/}
+            }
+            setDescription(gpx.tracks[0].desc);
+            setDifficultyStr(gpx.tracks[0].type);
+            setAscentStr(gpx.tracks[0].elevation.pos);
+            setTitle(gpx.tracks[0].name);
+            setLengthStr(gpx.tracks[0].distance.total);
+            console.log(gpx);
+            console.log(gpx.tracks[0].points.map(p => [p.lat, p.lon]));
+            //numero di track nel file:
+            const track = gpx.tracks.map(t=> [t]);
+            console.log(gpx.tracks.map(t => [t]));
+            //console.log(gpx.segment.length());
+            console.log(puntiDaTrack);
 
-            console.log("distance: " + gpx.tracks[0].distance.total);
+
+            
+            
+  
+
+            {/*
+            console.log(gpx.waypoints);
+            let information = getInformation(positions[0].lat, positions[0].lon );
+            console.log(information);
+        */}
+            
         }
 
     }, [fileContents]);
+
 
     const navigate = useNavigate();
 
     const handleSubmit = (event) => {
         event.preventDefault();
-
-
-
         if(title.trim().length === 0){
             setErrorMessage('The title cannot be empty')
         }else{
@@ -93,6 +139,7 @@ function AddHike(props){
                 formData.append('length', length);
                 formData.append('expectedTime', expectedTime);
                 formData.append('ascent', ascent);
+                // modificare l'ascent non è quella
                 formData.append('difficulty', difficulty);
                 formData.append('description', description);
                 formData.append('region', region);
@@ -229,6 +276,22 @@ function AddHike(props){
                     </Col>
                 </Row>
             </FormGroup>
+
+            <>
+            {
+                presenceWayPoints?
+                <FormGroup>
+                <Row>
+                    <Col>
+                    <FormLabel className="Text">{listReferencePoint[0].name}</FormLabel>
+                    <FormControl className="InputBox" value={listReferencePoint[0]} onChange={(e) => setReferencePoints(e.target.value)}></FormControl>
+                    </Col>
+                </Row>
+            </FormGroup>
+            :
+            <h2></h2>
+            }
+            </>
             <Button type = 'submit'>SAVE</Button>
             <Button colore = 'red' onClick= {()=> navigate('/localGuide')}>CANCEL</Button>
             
@@ -236,7 +299,7 @@ function AddHike(props){
         <>
             <div>
                 <>  
-                <Map positionsState = {positionsState} />     
+                <Map positionsState = {positionsState} setPuntiDaTrack={setPuntiDaTrack} puntiDaTrack={puntiDaTrack} referencePoints={referencePoints} setReferencePoints={setReferencePoints}/>     
                 </>
             </div>
         </>
