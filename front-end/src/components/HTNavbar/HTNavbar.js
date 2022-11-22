@@ -110,7 +110,7 @@ function HTNavbar(props) {
                     </Box>
                     <Typography
                         className="unselectable"
-                        style={{ fontFamily: "Bakbak One, display" }}
+                        style={{ fontFamily: "Bakbak One, display", fontSize: "18px" }}
                         variant="h5"
                         noWrap
                         onClick={() => { navigate("/") }}
