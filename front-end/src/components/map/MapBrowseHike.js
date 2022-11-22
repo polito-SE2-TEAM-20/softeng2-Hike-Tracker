@@ -35,10 +35,10 @@ export const LocationMarker = () => {
 }
 
 export const MapBrowseHike = (props) => {
-    const [clickedCenter, setClickedCenter] = useState([43.046182, 12.407823])
+    const [clickedCenter, setClickedCenter] = useState([45.07412045176881, 7.621063528883495])
     return (
         <div style={{ marginTop: "0px" }}>
-            <MapContainer center={clickedCenter} zoom={7}
+            <MapContainer center={clickedCenter} zoom={9}
                 scrollWheelZoom={true} zoomControl={false}
                 style={{ width: "auto", minHeight: "100vh", height: "100%" }}>
                 <TileLayer
