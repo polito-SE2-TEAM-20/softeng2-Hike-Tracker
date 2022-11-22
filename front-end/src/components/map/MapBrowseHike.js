@@ -36,8 +36,6 @@ export const LocationMarker = () => {
 
 export const MapBrowseHike = (props) => {
     const [clickedCenter, setClickedCenter] = useState([43.046182, 12.407823])
-    console.log(clickedCenter)
-
     return (
         <div style={{ marginTop: "0px" }}>
             <MapContainer center={clickedCenter} zoom={7}
@@ -48,17 +46,25 @@ export const MapBrowseHike = (props) => {
                     url={"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}
                 />
                 <ZoomControl position='bottomright' />
-                <Marker
-                    key={0}
-                    position={[props?.dataset[0][0], props?.dataset[0][1]]}>
-                    <Popup position={[props?.dataset[0][0], props?.dataset[0][1]]}>
-                        <HikePopup elem={props?.dataset[0]} />
-                    </Popup>
-                </Marker>
-                <Polyline
-                    pathOptions={{ fillColor: 'red', color: 'blue' }}
-                    positions={props.dataset}
-                />
+                {
+                    props.dataset.map((hike) => {
+                        console.log(hike)
+                        return(<>
+                            <Marker
+                                key={Math.random()}
+                                position={[hike[0][0], hike[0][1]]}>
+                                <Popup position={[hike[0][0], hike[0][1]]}>
+                                    <HikePopup elem={hike[0]} />
+                                </Popup>
+                            </Marker>
+                            <Polyline
+                                pathOptions={{ fillColor: 'red', color: 'blue' }}
+                                positions={hike}
+                            />
+                        </>)
+                    })
+                }
+
             </MapContainer>
         </div>
     );

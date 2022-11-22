@@ -37,8 +37,6 @@ function HTNavbar(props) {
         setAnchorElUser(null);
     };
 
-    console.log(props.user)
-
     return (
         <AppBar position="fixed" style={{
             backgroundColor: "#202020", marginBottom: "auto", paddingLeft: "35px",
