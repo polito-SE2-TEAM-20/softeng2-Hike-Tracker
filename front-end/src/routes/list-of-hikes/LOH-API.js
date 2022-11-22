@@ -8,26 +8,23 @@ async function getListOfHikes() {
     const listOfHikes = await response.json();
     return listOfHikes
   } else {
-    console.log("greve zì")
     const errDetail = await response.json();
     throw errDetail.message;
   }
 }
 
 async function getFilteredListOfHikes(request) {
-  console.log(request)
   let response = await fetch((APIURL + '/hikes/filteredHikes'), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(request)
+    body: JSON.stringify(request.filter)
   });
   if (response.ok) {
     const listOfHikes = await response.json();
     return listOfHikes
   } else {
-    console.log("greve zì")
     const errDetail = await response.json();
     console.log(errDetail)
     throw errDetail.message;

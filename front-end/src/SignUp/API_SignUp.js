@@ -13,9 +13,7 @@ async function signUp(credentials){
     if(response.ok){
         const user = await response.json();
 
-        localStorage.setItem('token', user.token);
-        console.log(localStorage);
-        console.log(user);
+        // localStorage.setItem('token', user.token);
         return user;
 
     }else{

@@ -1,14 +1,18 @@
-import './button-style.css'
-import { useNavigate } from "react-router-dom";
+import { Button } from "@mui/material";
 
-const Button = (props) => {
+const HTButton = (props) => {
     return (
-        <div onClick={props.navigate} className="button-frame unselectable" style={{backgroundColor: props.color, color: props.textColor}}>
-            <div className="button-text" style={{fontSize: props.size}}>
-                {props.text}
-            </div>
-        </div>
+        <Button onClick={props.navigate}
+            variant="contained"
+            style={{
+                backgroundColor: props.color, color: props.textColor,
+                borderRadius: "24px", fontSize: props.size,
+                fontFamily: "Bakbak One, display", fontWeight: "600",
+                textTransform: "none"
+            }}>
+            {props.text}
+        </Button>
     );
 }
 
-export default Button
+export default HTButton
