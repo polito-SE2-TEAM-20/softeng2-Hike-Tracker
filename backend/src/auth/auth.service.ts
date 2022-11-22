@@ -28,17 +28,16 @@ export class AuthService {
   async register({ password, ...data }: RegisterDto): Promise<UserContext> {
     const hashedPassword = await this.hashPassword(password);
 
+    const user = await this.dataSource.getRepository(User).save({
+      ...data,
+      password: hashedPassword,
+    });
+
     await this.mailService.sendMail({
       to:data.email,
       from:"hikingofficial@protonmail.com",
       subject: 'E-mail verification ✔',
       text: 'Hi '+data.firstName+', please confirm your e-mail clicking on this link: ', 
-    });
-      
-
-    const user = await this.dataSource.getRepository(User).save({
-      ...data,
-      password: hashedPassword,
     });
 
     // const token = await this.jwtService.signAsync({ id: user.id });

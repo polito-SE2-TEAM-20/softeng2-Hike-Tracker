@@ -38,7 +38,7 @@ import { ParkingLotModule } from './parking_lot/parking_lot.module';
           host: 'smtp.sendgrid.net',
           auth: {
             user: 'apikey',
-            pass: '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',
+            pass: '',
           },
         }
       }),
