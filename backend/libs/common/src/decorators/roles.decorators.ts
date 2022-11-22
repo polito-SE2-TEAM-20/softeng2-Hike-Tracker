@@ -19,8 +19,6 @@ export const HikerOnly = () => createRoleDecorator(UserRole.hiker);
 
 export const LocalGuideOnly = () => createRoleDecorator(UserRole.localGuide);
 
-export const HutWorkerOnly = () =>
-  applyDecorators(Roles(UserRole.hutWorker), UseGuards(RolesGuard));
+export const HutWorkerOnly = () => createRoleDecorator(UserRole.hutWorker);
 
-export const PlatformManagerOnly = () =>
-  applyDecorators(Roles(UserRole.platformManager), UseGuards(RolesGuard));
+export const PlatformManagerOnly = () =>  createRoleDecorator(UserRole.platformManager);
