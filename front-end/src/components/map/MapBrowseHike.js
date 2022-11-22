@@ -39,7 +39,7 @@ export const MapBrowseHike = (props) => {
     return (
         <div style={{ marginTop: "0px" }}>
             <MapContainer center={clickedCenter} zoom={9}
-                scrollWheelZoom={true} zoomControl={false}
+                scrollWheelZoom={{xs:false, sm:false, md: false, lg: true, xl: true}} zoomControl={false}
                 style={{ width: "auto", minHeight: "100vh", height: "100%" }}>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

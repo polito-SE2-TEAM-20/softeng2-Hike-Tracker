@@ -10,6 +10,7 @@ import BH_API from './BH-API';
 import { Grid } from '@mui/material';
 import HTNavbar from '../../components/HTNavbar/HTNavbar';
 import MapLoading from '../../components/map/MapLoading';
+import MapFilters from '../../components/map-filters/MapFilters';
 
 const HTBrowseHikes = (props) => {
     const [loading, setLoading] = useState(false)
@@ -53,6 +54,7 @@ const HTBrowseHikes = (props) => {
     return (
         <Grid container spacing={0} sx={{ backgroundColor: "#f2f2f2", minHeight: "100vh", height: "100%", minWidth: "100vw", width: "100%" }}>
             <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
+            <MapFilters />
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                 {loading ? <MapBrowseHike dataset={positions} /> : <MapLoading></MapLoading>}
             </Grid>
