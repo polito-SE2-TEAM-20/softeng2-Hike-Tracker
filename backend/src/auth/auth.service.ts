@@ -7,12 +7,13 @@ import { User, UserContext, UserJwtPayload } from '@app/common';
 import { safeUser } from '@core/users/users.utils';
 
 import { RegisterDto } from './auth.dto';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthService {
   private readonly HASH_ROUNDS = 10;
 
-  constructor(private dataSource: DataSource, private jwtService: JwtService) {}
+  constructor(private dataSource: DataSource, private jwtService: JwtService, private mailService: MailerService) {}
 
   async validateUser(email: string, password: string): Promise<User | null> {
     const user = await this.dataSource.getRepository(User).findOneBy({ email });
@@ -26,6 +27,14 @@ export class AuthService {
 
   async register({ password, ...data }: RegisterDto): Promise<UserContext> {
     const hashedPassword = await this.hashPassword(password);
+
+    await this.mailService.sendMail({
+      to:data.email,
+      from:"hikingofficial@protonmail.com",
+      subject: 'E-mail verification ✔',
+      text: 'Hi '+data.firstName+', please confirm your e-mail clicking on this link: ', 
+    });
+      
 
     const user = await this.dataSource.getRepository(User).save({
       ...data,
