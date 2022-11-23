@@ -89,7 +89,7 @@ export class TestingService {
   }
 
   async createParkingLot(
-    data: DeepPartial<ParkingLotDto>,
+    data: DeepPartial<ParkingLot>,
     pointData: Partial<Point> = {
       position: { type: 'Point', coordinates: [49, 7] },
     },
