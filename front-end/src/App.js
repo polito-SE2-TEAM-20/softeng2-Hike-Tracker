@@ -33,6 +33,7 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
+import ShowHike from './routes/show-hike/ShowHike';
 
 function App() {
   return (
@@ -127,7 +128,7 @@ function App2() {
         <Route path="/" element={<HTMainPage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} navigate={navigate}/>} />
         <Route path="/listofhikes" element={<HTListOfHikes user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/browsehikes" element={<HTBrowseHikes user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
-        <Route path="/singlehike" element={<SingleHike />} />
+        <Route path="/singlehike" element={<SingleHike user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/localGuide" element={<LocalGuide isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
         <Route path="/navbar" element={<NavigationBar user={user} />} />
         <Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut}/>} />
