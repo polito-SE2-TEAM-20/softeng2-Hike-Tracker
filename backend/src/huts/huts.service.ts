@@ -2,9 +2,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { propEq } from 'ramda';
 import { EntityManager, In, Repository } from 'typeorm';
 
-import { BaseService, CurrentUser, GPoint, Hut, ID, orderEntities, Point, PointType, User, UserContext } from '@app/common';
+import {
+  BaseService,
+  GPoint,
+  Hut,
+  ID,
+  orderEntities,
+  Point,
+  PointType,
+  User,
+} from '@app/common';
+
 import { CreateHutDto } from './huts.dto';
-import { Logger } from '@nestjs/common/services/logger.service';
 
 export class HutsService extends BaseService<Hut> {
   constructor(
@@ -31,7 +40,6 @@ export class HutsService extends BaseService<Hut> {
     orderEntities(huts, ids, propEq('id'));
   }
 
-
   async validatePermissions(hut: Hut, user: User): Promise<void> {
     if (hut.userId !== user.id) {
       throw new Error('Permissions error');
@@ -41,29 +49,28 @@ export class HutsService extends BaseService<Hut> {
   /**
    * Create a new hut
    */
-  async createNewHut({...data}: CreateHutDto, userId : number): Promise<Hut> {
-
+  async createNewHut({ ...data }: CreateHutDto, userId: number): Promise<Hut> {
     //Create hut point
-    const position : GPoint = {
+    const position: GPoint = {
       type: 'Point',
-      coordinates: [data.location!!.lon, data.location!!.lat],
-    }
+      coordinates: [data.location!.lon, data.location!.lat],
+    };
 
     const point = await this.pointRepository.save({
       type: PointType.hut,
-      position: position,
-      address : data.location?.address,
-      name: data.location?.name
-    })
+      position,
+      address: data.location?.address,
+      name: data.location?.name,
+    });
 
     //Create a new hut in the DB
     const hut = await this.hutsRepository.save({
-        userId: userId,
-        title : data.title,
-        pointId : point.id,
-        numberOfBeds: data.numberOfBeds,
-        price: data.price,
-    })
+      userId,
+      title: data.title,
+      pointId: point.id,
+      numberOfBeds: data.numberOfBeds,
+      price: data.price,
+    });
 
     //Return created hut
     return hut;

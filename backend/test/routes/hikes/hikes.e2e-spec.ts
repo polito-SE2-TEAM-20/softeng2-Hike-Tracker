@@ -49,6 +49,7 @@ describe('Hikes (e2e)', () => {
     const hike = await testService.createHike({ userId: localGuide.id });
     const huts = await mapArray(10, (i) =>
       testService.createHut({
+        userId: localGuide.id,
         numberOfBeds: i,
         price: randomInt(10, 100),
         title: `Hut ${i}`,

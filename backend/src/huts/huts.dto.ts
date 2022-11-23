@@ -1,6 +1,13 @@
-import { ReferencePointDto } from '@core/hikes/hikes.dto';
 import { Type } from 'class-transformer';
-import { IsNumber, IsObject, IsOptional, isString, IsString, Min, ValidateNested } from 'class-validator';
+import {
+  IsNumber,
+  IsOptional,
+  IsString,
+  Min,
+  ValidateNested,
+} from 'class-validator';
+
+import { ReferencePointDto } from '@core/hikes/hikes.dto';
 
 export class FilterHutsDto {
   @IsNumber()
@@ -25,12 +32,11 @@ export class FilterHutsDto {
 }
 
 export class CreateHutDto {
+  @IsString()
+  title!: string;
 
   @IsString()
-  title?: string;
-
-  @IsString()
-  description?: string
+  description!: string;
 
   @IsOptional()
   @ValidateNested()
@@ -39,10 +45,9 @@ export class CreateHutDto {
 
   @IsNumber()
   @Min(0)
-  numberOfBeds?: number;
+  numberOfBeds!: number;
 
   @IsNumber()
   @IsOptional()
   price?: number;
-
 }

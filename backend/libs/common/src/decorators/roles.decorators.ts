@@ -21,4 +21,5 @@ export const LocalGuideOnly = () => createRoleDecorator(UserRole.localGuide);
 
 export const HutWorkerOnly = () => createRoleDecorator(UserRole.hutWorker);
 
-export const PlatformManagerOnly = () =>  createRoleDecorator(UserRole.platformManager);
+export const PlatformManagerOnly = () =>
+  createRoleDecorator(UserRole.platformManager);

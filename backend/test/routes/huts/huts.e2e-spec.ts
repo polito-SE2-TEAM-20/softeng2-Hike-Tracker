@@ -1,4 +1,4 @@
-import { mapToId, Point } from '@app/common';
+import { mapToId, Point, UserRole } from '@app/common';
 import { finishTest } from '@app/testing';
 import { prepareTestApp, prepareVars } from '@test/base';
 
@@ -16,20 +16,25 @@ describe('Huts (e2e)', () => {
 
   const setup = async () => {
     const user = await testService.createUser();
+    const localGuide = await testService.createUser({
+      role: UserRole.localGuide,
+    });
 
     return {
       user,
+      localGuide,
     };
   };
 
   it('should filter huts', async () => {
-    const { user } = await setup();
+    const { user, localGuide } = await setup();
 
     const pointData: Partial<Point> = {
       position: { type: 'Point', coordinates: [10, 20] },
     };
     const hut1 = await testService.createHut(
       {
+        userId: localGuide.id,
         numberOfBeds: 5,
         price: 55.3,
       },
@@ -37,6 +42,7 @@ describe('Huts (e2e)', () => {
     );
     const hut2 = await testService.createHut(
       {
+        userId: localGuide.id,
         numberOfBeds: 2,
         price: 80.5,
       },
@@ -44,6 +50,7 @@ describe('Huts (e2e)', () => {
     );
     const hut3 = await testService.createHut(
       {
+        userId: localGuide.id,
         numberOfBeds: 1,
         price: 100,
       },
@@ -51,6 +58,7 @@ describe('Huts (e2e)', () => {
     );
     const hut4 = await testService.createHut(
       {
+        userId: localGuide.id,
         numberOfBeds: 3,
         price: 45,
       },
@@ -58,6 +66,7 @@ describe('Huts (e2e)', () => {
     );
     const hut5 = await testService.createHut(
       {
+        userId: localGuide.id,
         numberOfBeds: 6,
         price: 130,
       },
@@ -132,10 +141,11 @@ describe('Huts (e2e)', () => {
   });
 
   it('should return point inside hut', async () => {
-    const { user } = await setup();
+    const { user, localGuide } = await setup();
 
     const hut = await testService.createHut(
       {
+        userId: localGuide.id,
         numberOfBeds: 1,
         price: 100,
       },

@@ -66,14 +66,14 @@ export class Hut {
   })
   point?: Point;
 
-   /**
+  /**
    * TypeORM sql-gen only
    * @deprecated
    */
-    @ManyToOne(() => User, (entity) => entity.__joiner, FOREIGN_OPTIONS_CASCADE)
-    @JoinColumn({
-      name: 'userId',
-      referencedColumnName: 'id',
-    })
-    user?: User;
+  @ManyToOne(() => User, (entity) => entity.__joiner, FOREIGN_OPTIONS_CASCADE)
+  @JoinColumn({
+    name: 'userId',
+    referencedColumnName: 'id',
+  })
+  user?: User;
 }
