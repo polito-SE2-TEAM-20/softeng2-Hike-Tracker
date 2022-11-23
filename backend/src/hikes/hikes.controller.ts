@@ -21,6 +21,7 @@ import { DataSource, DeepPartial, In } from 'typeorm';
 
 import {
   CurrentUser,
+  GPoint,
   GPX_FILE_URI,
   GroupValidationPipe,
   Hike,

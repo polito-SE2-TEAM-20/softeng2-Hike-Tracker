@@ -75,7 +75,7 @@ describe('Hikes (e2e)', () => {
     const hikeData = {
       title: 'eeee',
       description: 'test desc',
-      region: 'Torinio',
+      region: 'Torino',
       province: 'TO',
       length: 100.56,
       ascent: 5.71,
@@ -149,12 +149,32 @@ describe('Hikes (e2e)', () => {
   it('should update hike', async () => {
     const { localGuide, hike } = await setup();
 
+    
     const updateData = {
-      title: 'new hike title',
-      description: 'this is a new hike desc',
-      region: 'Torinio',
+      title: 'eeee',
+      description: 'test desc',
+      region: 'Torino',
       province: 'TO',
-      length: 5.78,
+      length: 100.56,
+      ascent: 5.71,
+      expectedTime: 1020,
+      difficulty: HikeDifficulty.professionalHiker,
+      referencePoints: [
+        {
+          name: 'Small fountain',
+          address: 'Some test address 1/1',
+          lat: 45.18,
+          lon: 7.084,
+        },
+      ],
+      startPoint: {
+        name: 'That small building near garage entrance',
+      },
+      endPoint: {
+        address: 'Turin, Via Torino 130',
+        lat: 45.181,
+        lon: 7.083,
+      },
     };
 
     await restService
@@ -168,6 +188,16 @@ describe('Hikes (e2e)', () => {
           ...hike,
           ...updateData,
         });
+        expect(body.referencePoints).toEqual(
+          [
+            {
+              name: 'Small fountain',
+              address: 'Some test address 1/1',
+              lat: 45.18,
+              lon: 7.084,
+            }
+          ]
+        );
       });
   });
 
