@@ -1,4 +1,4 @@
-import { IsIn, IsString, MaxLength, MinLength, IsEmail } from 'class-validator';
+import { IsIn, IsString, MaxLength, MinLength, IsEmail, Length, IsOptional } from 'class-validator';
 
 import { UserLimits, UserRole } from '@app/common';
 
@@ -26,6 +26,11 @@ export class RegisterDto {
 
   @IsIn(Object.values(UserRole).filter((v) => typeof v === 'number'))
   role!: UserRole;
+
+  @MinLength(10)
+  @MaxLength(10)
+  @IsOptional()
+  phoneNumber!: string;
 }
 
 export class LoginDto {

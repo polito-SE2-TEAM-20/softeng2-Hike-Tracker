@@ -44,6 +44,14 @@ export class User {
   role!: UserRole;
 
   @Column({
+    type: 'varchar',
+    length: UserLimits.phoneNumber,
+    nullable: true,
+    default:null
+  })
+  phoneNumber!: string|null;
+
+  @Column({
     type: 'boolean',
     nullable: false,
     default: false
