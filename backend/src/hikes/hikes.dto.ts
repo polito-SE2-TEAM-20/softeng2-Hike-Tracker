@@ -6,6 +6,7 @@ import {
   IsInt,
   IsLatitude,
   IsLongitude,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
@@ -13,6 +14,7 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
+import { isNil } from 'ramda';
 
 import {
   DtoWithGroups,
@@ -21,8 +23,11 @@ import {
   ID,
   IsIdentifier,
   PointLimits,
+  transformToClass,
   valToNumber,
 } from '@app/common';
+
+import { StartEndPointTransformer } from './hikes.utils';
 
 export class PointWithRadius {
   @IsLatitude()
@@ -107,6 +112,40 @@ export class ReferencePointDto {
   lon!: number;
 }
 
+export class StartEndPointDto extends DtoWithGroups {
+  protected generateGroups(): string[] {
+    if (!isNil(this.name)) return ['name'];
+    if (!isNil(this.address)) return ['address'];
+    if (!isNil(this.lat)) return ['position'];
+
+    throw new Error('name, address, or lat/lon should be defined');
+  }
+
+  @IsString({ groups: ['name'] })
+  @IsNotEmpty({ groups: ['name'] })
+  @IsOptional()
+  @MaxLength(PointLimits.name)
+  name?: string;
+
+  @IsString({ groups: ['address'] })
+  @IsNotEmpty({ groups: ['address'] })
+  @IsOptional()
+  @MaxLength(PointLimits.address)
+  address?: string;
+
+  @IsOptional()
+  @IsNotEmpty({ groups: ['position'] })
+  @IsLatitude({ groups: ['position'] })
+  @Transform(({ value }) => valToNumber(value))
+  lat!: number;
+
+  @IsOptional()
+  @IsNotEmpty({ groups: ['position'] })
+  @IsLongitude({ groups: ['position'] })
+  @Transform(({ value }) => valToNumber(value))
+  lon!: number;
+}
+
 export class HikeDto {
   @IsNumber()
   @Min(0)
@@ -152,19 +191,23 @@ export class HikeDto {
         return value;
       }
 
-      return JSON.parse(value).map((entry: any) => {
-        const dto = new ReferencePointDto();
-
-        Object.entries(entry).forEach(([key, v]) => {
-          dto[key] = v;
-        });
-
-        return dto;
-      });
+      return transformToClass(ReferencePointDto, JSON.parse(value));
     },
     { toClassOnly: true },
   )
   referencePoints!: ReferencePointDto[];
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => StartEndPointDto)
+  @StartEndPointTransformer()
+  startPoint?: StartEndPointDto | null;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => StartEndPointDto)
+  @StartEndPointTransformer()
+  endPoint?: StartEndPointDto | null;
 }
 
 export class UpdateHikeDto extends OmitType(PartialType(HikeDto), [

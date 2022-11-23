@@ -9,9 +9,16 @@ import {
 } from '@nestjs/common';
 import { isNil } from 'ramda';
 
-import { Hut, ID, Point } from '@app/common';
+import {
+  CurrentUser,
+  Hut,
+  HutWorkerOnly,
+  ID,
+  Point,
+  UserContext,
+} from '@app/common';
 
-import { FilterHutsDto } from './huts.dto';
+import { CreateHutDto, FilterHutsDto } from './huts.dto';
 import { HutsService } from './huts.service';
 
 @Controller('huts')
@@ -57,9 +64,18 @@ export class HutsController {
       .getOne();
 
     if (!hut) {
-      new Error(`Hut ${id} not found`);
+      throw new Error(`Hut ${id} not found`);
     }
 
     return hut;
+  }
+
+  @Post('createHut')
+  @HutWorkerOnly()
+  async createHut(
+    @Body() body: CreateHutDto,
+    @CurrentUser() user: UserContext,
+  ): Promise<Hut> {
+    return await this.service.createNewHut(body, user.id);
   }
 }

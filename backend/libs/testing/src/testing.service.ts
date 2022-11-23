@@ -4,6 +4,7 @@ import type {
   DataSource,
   DeepPartial,
   EntityTarget,
+  ObjectLiteral,
   Repository,
 } from 'typeorm';
 
@@ -33,27 +34,35 @@ export class TestingService {
     @InjectDataSource(CONNECTION_NAME) private dataSource: DataSource,
   ) {}
 
-  findOne<T>(type: EntityTarget<T>): Repository<T>['findOne'] {
+  findOne<T extends ObjectLiteral>(
+    type: EntityTarget<T>,
+  ): Repository<T>['findOne'] {
     const repository = this.dataSource.getRepository(type);
     return repository.findOne.bind(repository);
   }
 
-  update<T>(type: EntityTarget<T>): Repository<T>['update'] {
+  update<T extends ObjectLiteral>(
+    type: EntityTarget<T>,
+  ): Repository<T>['update'] {
     const repository = this.dataSource.getRepository(type);
     return repository.update.bind(repository);
   }
 
-  delete<T>(type: EntityTarget<T>): Repository<T>['delete'] {
+  delete<T extends ObjectLiteral>(
+    type: EntityTarget<T>,
+  ): Repository<T>['delete'] {
     const repository = this.dataSource.getRepository(type);
     return repository.delete.bind(repository);
   }
 
-  count<T>(type: EntityTarget<T>): Repository<T>['count'] {
+  count<T extends ObjectLiteral>(
+    type: EntityTarget<T>,
+  ): Repository<T>['count'] {
     const repository = this.dataSource.getRepository(type);
     return repository.count.bind(repository);
   }
 
-  find<T>(type: EntityTarget<T>): Repository<T>['find'] {
+  find<T extends ObjectLiteral>(type: EntityTarget<T>): Repository<T>['find'] {
     const repository = this.dataSource.getRepository(type);
     return repository.find.bind(repository);
   }
@@ -109,11 +118,11 @@ export class TestingService {
   }
 
   async createPoint(data: DeepPartial<Point> = {}): Promise<Point> {
-    return await this.createBase(Point, data);
+    return await this.createBase<Point>(Point, data);
   }
 
   async createHike(data: DeepPartial<Hike> = {}): Promise<Hike> {
-    return await this.createBase(Hike, data);
+    return await this.createBase<Hike>(Hike, data);
   }
 
   async createUser(
@@ -142,7 +151,7 @@ export class TestingService {
     };
   }
 
-  async createBase<T>(
+  async createBase<T extends ObjectLiteral>(
     type: EntityTarget<T>,
     data: DeepPartial<T> = {} as DeepPartial<T>,
   ): Promise<T> {
@@ -155,11 +164,11 @@ export class TestingService {
     return this.dataSource;
   }
 
-  getRepository<T>(t: EntityTarget<T>) {
+  getRepository<T extends ObjectLiteral>(t: EntityTarget<T>) {
     return this.dataSource.getRepository(t);
   }
 
-  repo<T>(t: EntityTarget<T>) {
+  repo<T extends ObjectLiteral>(t: EntityTarget<T>) {
     return this.getRepository(t);
   }
 

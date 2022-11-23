@@ -13,11 +13,18 @@ import {
 } from '../constants';
 
 import { Point } from './point.entity';
+import { User } from './user.entity';
 
 @Entity('huts')
 export class Hut {
   @PrimaryGeneratedColumn('increment')
   id!: number;
+
+  @Column({
+    type: 'integer',
+    nullable: false,
+  })
+  userId!: number;
 
   @Column({
     type: 'varchar',
@@ -58,4 +65,15 @@ export class Hut {
     referencedColumnName: 'id',
   })
   point?: Point;
+
+  /**
+   * TypeORM sql-gen only
+   * @deprecated
+   */
+  @ManyToOne(() => User, (entity) => entity.__joiner, FOREIGN_OPTIONS_CASCADE)
+  @JoinColumn({
+    name: 'userId',
+    referencedColumnName: 'id',
+  })
+  user?: User;
 }

@@ -1,4 +1,4 @@
-import { Hike, Hut, ParkingLot, Point, User } from '../entities';
+import { Hike, HikePoint, Hut, ParkingLot, Point, User } from '../entities';
 
 export type ID = number;
 
@@ -26,4 +26,8 @@ export type LinkedPoint =
 export type HikeFull = Hike & {
   linkedPoints: LinkedPoint[];
   referencePoints: Point[];
+  startPoint?: Point;
+  endPoint?: Point;
 };
+
+export type StartEndPoint = Point & { hikePoint: HikePoint };
