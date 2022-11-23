@@ -121,17 +121,6 @@ function App2() {
   }
 */}
 
-const addNewGpx = (formData) =>{
-  API_NewHike.addNewGpx(formData)
-    .then((newHike) =>{
-      console.log(newHike);
-    })
-    .catch((err) => {
-      throw err;
-    });
-}
-
-
   return (
     <>
       <Routes>
@@ -143,8 +132,8 @@ const addNewGpx = (formData) =>{
         <Route path="/navbar" element={<NavigationBar user={user} />} />
         <Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut}/>} />
         {/*<Route path="/hikeGpx" element={<AddHike addNewGpx={addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />*/}
-        <Route path="/hikeGpx" element={<AddHike addNewGpx={addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
-        <Route path="/hikeGpxHT" element={<HTAddHike addNewGpx={addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
+        <Route path="/hikeGpx" element={<AddHike addNewGpx={API_NewHike.addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
+        <Route path="/hikeGpxHT" element={<HTAddHike addNewGpx={API_NewHike.addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
 
         <Route path="/signup" element={<SignUpForm doRegister={doRegister} />} />
         <Route path="/hutpage" element={<HTHutPage isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
