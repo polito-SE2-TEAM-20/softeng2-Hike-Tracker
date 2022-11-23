@@ -6,11 +6,7 @@ import { ReferencePointDto } from '@core/hikes/hikes.dto';
   
 
 export class ParkingLotDto {
-    // @IsNumber()
-    // @Min(1)
-    // @Transform(({ value }) => valToNumber(value))
-    // pointId!: number;
-  
+
     @IsNumber()
     @Min(1)
     @Transform(({ value }) => valToNumber(value))

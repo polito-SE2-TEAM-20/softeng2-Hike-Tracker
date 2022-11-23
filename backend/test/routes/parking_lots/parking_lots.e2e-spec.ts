@@ -26,28 +26,33 @@ describe('Parking Lots (e2e)', () => {
   it('should create a parking lot', async () => {
     const { user } = await setup();
 
-    const pointData: Partial<Point> = {
-        position: { type: 'Point', coordinates: [10, 20] },
-    };
+    // const pointData: Partial<Point> = {
+    //     position: { type: 'Point', coordinates: [10, 20] },
+    // };
 
-    await testService.createPoint(pointData)
+    // await testService.createPoint(pointData)
 
     const lot1 = 
-        {
-            "pointId": 1,
-            "maxCars": 0
-        }
+    {
+      "maxCars": 0,
+      "location": {
+          "lat": 5.056,
+          "lon": 4.0586,
+          "name": "test",
+          "address": "test"
+      }
+  }
 
     const lot2 = 
-        {
-            "pointId": 1,
-            "maxCars": 10
-        }
-    const lot3 = 
-        {
-            "pointId": 2,
-            "maxCars": 5
-        }
+    {
+      "maxCars": 2,
+      "location": {
+          "lat": 5.056,
+          "lon": 4.0586,
+          "name": "test",
+          "address": "test"
+      }
+  }
 
       await restService
       .build(app, user)
@@ -69,15 +74,6 @@ describe('Parking Lots (e2e)', () => {
             "id": expect.any(TypeID)
         })
       });
-
-      await restService
-      .build(app, user)
-      .request()
-      .post('/parkingLot/insertLot')
-      .send(lot3)
-      .expect(422)
-
-
 
   });
 });
