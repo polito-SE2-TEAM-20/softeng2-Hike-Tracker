@@ -131,6 +131,8 @@ export class TestingService {
       role: UserRole.localGuide,
       email,
       password,
+      verified: true,
+      verificationHash: "123",
       ...data,
     })) as unknown as User;
 
