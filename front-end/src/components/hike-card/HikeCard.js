@@ -7,7 +7,6 @@ import Typography from '@mui/material/Typography';
 import touristIcon from '../../Assets/tourist-icon.png'
 import hikerIcon from '../../Assets/hiker-icon.png'
 import proIcon from '../../Assets/pro-icon.png'
-import { Skeleton } from '@mui/material';
 
 const bull = (
   <Box
