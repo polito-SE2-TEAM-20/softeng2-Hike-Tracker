@@ -14,6 +14,7 @@ import {
   Hut,
   HutWorkerOnly,
   ID,
+  LocalGuideAndHutWorkerOnly,
   Point,
   UserContext,
 } from '@app/common';
@@ -71,7 +72,7 @@ export class HutsController {
   }
 
   @Post('createHut')
-  @HutWorkerOnly()
+  @LocalGuideAndHutWorkerOnly()
   async createHut(
     @Body() body: CreateHutDto,
     @CurrentUser() user: UserContext,
