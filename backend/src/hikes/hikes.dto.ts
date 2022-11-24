@@ -114,12 +114,22 @@ export class ReferencePointDto {
 
 export class StartEndPointDto extends DtoWithGroups {
   protected generateGroups(): string[] {
+    if (!isNil(this.hutId)) return ['hut'];
+    if (!isNil(this.parkingLotId)) return ['parkingLot'];
     if (!isNil(this.name)) return ['name'];
     if (!isNil(this.address)) return ['address'];
     if (!isNil(this.lat)) return ['position'];
 
     throw new Error('name, address, or lat/lon should be defined');
   }
+
+  @IsOptional()
+  @IsIdentifier({ groups: ['hut'] })
+  hutId?: ID | null;
+
+  @IsOptional()
+  @IsIdentifier({ groups: ['parkingLot'] })
+  parkingLotId?: ID | null;
 
   @IsString({ groups: ['name'] })
   @IsNotEmpty({ groups: ['name'] })
@@ -210,18 +220,6 @@ export class HikeDto {
   endPoint?: StartEndPointDto | null;
 }
 
-export class UpdateHikeDto extends OmitType(PartialType(HikeDto), [
-  'referencePoints',
-  'startPoint',
-  'endPoint',
-] as const) {
-  @IsArray()
-  @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => ReferencePointDto)
-  referencePoints?: ReferencePointDto[];
-}
-
 class LinkedPointDto extends DtoWithGroups {
   protected generateGroups() {
     if (this.hutId) {
@@ -241,6 +239,28 @@ class LinkedPointDto extends DtoWithGroups {
   @IsIdentifier({ groups: ['parkingLot'] })
   @IsOptional({ groups: ['hut'] })
   parkingLotId!: ID;
+}
+
+export class UpdateHikeDto extends OmitType(PartialType(HikeDto), [
+  'referencePoints',
+  'startPoint',
+  'endPoint',
+] as const) {
+  @IsArray()
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => ReferencePointDto)
+  referencePoints?: ReferencePointDto[];
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => LinkedPointDto)
+  startPoint?: LinkedPointDto | null;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => LinkedPointDto)
+  endPoint?: LinkedPointDto | null;
 }
 
 export class LinkHutToHikeDto {
