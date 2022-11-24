@@ -87,7 +87,6 @@ const HTListOfHikes = (props) => {
             loh = await LOH_API.getListOfHikes()
         }
         getHikes().then(() => {
-            console.log(loh)
             setListOfHikes(loh)
             setLoading(true)
         });
