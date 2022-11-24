@@ -375,7 +375,7 @@ export class HikesController {
       .getRepository()
       .update({ id }, omit(['referencePoints'], data)); //Is it updating what?
 
-    return await this.service.findByIdOrThrow(id);
+      return await this.service.getFullHike(id);;
   }
 
   @Get(':id')

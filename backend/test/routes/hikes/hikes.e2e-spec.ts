@@ -187,15 +187,13 @@ describe('Hikes (e2e)', () => {
         expect(body).toMatchObject({
           ...hike,
           ...updateData,
+          referencePoints: updateData.referencePoints.map<Point>((refPoint) => ({
+            ...withoutLatLon(refPoint),
+            id: anyId(),
+            position: latLonToGisPoint(refPoint),
+            type: PointType.point,
+          })),
         });
-        expect(body.referencePoints).toEqual([
-          {
-            name: 'Small fountain',
-            address: 'Some test address 1/1',
-            lat: 45.18,
-            lon: 7.084,
-          },
-        ]);
       });
   });
 
