@@ -316,64 +316,64 @@ export class HikesController {
     await this.service.ensureExistsOrThrow(id);
 
     //Antonio's code on Ref Points Update starts here
-      /*
+    /*
         OPERATIONS TO DO:
         - SELECT all Ref Points Id in HikePoint table; ✓
         - DELETE all Ref Points associated to a certain hike in Point table by IDs previously selected; ✓
         - INSERT new Ref Points in Points; ✓
         - INSERT new Ref Points in HikePoints; ✓
       */
-     if(!isNil(data.referencePoints)){
+    if (!isNil(data.referencePoints)) {
+      const points = await this.dataSource.getRepository(HikePoint).findBy({
+        hikeId: id,
+      });
 
-        let points = await this.dataSource.getRepository(HikePoint).findBy({
-          hikeId: id
-        });
+      const pointsToDelete = points.map((hikePoint) => hikePoint.pointId);
 
-        let pointsToDelete = points.map((hikePoint) => hikePoint.pointId);
+      await this.pointsService.getRepository().delete({
+        id: In(pointsToDelete),
+      });
 
-        await this.pointsService.getRepository().delete({
-          id: In(pointsToDelete)
-        })
+      //Creation of proper ref points
+      const refPointsForDB = data.referencePoints.map((refPoint) => {
+        const pointObject: GPoint = {
+          type: 'Point',
+          coordinates: [refPoint.lon, refPoint.lat],
+        };
 
-        //Creation of proper ref points
-        const refPointsForDB = data.referencePoints.map((refPoint) => {
-          const pointObject: GPoint = {
-            type: 'Point',
-            coordinates: [refPoint.lon, refPoint.lat],
-          };
-  
-          const refPointForDB = {
-            name: refPoint.name,
-            address: refPoint.address,
-            point: pointObject,
-          };
-          return refPointForDB;
-        });
-  
-        //INSERT into Points table of the RefPoints
-        const referencePoints = await this.pointsService.getRepository().save(
-          refPointsForDB.map<Partial<Point>>((point) => ({
-            type: 0,
-            position: point.point,
-            address: point.address,
-            name: point.name,
-          })),
-        );
-  
-        //INSERT into HikePoints table of the RefPoints
-        await this.dataSource.getRepository(HikePoint).save(
-          referencePoints.map<HikePoint>((point, index) => ({
-            hikeId: id,
-            pointId: point.id,
-            index,
-            type: PointType.referencePoint,
-          })),
-        );
-     } 
+        const refPointForDB = {
+          name: refPoint.name,
+          address: refPoint.address,
+          point: pointObject,
+        };
+        return refPointForDB;
+      });
+
+      //INSERT into Points table of the RefPoints
+      const referencePoints = await this.pointsService.getRepository().save(
+        refPointsForDB.map<Partial<Point>>((point) => ({
+          type: 0,
+          position: point.point,
+          address: point.address,
+          name: point.name,
+        })),
+      );
+
+      //INSERT into HikePoints table of the RefPoints
+      await this.dataSource.getRepository(HikePoint).save(
+        referencePoints.map<HikePoint>((point, index) => ({
+          hikeId: id,
+          pointId: point.id,
+          index,
+          type: PointType.referencePoint,
+        })),
+      );
+    }
     //Antonio's code ends here
 
-    await this.service.getRepository().update({ id },  omit(['referencePoints'], data)); //Is it updating what?
-
+    await this.service
+      .getRepository()
+      .update({ id }, omit(['referencePoints'], data)); //Is it updating what?
 
     return await this.service.findByIdOrThrow(id);
   }

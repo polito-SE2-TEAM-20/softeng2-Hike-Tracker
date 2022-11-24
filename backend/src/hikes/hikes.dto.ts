@@ -212,6 +212,8 @@ export class HikeDto {
 
 export class UpdateHikeDto extends OmitType(PartialType(HikeDto), [
   'referencePoints',
+  'startPoint',
+  'endPoint',
 ] as const) {
   @IsArray()
   @IsOptional()
