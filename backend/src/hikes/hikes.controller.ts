@@ -1,5 +1,3 @@
-import { join } from 'path';
-
 import {
   Controller,
   Get,
@@ -66,6 +64,7 @@ export class HikesController {
   }
 
   @Post('/filteredHikes')
+  @HttpCode(HttpStatus.OK)
   async getFilteredHikes(
     @Body()
     { inPointRadius, ...body }: FilteredHikesDto,
@@ -145,7 +144,13 @@ export class HikesController {
       }),
     )
     file: Express.Multer.File,
-    @Body() body: HikeDto,
+    @Body()
+    {
+      referencePoints: referencePointsArray,
+      startPoint: _startPoint,
+      endPoint: _endPoint,
+      ...body
+    }: HikeDto,
     @CurrentUser() user: UserContext,
   ): Promise<Hike | null> {
     const gpx = await fs.readFile(file.path);
@@ -166,13 +171,12 @@ export class HikesController {
 
       const hike = await this.service.getRepository(entityManager).save({
         userId: user.id,
-        gpxPath: join(GPX_FILE_URI, file.filename),
+        gpxPath: [GPX_FILE_URI, file.filename].join('/'),
         ...parsedHike.hike,
         ...body,
       });
 
       //Antonio's code for refPoint insertion starts here
-      const referencePointsArray = body.referencePoints;
 
       const refPointsForDB = referencePointsArray.map((refPoint) => {
         return {
@@ -206,10 +210,10 @@ export class HikesController {
       let endPoint: Point | null = null;
       const hikePointsToInsert: DeepPartial<HikePoint>[] = [];
 
-      if (body.startPoint) {
+      if (_startPoint) {
         startPoint = await pointsRepo.save({
-          ...pick(['address', 'name'], body.startPoint),
-          position: latLonToGisPoint(body.startPoint),
+          ...pick(['address', 'name'], _startPoint),
+          position: latLonToGisPoint(_startPoint),
           type: PointType.point,
         });
 
@@ -220,10 +224,10 @@ export class HikesController {
           type: PointType.startPoint,
         });
       }
-      if (body.endPoint) {
+      if (_endPoint) {
         endPoint = await pointsRepo.save({
-          ...pick(['address', 'name'], body.endPoint),
-          position: latLonToGisPoint(body.endPoint),
+          ...pick(['address', 'name'], _endPoint),
+          position: latLonToGisPoint(_endPoint),
           type: PointType.point,
         });
 
@@ -245,7 +249,7 @@ export class HikesController {
 
   @Post('linkPoints')
   @LocalGuideOnly()
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   async linkPoints(
     @Body(new GroupValidationPipe()) { hikeId, linkedPoints }: LinkHutToHikeDto,
   ): Promise<HikeFull> {

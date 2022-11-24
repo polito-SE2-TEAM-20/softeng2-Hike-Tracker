@@ -51,6 +51,14 @@ export class FilteredHikesDto {
   province?: string;
 
   @IsOptional()
+  @IsString()
+  city?: string;
+
+  @IsOptional()
+  @IsString()
+  country?: string;
+
+  @IsOptional()
   @IsNumber()
   @Min(0)
   maxLength?: number;
@@ -191,6 +199,14 @@ export class HikeDto {
   @IsString()
   @MaxLength(HikeLimits.province)
   province!: string;
+
+  @IsString()
+  @MaxLength(HikeLimits.city)
+  city!: string;
+
+  @IsString()
+  @MaxLength(HikeLimits.country)
+  country!: string;
 
   @IsArray()
   @ValidateNested({ each: true })
