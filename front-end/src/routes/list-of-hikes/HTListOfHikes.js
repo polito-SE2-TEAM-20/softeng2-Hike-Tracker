@@ -13,7 +13,7 @@ import HTTopBarFilter from '../../components/side-filter/HTTopBarFilter';
 import Skeleton from '@mui/material/Skeleton';
 
 const HTListOfHikes = (props) => {
-    const displayType = [
+    const displayType = 
         {
             mobile: {
                 xs: "flex",
@@ -37,7 +37,7 @@ const HTListOfHikes = (props) => {
                 xl: "flex"
             }
         }
-    ]
+    
 
     const [region, setRegion] = useState('')
     const [province, setProvince] = useState('')
