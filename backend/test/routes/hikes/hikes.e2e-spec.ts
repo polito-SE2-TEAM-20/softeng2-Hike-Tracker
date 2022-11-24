@@ -146,7 +146,7 @@ describe('Hikes (e2e)', () => {
     ).toHaveLength(3);
   });
 
-  it('should update hike', async () => {
+  it('should update hike - referencePoints, startPoint, endPoint', async () => {
     const { localGuide, hike } = await setup();
 
     const updateData = {
@@ -166,15 +166,14 @@ describe('Hikes (e2e)', () => {
           lon: 7.084,
         },
       ],
-      // todo: uncomment when implemented
-      // startPoint: {
-      //   name: 'That small building near garage entrance',
-      // },
-      // endPoint: {
-      //   address: 'Turin, Via Torino 130',
-      //   lat: 45.181,
-      //   lon: 7.083,
-      // },
+      startPoint: {
+        name: 'That small building near garage entrance',
+      },
+      endPoint: {
+        address: 'Turin, Via Torino 130',
+        lat: 45.181,
+        lon: 7.083,
+      },
     };
 
     await restService
@@ -187,12 +186,14 @@ describe('Hikes (e2e)', () => {
         expect(body).toMatchObject({
           ...hike,
           ...updateData,
-          referencePoints: updateData.referencePoints.map<Point>((refPoint) => ({
-            ...withoutLatLon(refPoint),
-            id: anyId(),
-            position: latLonToGisPoint(refPoint),
-            type: PointType.point,
-          })),
+          referencePoints: updateData.referencePoints.map<Point>(
+            (refPoint) => ({
+              ...withoutLatLon(refPoint),
+              id: anyId(),
+              position: latLonToGisPoint(refPoint),
+              type: PointType.point,
+            }),
+          ),
         });
       });
   });

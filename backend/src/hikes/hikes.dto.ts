@@ -220,7 +220,7 @@ export class HikeDto {
   endPoint?: StartEndPointDto | null;
 }
 
-class LinkedPointDto extends DtoWithGroups {
+export class LinkedPointDto extends DtoWithGroups {
   protected generateGroups() {
     if (this.hutId) {
       return ['hut'];

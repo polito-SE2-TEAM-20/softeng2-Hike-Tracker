@@ -16,7 +16,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs-extra';
-import { isNil, omit, pick, propEq } from 'ramda';
+import { isNil, pick, propEq } from 'ramda';
 import { DataSource, DeepPartial, In } from 'typeorm';
 
 import {
@@ -311,7 +311,13 @@ export class HikesController {
   @LocalGuideOnly()
   async updateHike(
     @Param('id') id: ID,
-    @Body() data: UpdateHikeDto,
+    @Body()
+    {
+      referencePoints: hikeReferencePoints,
+      startPoint,
+      endPoint,
+      ...data
+    }: UpdateHikeDto,
   ): Promise<Hike> {
     await this.service.ensureExistsOrThrow(id);
 
@@ -323,7 +329,7 @@ export class HikesController {
         - INSERT new Ref Points in Points; ✓
         - INSERT new Ref Points in HikePoints; ✓
       */
-    if (!isNil(data.referencePoints)) {
+    if (!isNil(hikeReferencePoints)) {
       const points = await this.dataSource.getRepository(HikePoint).findBy({
         hikeId: id,
       });
@@ -335,7 +341,7 @@ export class HikesController {
       });
 
       //Creation of proper ref points
-      const refPointsForDB = data.referencePoints.map((refPoint) => {
+      const refPointsForDB = hikeReferencePoints.map((refPoint) => {
         const pointObject: GPoint = {
           type: 'Point',
           coordinates: [refPoint.lon, refPoint.lat],
@@ -371,11 +377,12 @@ export class HikesController {
     }
     //Antonio's code ends here
 
-    await this.service
-      .getRepository()
-      .update({ id }, omit(['referencePoints'], data)); //Is it updating what?
+    // update start and end point
+    await this.service.updateStartEndPoints({ id, startPoint, endPoint });
 
-      return await this.service.getFullHike(id);;
+    await this.service.getRepository().update({ id }, data);
+
+    return await this.service.getFullHike(id);
   }
 
   @Get(':id')

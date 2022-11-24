@@ -18,6 +18,8 @@ import {
   WithPoint,
 } from '@app/common';
 
+import { LinkedPointDto } from './hikes.dto';
+
 export class HikesService extends BaseService<Hike> {
   constructor(
     @InjectRepository(Hike)
@@ -129,5 +131,79 @@ export class HikesService extends BaseService<Hike> {
       startPoint,
       endPoint,
     };
+  }
+
+  async updateStartEndPoints({
+    id,
+    endPoint,
+    startPoint,
+  }: {
+    id: ID;
+    startPoint?: LinkedPointDto | null;
+    endPoint?: LinkedPointDto | null;
+  }): Promise<void> {
+    for (const { field, type } of [
+      { field: startPoint, type: PointType.startPoint },
+      { field: endPoint, type: PointType.startPoint },
+    ]) {
+      if (!field) {
+        continue;
+      }
+
+      const { hutId, parkingLotId } = field;
+
+      let point: Point | null = null;
+
+      if (hutId) {
+        point = await this.dataSource
+          .getRepository(Point)
+          .createQueryBuilder('p')
+          .andWhere((qb) => {
+            const subQuery = qb
+              .subQuery()
+              .select(['h.pointId'])
+              .from(Hut, 'h')
+              .andWhere('h.id = :hutId', {
+                hutId,
+              })
+              .getQuery();
+
+            return `p.id IN ${subQuery}`;
+          })
+          .getOne();
+      } else if (parkingLotId) {
+        point = await this.dataSource
+          .getRepository(Point)
+          .createQueryBuilder('p')
+          .andWhere((qb) => {
+            const subQuery = qb
+              .subQuery()
+              .select(['pl.pointId'])
+              .from(ParkingLot, 'pl')
+              .andWhere('pl.id :parkingLotId', {
+                parkingLotId,
+              })
+              .getQuery();
+
+            return `p.id IN ${subQuery}`;
+          })
+          .getOne();
+      }
+
+      if (!point) {
+        continue;
+      }
+
+      // remove existing point
+      await this.dataSource.getRepository(HikePoint).delete({
+        hikeId: id,
+        type,
+      });
+
+      // save new start point
+      await this.dataSource
+        .getRepository(HikePoint)
+        .save({ index: 1, hikeId: id, pointId: point.id, type });
+    }
   }
 }
