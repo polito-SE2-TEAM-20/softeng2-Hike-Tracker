@@ -16,16 +16,19 @@ import { LocalGuide } from './Visuals/localGuide';
 import { NavigationBar } from './Visuals/Navbar'
 import API_SignUp from './SignUp/API_SignUp';
 import HTListOfHikes from './routes/list-of-hikes/HTListOfHikes';
+import API_NewHut from './NewHut/API_NewHut';
 
 // import { AddHike } from './NewHike/proveAddHike';
 
 import { AddHike } from './NewHike/AddHike';
 import { HTAddHike } from './NewHike/HTAddHike';
+import { NewHutForm } from './NewHut/NewHut';
 
 
 import LoginForm from './Login/Login';
 import {SignUpForm} from './SignUp/SignUp';
 import HTHutPage from './routes/hut-page/HTHutPage';
+
 
 
 import {
@@ -103,7 +106,23 @@ function App2() {
         setErrorMessage(err);
       }
       )
-  }
+   }
+
+   const addNewHut =(hut, setShow, setErrorMessage) =>{
+    API_NewHut.addNewHut(hut)
+       .then(newHut => {
+        setShow(false);
+        console.log(newHut);
+        navigate('/localGuide');
+       })
+       .catch(err=>{
+        setShow(true);
+        setErrorMessage(err);
+       })
+   }
+
+
+
 {/*
   const addNewGpx = async (formData, hike) => {
     try {
@@ -138,6 +157,7 @@ function App2() {
 
         <Route path="/signup" element={<SignUpForm doRegister={doRegister} />} />
         <Route path="/hutpage" element={<HTHutPage isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
+        <Route path="/newHut" element={<NewHutForm isLoggedIn={loggedIn} doLogOut={doLogOut} addNewHut={addNewHut}/>}/>
       </Routes>
     </>
   );
