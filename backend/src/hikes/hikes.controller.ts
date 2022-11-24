@@ -16,7 +16,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs-extra';
-import { isNil, pick, propEq } from 'ramda';
+import { isNil, omit, pick, propEq } from 'ramda';
 import { DataSource, DeepPartial, In } from 'typeorm';
 
 import {
@@ -361,7 +361,7 @@ export class HikesController {
         );
   
         //INSERT into HikePoints table of the RefPoints
-        await this.service.getRepository().save(
+        await this.dataSource.getRepository(HikePoint).save(
           referencePoints.map<HikePoint>((point, index) => ({
             hikeId: id,
             pointId: point.id,
@@ -372,7 +372,7 @@ export class HikesController {
      } 
     //Antonio's code ends here
 
-    await this.service.getRepository().update({ id }, data); //Is it updating what?
+    await this.service.getRepository().update({ id },  omit(['referencePoints'], data)); //Is it updating what?
 
 
     return await this.service.findByIdOrThrow(id);
