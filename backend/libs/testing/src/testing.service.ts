@@ -18,6 +18,7 @@ import {
   Point,
   User,
   UserRole,
+  WithPoint,
 } from '@app/common';
 
 import { CONNECTION_NAME } from './testing.constants';
@@ -82,17 +83,18 @@ export class TestingService {
     pointData: Partial<Point> = {
       position: { type: 'Point', coordinates: [49, 7] },
     },
-  ): Promise<Hut> {
+  ): Promise<WithPoint<Hut>> {
     let pointId: ID | undefined = data?.pointId;
 
-    if (pointData || !pointId) {
+    if (!pointId) {
       const point = await this.createPoint(pointData);
       pointId = point.id;
     }
 
+    const prettyPoint = await this.repo(Point).findOneByOrFail({ id: pointId });
     const hut = await this.createBase<Hut>(Hut, { ...data, pointId });
 
-    return hut;
+    return { ...hut, point: prettyPoint };
   }
 
   async createParkingLot(
@@ -100,7 +102,7 @@ export class TestingService {
     pointData: Partial<Point> = {
       position: { type: 'Point', coordinates: [49, 7] },
     },
-  ): Promise<ParkingLot> {
+  ): Promise<WithPoint<ParkingLot>> {
     let pointId: ID | undefined = data?.pointId;
 
     if (pointData || !pointId) {
@@ -108,7 +110,14 @@ export class TestingService {
       pointId = point.id;
     }
 
-    return await this.createBase<ParkingLot>(ParkingLot, { ...data, pointId });
+    const prettyPoint = await this.repo(Point).findOneByOrFail({ id: pointId });
+
+    const parkingLot = await this.createBase<ParkingLot>(ParkingLot, {
+      ...data,
+      pointId,
+    });
+
+    return { ...parkingLot, point: prettyPoint };
   }
 
   async createHikePoint(
@@ -158,6 +167,14 @@ export class TestingService {
     return await this.dataSource.getRepository(type).save({
       ...data,
     });
+  }
+
+  async withPoint<T extends { pointId: ID }>(entity: T): Promise<WithPoint<T>> {
+    const point = await this.repo(Point).findOneByOrFail({
+      id: entity.pointId,
+    });
+
+    return { ...entity, point };
   }
 
   getConnection() {

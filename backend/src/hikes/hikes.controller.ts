@@ -14,8 +14,8 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs-extra';
-import { isNil, pick, propEq } from 'ramda';
-import { DataSource, DeepPartial, In } from 'typeorm';
+import { isNil, propEq } from 'ramda';
+import { DataSource, In } from 'typeorm';
 
 import {
   CurrentUser,
@@ -206,40 +206,14 @@ export class HikesController {
       //Antonio's code ends here
 
       // insert start/end points
-      let startPoint: Point | null = null;
-      let endPoint: Point | null = null;
-      const hikePointsToInsert: DeepPartial<HikePoint>[] = [];
-
-      if (_startPoint) {
-        startPoint = await pointsRepo.save({
-          ...pick(['address', 'name'], _startPoint),
-          position: latLonToGisPoint(_startPoint),
-          type: PointType.point,
-        });
-
-        hikePointsToInsert.push({
-          index: 0,
-          hikeId: hike.id,
-          pointId: startPoint.id,
-          type: PointType.startPoint,
-        });
-      }
-      if (_endPoint) {
-        endPoint = await pointsRepo.save({
-          ...pick(['address', 'name'], _endPoint),
-          position: latLonToGisPoint(_endPoint),
-          type: PointType.point,
-        });
-
-        hikePointsToInsert.push({
-          index: 10000,
-          hikeId: hike.id,
-          pointId: endPoint.id,
-          type: PointType.endPoint,
-        });
-      }
-
-      await hikePointsRepo.save(hikePointsToInsert);
+      await this.service.upsertStartEndPoints(
+        {
+          id: hike.id,
+          startPoint: _startPoint,
+          endPoint: _endPoint,
+        },
+        entityManager,
+      );
 
       return { hike, points: referencePoints };
     });
@@ -382,7 +356,7 @@ export class HikesController {
     //Antonio's code ends here
 
     // update start and end point
-    await this.service.updateStartEndPoints({ id, startPoint, endPoint });
+    await this.service.upsertStartEndPoints({ id, startPoint, endPoint });
 
     await this.service.getRepository().update({ id }, data);
 

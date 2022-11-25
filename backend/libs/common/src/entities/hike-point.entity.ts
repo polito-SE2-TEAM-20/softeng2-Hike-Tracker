@@ -52,6 +52,7 @@ export class HikePoint {
    */
   @ManyToOne(() => Hike, (entity) => entity.__joiner, FOREIGN_OPTIONS_CASCADE)
   @JoinColumn({
+    foreignKeyConstraintName: 'hike_points_hikeId_fk',
     name: 'hikeId',
     referencedColumnName: 'id',
   })
@@ -63,6 +64,7 @@ export class HikePoint {
    */
   @ManyToOne(() => Point, (entity) => entity.__joiner, FOREIGN_OPTIONS_CASCADE)
   @JoinColumn({
+    foreignKeyConstraintName: 'hike_points_pointId_fk',
     name: 'pointId',
     referencedColumnName: 'id',
   })

@@ -12,7 +12,6 @@ import { isNil } from 'ramda';
 import {
   CurrentUser,
   Hut,
-  HutWorkerOnly,
   ID,
   LocalGuideAndHutWorkerOnly,
   Point,

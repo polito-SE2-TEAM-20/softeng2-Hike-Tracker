@@ -268,15 +268,24 @@ export class UpdateHikeDto extends OmitType(PartialType(HikeDto), [
   @Type(() => ReferencePointDto)
   referencePoints?: ReferencePointDto[];
 
-  @IsOptional()
   @ValidateNested()
-  @Type(() => LinkedPointDto)
-  startPoint?: LinkedPointDto | null;
+  @Type(() => StartEndPointDto)
+  startPoint?: StartEndPointDto | null;
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => LinkedPointDto)
-  endPoint?: LinkedPointDto | null;
+  @Type(() => StartEndPointDto)
+  endPoint?: StartEndPointDto | null;
+
+  // @IsOptional()
+  // @ValidateNested()
+  // @Type(() => LinkedPointDto)
+  // startPoint?: LinkedPointDto | null;
+
+  // @IsOptional()
+  // @ValidateNested()
+  // @Type(() => LinkedPointDto)
+  // endPoint?: LinkedPointDto | null;
 }
 
 export class LinkHutToHikeDto {
