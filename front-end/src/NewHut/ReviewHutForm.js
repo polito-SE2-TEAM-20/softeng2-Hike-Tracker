@@ -19,6 +19,10 @@ function ReviewHutForm(props) {
             <ListItemText primary='Elevation' />
             <Typography variant="body2">{props.elevation}</Typography>
           </ListItem>
+          <ListItem key={props.country} sx={{ py: 1, px: 0 }}>
+            <ListItemText primary='Country' />
+            <Typography variant="body2">{props.country}</Typography>
+          </ListItem>
 
           <ListItem key={props.region} sx={{ py: 1, px: 0 }}>
             <ListItemText primary='Region' />

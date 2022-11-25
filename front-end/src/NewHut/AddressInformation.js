@@ -40,6 +40,20 @@ function AddressInformation(props) {
             onChange={(e) => {props.setElevation(e.target.value)}}
           />
         </Grid>
+        <Grid item xs={12}>
+          <TextField
+            required
+            id="country"
+            name="country"
+            label="Country"
+            fullWidth
+            autoComplete="country"
+            variant="standard"
+
+            value ={props.country}
+            onChange={(e) => {props.setCountry(e.target.value)}}
+          />
+        </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
             required
