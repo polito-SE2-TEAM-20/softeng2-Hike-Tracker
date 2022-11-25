@@ -6,18 +6,19 @@ import './browse-hikes-style.css'
 
 import { MapBrowseHike } from '../../components/map/MapBrowseHike';
 import { useNavigate } from 'react-router';
-import BH_API from './BH-API';
 import { Grid } from '@mui/material';
 import HTNavbar from '../../components/HTNavbar/HTNavbar';
 import MapLoading from '../../components/map/MapLoading';
 import MapFilters from '../../components/map-filters/MapFilters';
-import LOH_API from '../list-of-hikes/LOH-API';
+import API from '../../API/API.js';
 
 const HTBrowseHikes = (props) => {
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
     const [listOfHikes, setListOfHikes] = useState([])
     const [hike2Positions, setHike2Positions] = useState([])
+    const [isRadiusProcedureActive, setIsRadioProcedureActive] = useState(false)
+    const [radiusFilter, setRadiusFilter] = useState([[0.0, 0.0], 0.0])
 
     const [filter, setFilter] = useState({
         "province": null,
@@ -35,10 +36,9 @@ const HTBrowseHikes = (props) => {
     useEffect(() => {
         var loh = []
         const getHikes = async () => {
-            loh = await LOH_API.getFilteredListOfHikes({ filter })
+            loh = await API.getFilteredListOfHikes({ filter })
         }
         getHikes().then(() => {
-            console.log(loh)
             setListOfHikes(loh)
         });
     }, [filter])
@@ -50,7 +50,7 @@ const HTBrowseHikes = (props) => {
     useEffect(() => {
         var tmpListOfHikes = []
         const getHikes = async () => {
-            tmpListOfHikes = await BH_API.getListOfHikes()
+            tmpListOfHikes = await API.getListOfHikes()
         }
         getHikes().then(() => {
             setListOfHikes(tmpListOfHikes)
@@ -62,7 +62,7 @@ const HTBrowseHikes = (props) => {
         const getGpxFiles = async () => {
             setLoading(false)
             for (let hike of listOfHikes.map(x => x)) {
-                const result = await BH_API.getHikePathByHike(hike)
+                const result = await API.getHikePathByHike(hike)
                 fillingList.push(result)
             }
         }
@@ -85,7 +85,9 @@ const HTBrowseHikes = (props) => {
     return (
         <Grid container spacing={0} sx={{ backgroundColor: "#f2f2f2", minHeight: "100vh", height: "100%", minWidth: "100vw", width: "100%" }}>
             <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
-            <MapFilters loading={loading} listOfHikes={hike2Positions} setFilter={setFilter} />
+            <MapFilters radiusFilter={radiusFilter} setRadiusFilter={setRadiusFilter}
+                setIsRadioProcedureActive={setIsRadioProcedureActive} loading={loading}
+                listOfHikes={hike2Positions} setFilter={setFilter} />
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                 {loading ? <MapBrowseHike dataset={hike2Positions} /> : <MapLoading></MapLoading>}
             </Grid>

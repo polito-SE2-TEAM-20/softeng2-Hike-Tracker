@@ -6,7 +6,7 @@ import touristIcon from '../../Assets/tourist-icon.png'
 import hikerIcon from '../../Assets/hiker-icon.png'
 import proIcon from '../../Assets/pro-icon.png'
 import { useEffect, useState } from "react";
-import LOH_API from "../list-of-hikes/LOH-API";
+import API from '../../API/API.js';
 import { Skeleton } from "@mui/material";
 
 const Difficulty = (props) => {
@@ -60,7 +60,7 @@ const ShowHike = (props) => {
     useEffect(() => {
         let tmpHike = { title: "", description: "", region: "", province: "", length: "", expectedTime: "", ascent: "", difficulty: -1 }
         const getHike = async () => {
-            tmpHike = await LOH_API.getSingleHikeByID(hikeid)
+            tmpHike = await API.getSingleHikeByID(hikeid)
         }
         getHike().then(() => {
             setHike(tmpHike)
