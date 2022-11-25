@@ -5,7 +5,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'leaflet/dist/leaflet.css'
 
 import HTBrowseHikes from './routes/browse-hikes/HTBrowseHikes.js'
-import BACKUPHTListOfHikes from './routes/list-of-hikes/BACKUPListOfHikes.js';
 import SingleHike from './components/single-hike/SingleHike.js';
 import HTMainPage from './routes/main-page/HTMainPage';
 import { useNavigate } from 'react-router-dom';
