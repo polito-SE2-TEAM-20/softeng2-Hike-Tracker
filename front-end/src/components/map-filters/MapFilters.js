@@ -13,7 +13,6 @@ const MapFilters = (props) => {
     const [openLength, setOpenLength] = useState(false);
     const [openAscent, setOpenAscent] = useState(false);
     const [openDiff, setOpenDiff] = useState(false);
-    const [openRadius, setOpenRadius] = useState(false);
     const chipVariants = ["outlined", "filled"];
 
     var regions = []
@@ -110,10 +109,7 @@ const MapFilters = (props) => {
                     <Grid item md={2} lg={2} xl={2}>
                         <Chip variant={diff[0] == 0 && diff[1] == maxDiff ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenDiff(true) }} label="Difficulty" clickable />
                     </Grid>
-                    <Grid item md={2} lg={2} xl={2}>
-                        <Chip variant={chipVariants[0]} onClick={() => { props.setIsRadioProcedureActive(true) }} label="Radius" clickable />
-                    </Grid>
-                    <Grid item md={7} lg={7} xl={7} sx={{ display: "flex", justifyContent: "center", marginRight: "24px" }}>
+                    <Grid item md={6} lg={6} xl={6} sx={{ display: "flex", justifyContent: "center", marginRight: "24px" }}>
                         <HTButton text="Apply" color="black" textColor="white" size="14px" navigate={() => {
                             props.setFilter(
                                 {
@@ -131,7 +127,7 @@ const MapFilters = (props) => {
                             )
                         }} />
                     </Grid>
-                    <Grid item md={7} lg={7} xl={7} sx={{ display: "flex", justifyContent: "center", marginRight: "24px" }}>
+                    <Grid item md={6} lg={6} xl={6} sx={{ display: "flex", justifyContent: "center", marginRight: "24px" }}>
                         <HTButton text="Reset" color="black" textColor="white" size="14px" navigate={resetAllFields} />
                     </Grid>
                 </Grid >
@@ -167,10 +163,7 @@ const MapFilters = (props) => {
                     <Grid item md={2} lg={2} xl={2}>
                         <Chip variant={diff[0] == 0 && diff[1] == maxDiff ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenDiff(true) }} label="Difficulty" clickable />
                     </Grid>
-                    <Grid item md={6} lg={6} xl={6}>
-                        <Chip variant={chipVariants[0]} onClick={() => { setOpenRadius(true) }} label="Radius" clickable />
-                    </Grid>
-                    <Grid item md={2} lg={2} xl={2} sx={{ display: "flex", justifyContent: "center", marginRight: "24px" }}>
+                    <Grid item md={5} lg={5} xl={5} sx={{ display: "flex", justifyContent: "center", marginRight: "24px" }}>
                         <HTButton text="Apply" color="black" textColor="white" size="14px" navigate={() => {
                             props.setFilter(
                                 {
@@ -188,7 +181,7 @@ const MapFilters = (props) => {
                             )
                         }} />
                     </Grid>
-                    <Grid item md={2} lg={2} xl={2} sx={{ display: "flex", justifyContent: "center" }}>
+                    <Grid item md={5} lg={5} xl={5} sx={{ display: "flex", justifyContent: "center" }}>
                         <HTButton text="Reset" color="black" textColor="white" size="14px" navigate={resetAllFields} />
                     </Grid>
                 </Grid >
@@ -223,9 +216,6 @@ const MapFilters = (props) => {
                     </Grid>
                     <Grid item xs={3}>
                         <Chip variant={diff[0] == 0 && diff[1] == maxDiff ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenDiff(true) }} label="Difficulty" clickable />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Chip variant={chipVariants[0]} onClick={() => { setOpenRadius(true) }} label="Radius" clickable />
                     </Grid>
                     <Grid item container columns={12} zeroMinWidth style={{ display: "flex", justifyContent: "center" }}>
                         <Grid item xs={6} sx={{ display: "flex", justifyContent: "center", marginTop: "15px" }}>

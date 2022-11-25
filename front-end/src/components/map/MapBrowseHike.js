@@ -39,7 +39,7 @@ export const LocationMarker = () => {
 export const MapBrowseHike = (props) => {
     const [clickedCenter, setClickedCenter] = useState([45.07412045176881, 7.621063528883495])
     const [selected, setSelected] = useState(-1)
-    const [flyIndex, setFlyIndex] = useState(-1);
+    const [flyIndex, setFlyIndex] = useState(-1)
 
     const OnClickSelectHike = (index) => {
         setSelected(index)
@@ -53,21 +53,33 @@ export const MapBrowseHike = (props) => {
         map.flyTo(props.dataset.filter(x => x.id == props.index)[0].positions[0], 14)
     }
 
+    const _circleCreated = (e) => {
+        props.setRadiusFilter([e.layer.toGeoJSON().geometry.coordinates, e.layer.getRadius()])
+    }
+
+    const _circleEdited = (e) => {
+        console.log(e)
+    }
+
+    const _circleDeleted = (e) => {
+        console.log(e)
+    }
+
     return (
         <div style={{ marginTop: "0px" }}>
             <MapContainer center={clickedCenter} zoom={9}
                 scrollWheelZoom={{ xs: false, sm: false, md: false, lg: true, xl: true }} zoomControl={false}
                 style={{ width: "auto", minHeight: "100vh", height: "100%" }}>
-                    <FeatureGroup>
-                        <EditControl position="bottomright" draw={{
-                            rectangle:false,
-                            circle: true,
-                            circlemarker: false,
-                            marker: false,
-                            polygon: false,
-                            polyline: false
-                        }} />
-                    </FeatureGroup>
+                <FeatureGroup>
+                    <EditControl position="bottomright" draw={{
+                        rectangle: false,
+                        circle: true,
+                        circlemarker: false,
+                        marker: false,
+                        polygon: false,
+                        polyline: false
+                    }} onCreated={e => _circleCreated(e)} onEdited={e => _circleEdited(e)} onDeleted={e => _circleDeleted(e)} />
+                </FeatureGroup>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url={"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}
