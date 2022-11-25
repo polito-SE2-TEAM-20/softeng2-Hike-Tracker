@@ -70,6 +70,8 @@ export class HutsService extends BaseService<Hut> {
       pointId: point.id,
       numberOfBeds: data.numberOfBeds,
       price: data.price,
+      ownerName: data.ownerName,
+      website: data.website
     });
 
     //Return created hut

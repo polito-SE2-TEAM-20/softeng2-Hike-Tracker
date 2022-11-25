@@ -55,6 +55,19 @@ export class Hut {
   })
   price!: number | null;
 
+  @Column({
+    type: 'varchar',
+    length: HutLimits.ownerName,
+    nullable: true,
+  })
+  ownerName!: string;
+
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  website!: string;
+
   /**
    * TypeORM sql-gen only
    * @deprecated

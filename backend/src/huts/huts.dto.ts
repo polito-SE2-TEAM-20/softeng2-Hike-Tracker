@@ -50,4 +50,12 @@ export class CreateHutDto {
   @IsNumber()
   @IsOptional()
   price?: number;
+
+  @IsString()
+  @IsOptional()
+  ownerName!: string;
+
+  @IsString()
+  @IsOptional()
+  website!: string;
 }
