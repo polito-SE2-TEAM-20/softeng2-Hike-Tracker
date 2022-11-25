@@ -1,12 +1,9 @@
-import { HutDescription } from "./HutDescription";
-import { AddressInformation } from './AddressInformation';
-import { ReviewHutForm } from "./ReviewHutForm";
+import { ParkingDescription } from "./ParkingDescription";
+import { AddressInformationParking } from './AddressInformationParking';
+import { ReviewParkingForm } from "./ReviewParkingForm";
 import { useState, useEffect } from 'react';
-
-
 import * as React from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
-import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Toolbar from '@mui/material/Toolbar';
@@ -19,11 +16,7 @@ import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
-
 import Alert from '@mui/material/Alert';
-import {MapHut} from './MapHut.js';
-
-
 import login from '../Assets//login.jpg'; // Import using relative path
 import { useNavigate } from "react-router";
 
@@ -47,12 +40,12 @@ function Copyright() {
   );
 }
 
-const steps = ['Hut Address', 'Hut information', 'Review hut infos'];
+const steps = ['Parking address', 'Parking information', 'Review parking infos'];
 
 const theme = createTheme(
 );
 
-function NewHutForm(props) {
+function NewParking(props) {
     const navigate = useNavigate();
     const [name, setName] = useState(''); 
     // location of the hut
@@ -63,15 +56,9 @@ function NewHutForm(props) {
     const [province, setProvince] = useState('');
     const [address, setAddress] = useState('');
     const [country, setCountry] = useState('');
+    const [city, setCity] = useState('');
 
-    // contact details of the HuT
-    const [owner, setOwner] = useState('');
-    const [website, setWebsite] = useState('');
-    const [emailAddress, setEmailAddress] = useState('');
-
-    // services / facilities
-    const [beds, setBeds] = useState(''); // number of beds
-    const [foodSupply, setFoodSupply] = useState(''); // one of: none / simple buffet / diner / restaurant
+    const [spots, setSpots] = useState(''); // number of spots
     const [price, setPrice] = useState('');
 
     // other informations
@@ -84,14 +71,14 @@ function NewHutForm(props) {
 
   const handleNext = () => {
     if(activeStep ===(steps.length - 3)){
-        if([name, latitude, longitude, region, province, address].some(t=> t.length ===0)){
+        if([name, latitude, longitude, country, region, province, city, address].some(t=> t.length ===0)){
         setErrorMessage("All fields with the * should be filled");
         setShow(true);
     }else if(name.match(/^\s+$/)){
         setErrorMessage("insert a valid name for the hut");
         setShow(true);
-    }else if(!province.match(/^[a-zA-Z]+[a-zA-Z]+$/) || !region.match(/^[a-zA-Z]+[a-zA-Z]+$/) ){
-            setErrorMessage("insert a valid name for region and province");
+    }else if(!province.match(/^[a-zA-Z]+[a-zA-Z]+$/) || !region.match(/^[a-zA-Z]+[a-zA-Z]+$/) || !country.match(/^[a-zA-Z]+[a-zA-Z]+$/) || !city.match(/^[a-zA-Z]+[a-zA-Z]+$/)){
+            setErrorMessage("insert a valid name for country, region, province and city");
             setShow(true);
             //check if the coordinate are with the comma or the point
     }else if(!latitude.match(/^([0-9]*[.])?[0-9]+$/)) {
@@ -104,7 +91,7 @@ function NewHutForm(props) {
         setShow(false);
         setActiveStep(activeStep + 1);
     }}else if(activeStep===(steps.length - 2)){
-        if([beds, description, price].some(t=> t.length ===0)){
+        if([spots, description, price].some(t=> t.length ===0)){
             setErrorMessage("All fields with the * should be filled");
             setShow(true);
     }else{
@@ -113,10 +100,10 @@ function NewHutForm(props) {
     }}else if(activeStep === (steps.length - 1) ){
 
         //cosa cambia tra title e name???
-        let object = {title: name, description: description, numberOfBeds: parseInt(beds), location : {lat: parseFloat(latitude), lon: parseFloat(longitude), name: name, address:address}, price: parseFloat(price)}
+        //let object = {title: name, description: description, numberOfSpots: parseInt(spots), location : {lat: parseFloat(latitude), lon: parseFloat(longitude), name: name, address:address}, price: parseFloat(price)}
         setShow(false);
         setActiveStep(activeStep + 1);
-        props.addNewHut(object).catch((err)=> {setErrorMessage(err); setShow(true)})
+        // props.addNewHut(object).catch((err)=> {setErrorMessage(err); setShow(true)})
 
     }
   };
@@ -124,10 +111,12 @@ function NewHutForm(props) {
 
   const handleClear =() =>{
     if(activeStep ===(steps.length - 3)){
-    setName(''); setElevation(''); setLatitude(''); setLongitude(''); setRegion(''); setProvince(''); setAddress('');
+    setName(''); setElevation(''); setLatitude(''); setLongitude(''); setCountry(''); setRegion(''); setProvince(''); 
+    setCity('');  setAddress('');
     setCountry('');
     }else if(activeStep ===(steps.length - 2)){
-         setWebsite(''); setOwner(''); setEmailAddress(''); setBeds(''); setDescription(''); setPrice('');
+         setSpots(''); setDescription(''); setPrice('');
+
     }
     
 
@@ -143,18 +132,18 @@ function NewHutForm(props) {
   function getStepContent(step) {
     switch (step) {
       case 0:
-        return <AddressInformation name={name} setName = {setName} elevation={elevation} setElevation={setElevation} setLatitude={setLatitude} latitude={latitude} 
-        longitude={longitude} setLongitude={setLongitude} region={region} setRegion={setRegion} province={province} 
-       setProvince={setProvince} address={address} setAddress={setAddress} country={country} setCountry={setCountry}/>;
+        return <AddressInformationParking name={name} setName = {setName} elevation={elevation} setElevation={setElevation} 
+        setLatitude={setLatitude} latitude={latitude} longitude={longitude} setLongitude={setLongitude} region={region} 
+        setRegion={setRegion} province={province} 
+       setProvince={setProvince} address={address} setAddress={setAddress} country={country} setCountry={setCountry} city={city} 
+       setCity={setCity}/>;
       case 1:
-        return <HutDescription owner={owner} setOwner={setOwner} website={website} setWebsite={setWebsite} emailAddress={emailAddress} 
-        setEmailAddress={setEmailAddress} beds={beds} setBeds={setBeds} description={description} setDescription={setDescription}
+        return <ParkingDescription spots={spots} setSpots={setSpots} description={description} setDescription={setDescription}
          price={price} setPrice={setPrice}/>;
       case 2:
-        return <ReviewHutForm name={name}  elevation={elevation}  latitude={latitude} 
-        longitude={longitude} region={region}  province={province} 
-        address={address} owner={owner}  website={website}  emailAddress={emailAddress} 
-        beds={beds} description={description} price={price} country={country}/>;
+        return <ReviewParkingForm name={name}  elevation={elevation}  latitude={latitude} 
+        longitude={longitude} region={region}  province={province}  country={country} city={city}
+        address={address} spots={spots} description={description} price={price} />;
       default:
         throw new Error('Unknown step');
     }
@@ -163,27 +152,10 @@ function NewHutForm(props) {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      {/*<AppBar
-        position="absolute"
-        color="default"
-        elevation={0}
-        sx={{
-          position: 'relative',
-          borderBottom: (t) => `1px solid ${t.palette.divider}`,
-        }}
-      >
-        <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap>
-            Hike Tracking
-          </Typography>
-        </Toolbar>
-      </AppBar>*/}
-
       <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
-        
         <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }} style={styles.paperContainer}>
           <Typography component="h1" variant="h4" align="center">
-            ADD A NEW HUT
+            ADD A NEW PARKING LOT
           </Typography>
           <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
             {steps.map((label) => (
@@ -195,10 +167,10 @@ function NewHutForm(props) {
           {activeStep === steps.length ? (
             <React.Fragment>
               <Typography variant="h5" gutterBottom>
-                HUT INSERTED
+                PARKING LOT INSERTED
               </Typography>
               <Typography variant="subtitle1">
-                Your new hut {name} has been inserted
+                Your new parking lot {name} has been inserted
               </Typography>
               <Button onClick={goBackLocalGuide} sx={{ mt: 3, ml: 1 }}>
                     Go to my page
@@ -221,23 +193,23 @@ function NewHutForm(props) {
                   </Button>
                 )}
                 {activeStep !==steps.length -1 &&( 
-                    <Button
-                     variant="contained"
-                     startIcon={<DeleteIcon />}
-                     onClick={handleClear}
-                     sx={{ mt: 3, ml: 1 }}
-                     color="error"
-                   >
-                     {'Reset'}
-                   </Button>
-                   )}
+                 <Button
+                  variant="contained"
+                  startIcon={<DeleteIcon />}
+                  onClick={handleClear}
+                  sx={{ mt: 3, ml: 1 }}
+                  color="error"
+                >
+                  {'Reset'}
+                </Button>
+                )}
                 <Button
                   variant="contained"
                   onClick={handleNext}
                   type="submit"
                   sx={{ mt: 3, ml: 1 }}
                 >
-                  {activeStep === steps.length - 1 ? 'Enter the new Hut' : 'Next'}
+                  {activeStep === steps.length - 1 ? 'Enter the new Parking Lot' : 'Next'}
                 </Button>
                {/*<MapHut latitude={latitude} longitude={longitude}/>*/}
               </Box>
@@ -254,4 +226,4 @@ function NewHutForm(props) {
   );
 }
 
-export {NewHutForm}
+export {NewParking}
