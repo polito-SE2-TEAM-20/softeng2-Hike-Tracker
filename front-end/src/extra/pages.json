@@ -1,12 +1,29 @@
 [
-  {
-    "title": "Browse hikes",
-    "URL": "/browsehikes",
-    "reqLogin": true
-  },
-  {
-    "title": "List of hikes",
-    "URL": "/listofhikes",
-    "reqLogin": false
-  }
+    {
+        "title": "Browse hikes",
+        "URL": "/browsehikes",
+        "requirments" : {
+            "login" : true,
+            "roles" : null
+        }
+    },
+    {
+        "title": "List of hikes",
+        "URL": "/listofhikes",
+        "requirments" : {
+            "login" : false,
+            "roles" : null
+        }
+    },
+    {
+        "title": "My Huts",
+        "URL": "/myhuts",
+        "requirments" : {
+            "login" : true,
+            "roles" : [
+                2,
+                4
+            ]
+        }
+    }
 ]

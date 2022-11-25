@@ -35,6 +35,7 @@ import {
 } from "react-router-dom";
 import ShowHike from './routes/show-hike/ShowHike';
 import API_NewParking from './NewParkingLot/API_NewParkingLot';
+import { MyHutsPage } from './routes/hut/MyHutsPage';
 
 function App() {
   return (
@@ -165,6 +166,7 @@ function App2() {
         <Route path="/signup" element={<SignUpForm doRegister={doRegister} />} />
         <Route path="/hutpage" element={<HTHutPage isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/newHut" element={<NewHutForm isLoggedIn={loggedIn} doLogOut={doLogOut} addNewHut={addNewHut}/>}/>
+        <Route path="/myHuts" element={<MyHutsPage isLoggedIn={loggedIn} doLogOut={doLogOut}/>}/>
         <Route path="/showhike/:hikeid" element={<ShowHike user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />}/>
         <Route path="/newParking" element={<NewParking isLoggedIn={loggedIn} doLogOut={doLogOut} addNewParkingLot={addNewParkingLot}/>}/>
 

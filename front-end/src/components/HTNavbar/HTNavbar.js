@@ -93,13 +93,17 @@ function HTNavbar(props) {
                         >
                             {pages.map((page) => {
                                 if (props.isLoggedIn) {
-                                    return (
-                                        <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}>
-                                            <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Bakbak One, display" }}>{page.title}</Typography>
-                                        </MenuItem>
-                                    )
+                                    if (page.requirments.roles === null ||
+                                        page.requirments.roles.includes(props.user?.role)) {
+                                        return (
+                                            <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}>
+                                                <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Bakbak One, display" }}>{page.title}</Typography>
+                                            </MenuItem>
+                                        )
+                                    }
                                 }
-                                if (!props.isLoggedIn && !page.reqLogin) {
+                                if (!props.isLoggedIn && !page.requirments.login &&
+                                    page.requirments.roles === null) {
                                     return (
                                         <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}>
                                             <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Bakbak One, display" }}>{page.title}</Typography>
@@ -130,18 +134,23 @@ function HTNavbar(props) {
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         {pages.map((page) => {
                             if (props.isLoggedIn) {
-                                return (
-                                    <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "18px", marginRight: "24px" }}
-                                        key={page.title}
-                                        onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}
-                                        sx={{ my: 2, color: 'white', display: 'block' }}
-                                    >
-                                        {page.title}
-                                        <Divider orientation='vertical' flexItem />
-                                    </Button>
-                                )
+                                if (page.requirments.roles === null ||
+                                    page.requirments.roles.includes(props.user?.role)) {
+                                    return (
+                                        <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "18px", marginRight: "24px" }}
+                                            key={page.title}
+                                            onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}
+                                            sx={{ my: 2, color: 'white', display: 'block' }}
+                                        >
+                                            {page.title}
+                                            <Divider orientation='vertical' flexItem />
+                                        </Button>
+                                    )
+                                }
                             }
-                            if (!props.isLoggedIn && !page.reqLogin) {
+                            if (!props.isLoggedIn && !page.reqLogin &&
+                                page.requirments.roles === null
+                            ) {
                                 return (
                                     <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "18px", marginRight: "24px" }}
                                         key={page.title}
