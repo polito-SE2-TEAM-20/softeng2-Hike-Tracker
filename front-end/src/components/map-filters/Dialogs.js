@@ -43,6 +43,12 @@ export function SliderDialog(props) {
                 <Grid item lg={12} xl={12} style={{ display: "flex", justifyContent: "center" }}>
                     <HTSlider value={props.value} setFun={props.setFun} max={props.max} />
                 </Grid>
+                <Grid sx={{display: "flex", justifyContent: "center", marginBottom: "15px"}}>
+                    <HTButton text="Confirm" navigate={handleClose} color="#55bb69" textColor="white" />
+                </Grid>
+                <Grid sx={{display: "flex", justifyContent: "center"}}>
+                    <HTButton text="Clear" navigate={() => {props.setFun([0, props.max])}} color="#ff5569" textColor="white" />
+                </Grid>
             </List>
         </Dialog>
     );
