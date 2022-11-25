@@ -1,0 +1,12 @@
+[
+  {
+    "title": "Browse hikes",
+    "URL": "/browsehikes",
+    "reqLogin": true
+  },
+  {
+    "title": "List of hikes",
+    "URL": "/listofhikes",
+    "reqLogin": false
+  }
+]

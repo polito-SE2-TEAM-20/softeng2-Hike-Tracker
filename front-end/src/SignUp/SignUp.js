@@ -1,157 +1,273 @@
-import React from 'react'
+import * as React from 'react';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import Link from '@mui/material/Link';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import Paper from '@mui/material/Paper';
+import Alert from '@mui/material/Alert';
+import HikingIcon from '@mui/icons-material/Hiking';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './SignUp.css'
 
-import { useNavigate } from 'react-router-dom';
-
-import { Form, Button, Alert, Col, Row, FormGroup, NavLink, FormSelect } from 'react-bootstrap';
-function SignUp(props) {
-
-    const [show, setShow] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
-    const navigate = useNavigate();
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [roleStr, setRoleStr] = useState();
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-
-  
-
-
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        setErrorMessage('');
-        let valid = true;
-        if(firstName==='' || lastName ===''){
-            setErrorMessage('Please insert a valid name');
-            setShow(true);
-            valid = false;
-        }
-        if(email===''){
-            setErrorMessage('Please insert a valid email');
-            setShow(true);
-            valid = false;
-        }
-        if(password===''){
-            setErrorMessage('Please insert a valid password');
-            setShow(true);
-            valid = false;
-        }
-        if(confirmPassword===''){
-            setErrorMessage('Please confirm your password');
-            setShow(true);
-            valid = false;
-        }
-        if (confirmPassword !== password) {
-            valid = false;
-            setErrorMessage('Password do not match');
-            setShow(true);
-        }
-        if (valid) {
-            const role = parseInt(roleStr);
-            const credentials = { email, firstName, lastName, password, role };
-            console.log(credentials);
-            props.doRegister(credentials, setShow, setErrorMessage);
-
-        console.log(firstName, lastName, email, password, confirmPassword, role);
-        }
-    }
-
-    return (
-        <div className={`LoginPage ${props.className}`}>
-            <Row type="flex" justify="center" align="middle" style={{ minHeight: '20vh' }}>
-                <div className='CircleSopra'>
-                    <div className='Rectangle1' />
-                    <div className='Rectangle2' />
-                    <div className='Rectangle3' />
-                </div>
-            </Row>
-            <Row type="flex" justify="center" align="middle" style={{ minHeight: '50vh' }}>
-
-
-                <Col>
-                    <Form justify="center" onSubmit={handleSubmit} style={{ marginTop: '2em' }} >
-                        <div justify="center" className="LogInBox">
-                            <Form.Group>
-                                <div className='HeaderLogIn'>
-                                    <span className='SignIntoaccessyouraccount'>Sign Up to create your account!</span>
-                                    <span className='Welcomeback'>Welcome!</span>
-                                    <span className='SIGNIN'>SIGN UP</span>
-                                </div>
-                            </Form.Group>
-
-
-                            <Alert
-                                dismissible
-                                show={show}
-                                onClose={() => setShow(false)}
-                                variant="danger">
-                                {errorMessage}
-                            </Alert>
-                            <div className='InputForm'>
-                                <Row>
-                                
-                                <Form.Group className="col-6" controlId='firstName'>
-                                    <Form.Label className='Name'>First Name</Form.Label>
-                                    <Form.Control type='text' placeholder="Insert name" className='InputName' required value={firstName} onChange={(ev) => setFirstName(ev.target.value)} />
-                                </Form.Group>
-                               
-                                <Form.Group className="col-6" controlId='lastName'>
-                                    <Form.Label className='Name'>Last Name</Form.Label>
-                                    <Form.Control type='text' placeholder="Insert last name" className='InputName' value={lastName} onChange={(ev) => setLastName(ev.target.value)} />
-                                </Form.Group>
-                                </Row>
-                                <Form.Group controlId='roleStr'>
-                                    <Form.Label className='Name'>Role</Form.Label>
-                                    <div className="form-row">
-                                    <FormSelect aria-label="Type of Iscription" className='InputName'  required={true} onChange={(e) => { setRoleStr(e.target.value); console.log(e.target.value) }}>
-                                        <option>Open to choose the type of Iscription</option>
-
-                                        <option value="0">Hiker</option>
-                                        <option value="2">Local Guide</option>
-                                        <option value="3">Platform Manager</option>
-                                        <option value="4">Hut worker</option>
-                                        <option value="5">Emergency Operator</option>
-                                    </FormSelect>
-                                    </div>
-                                </Form.Group>
-
-                                <Form.Group controlId='email'>
-                                    <Form.Label className='Name'>Email</Form.Label>
-                                    <Form.Control type='text' placeholder="Insert email" className='InputName' value={email} onChange={(ev) => setEmail(ev.target.value)} />
-                                </Form.Group>
-                                <Form.Group controlId='password'>
-                                    <Form.Label className='Name' >Password</Form.Label>
-                                    <Form.Control type='password' placeholder="Insert password" className='InputName' value={password} onChange={ev => setPassword(ev.target.value)} />
-
-                                </Form.Group>
-                                <Form.Group controlId='confirmPassword'>
-                                    <Form.Label className='Name' >Repeat Password</Form.Label>
-                                    <Form.Control type='password'  placeholder="Repeat Password" className='InputName' value={confirmPassword} onChange={ev => setConfirmPassword(ev.target.value)} />
-
-                                </Form.Group>
-                            </div>
-                            <FormGroup className='ButtonLogIn'>
-                                <Button type="submit" className='button'>SignUp</Button>
-                            </FormGroup>
-                            <FormGroup className='ButtonAnnulla'>
-                                <Button className='button2' onClick={() => navigate('/')}>ANNULLA</Button>
-                            </FormGroup>
-                        </div>
-                    </Form>
-                </Col>
-
-
-            </Row>
-            <Row>
-                <div className='DonthaveanaccountyetCreateone'>Already have an account? <NavLink href="/login">Sign in</NavLink></div>
-            </Row>
-        </div>
-    );
+function Copyright(props) {
+  return (
+    <Typography variant="body2" color="text.secondary" align="center" {...props}>
+      {'Copyright © '}
+      <Link color="inherit" href="/">
+        Hike Tracker
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
 }
 
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1a1a1a'
+    }
+  }
+});
+
+function SignUpForm(props) {
+
+  const [show, setShow] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [role, setRole] = useState(0);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
 
 
-export {SignUp}
+  const navigate = useNavigate();
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setErrorMessage('');
+    let valid = true;
+    if (firstName === '' || lastName === '') {
+      setErrorMessage('Please insert a valid name');
+      setShow(true);
+      valid = false;
+    }
+    if (email === '') {
+      setErrorMessage('Please insert a valid email');
+      setShow(true);
+      valid = false;
+    }
+    if (password === '') {
+      setErrorMessage('Please insert a valid password');
+      setShow(true);
+      valid = false;
+    }
+    if (confirmPassword === '') {
+      setErrorMessage('Please confirm your password');
+      setShow(true);
+      valid = false;
+    }
+    if (confirmPassword !== password) {
+      valid = false;
+      setErrorMessage('Password do not match');
+      setShow(true);
+    }
+    if (valid) {
+
+      const credentials = { email, firstName, lastName, password, role };
+      // const credentials = {email, firstName, lastName, password, role, phoneNumber};
+      props.doRegister(credentials, setShow, setErrorMessage);
+    }
+  }
+
+  return (
+
+
+    <ThemeProvider theme={theme}>
+      <Grid container component="main" sx={{ height: '100vh' }}>
+        <CssBaseline />
+        <Grid
+          className='signup-side'
+          item
+          sm={4}
+          md={7}
+          sx={{
+            backgroundColor: (t) =>
+              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900]
+          }}
+        />
+        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square sx={{ backgroundColor: '#f9e9cb' }}>
+          <Box
+            sx={{
+              my: 8,
+              mx: 4,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+              <HikingIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Sign up
+            </Typography>
+            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 4 }}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    autoComplete="given-name"
+                    name="firstName"
+                    required
+                    fullWidth
+                    id="firstName"
+                    label="First Name"
+                    autoFocus
+                    onChange={e => setFirstName(e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="lastName"
+                    label="Last Name"
+                    name="lastName"
+                    autoComplete="family-name"
+                    onChange={e => setLastName(e.target.value)}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    required={role !== 0}
+                    fullWidth
+                    id="phoneNumber"
+                    label="Phone Number"
+                    name="phoneNumber"
+                    autoComplete="family-name"
+                    onChange={e => setPhoneNumber(e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <RoleSelect setRole={setRole} role={role}></RoleSelect>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    id="email"
+                    label="Email Address"
+                    name="email"
+                    autoComplete="email"
+                    type="email"
+                    onChange={ev => setEmail(ev.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    name="password"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    autoComplete="new-password"
+                    onChange={ev => setPassword(ev.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    name="confirmPassword"
+                    label="Confirm Password"
+                    type="password"
+                    id="confirmPassword"
+                    autoComplete="new-password"
+                    onChange={ev => setConfirmPassword(ev.target.value)}
+                  />
+                </Grid>
+              </Grid>
+              {
+                show ?
+                  <Alert variant="outlined" severity="error" onClose={() => { setErrorMessage(''); setShow(false) }}>{errorMessage}</Alert> : <></>
+              }
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign Up
+              </Button>
+              <Grid container justifyContent="flex-end">
+                <Grid item xs>
+                  <Link href="/" variant="body2">
+                    Go back
+                  </Link>
+                </Grid>
+                <Grid item>
+                  <Link href="/login" variant="body2">
+                    Already have an account? Sign in
+                  </Link>
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
+          <Copyright sx={{ mt: 5 }} />
+        </Grid>
+
+      </Grid>
+    </ThemeProvider>
+  );
+}
+
+export { SignUpForm }
+
+
+function RoleSelect(props) {
+  return <>
+
+    <FormControl fullWidth>
+      <InputLabel id="demo-simple-select-label">Role</InputLabel>
+      <Select
+
+        labelId="demo-simple-select-label"
+        id="demo-seimple-select"
+        value={props.role}
+        fullWidth
+        name="role"
+
+        label="role"
+        onChange={ev => props.setRole(ev.target.value)}
+      >
+        <MenuItem value={0}>
+          Hiker
+        </MenuItem>
+        <MenuItem value={2}>
+          Local Guide
+        </MenuItem>
+        <MenuItem value={3}>
+          Platform Manager
+        </MenuItem>
+        <MenuItem value={4}>
+          Hut Worker
+        </MenuItem>
+        <MenuItem value={5}>
+          Emergency Operator
+        </MenuItem>
+        {/* delete administator because it should be different??*/}
+      </Select>
+    </FormControl>
+  </>
+}

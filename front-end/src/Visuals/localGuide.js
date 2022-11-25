@@ -18,7 +18,7 @@ const gotoLogin = () => {
 
 
 const goToAddNewHike = () => {
-    navigate("/hikeGpx", { replace: false })
+    navigate("/newHike", { replace: false })
 }
 
 const gotoBrowseHikes = () => {
@@ -51,15 +51,16 @@ const gotoHomeLocal = () => {
     </Navbar>
     <Row>
         <PageLandscape />
+        {console.log(props.user)}
     </Row>
 
     <Row>
-                <Col style={{ display: "flex", justifyContent: "center" }}>
+                {/*<Col style={{ display: "flex", justifyContent: "center" }}>
                     <Button navigate={gotoBrowseHikes} text="Browse our hikes" textColor="white" size="36px" color="#1a1a1a" />
                 </Col>
                 <Col style={{ display: "flex", justifyContent: "center" }}>
                     <Button navigate={gotoListOfHikes} text="Go to list of hikes" textColor="white" size="36px" color="#1a1a1a" />
-                </Col>
+        </Col>*/}
                         <Col style={{ display: "flex", justifyContent: "center" }}>
                             <Button navigate={goToAddNewHike} text="Add a new hike" textColor="white" size="36px" color="#1a1a1a" />
                         </Col>
