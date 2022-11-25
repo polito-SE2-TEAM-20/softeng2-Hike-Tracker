@@ -6,11 +6,11 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import styled from '@emotion/styled'
 
-function AddressInformation(props) {
+function AddressInformationParking(props) {
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
-        Hut Address
+        Parking Address
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6}>
@@ -18,7 +18,7 @@ function AddressInformation(props) {
             required
             id="name"
             name="name"
-            label="Name of the Hut"
+            label="Name of the Parking"
             fullWidth
             autoComplete="name"
             variant="standard"
@@ -85,6 +85,20 @@ function AddressInformation(props) {
         <Grid item xs={12} sm={6}>
           <TextField
             required
+            id="city"
+            name="city"
+            label="City"
+            fullWidth
+            autoComplete="city"
+            variant="standard"
+
+            value ={props.city}
+            onChange={(e) => {props.setCity(e.target.value)}}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            required
             id="latitude"
             name="latitude"
             label="Latitude"
@@ -131,4 +145,4 @@ function AddressInformation(props) {
   );
 }
 
-export {AddressInformation}
+export {AddressInformationParking}

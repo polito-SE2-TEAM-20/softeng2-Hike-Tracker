@@ -58,7 +58,7 @@ const Inner = ({positionsState, setPuntiDaTrack, setReferencePoint, puntiDaTrack
     var popup = L.popup();
     setPuntiDaTrack(null);
     const [punti, setPunti] = useState(null);
-    if(positionsState.length!==0){
+    if(positionsState?.length!==0){
 
     map.on('click', function(e) {
         let prov = [e.latlng.lat, e.latlng.lng];
@@ -70,7 +70,7 @@ const Inner = ({positionsState, setPuntiDaTrack, setReferencePoint, puntiDaTrack
     }
 useEffect(()=>{
     if(puntiDaTrack){
-        if(positionsState.length){
+        if(positionsState?.length){
                 getNearestPoint(positionsState, puntiDaTrack);
     let nearest = (getNearestPoint(positionsState, puntiDaTrack));
     let object = {lat: nearest[0], lon: nearest[1]}

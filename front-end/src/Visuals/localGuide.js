@@ -18,7 +18,7 @@ const gotoLogin = () => {
 
 
 const goToAddNewHike = () => {
-    navigate("/hikeGpxHT", { replace: false })
+    navigate("/newHike", { replace: false })
 }
 
 const gotoBrowseHikes = () => {

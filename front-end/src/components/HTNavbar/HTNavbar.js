@@ -15,6 +15,7 @@ import pages from '../../extra/pages.json'
 import { useNavigate } from 'react-router';
 import './navbar-style.css'
 import { Divider } from '@mui/material';
+import { displayTypeFlex, displayTypeBlock } from '../../extra/DisplayType';
 
 function HTNavbar(props) {
     const settings = ['Login', 'Logout'];
@@ -51,7 +52,7 @@ function HTNavbar(props) {
                         onClick={() => { navigate("/") }}
                         sx={{
                             mr: 12,
-                            display: { xs: 'none', md: 'flex' },
+                            display: displayTypeFlex.pc,
                             fontFamily: "Bakbak One, display",
                             fontWeight: 700,
                             color: 'inherit',
@@ -87,7 +88,7 @@ function HTNavbar(props) {
                             open={Boolean(anchorElNav)}
                             onClose={handleCloseNavMenu}
                             sx={{
-                                display: { xs: 'block', md: 'none' },
+                                display: displayTypeBlock.mobile,
                             }}
                         >
                             {pages.map((page) => {
@@ -116,7 +117,7 @@ function HTNavbar(props) {
                         onClick={() => { navigate("/") }}
                         sx={{
                             mr: 4,
-                            display: { xs: 'flex', md: 'none' },
+                            display: displayTypeFlex.mobile,
                             fontFamily: "Bakbak One, display",
                             fontWeight: 700,
                             color: 'inherit',

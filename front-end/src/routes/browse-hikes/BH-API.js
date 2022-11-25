@@ -31,7 +31,6 @@ async function getPathByID(path) {
     method: 'GET'
   });
   if (response.ok) {
-    console.log(response)
     const gpxFile = await response.text();
     return gpxFile
   } else {
@@ -57,5 +56,23 @@ async function getHikeByListOfPaths(listOfPaths) {
   return hikes
 }
 
-const BH_API = { getListOfGPXFiles, getListOfHikes, getPathByID, getHikeByListOfPaths }
+async function getHikePathByHike(hike) {
+  var outHike = hike
+  outHike.positions = []
+  if(outHike.gpxPath == undefined || outHike.gpxPath == "")
+    return outHike
+  let response = await fetch((APIURL + hike.gpxPath), {
+    method: 'GET'
+  });
+  if (response.ok) {
+    const positions = await response.text();
+    outHike.positions = positions
+  } else {
+    const errDetail = await response.json();
+    throw errDetail.message;
+  }
+  return outHike;
+}
+
+const BH_API = { getListOfGPXFiles, getListOfHikes, getPathByID, getHikeByListOfPaths, getHikePathByHike }
 export default BH_API

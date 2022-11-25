@@ -5,41 +5,19 @@ import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 
-function HutDescription(props) {
+function ParkingDescription(props) {
     return (
         <React.Fragment>
             <Typography variant="h6" gutterBottom>
-                Hut information
+                Parking information
             </Typography>
             <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                    <TextField
-                        id="owner"
-                        label="Owner"
-                        fullWidth
-                        autoComplete="owner"
-                        variant="standard"
-                        value={props.owner}
-                        onChange={(e) => { props.setOwner(e.target.value) }}
-                    />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <TextField
-                        id="website"
-                        label="Website"
-                        fullWidth
-                        autoComplete="website"
-                        variant="standard"
-                        value={props.website}
-                        onChange={(e) => { props.setWebsite(e.target.value) }}
-                    />
-                </Grid>
                 <Grid item xs={12} md={6}>
                     <TextField
                         required
                         id="price"
                         label="price"
-                        helperText="Price per night"
+                        helperText="Price per hour"
                         fullWidth
                         type="number"
                         autoComplete="price"
@@ -53,31 +31,18 @@ function HutDescription(props) {
                 <Grid item xs={12} md={6}>
                     <TextField
                         required
-                        id="beds"
-                        label="beds"
-                        helperText="Number of Beds"
+                        id="spots"
+                        label="spots"
+                        helperText="Number of Spots"
                         fullWidth
                         type="number"
-                        autoComplete="beds"
+                        autoComplete="spots"
                         variant="standard"
 
-                        value={props.beds}
-                        onChange={(e) => { props.setBeds(e.target.value) }}
+                        value={props.spots}
+                        onChange={(e) => { props.setSpots(e.target.value) }}
                     />
                 </Grid>
-                <Grid item xs={12} >
-                    <TextField
-                        id="emailAddress"
-                        label="Email address"
-                        fullWidth
-                        autoComplete="emailAddress"
-                        variant="standard"
-
-                        value={props.emailAddress}
-                        onChange={(e) => { props.setEmailAddress(e.target.value) }}
-                    />
-                </Grid>
-            
                 <Grid item xs={12} >
                     <TextField
                         required
@@ -101,4 +66,4 @@ function HutDescription(props) {
     );
 }
 
-export { HutDescription }
+export { ParkingDescription }

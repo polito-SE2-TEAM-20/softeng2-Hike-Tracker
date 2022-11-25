@@ -4,11 +4,11 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 
-function ReviewHutForm(props) {
+function ReviewParkingForm(props) {
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
-        Hut to insert
+        Parking Lot to insert
       </Typography>
       <List disablePadding>
           <ListItem key={props.name} sx={{ py: 1, px: 0 }}>
@@ -33,6 +33,10 @@ function ReviewHutForm(props) {
             <ListItemText primary='Province' />
             <Typography variant="body2">{props.province}</Typography>
           </ListItem>
+          <ListItem key={props.city} sx={{ py: 1, px: 0 }}>
+            <ListItemText primary='City' />
+            <Typography variant="body2">{props.city}</Typography>
+          </ListItem>
 
 
           <ListItem key={props.address} sx={{ py: 1, px: 0 }}>
@@ -49,37 +53,14 @@ function ReviewHutForm(props) {
             <ListItemText primary='Longitude' />
             <Typography variant="body2">{props.longitude}</Typography>
           </ListItem>
-
-          <ListItem key={props.owner} sx={{ py: 1, px: 0 }}>
-            <ListItemText primary='Owner' />
-            <Typography variant="body2">{props.owner}</Typography>
-          </ListItem>
-
-          <ListItem key={props.emailAddress} sx={{ py: 1, px: 0 }}>
-            <ListItemText primary='EmailAddress' />
-            <Typography variant="body2">{props.emailAddress}</Typography>
-          </ListItem>
-
-
-          <ListItem key={props.phoneNumber} sx={{ py: 1, px: 0 }}>
-            <ListItemText primary='Phone Number' />
-            <Typography variant="body2">{props.phoneNumber}</Typography>
-          </ListItem>
-          <ListItem key={props.website} sx={{ py: 1, px: 0 }}>
-            <ListItemText primary='Website' />
-            <Typography variant="body2">{props.website}</Typography>
-          </ListItem>
-
-          <ListItem key={props.beds} sx={{ py: 1, px: 0 }}>
+          <ListItem key={props.spots} sx={{ py: 1, px: 0 }}>
             <ListItemText primary='Beds' />
-            <Typography variant="body2">{props.beds}</Typography>
+            <Typography variant="body2">{props.spots}</Typography>
           </ListItem>
           <ListItem key={props.price} sx={{ py: 1, px: 0 }}>
-            <ListItemText primary='Price' />
+            <ListItemText primary='Price per hour' />
             <Typography variant="body2">{props.price}</Typography>
           </ListItem>
-
-
           <ListItem key={props.description} sx={{ py: 1, px: 0 }}>
             <ListItemText primary='Description' />
             <Typography variant="body2">{props.description}</Typography>
@@ -89,6 +70,4 @@ function ReviewHutForm(props) {
     </React.Fragment>
   );
 }
-
-
-export {ReviewHutForm}
+export {ReviewParkingForm}
