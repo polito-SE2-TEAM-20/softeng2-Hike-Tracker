@@ -6,12 +6,11 @@ import './browse-hikes-style.css'
 
 import { MapBrowseHike } from '../../components/map/MapBrowseHike';
 import { useNavigate } from 'react-router';
-import BH_API from './BH-API';
 import { Grid } from '@mui/material';
 import HTNavbar from '../../components/HTNavbar/HTNavbar';
 import MapLoading from '../../components/map/MapLoading';
 import MapFilters from '../../components/map-filters/MapFilters';
-import LOH_API from '../list-of-hikes/LOH-API';
+import API from '../../API/API.js';
 
 const HTBrowseHikes = (props) => {
     const [loading, setLoading] = useState(false)
@@ -37,10 +36,9 @@ const HTBrowseHikes = (props) => {
     useEffect(() => {
         var loh = []
         const getHikes = async () => {
-            loh = await LOH_API.getFilteredListOfHikes({ filter })
+            loh = await API.getFilteredListOfHikes({ filter })
         }
         getHikes().then(() => {
-            console.log(loh)
             setListOfHikes(loh)
         });
     }, [filter])
@@ -52,7 +50,7 @@ const HTBrowseHikes = (props) => {
     useEffect(() => {
         var tmpListOfHikes = []
         const getHikes = async () => {
-            tmpListOfHikes = await BH_API.getListOfHikes()
+            tmpListOfHikes = await API.getListOfHikes()
         }
         getHikes().then(() => {
             setListOfHikes(tmpListOfHikes)
@@ -64,7 +62,7 @@ const HTBrowseHikes = (props) => {
         const getGpxFiles = async () => {
             setLoading(false)
             for (let hike of listOfHikes.map(x => x)) {
-                const result = await BH_API.getHikePathByHike(hike)
+                const result = await API.getHikePathByHike(hike)
                 fillingList.push(result)
             }
         }

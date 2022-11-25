@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import HTNavbar from '../../components/HTNavbar/HTNavbar';
 import { Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import LOH_API from './LOH-API';
+import API from '../../API/API.js';
 import HikeCard from '../../components/hike-card/HikeCard';
 import HTTopBarFilter from '../../components/side-filter/HTTopBarFilter';
 import Skeleton from '@mui/material/Skeleton';
@@ -29,7 +29,7 @@ const HTListOfHikes = (props) => {
     useEffect(() => {
         var loh = []
         const getHikes = async () => {
-            loh = await LOH_API.getListOfHikes()
+            loh = await API.getListOfHikes()
         }
         getHikes().then(() => {
             setListOfHikes(loh)
@@ -41,7 +41,7 @@ const HTListOfHikes = (props) => {
         console.log(filter)
         var loh = []
         const getHikes = async () => {
-            loh = await LOH_API.getFilteredListOfHikes({ filter })
+            loh = await API.getFilteredListOfHikes({ filter })
         }
         getHikes().then(() => {
             console.log(loh)
