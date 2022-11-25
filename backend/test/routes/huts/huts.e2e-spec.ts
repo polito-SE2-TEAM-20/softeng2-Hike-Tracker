@@ -38,7 +38,7 @@ describe('Huts (e2e)', () => {
         numberOfBeds: 5,
         price: 55.3,
       },
-      pointData,
+      {position: { type: 'Point', coordinates: [47, 7] }},
     );
     const hut2 = await testService.createHut(
       {
@@ -62,7 +62,7 @@ describe('Huts (e2e)', () => {
         numberOfBeds: 3,
         price: 45,
       },
-      pointData,
+      {position: { type: 'Point', coordinates: [47.8, 7] }},
     );
     const hut5 = await testService.createHut(
       {
@@ -77,7 +77,7 @@ describe('Huts (e2e)', () => {
       .build(app, user)
       .request()
       .post('/huts/filter')
-      .send({ numberOfBedsMin: 10 })
+      .send({ numberOfBedsMin: 10})
       .expect(200)
       .expect(({ body }) => {
         expect(body).toHaveLength(0);
@@ -101,13 +101,90 @@ describe('Huts (e2e)', () => {
         numberOfBedsMin: 3,
         numberOfBedsMax: 6,
         priceMin: 40,
-        priceMax: 100,
+        priceMax: 100
       })
       .expect(200)
       .expect(({ body }) => {
         expect(body).toHaveLength(2);
         expect(mapToId(body)).toEqual([hut4.id, hut1.id]);
       });
+
+      await restService
+      .build(app, user)
+      .request()
+      .post('/huts/filter')
+      .send({
+        numberOfBedsMin: 3,
+        numberOfBedsMax: 6,
+        priceMin: 40,
+        priceMax: 100, 
+        inPointRadius: {
+          lat: 7,
+          lon: 47,
+          radiusKms: 88
+        } 
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toHaveLength(1);
+        expect(mapToId(body)).toEqual([hut1.id]);
+      });
+
+      await restService
+      .build(app, user)
+      .request()
+      .post('/huts/filter')
+      .send({
+        inPointRadius: {
+          lat: 7,
+          lon: 47,
+          radiusKms: 200
+        } 
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toHaveLength(2);
+        expect(mapToId(body)).toEqual([hut4.id, hut1.id]);
+      });
+
+      await restService
+      .build(app, user)
+      .request()
+      .post('/huts/filter')
+      .send({
+        inPointRadius: {
+          lat: 7,
+          lon: 47,
+          radiusKms: 7000
+        } 
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toHaveLength(5);
+        expect(mapToId(body)).toEqual([hut5.id, hut4.id, hut3.id, hut2.id, hut1.id]);
+      });
+
+      await restService
+      .build(app, user)
+      .request()
+      .post('/huts/filter')
+      .send({
+        numberOfBedsMin: 3,
+        numberOfBedsMax: 6,
+        priceMin: 40,
+        priceMax: 100, 
+        inPointRadius: {
+          lat: 7,
+          lon: 47,
+          radiusKms: 89
+        } 
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toHaveLength(2);
+        expect(mapToId(body)).toEqual([hut4.id, hut1.id]);
+      });
+
     await restService
       .build(app, user)
       .request()

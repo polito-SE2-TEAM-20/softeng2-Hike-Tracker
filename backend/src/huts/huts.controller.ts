@@ -20,6 +20,7 @@ import {
 
 import { CreateHutDto, FilterHutsDto } from './huts.dto';
 import { HutsService } from './huts.service';
+import { PointWithRadius } from '@core/hikes/hikes.dto';
 
 @Controller('huts')
 export class HutsController {
@@ -29,9 +30,13 @@ export class HutsController {
   @HttpCode(200)
   async filterHuts(
     @Body()
-    { priceMin, priceMax, numberOfBedsMax, numberOfBedsMin }: FilterHutsDto,
+    { priceMin, priceMax, numberOfBedsMax, numberOfBedsMin, inPointRadius }: FilterHutsDto,
   ): Promise<Hut[]> {
     const query = this.service.getRepository().createQueryBuilder('h');
+
+    if (!isNil(inPointRadius)) {
+      query.andWhere(`ST_DWithin(ST_MakePoint(${inPointRadius.lon}, ${inPointRadius.lat}), p."position", ${inPointRadius.radiusKms}*1000)`);
+    }
 
     if (!isNil(priceMin)) {
       query.andWhere('h.price >= :priceMin', { priceMin });
@@ -50,7 +55,6 @@ export class HutsController {
     query
       .leftJoinAndMapOne('h.point', Point, 'p', 'p.id = h."pointId"')
       .orderBy('h.id', 'DESC');
-
     return await query.getMany();
   }
 

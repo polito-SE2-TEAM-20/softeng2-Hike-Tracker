@@ -7,7 +7,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-import { ReferencePointDto } from '@core/hikes/hikes.dto';
+import { PointWithRadius, ReferencePointDto } from '@core/hikes/hikes.dto';
 
 export class FilterHutsDto {
   @IsNumber()
@@ -29,6 +29,11 @@ export class FilterHutsDto {
   @Min(0)
   @IsOptional()
   numberOfBedsMax?: number;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => PointWithRadius)
+  inPointRadius?: PointWithRadius;
 }
 
 export class CreateHutDto {
