@@ -93,14 +93,14 @@ function HTNavbar(props) {
                             {pages.map((page) => {
                                 if (props.isLoggedIn) {
                                     return (
-                                        <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.url) }}>
+                                        <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}>
                                             <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Bakbak One, display" }}>{page.title}</Typography>
                                         </MenuItem>
                                     )
                                 }
                                 if (!props.isLoggedIn && !page.reqLogin) {
                                     return (
-                                        <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.url) }}>
+                                        <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}>
                                             <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Bakbak One, display" }}>{page.title}</Typography>
                                         </MenuItem>
                                     )

@@ -11,34 +11,9 @@ import HTTable from '../../components/table/HTTable';
 import HikeCard from '../../components/hike-card/HikeCard';
 import HTTopBarFilter from '../../components/side-filter/HTTopBarFilter';
 import Skeleton from '@mui/material/Skeleton';
+import { displayType } from '../../extra/DisplayType';
 
 const HTListOfHikes = (props) => {
-    const displayType = [
-        {
-            mobile: {
-                xs: "flex",
-                sm: "flex",
-                md: "none",
-                lg: "none",
-                xl: "none"
-            },
-            tablet: {
-                xs: "flex",
-                sm: "flex",
-                md: "flex",
-                lg: "none",
-                xl: "none"
-            },
-            pc: {
-                xs: "none",
-                sm: "none",
-                md: "flex",
-                lg: "flex",
-                xl: "flex"
-            }
-        }
-    ]
-
     const [region, setRegion] = useState('')
     const [province, setProvince] = useState('')
     const [minAsc, setMinAsc] = useState('')
@@ -87,7 +62,6 @@ const HTListOfHikes = (props) => {
             loh = await LOH_API.getListOfHikes()
         }
         getHikes().then(() => {
-            console.log(loh)
             setListOfHikes(loh)
             setLoading(true)
         });

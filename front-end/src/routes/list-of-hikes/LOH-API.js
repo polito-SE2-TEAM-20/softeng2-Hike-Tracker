@@ -26,7 +26,19 @@ async function getFilteredListOfHikes(request) {
     return listOfHikes
   } else {
     const errDetail = await response.json();
-    console.log(errDetail)
+    throw errDetail.message;
+  }
+}
+
+async function getSingleHikeByID(hikeid) {
+  let response = await fetch((APIURL + '/hikes/' + hikeid), {
+    method: 'GET'
+  });
+  if (response.ok) {
+    const hike = await response.json();
+    return hike
+  } else {
+    const errDetail = await response.json();
     throw errDetail.message;
   }
 }
@@ -45,5 +57,5 @@ async function getHikesForLocalGuide() {
   }
 }
 
-const LOH_API = { getListOfHikes, getFilteredListOfHikes, getHikesForLocalGuide }
+const LOH_API = { getListOfHikes, getFilteredListOfHikes, getSingleHikeByID, getHikesForLocalGuide }
 export default LOH_API

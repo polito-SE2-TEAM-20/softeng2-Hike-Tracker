@@ -19,6 +19,30 @@ import { TextField } from "@mui/material";
 
 const emails = ['username@gmail.com', 'user02@gmail.com'];
 
+const RadiusProcedure = (props) => {
+    if (props.isVisible) {
+        if (props.step == 0) {
+            return (
+                <>
+                    <Typography variant="h4">1. Select a point on the map</Typography>
+                    <HTButton text="Confirm" />
+                    <HTButton text="Cancel" />
+                </>
+            );
+        }
+        else if (props.step == 1) {
+            return (
+                <>
+                    <Typography variant="h4">2. Insert the desired radius</Typography>
+                    <TextField sx={{ display: "flex", justifyContent: "left", marginRight: "18px", width: "15vw" }} label="Radius in meters" size="small" />
+                    <HTButton text="Confirm" />
+                    <HTButton text="Cancel" />
+                </>
+            );
+        }
+    }
+}
+
 function SimpleDialog(props) {
     const { onClose, selectedValue, open } = props;
 
@@ -67,54 +91,69 @@ SimpleDialog.propTypes = {
 const MapFilters = (props) => {
     const [open, setOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState(emails[1]);
+    const [isVisible, setIsVisible] = useState(false);
+    const [step, setStep] = useState(-1)
 
     const handleClickOpen = () => {
         setOpen(true);
     };
+
+    const handleRadiusProcedure = () => {
+        setIsVisible(true)
+        setStep(0)
+    }
 
     const handleClose = (value) => {
         setOpen(false);
         setSelectedValue(value);
     };
     return (
-        <Paper elevation={5} style={{ width: "fit-content", height: "140px", borderRadius: "25px", backgroundColor: "#ffffff", marginTop: "85px", marginLeft: "15px", padding: "25px", zIndex: "15", position: "fixed" }}>
-            <Grid zeroMinWidth container spacing={2} direction="row">
-                <Grid item>
-                    <Chip onClick={handleClickOpen} label="Region" clickable />
+        <>
+            <Paper elevation={5} style={{ width: "fit-content", height: "140px", borderRadius: "25px", backgroundColor: "#ffffff", marginTop: "85px", marginLeft: "15px", padding: "25px", zIndex: "15", position: "fixed" }}>
+                <Grid zeroMinWidth container spacing={2} direction="row">
+                    <Grid item>
+                        <Chip onClick={handleClickOpen} label="Region" clickable />
+                    </Grid>
+                    <Grid item>
+                        <Chip onClick={handleClickOpen} label="Province" clickable />
+                    </Grid>
+                    <Grid item>
+                        <Chip onClick={handleClickOpen} label="Length" clickable />
+                    </Grid>
+                    <Grid item>
+                        <Chip onClick={handleClickOpen} label="Expected time" clickable />
+                    </Grid>
+                    <Grid item>
+                        <Chip onClick={handleClickOpen} label="Ascent" clickable />
+                    </Grid>
+                    <Grid item>
+                        <Chip onClick={handleClickOpen} label="Difficulty" clickable />
+                    </Grid>
+                    <Grid item>
+                        <Chip onClick={handleRadiusProcedure} label="Radius" clickable />
+                    </Grid>
+                </Grid >
+                <SimpleDialog
+                    selectedValue={selectedValue}
+                    open={open}
+                    onClose={handleClose}
+                />
+                <Grid container columns={12} zeroMinWidth style={{ marginTop: "20px", display: "flex", justifyContent: "left" }}>
+                    <Grid item>
+                        <TextField sx={{ display: "flex", justifyContent: "left", marginRight: "18px", width: "15vw" }} label="Search" size="small" />
+                    </Grid>
+                    <Grid item lg={1} sx={{ display: "flex", justifyContent: "center", marginRight: "24px" }}>
+                        <HTButton text="Apply" color="black" textColor="white" size="14px" />
+                    </Grid>
+                    <Grid item lg={1} sx={{ display: "flex", justifyContent: "center" }}>
+                        <HTButton text="Reset" color="black" textColor="white" size="14px" />
+                    </Grid>
                 </Grid>
-                <Grid item>
-                    <Chip onClick={handleClickOpen} label="Province" clickable />
-                </Grid>
-                <Grid item>
-                    <Chip onClick={handleClickOpen} label="Length" clickable />
-                </Grid>
-                <Grid item>
-                    <Chip onClick={handleClickOpen} label="Expected time" clickable />
-                </Grid>
-                <Grid item>
-                    <Chip onClick={handleClickOpen} label="Ascent" clickable />
-                </Grid>
-                <Grid item>
-                    <Chip onClick={handleClickOpen} label="Difficulty" clickable />
-                </Grid>
-            </Grid >
-            <SimpleDialog
-                selectedValue={selectedValue}
-                open={open}
-                onClose={handleClose}
-            />
-            <Grid container columns={12} zeroMinWidth style={{ marginTop: "20px", display: "flex", justifyContent: "left" }}>
-                <Grid item>
-                    <TextField sx={{ display: "flex", justifyContent: "left", marginRight: "18px", width: "15vw" }} label="Search" size="small" />
-                </Grid>
-                <Grid item lg={1} sx={{ display: "flex", justifyContent: "center", marginRight: "24px" }}>
-                    <HTButton text="Apply" color="black" textColor="white" size="14px" />
-                </Grid>
-                <Grid item lg={1} sx={{ display: "flex", justifyContent: "center" }}>
-                    <HTButton text="Reset" color="black" textColor="white" size="14px" />
-                </Grid>
+            </Paper>
+            <Grid item style={{ width: "fit-content", height: "140px", borderRadius: "25px", backgroundColor: "#ffffff", marginTop: "85px", marginLeft: "850px", padding: "25px", zIndex: "15", position: "fixed" }}>
+                <RadiusProcedure isVisible={isVisible} step={step} />
             </Grid>
-        </Paper>
+        </>
 
     )
 }

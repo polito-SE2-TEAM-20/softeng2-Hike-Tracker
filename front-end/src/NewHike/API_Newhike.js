@@ -29,6 +29,24 @@ async function addNewGpx(formData) {
     }
   }
 
+
+  async function getRegion(lat, lon) {
+    let response = await fetch((`http://api.positionstack.com/v1/reverse?access_key=01e71287aba0f5d255cf1c394737f1ff&query=${lat},${lon}`), {
+      method: 'GET'
+    });
+    if (response.ok) {
+      console.log(response)
+      const information = await response.json();
+      console.log(information);
+      return information
+    } else {
+      const errDetail = await response.json();
+      throw errDetail.message;
+    }
+  }
+  
+
+
 function addHike(hike){
     return new Promise((resolve, reject)=>{
       fetch((APIURL + 'hikes/' + hike.id), {
@@ -50,5 +68,5 @@ function addHike(hike){
     })
   }
 
-const API_NewHike = {addNewGpx, addHike};
+const API_NewHike = {addNewGpx, addHike, getRegion};
 export default API_NewHike;
