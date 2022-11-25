@@ -14,16 +14,13 @@ function HutDescription(props) {
             <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
                     <TextField
-                        required
                         id="owner"
                         label="Owner"
                         fullWidth
                         autoComplete="owner"
                         variant="standard"
-
                         value={props.owner}
                         onChange={(e) => { props.setOwner(e.target.value) }}
-
                     />
                 </Grid>
                 <Grid item xs={12} md={6}>
@@ -33,7 +30,6 @@ function HutDescription(props) {
                         fullWidth
                         autoComplete="website"
                         variant="standard"
-
                         value={props.website}
                         onChange={(e) => { props.setWebsite(e.target.value) }}
                     />
