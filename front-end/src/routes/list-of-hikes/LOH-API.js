@@ -31,5 +31,19 @@ async function getFilteredListOfHikes(request) {
   }
 }
 
-const LOH_API = { getListOfHikes, getFilteredListOfHikes }
+//Antonio's API Function for getting list of hikes inserted by a local guide
+async function getHikesForLocalGuide() {
+  let response = await fetch((APIURL + '/me/hikes'), {
+    method: 'GET'
+  });
+  if (response.ok) {
+    const listOfHikes = await response.json();
+    return listOfHikes
+  } else {
+    const errDetail = await response.json();
+    throw errDetail.message;
+  }
+}
+
+const LOH_API = { getListOfHikes, getFilteredListOfHikes, getHikesForLocalGuide }
 export default LOH_API
