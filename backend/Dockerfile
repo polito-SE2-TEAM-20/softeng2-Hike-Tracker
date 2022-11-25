@@ -1,6 +1,7 @@
 FROM node:16.14.0-alpine
 
-ENV PORT 3500
+ARG PORT=3500
+ENV PORT ${PORT}
 
 WORKDIR /srv
 

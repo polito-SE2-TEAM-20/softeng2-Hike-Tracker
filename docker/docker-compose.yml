@@ -3,7 +3,7 @@ services:
   frontend:
     image: ghcr.io/polito-se2-team-20/frontend:demo
     ports:
-        - "3000:3000"
+        - "3600:3600"
 
   backend:
     ports:
@@ -24,6 +24,8 @@ services:
       - SYNCHRONIZE=$SYNCHRONIZE
     networks:
       - stacknet
+    depends_on:
+      - postgresql
 
   postgresql:
     image: postgis/postgis:14-3.3
@@ -40,6 +42,6 @@ services:
     ports:
       - '5438:5432'
 
-  networks:
-    app-network:
-      driver: bridge
+networks:
+  stacknet:
+    driver: bridge
