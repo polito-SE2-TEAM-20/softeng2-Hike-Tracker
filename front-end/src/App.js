@@ -82,6 +82,7 @@ function App2() {
 
   const doLogOut = async (returnToHome="true") => {
     await API_Login.logOut();
+    localStorage.clear();
     setLoggedIn(false);
     setUser({});
     setRole();
