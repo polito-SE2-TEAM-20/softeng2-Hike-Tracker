@@ -18,6 +18,8 @@ const HTBrowseHikes = (props) => {
     const navigate = useNavigate()
     const [listOfHikes, setListOfHikes] = useState([])
     const [hike2Positions, setHike2Positions] = useState([])
+    const [isRadiusProcedureActive, setIsRadioProcedureActive] = useState(false)
+    const [radiusFilter, setRadiusFilter] = useState([[0.0, 0.0], 0.0])
 
     const [filter, setFilter] = useState({
         "province": null,
@@ -85,7 +87,7 @@ const HTBrowseHikes = (props) => {
     return (
         <Grid container spacing={0} sx={{ backgroundColor: "#f2f2f2", minHeight: "100vh", height: "100%", minWidth: "100vw", width: "100%" }}>
             <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
-            <MapFilters loading={loading} listOfHikes={hike2Positions} setFilter={setFilter} />
+            <MapFilters setIsRadioProcedureActive={setIsRadioProcedureActive} loading={loading} listOfHikes={hike2Positions} setFilter={setFilter} />
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                 {loading ? <MapBrowseHike dataset={hike2Positions} /> : <MapLoading></MapLoading>}
             </Grid>

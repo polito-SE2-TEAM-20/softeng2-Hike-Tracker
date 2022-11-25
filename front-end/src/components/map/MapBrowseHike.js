@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import 'leaflet/dist/leaflet.css'
+import 'leaflet-draw/dist/leaflet.draw.css'
 
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents, ZoomControl, Polyline, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, useMapEvents, ZoomControl, Polyline, useMap } from 'react-leaflet'
 import L from 'leaflet';
 import HikePopup from '../hike-popup/HikePopup';
 import sampledata from '../../extra/sample-data/sample-data.json'
 import { Paper } from '@mui/material'
+import { EditControl } from 'react-leaflet-draw'
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -56,6 +58,16 @@ export const MapBrowseHike = (props) => {
             <MapContainer center={clickedCenter} zoom={9}
                 scrollWheelZoom={{ xs: false, sm: false, md: false, lg: true, xl: true }} zoomControl={false}
                 style={{ width: "auto", minHeight: "100vh", height: "100%" }}>
+                    <FeatureGroup>
+                        <EditControl position="bottomright" draw={{
+                            rectangle:false,
+                            circle: true,
+                            circlemarker: false,
+                            marker: false,
+                            polygon: false,
+                            polyline: false
+                        }} />
+                    </FeatureGroup>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url={"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}

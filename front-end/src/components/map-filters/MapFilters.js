@@ -111,7 +111,7 @@ const MapFilters = (props) => {
                         <Chip variant={diff[0] == 0 && diff[1] == maxDiff ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenDiff(true) }} label="Difficulty" clickable />
                     </Grid>
                     <Grid item md={2} lg={2} xl={2}>
-                        <Chip variant={chipVariants[0]} onClick={() => { setOpenRadius(true) }} label="Radius" clickable />
+                        <Chip variant={chipVariants[0]} onClick={() => { props.setIsRadioProcedureActive(true) }} label="Radius" clickable />
                     </Grid>
                     <Grid item md={7} lg={7} xl={7} sx={{ display: "flex", justifyContent: "center", marginRight: "24px" }}>
                         <HTButton text="Apply" color="black" textColor="white" size="14px" navigate={() => {
