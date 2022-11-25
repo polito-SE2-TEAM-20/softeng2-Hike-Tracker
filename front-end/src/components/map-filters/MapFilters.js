@@ -16,6 +16,7 @@ import { blue } from '@mui/material/colors';
 import { useState } from "react";
 import HTButton from "../buttons/Button";
 import { TextField } from "@mui/material";
+import { displayType } from '../../extra/DisplayType';
 
 const emails = ['username@gmail.com', 'user02@gmail.com'];
 
@@ -78,28 +79,37 @@ const MapFilters = (props) => {
     };
     return (
         <>
-            <Paper elevation={5} style={{ width: "fit-content", height: "140px", borderRadius: "25px", backgroundColor: "#ffffff", marginTop: "85px", marginLeft: "15px", padding: "25px", zIndex: "15", position: "fixed" }}>
-                <Grid zeroMinWidth container spacing={2} direction="row">
-                    <Grid item>
+            {/**
+            * PC
+            */}
+            <Paper elevation={5} columns={12} sx={{ display: displayType.pc }} style={{ width: "fit-content", height: "fit-content", borderRadius: "25px", backgroundColor: "#ffffff", marginTop: "85px", marginLeft: "15px", padding: "25px", zIndex: "15", position: "fixed" }}>
+                <Grid zeroMinWidth container spacing={1} direction="row">
+                    <Grid item md={2} lg={2} xl={2}>
                         <Chip onClick={handleClickOpen} label="Region" clickable />
                     </Grid>
-                    <Grid item>
+                    <Grid item md={2} lg={2} xl={2}>
                         <Chip onClick={handleClickOpen} label="Province" clickable />
                     </Grid>
-                    <Grid item>
+                    <Grid item md={2} lg={2} xl={2}>
                         <Chip onClick={handleClickOpen} label="Length" clickable />
                     </Grid>
-                    <Grid item>
+                    <Grid item md={2} lg={2} xl={2}>
                         <Chip onClick={handleClickOpen} label="Expected time" clickable />
                     </Grid>
-                    <Grid item>
+                    <Grid item md={2} lg={2} xl={2}>
                         <Chip onClick={handleClickOpen} label="Ascent" clickable />
                     </Grid>
-                    <Grid item>
+                    <Grid item md={2} lg={2} xl={2}>
                         <Chip onClick={handleClickOpen} label="Difficulty" clickable />
                     </Grid>
-                    <Grid item>
+                    <Grid item md={6} lg={6} xl={6}>
                         <Chip onClick={handleClickOpen} label="Radius" clickable />
+                    </Grid>
+                    <Grid item md={2} lg={2} xl={2} sx={{ display: "flex", justifyContent: "center", marginRight: "24px" }}>
+                        <HTButton text="Apply" color="black" textColor="white" size="14px" />
+                    </Grid>
+                    <Grid item md={2} lg={2} xl={2} sx={{ display: "flex", justifyContent: "center" }}>
+                        <HTButton text="Reset" color="black" textColor="white" size="14px" />
                     </Grid>
                 </Grid >
                 <SimpleDialog
@@ -107,17 +117,91 @@ const MapFilters = (props) => {
                     open={open}
                     onClose={handleClose}
                 />
-                <Grid container columns={12} zeroMinWidth style={{ marginTop: "20px", display: "flex", justifyContent: "left" }}>
-                    <Grid item>
-                        <TextField sx={{ display: "flex", justifyContent: "left", marginRight: "18px", width: "15vw" }} label="Search" size="small" />
+
+            </Paper>
+
+            {/**
+            * TABLET
+            */}
+            <Paper elevation={5} columns={12} sx={{ display: displayType.tablet }} style={{ width: "fit-content", height: "fit-content", borderRadius: "25px", backgroundColor: "#ffffff", marginTop: "85px", marginLeft: "15px", padding: "25px", zIndex: "15", position: "fixed" }}>
+                <Grid zeroMinWidth container spacing={1} direction="row">
+                    <Grid item md={2} lg={2} xl={2}>
+                        <Chip onClick={handleClickOpen} label="Region" clickable />
                     </Grid>
-                    <Grid item lg={1} sx={{ display: "flex", justifyContent: "center", marginRight: "24px" }}>
+                    <Grid item md={2} lg={2} xl={2}>
+                        <Chip onClick={handleClickOpen} label="Province" clickable />
+                    </Grid>
+                    <Grid item md={2} lg={2} xl={2}>
+                        <Chip onClick={handleClickOpen} label="Length" clickable />
+                    </Grid>
+                    <Grid item md={2} lg={2} xl={2}>
+                        <Chip onClick={handleClickOpen} label="Expected time" clickable />
+                    </Grid>
+                    <Grid item md={2} lg={2} xl={2}>
+                        <Chip onClick={handleClickOpen} label="Ascent" clickable />
+                    </Grid>
+                    <Grid item md={2} lg={2} xl={2}>
+                        <Chip onClick={handleClickOpen} label="Difficulty" clickable />
+                    </Grid>
+                    <Grid item md={6} lg={6} xl={6}>
+                        <Chip onClick={handleClickOpen} label="Radius" clickable />
+                    </Grid>
+                    <Grid item md={2} lg={2} xl={2} sx={{ display: "flex", justifyContent: "center", marginRight: "24px" }}>
                         <HTButton text="Apply" color="black" textColor="white" size="14px" />
                     </Grid>
-                    <Grid item lg={1} sx={{ display: "flex", justifyContent: "center" }}>
+                    <Grid item md={2} lg={2} xl={2} sx={{ display: "flex", justifyContent: "center" }}>
                         <HTButton text="Reset" color="black" textColor="white" size="14px" />
                     </Grid>
-                </Grid>
+                </Grid >
+                <SimpleDialog
+                    selectedValue={selectedValue}
+                    open={open}
+                    onClose={handleClose}
+                />
+
+            </Paper>
+
+            {/**
+            * MOBILE
+            */}
+            <Paper elevation={5} sx={{ display: displayType.mobile }} style={{ width: "fit-content", height: "200px", backgroundColor: "#ffffff", marginTop: "70px", marginLeft: "auto", marginRight: "auto", padding: "25px", zIndex: "15", position: "fixed" }}>
+                <Grid zeroMinWidth container spacing={1} direction="row">
+                    <Grid item xs={3}>
+                        <Chip onClick={handleClickOpen} label="Region" clickable />
+                    </Grid>
+                    <Grid item xs={3}>
+                        <Chip onClick={handleClickOpen} label="Province" clickable />
+                    </Grid>
+                    <Grid item xs={3}>
+                        <Chip onClick={handleClickOpen} label="Length" clickable />
+                    </Grid>
+                    <Grid item xs={3}>
+                        <Chip onClick={handleClickOpen} label="Expected time" clickable />
+                    </Grid>
+                    <Grid item xs={3}>
+                        <Chip onClick={handleClickOpen} label="Ascent" clickable />
+                    </Grid>
+                    <Grid item xs={3}>
+                        <Chip onClick={handleClickOpen} label="Difficulty" clickable />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Chip onClick={handleClickOpen} label="Radius" clickable />
+                    </Grid>
+                    <Grid item container columns={12} zeroMinWidth style={{ display: "flex", justifyContent: "center" }}>
+                        <Grid item xs={6} sx={{ display: "flex", justifyContent: "center", marginTop: "15px" }}>
+                            <HTButton text="Apply" color="black" textColor="white" size="14px" />
+                        </Grid>
+                        <Grid item xs={6} sx={{ display: "flex", justifyContent: "center", marginTop: "15px" }}>
+                            <HTButton text="Reset" color="black" textColor="white" size="14px" />
+                        </Grid>
+                    </Grid>
+                </Grid >
+                <SimpleDialog
+                    selectedValue={selectedValue}
+                    open={open}
+                    onClose={handleClose}
+                />
+
             </Paper>
         </>
 
