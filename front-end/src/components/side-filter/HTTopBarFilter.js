@@ -4,7 +4,7 @@ import './httopfilter-style.css'
 import HTDropdown from './HTDropdown'
 import { useEffect, useState } from "react";
 import HTSlider from './HTSlider'
-import { displayType } from '../../extra/DisplayType';
+import { displayTypeFlex } from '../../extra/DisplayType';
 
 const HTTopBarFilter = (props) => {
     var regions = []
@@ -81,7 +81,7 @@ const HTTopBarFilter = (props) => {
             {/**
              * PC
              */}
-            <Grid container item lg={3} xl={3} columns={12} spacing={0} sx={{ display: displayType.pc }} style={{
+            <Grid container item lg={3} xl={3} columns={12} spacing={0} sx={{ display: displayTypeFlex.pc }} style={{
                 borderStyle: "solid", borderColor: "#f2f2f2", width: "100vw", justifyContent: "center",
                 paddingTop: "15px", paddingBottom: "15px", position: "fixed", zIndex: "1", height: "70vh", marginTop: "25px", marginLeft: "25px",
                 borderRadius: "8px", backgroundColor: "#fbfbfb"
@@ -135,7 +135,7 @@ const HTTopBarFilter = (props) => {
             {/**
              * MOBILE
              */}
-            <Grid container item xs={12} sm={12} columns={12} spacing={0} sx={{ display: displayType.mobile }} style={{
+            <Grid container item xs={12} sm={12} columns={12} spacing={0} sx={{ display: displayTypeFlex.mobile }} style={{
                 borderStyle: "solid", borderColor: "#f2f2f2", width: "100vw", justifyContent: "center",
                 paddingTop: "15px", paddingBottom: "15px",
                 zIndex: "1", height: "70vh", marginTop: "25px", marginLeft: "auto", marginRight: "auto",
@@ -190,7 +190,7 @@ const HTTopBarFilter = (props) => {
             {/**
              * TABLET
              */}
-            <Grid container item md={12} columns={12} spacing={0} sx={{ display: displayType.tablet }} style={{
+            <Grid container item md={12} columns={12} spacing={0} sx={{ display: displayTypeFlex.tablet }} style={{
                 borderStyle: "solid", borderColor: "#f2f2f2", width: "100vw", justifyContent: "center",
                 paddingTop: "15px", paddingBottom: "15px",
                 zIndex: "1", height: "70vh", marginTop: "25px", marginLeft: "auto", marginRight: "auto",

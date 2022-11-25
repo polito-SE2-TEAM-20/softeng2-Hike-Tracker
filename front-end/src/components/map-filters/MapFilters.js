@@ -16,7 +16,7 @@ import { blue } from '@mui/material/colors';
 import { useState } from "react";
 import HTButton from "../buttons/Button";
 import { TextField } from "@mui/material";
-import { displayType } from '../../extra/DisplayType';
+import { displayTypeFlex } from '../../extra/DisplayType';
 
 const emails = ['username@gmail.com', 'user02@gmail.com'];
 
@@ -82,7 +82,7 @@ const MapFilters = (props) => {
             {/**
             * PC
             */}
-            <Paper elevation={5} columns={12} sx={{ display: displayType.pc }} style={{ width: "fit-content", height: "fit-content", borderRadius: "25px", backgroundColor: "#ffffff", marginTop: "85px", marginLeft: "15px", padding: "25px", zIndex: "15", position: "fixed" }}>
+            <Paper elevation={5} columns={12} sx={{ display: displayTypeFlex.pc }} style={{ width: "fit-content", height: "fit-content", borderRadius: "25px", backgroundColor: "#ffffff", marginTop: "85px", marginLeft: "15px", padding: "25px", zIndex: "15", position: "fixed" }}>
                 <Grid zeroMinWidth container spacing={1} direction="row">
                     <Grid item md={2} lg={2} xl={2}>
                         <Chip onClick={handleClickOpen} label="Region" clickable />
@@ -123,7 +123,7 @@ const MapFilters = (props) => {
             {/**
             * TABLET
             */}
-            <Paper elevation={5} columns={12} sx={{ display: displayType.tablet }} style={{ width: "fit-content", height: "fit-content", borderRadius: "25px", backgroundColor: "#ffffff", marginTop: "85px", marginLeft: "15px", padding: "25px", zIndex: "15", position: "fixed" }}>
+            <Paper elevation={5} columns={12} sx={{ display: displayTypeFlex.tablet }} style={{ width: "fit-content", height: "fit-content", borderRadius: "25px", backgroundColor: "#ffffff", marginTop: "85px", marginLeft: "15px", padding: "25px", zIndex: "15", position: "fixed" }}>
                 <Grid zeroMinWidth container spacing={1} direction="row">
                     <Grid item md={2} lg={2} xl={2}>
                         <Chip onClick={handleClickOpen} label="Region" clickable />
@@ -164,7 +164,7 @@ const MapFilters = (props) => {
             {/**
             * MOBILE
             */}
-            <Paper elevation={5} sx={{ display: displayType.mobile }} style={{ width: "fit-content", height: "200px", backgroundColor: "#ffffff", marginTop: "70px", marginLeft: "auto", marginRight: "auto", padding: "25px", zIndex: "15", position: "fixed" }}>
+            <Paper elevation={5} sx={{ display: displayTypeFlex.mobile }} style={{ width: "fit-content", height: "200px", backgroundColor: "#ffffff", marginTop: "70px", marginLeft: "auto", marginRight: "auto", padding: "25px", zIndex: "15", position: "fixed" }}>
                 <Grid zeroMinWidth container spacing={1} direction="row">
                     <Grid item xs={3}>
                         <Chip onClick={handleClickOpen} label="Region" clickable />
