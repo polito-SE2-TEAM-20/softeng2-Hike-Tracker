@@ -1,4 +1,4 @@
-import { Chip, Grid, Paper } from "@mui/material"
+import { Chip, Divider, Grid, Paper } from "@mui/material"
 import * as React from 'react';
 import { useState, useEffect } from "react";
 import HTButton from "../buttons/Button";
@@ -89,8 +89,8 @@ const MapFilters = (props) => {
             {/**
             * PC
             */}
-            <Paper elevation={5} columns={12} sx={{ display: displayTypeFlex.pc }} style={{ width: "fit-content", height: "fit-content", borderRadius: "25px", backgroundColor: "#ffffff", marginTop: "85px", marginLeft: "15px", padding: "25px", zIndex: "15", position: "fixed" }}>
-                <Grid zeroMinWidth container spacing={1} direction="row">
+            <Paper elevation={5} sx={{ display: displayTypeFlex.pc }} style={{ width: "fit-content", height: "fit-content", borderRadius: "25px", backgroundColor: "#ffffff", marginTop: "85px", marginLeft: "15px", padding: "25px", zIndex: "15", position: "fixed" }}>
+                <Grid zeroMinWidth columns={15} container spacing={1} direction="row">
                     <Grid item md={2} lg={2} xl={2}>
                         <Chip onClick={() => { setOpenRegion(true) }} label="Region" clickable />
                     </Grid>
@@ -100,7 +100,7 @@ const MapFilters = (props) => {
                     <Grid item md={2} lg={2} xl={2}>
                         <Chip onClick={() => { setOpenLength(true) }} label="Length" clickable />
                     </Grid>
-                    <Grid item md={2} lg={2} xl={2}>
+                    <Grid item md={3} lg={3} xl={3}>
                         <Chip onClick={() => { setOpenExpTime(true) }} label="Expected time" clickable />
                     </Grid>
                     <Grid item md={2} lg={2} xl={2}>
@@ -109,10 +109,10 @@ const MapFilters = (props) => {
                     <Grid item md={2} lg={2} xl={2}>
                         <Chip onClick={() => { setOpenDiff(true) }} label="Difficulty" clickable />
                     </Grid>
-                    <Grid item md={6} lg={6} xl={6}>
+                    <Grid item md={2} lg={2} xl={2}>
                         <Chip onClick={() => { setOpenRadius(true) }} label="Radius" clickable />
                     </Grid>
-                    <Grid item md={2} lg={2} xl={2} sx={{ display: "flex", justifyContent: "center", marginRight: "24px" }}>
+                    <Grid item md={7} lg={7} xl={7} sx={{ display: "flex", justifyContent: "center", marginRight: "24px" }}>
                         <HTButton text="Apply" color="black" textColor="white" size="14px" navigate={() => {
                             props.setFilter(
                                 {
@@ -130,16 +130,16 @@ const MapFilters = (props) => {
                             )
                         }} />
                     </Grid>
-                    <Grid item md={2} lg={2} xl={2} sx={{ display: "flex", justifyContent: "center" }}>
+                    <Grid item md={7} lg={7} xl={7} sx={{ display: "flex", justifyContent: "center", marginRight: "24px" }}>
                         <HTButton text="Reset" color="black" textColor="white" size="14px" navigate={resetAllFields} />
                     </Grid>
-                    <TextDialog dataset={regions} open={openRegion} setOpen={setOpenRegion} value={region} setFun={setRegion} text="Region" />
-                    <TextDialog dataset={provinces} open={openProvince} setOpen={setOpenProvince} value={province} setFun={setProvince} text="Province" />
-                    <SliderDialog max={maxLen} open={openLength} setOpen={setOpenLength} value={length} setFun={setLength} text="Length" />
-                    <SliderDialog max={maxExpTime} open={openExpTime} setOpen={setOpenExpTime} value={expTime} setFun={setExpTime} text="Expected time" />
-                    <SliderDialog max={maxDiff} open={openDiff} setOpen={setOpenDiff} value={diff} setFun={setDiff} text="Difficulty" />
-                    <SliderDialog max={maxAsc} open={openAscent} setOpen={setOpenAscent} value={asc} setFun={setAsc} text="Ascent" />
                 </Grid >
+                <TextDialog dataset={regions} open={openRegion} setOpen={setOpenRegion} value={region} setFun={setRegion} text="Region" />
+                <TextDialog dataset={provinces} open={openProvince} setOpen={setOpenProvince} value={province} setFun={setProvince} text="Province" />
+                <SliderDialog max={maxLen} open={openLength} setOpen={setOpenLength} value={length} setFun={setLength} text="Length" />
+                <SliderDialog max={maxExpTime} open={openExpTime} setOpen={setOpenExpTime} value={expTime} setFun={setExpTime} text="Expected time" />
+                <SliderDialog max={maxDiff} open={openDiff} setOpen={setOpenDiff} value={diff} setFun={setDiff} text="Difficulty" />
+                <SliderDialog max={maxAsc} open={openAscent} setOpen={setOpenAscent} value={asc} setFun={setAsc} text="Ascent" />
 
             </Paper>
 
@@ -176,6 +176,12 @@ const MapFilters = (props) => {
                         <HTButton text="Reset" color="black" textColor="white" size="14px" />
                     </Grid>
                 </Grid >
+                <TextDialog dataset={regions} open={openRegion} setOpen={setOpenRegion} value={region} setFun={setRegion} text="Region" />
+                <TextDialog dataset={provinces} open={openProvince} setOpen={setOpenProvince} value={province} setFun={setProvince} text="Province" />
+                <SliderDialog max={maxLen} open={openLength} setOpen={setOpenLength} value={length} setFun={setLength} text="Length" />
+                <SliderDialog max={maxExpTime} open={openExpTime} setOpen={setOpenExpTime} value={expTime} setFun={setExpTime} text="Expected time" />
+                <SliderDialog max={maxDiff} open={openDiff} setOpen={setOpenDiff} value={diff} setFun={setDiff} text="Difficulty" />
+                <SliderDialog max={maxAsc} open={openAscent} setOpen={setOpenAscent} value={asc} setFun={setAsc} text="Ascent" />
 
             </Paper>
 
@@ -214,6 +220,13 @@ const MapFilters = (props) => {
                         </Grid>
                     </Grid>
                 </Grid >
+                <TextDialog dataset={regions} open={openRegion} setOpen={setOpenRegion} value={region} setFun={setRegion} text="Region" />
+                <TextDialog dataset={provinces} open={openProvince} setOpen={setOpenProvince} value={province} setFun={setProvince} text="Province" />
+                <SliderDialog max={maxLen} open={openLength} setOpen={setOpenLength} value={length} setFun={setLength} text="Length" />
+                <SliderDialog max={maxExpTime} open={openExpTime} setOpen={setOpenExpTime} value={expTime} setFun={setExpTime} text="Expected time" />
+                <SliderDialog max={maxDiff} open={openDiff} setOpen={setOpenDiff} value={diff} setFun={setDiff} text="Difficulty" />
+                <SliderDialog max={maxAsc} open={openAscent} setOpen={setOpenAscent} value={asc} setFun={setAsc} text="Ascent" />
+
 
             </Paper>
         </>
