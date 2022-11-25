@@ -81,27 +81,27 @@ const HTTopBarFilter = (props) => {
             {/**
              * PC
              */}
-            <Grid container item lg={3} columns={12} spacing={0} sx={{ display: displayType.pc }} style={{
+            <Grid container item lg={3} xl={3} columns={12} spacing={0} sx={{ display: displayType.pc }} style={{
                 borderStyle: "solid", borderColor: "#f2f2f2", width: "100vw", justifyContent: "center",
                 paddingTop: "15px", paddingBottom: "15px", position: "fixed", zIndex: "1", height: "70vh", marginTop: "25px", marginLeft: "25px",
                 borderRadius: "8px", backgroundColor: "#fbfbfb"
             }}>
-                <Grid item lg={12} style={{ display: "flex", justifyContent: "center" }}>
+                <Grid item lg={12} xl={12} style={{ display: "flex", justifyContent: "center" }}>
                     <HTDropdown dataset={regions} hint="Region" setFun={setRegion} val={region} />
                 </Grid>
-                <Grid item lg={12} style={{ display: "flex", justifyContent: "center" }}>
+                <Grid item lg={12} xl={12} style={{ display: "flex", justifyContent: "center" }}>
                     <HTDropdown dataset={provinces} hint="Province" setFun={setProvince} val={province} />
                 </Grid>
-                <Grid item lg={12} style={{ display: "flex", justifyContent: "center" }}>
+                <Grid item lg={12} xl={12} style={{ display: "flex", justifyContent: "center" }}>
                     <HTSlider value={length} setFun={setLength} max={maxLen} text="Length" />
                 </Grid>
-                <Grid item lg={12} style={{ display: "flex", justifyContent: "center" }}>
+                <Grid item lg={12} xl={12} style={{ display: "flex", justifyContent: "center" }}>
                     <HTSlider value={expTime} setFun={setExpTime} max={maxExpTime} text="Expected time" />
                 </Grid>
-                <Grid item lg={12} style={{ display: "flex", justifyContent: "center" }}>
+                <Grid item lg={12} xl={12} style={{ display: "flex", justifyContent: "center" }}>
                     <HTSlider value={diff} setFun={setDiff} max={maxDiff} text="Difficulty" />
                 </Grid>
-                <Grid item lg={12} style={{ display: "flex", justifyContent: "center" }}>
+                <Grid item lg={12} xl={12} style={{ display: "flex", justifyContent: "center" }}>
                     <HTSlider value={asc} setFun={setAsc} max={maxAsc} text="Ascent" />
                 </Grid>
 

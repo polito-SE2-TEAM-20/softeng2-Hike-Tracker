@@ -136,7 +136,7 @@ const HTListOfHikes = (props) => {
                                     :
                                     listOfHikes.map(hike => {
                                         return (
-                                            <Grid item lg={1} style={{ marginLeft: "15px", marginRight: "15px", marginBottom: "15px" }}>
+                                            <Grid item md={2} xl={1} style={{ marginLeft: "15px", marginRight: "15px", marginBottom: "15px" }}>
                                                 <HikeCard hike={hike} />
                                             </Grid>
                                         );
