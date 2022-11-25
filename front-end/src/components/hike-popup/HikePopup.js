@@ -28,7 +28,7 @@ const HikePopup = (props) => {
 
             <Divider style={{marginTop: "2px", marginBottom: "2px"}} />
 
-            <Button text="Zoom on it" color="black" textColor="white" fontSize="12px" />
+            <Button text="Zoom on it" color="black" textColor="white" fontSize="12px" navigate={() => {props.OnClickSelectHike(props.hike.id)}} />
         </div>
     );
 }
