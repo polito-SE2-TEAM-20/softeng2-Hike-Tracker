@@ -1,3 +1,5 @@
+import { randomInt } from 'crypto';
+
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import type {
@@ -81,7 +83,10 @@ export class TestingService {
   async createHut(
     data?: DeepPartial<Hut>,
     pointData: Partial<Point> = {
-      position: { type: 'Point', coordinates: [49, 7] },
+      position: {
+        type: 'Point',
+        coordinates: [randomInt(-170, 170), randomInt(-85, 85)],
+      },
     },
   ): Promise<WithPoint<Hut>> {
     let pointId: ID | undefined = data?.pointId;
@@ -100,7 +105,10 @@ export class TestingService {
   async createParkingLot(
     data: DeepPartial<ParkingLot>,
     pointData: Partial<Point> = {
-      position: { type: 'Point', coordinates: [49, 7] },
+      position: {
+        type: 'Point',
+        coordinates: [randomInt(-170, 170), randomInt(-85, 85)],
+      },
     },
   ): Promise<WithPoint<ParkingLot>> {
     let pointId: ID | undefined = data?.pointId;

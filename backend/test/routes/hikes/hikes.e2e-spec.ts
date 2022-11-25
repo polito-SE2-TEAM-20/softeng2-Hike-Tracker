@@ -10,7 +10,6 @@ import {
   HikePoint,
   latLonToGisPoint,
   mapToId,
-  Point,
   PointType,
   ROOT,
   UPLOAD_PATH,
@@ -265,9 +264,10 @@ describe('Hikes (e2e)', () => {
   });
 
   it('should update hike - referencePoints, startPoint, endPoint', async () => {
-    const { localGuide, hike, huts } = await setup();
+    const { localGuide, hike, huts, parkingLots } = await setup();
 
-    const [hutStart, hutEnd] = huts;
+    const hutStart = huts[9];
+    const parkingLotEnd = parkingLots[3];
 
     const updateData = {
       title: 'eeee',
@@ -292,7 +292,7 @@ describe('Hikes (e2e)', () => {
         hutId: hutStart.id,
       },
       endPoint: {
-        hutId: hutEnd.id,
+        parkingLotId: parkingLotEnd.id,
       },
     };
 
@@ -306,14 +306,23 @@ describe('Hikes (e2e)', () => {
         expect(body).toMatchObject({
           ...hike,
           ...withoutCompositeFields(updateData),
-          referencePoints: updateData.referencePoints.map<Point>(
-            (refPoint) => ({
-              ...withoutLatLon(refPoint),
-              id: anyId(),
-              position: latLonToGisPoint(refPoint),
-              type: PointType.point,
-            }),
+          referencePoints: updateData.referencePoints.map(
+            referencePointTransformer,
           ),
+          startPoint: {
+            type: 'hut',
+            entity: {
+              ...hutStart,
+              point: hutStart.point,
+            },
+          },
+          endPoint: {
+            type: 'parkingLot',
+            entity: {
+              ...parkingLotEnd,
+              point: parkingLotEnd.point,
+            },
+          },
         });
       });
   });
