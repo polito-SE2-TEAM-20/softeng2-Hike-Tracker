@@ -21,13 +21,21 @@ export type LinkedPoint =
   | {
       type: 'parkingLot';
       entity: WithPoint<ParkingLot>;
+    }
+  | {
+      type: 'point';
+      point: Point;
     };
 
 export type HikeFull = Hike & {
   linkedPoints: LinkedPoint[];
   referencePoints: Point[];
-  startPoint?: Point;
-  endPoint?: Point;
+  startPoint?: LinkedPoint | null;
+  endPoint?: LinkedPoint | null;
 };
 
-export type StartEndPoint = Point & { hikePoint: HikePoint };
+export type StartEndPoint = Point & {
+  hikePoint: HikePoint;
+  hut?: Hut;
+  parkingLot?: ParkingLot;
+};

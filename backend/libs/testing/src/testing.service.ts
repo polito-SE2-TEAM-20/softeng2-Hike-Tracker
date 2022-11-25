@@ -1,3 +1,5 @@
+import { randomInt } from 'crypto';
+
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import type {
@@ -18,6 +20,7 @@ import {
   Point,
   User,
   UserRole,
+  WithPoint,
 } from '@app/common';
 
 import { CONNECTION_NAME } from './testing.constants';
@@ -80,27 +83,34 @@ export class TestingService {
   async createHut(
     data?: DeepPartial<Hut>,
     pointData: Partial<Point> = {
-      position: { type: 'Point', coordinates: [49, 7] },
+      position: {
+        type: 'Point',
+        coordinates: [randomInt(-170, 170), randomInt(-85, 85)],
+      },
     },
-  ): Promise<Hut> {
+  ): Promise<WithPoint<Hut>> {
     let pointId: ID | undefined = data?.pointId;
 
-    if (pointData || !pointId) {
+    if (!pointId) {
       const point = await this.createPoint(pointData);
       pointId = point.id;
     }
 
+    const prettyPoint = await this.repo(Point).findOneByOrFail({ id: pointId });
     const hut = await this.createBase<Hut>(Hut, { ...data, pointId });
 
-    return hut;
+    return { ...hut, point: prettyPoint };
   }
 
   async createParkingLot(
     data: DeepPartial<ParkingLot>,
     pointData: Partial<Point> = {
-      position: { type: 'Point', coordinates: [49, 7] },
+      position: {
+        type: 'Point',
+        coordinates: [randomInt(-170, 170), randomInt(-85, 85)],
+      },
     },
-  ): Promise<ParkingLot> {
+  ): Promise<WithPoint<ParkingLot>> {
     let pointId: ID | undefined = data?.pointId;
 
     if (pointData || !pointId) {
@@ -108,7 +118,14 @@ export class TestingService {
       pointId = point.id;
     }
 
-    return await this.createBase<ParkingLot>(ParkingLot, { ...data, pointId });
+    const prettyPoint = await this.repo(Point).findOneByOrFail({ id: pointId });
+
+    const parkingLot = await this.createBase<ParkingLot>(ParkingLot, {
+      ...data,
+      pointId,
+    });
+
+    return { ...parkingLot, point: prettyPoint };
   }
 
   async createHikePoint(
@@ -158,6 +175,14 @@ export class TestingService {
     return await this.dataSource.getRepository(type).save({
       ...data,
     });
+  }
+
+  async withPoint<T extends { pointId: ID }>(entity: T): Promise<WithPoint<T>> {
+    const point = await this.repo(Point).findOneByOrFail({
+      id: entity.pointId,
+    });
+
+    return { ...entity, point };
   }
 
   getConnection() {

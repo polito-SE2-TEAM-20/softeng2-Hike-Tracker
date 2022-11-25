@@ -10,7 +10,6 @@ import {
   HikePoint,
   latLonToGisPoint,
   mapToId,
-  Point,
   PointType,
   ROOT,
   UPLOAD_PATH,
@@ -25,11 +24,20 @@ import {
   withoutLatLon,
 } from '@test/base';
 
+import { hikeBasic } from './constants';
+
 const withoutCompositeFields = omit([
   'referencePoints',
   'startPoint',
   'endPoint',
 ]);
+
+const referencePointTransformer = (refPoint: any) => ({
+  ...withoutLatLon(refPoint),
+  id: anyId(),
+  position: latLonToGisPoint(refPoint),
+  type: PointType.point,
+});
 
 describe('Hikes (e2e)', () => {
   let { dbName, app, restService, moduleRef, testService } = prepareVars();
@@ -125,16 +133,7 @@ describe('Hikes (e2e)', () => {
     const { localGuide } = await setup();
 
     const hikeData = {
-      title: 'eeee',
-      description: 'test desc',
-      region: 'Torino',
-      province: 'TO',
-      city: 'Turin',
-      country: 'Italy',
-      length: 100.56,
-      ascent: 5.71,
-      expectedTime: 1020,
-      difficulty: HikeDifficulty.professionalHiker,
+      ...hikeBasic,
       referencePoints: [
         {
           name: 'Small fountain',
@@ -167,22 +166,23 @@ describe('Hikes (e2e)', () => {
     expect(hike).toMatchObject({
       id: anyId(),
       ...hikeData,
-      referencePoints: hikeData.referencePoints.map<Point>((refPoint) => ({
-        ...withoutLatLon(refPoint),
-        id: anyId(),
-        position: latLonToGisPoint(refPoint),
-        type: PointType.point,
-      })),
+      referencePoints: hikeData.referencePoints.map(referencePointTransformer),
       startPoint: {
-        ...withoutLatLon(hikeData.startPoint),
-        id: anyId(),
-        address: null,
-        position: null,
+        type: 'point',
+        point: {
+          ...withoutLatLon(hikeData.startPoint),
+          id: anyId(),
+          address: null,
+          position: null,
+        },
       },
       endPoint: {
-        ...withoutLatLon(hikeData.endPoint),
-        id: anyId(),
-        name: null,
+        type: 'point',
+        point: {
+          ...withoutLatLon(hikeData.endPoint),
+          id: anyId(),
+          name: null,
+        },
       },
     });
     expect(hike.gpxPath).toMatch(/^\/static\/gpx\/.+\.gpx$/);
@@ -200,10 +200,74 @@ describe('Hikes (e2e)', () => {
     ).toHaveLength(3);
   });
 
-  it('should update hike - referencePoints, startPoint, endPoint', async () => {
-    const { localGuide, hike, huts } = await setup();
+  it('should link hut as a start/end point', async () => {
+    const { localGuide, huts, hike: otherHike } = await setup();
 
-    const [hutStart, hutEnd] = huts;
+    // add some random data for other hike
+    await testService.repo(HikePoint).save(
+      [huts[7], huts[4]].map<HikePoint>((hut, index) => ({
+        hikeId: otherHike.id,
+        index,
+        type: index & 1 ? PointType.endPoint : PointType.startPoint,
+        pointId: hut.pointId,
+      })),
+    );
+
+    const hutStart = huts[2];
+    const hutEnd = huts[5];
+    const hikeData = {
+      ...hikeBasic,
+      referencePoints: [
+        {
+          name: 'Small fountain',
+          address: 'Some test address 1/1',
+          lat: 45.18,
+          lon: 7.084,
+        },
+      ],
+      startPoint: {
+        hutId: hutStart.id,
+      },
+      endPoint: {
+        hutId: hutEnd.id,
+      },
+    };
+
+    const { body: hike } = await restService
+      .build(app, localGuide)
+      .request()
+      .post('/hikes/import')
+      .attach('gpxFile', resolve(ROOT, './test-data/4.gpx'))
+      .field(withoutCompositeFields(hikeData))
+      .field('referencePoints', JSON.stringify(hikeData.referencePoints))
+      .field('startPoint', JSON.stringify(hikeData.startPoint))
+      .field('endPoint', JSON.stringify(hikeData.endPoint))
+      .expect(201);
+
+    expect(hike).toMatchObject({
+      id: anyId(),
+      startPoint: {
+        type: 'hut',
+        entity: {
+          ...hutStart,
+          point: hutStart.point,
+        },
+      },
+      endPoint: {
+        type: 'hut',
+        entity: {
+          ...hutEnd,
+          point: hutEnd.point,
+        },
+      },
+    });
+  });
+
+  it('should update hike - referencePoints, startPoint, endPoint', async () => {
+    const { localGuide, hike, huts, parkingLots } = await setup();
+
+    const hutStart = huts[9];
+    const parkingLotEnd = parkingLots[3];
 
     const updateData = {
       title: 'eeee',
@@ -228,7 +292,7 @@ describe('Hikes (e2e)', () => {
         hutId: hutStart.id,
       },
       endPoint: {
-        hutId: hutEnd.id,
+        parkingLotId: parkingLotEnd.id,
       },
     };
 
@@ -242,14 +306,23 @@ describe('Hikes (e2e)', () => {
         expect(body).toMatchObject({
           ...hike,
           ...withoutCompositeFields(updateData),
-          referencePoints: updateData.referencePoints.map<Point>(
-            (refPoint) => ({
-              ...withoutLatLon(refPoint),
-              id: anyId(),
-              position: latLonToGisPoint(refPoint),
-              type: PointType.point,
-            }),
+          referencePoints: updateData.referencePoints.map(
+            referencePointTransformer,
           ),
+          startPoint: {
+            type: 'hut',
+            entity: {
+              ...hutStart,
+              point: hutStart.point,
+            },
+          },
+          endPoint: {
+            type: 'parkingLot',
+            entity: {
+              ...parkingLotEnd,
+              point: parkingLotEnd.point,
+            },
+          },
         });
       });
   });
