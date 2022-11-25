@@ -152,7 +152,7 @@ export class HikesController {
       ...body
     }: HikeDto,
     @CurrentUser() user: UserContext,
-  ): Promise<Hike | null> {
+  ): Promise<HikeFull | null> {
     const gpx = await fs.readFile(file.path);
     const gpxText = gpx.toString('utf8');
     const [parsedHike] = await this.gpxService.parseHikes(gpxText);

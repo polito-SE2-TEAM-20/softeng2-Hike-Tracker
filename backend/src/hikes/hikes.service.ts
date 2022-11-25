@@ -141,8 +141,8 @@ export class HikesService extends BaseService<Hike> {
         'p.hikePoint',
         HikePoint,
         'hp',
-        '(hp.pointId = p.id and hp.hikeId = :hikeId)',
-        { hikeId },
+        '(hp.pointId = p.id and hp.hikeId = :hikeId and hp.type IN (:...types))',
+        { hikeId, types: [PointType.startPoint, PointType.endPoint] },
       )
       .leftJoinAndMapOne('p.hut', Hut, 'h', 'h.pointId = p.id')
       .leftJoinAndMapOne('p.parkingLot', ParkingLot, 'pl', 'pl.pointId = p.id')
