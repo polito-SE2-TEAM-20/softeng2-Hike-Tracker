@@ -11,7 +11,7 @@ export default function ComboBox(props) {
       disableClearable
       id="combo-box-demo"
       options={props.dataset}
-      sx={{ width: 200, color: "white" }}
+      sx={{ width: 200, color: "white", zIndex: "50" }}
       renderInput={(params) => <TextField {...params} label={props.hint} />}
     />
   );

@@ -3,37 +3,13 @@ import './list-of-hikes-style.css'
 import { useEffect, useState } from 'react';
 import HTNavbar from '../../components/HTNavbar/HTNavbar';
 import { Grid, Typography } from '@mui/material';
-import { Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import LOH_API from './LOH-API';
-import HTSideFilter from '../../components/side-filter/HTFilter';
-import HTTable from '../../components/table/HTTable';
 import HikeCard from '../../components/hike-card/HikeCard';
 import HTTopBarFilter from '../../components/side-filter/HTTopBarFilter';
 import Skeleton from '@mui/material/Skeleton';
-import { displayType } from '../../extra/DisplayType';
 
 const HTListOfHikes = (props) => {
-    const [region, setRegion] = useState('')
-    const [province, setProvince] = useState('')
-    const [minAsc, setMinAsc] = useState('')
-    const [maxAsc, setMaxAsc] = useState('')
-    const [minDiff, setMinDiff] = useState('')
-    const [maxDiff, setMaxDiff] = useState('')
-    const [minLen, setMinLen] = useState('')
-    const [maxLen, setMaxLen] = useState('')
-    const [minExT, setMinExT] = useState('')
-    const [maxExT, setMaxExT] = useState('')
-
-    const values = [region, setRegion, province, setProvince, minAsc,
-        setMinAsc, maxAsc, setMaxAsc, minDiff, setMinDiff,
-        maxDiff, setMaxDiff, minLen, setMinLen, maxLen, setMaxLen,
-        minExT, setMinExT, maxExT, setMaxExT]
-
-    const [isFilterOpen, setFilterOpen] = useState(true)
-    const [isSortingOpen, setSortingOpen] = useState(false)
-    const [isHikeShown, setHikeShow] = useState(false)
-    const [hike, setHike] = useState({ title: "", expectedTime: -1, ascent: -1, difficulty: "", length: -1 })
     const [listOfHikes, setListOfHikes] = useState([])
     const navigate = useNavigate()
     const [filter, setFilter] = useState({
@@ -48,12 +24,6 @@ const HTListOfHikes = (props) => {
         "ascentMin": null,
         "ascentMax": null
     })
-    const [title, setTitle] = useState(0)
-    const [expectedTime, setExpectedTime] = useState(0)
-    const [ascent, setAscent] = useState(0)
-    const [difficulty, setDifficulty] = useState(0)
-    const [length, setLength] = useState(0)
-    const filterStates = { setTitle, setExpectedTime, setAscent, setDifficulty, setLength }
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
@@ -79,45 +49,10 @@ const HTListOfHikes = (props) => {
         });
     }, [filter])
 
-    const filterButton = () => {
-        setFilterOpen(!isFilterOpen)
-    }
-
-    const sortingButton = () => {
-        setSortingOpen(!isSortingOpen)
-    }
-
-    const selectHike = (hike_obj) => {
-        console.log(hike_obj)
-        var difficulty = "Professional hiker"
-        if (hike_obj.difficulty == 0) difficulty = "Tourist"
-        else if (hike_obj.difficulty == 1) difficulty = "Hiker"
-        setHike(
-            {
-                title: hike_obj.title,
-                expectedTime: hike_obj.expectedTime,
-                ascent: hike_obj.ascent,
-                difficulty: difficulty,
-                length: hike_obj.length,
-                description: hike_obj.description,
-                province: hike_obj.province,
-                region: hike_obj.region
-            }
-        )
-        setHikeShow(true)
-    }
-
-    const closeHike = () => {
-        setHikeShow(false)
-    }
-
     const gotoLogin = () => {
         navigate("/login", { replace: false })
     }
 
-    const gotoHome = () => {
-        navigate("/", { replace: false })
-    }
     return (
         <>
             <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
