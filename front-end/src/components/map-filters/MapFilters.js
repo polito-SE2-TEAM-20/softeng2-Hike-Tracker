@@ -99,16 +99,16 @@ const MapFilters = (props) => {
                         <Chip variant={province === "" ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenProvince(true) }} label="Province" clickable />
                     </Grid>
                     <Grid item md={2} lg={2} xl={2}>
-                        <Chip variant={length[0] == 0 && length[1] == maxLen ? chipVariants[0]:chipVariants[1]} onClick={() => { setOpenLength(true) }} label="Length" clickable />
+                        <Chip variant={length[0] == 0 && length[1] == maxLen ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenLength(true) }} label="Length" clickable />
                     </Grid>
                     <Grid item md={3} lg={3} xl={3}>
-                        <Chip variant={expTime[0] == 0 && expTime[1] == maxExpTime  ? chipVariants[0]:chipVariants[1]} onClick={() => { setOpenExpTime(true) }} label="Expected time" clickable />
+                        <Chip variant={expTime[0] == 0 && expTime[1] == maxExpTime ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenExpTime(true) }} label="Expected time" clickable />
                     </Grid>
                     <Grid item md={2} lg={2} xl={2}>
-                        <Chip variant={asc[0] == 0 && asc[1] == maxAsc  ? chipVariants[0]:chipVariants[1]} onClick={() => { setOpenAscent(true) }} label="Ascent" clickable />
+                        <Chip variant={asc[0] == 0 && asc[1] == maxAsc ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenAscent(true) }} label="Ascent" clickable />
                     </Grid>
                     <Grid item md={2} lg={2} xl={2}>
-                        <Chip variant={diff[0] == 0 && diff[1] == maxDiff  ? chipVariants[0]:chipVariants[1]} onClick={() => { setOpenDiff(true) }} label="Difficulty" clickable />
+                        <Chip variant={diff[0] == 0 && diff[1] == maxDiff ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenDiff(true) }} label="Difficulty" clickable />
                     </Grid>
                     <Grid item md={2} lg={2} xl={2}>
                         <Chip variant={chipVariants[0]} onClick={() => { setOpenRadius(true) }} label="Radius" clickable />
@@ -150,31 +150,46 @@ const MapFilters = (props) => {
             <Paper elevation={5} columns={12} sx={{ display: displayTypeFlex.tablet }} style={{ width: "fit-content", height: "fit-content", borderRadius: "25px", backgroundColor: "#ffffff", marginTop: "85px", marginLeft: "15px", padding: "25px", zIndex: "15", position: "fixed" }}>
                 <Grid zeroMinWidth container spacing={1} direction="row">
                     <Grid item md={2} lg={2} xl={2}>
-                        <Chip onClick={() => { setOpenRegion(true) }} label="Region" clickable />
+                        <Chip variant={region === "" ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenRegion(true) }} label="Region" clickable />
                     </Grid>
                     <Grid item md={2} lg={2} xl={2}>
-                        <Chip onClick={() => { setOpenProvince(true) }} label="Province" clickable />
+                        <Chip variant={province === "" ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenProvince(true) }} label="Province" clickable />
                     </Grid>
                     <Grid item md={2} lg={2} xl={2}>
-                        <Chip onClick={() => { setOpenLength(true) }} label="Length" clickable />
+                        <Chip variant={length[0] == 0 && length[1] == maxLen ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenLength(true) }} label="Length" clickable />
                     </Grid>
                     <Grid item md={2} lg={2} xl={2}>
-                        <Chip onClick={() => { setOpenExpTime(true) }} label="Expected time" clickable />
+                        <Chip variant={expTime[0] == 0 && expTime[1] == maxExpTime ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenExpTime(true) }} label="Expected time" clickable />
                     </Grid>
                     <Grid item md={2} lg={2} xl={2}>
-                        <Chip onClick={() => { setOpenAscent(true) }} label="Ascent" clickable />
+                        <Chip variant={asc[0] == 0 && asc[1] == maxAsc ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenAscent(true) }} label="Ascent" clickable />
                     </Grid>
                     <Grid item md={2} lg={2} xl={2}>
-                        <Chip onClick={() => { setOpenDiff(true) }} label="Difficulty" clickable />
+                        <Chip variant={diff[0] == 0 && diff[1] == maxDiff ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenDiff(true) }} label="Difficulty" clickable />
                     </Grid>
                     <Grid item md={6} lg={6} xl={6}>
-                        <Chip onClick={() => { setOpenRadius(true) }} label="Radius" clickable />
+                        <Chip variant={chipVariants[0]} onClick={() => { setOpenRadius(true) }} label="Radius" clickable />
                     </Grid>
                     <Grid item md={2} lg={2} xl={2} sx={{ display: "flex", justifyContent: "center", marginRight: "24px" }}>
-                        <HTButton text="Apply" color="black" textColor="white" size="14px" />
+                        <HTButton text="Apply" color="black" textColor="white" size="14px" navigate={() => {
+                            props.setFilter(
+                                {
+                                    "province": province === "" ? null : province,
+                                    "region": region === "" ? null : region,
+                                    "minLength": length[0],
+                                    "maxLength": length[1],
+                                    "expectedTimeMin": expTime[0],
+                                    "expectedTimeMax": expTime[1],
+                                    "difficultyMin": diff[0],
+                                    "difficultyMax": diff[1],
+                                    "ascentMin": asc[0],
+                                    "ascentMax": asc[1]
+                                }
+                            )
+                        }} />
                     </Grid>
                     <Grid item md={2} lg={2} xl={2} sx={{ display: "flex", justifyContent: "center" }}>
-                        <HTButton text="Reset" color="black" textColor="white" size="14px" />
+                        <HTButton text="Reset" color="black" textColor="white" size="14px" navigate={resetAllFields} />
                     </Grid>
                 </Grid >
                 <TextDialog dataset={regions} open={openRegion} setOpen={setOpenRegion} value={region} setFun={setRegion} text="Region" />
@@ -192,32 +207,47 @@ const MapFilters = (props) => {
             <Paper elevation={5} sx={{ display: displayTypeFlex.mobile }} style={{ width: "fit-content", height: "200px", backgroundColor: "#ffffff", marginTop: "70px", marginLeft: "auto", marginRight: "auto", padding: "25px", zIndex: "15", position: "fixed" }}>
                 <Grid zeroMinWidth container spacing={1} direction="row">
                     <Grid item xs={3}>
-                        <Chip onClick={() => { setOpenRegion(true) }} label="Region" clickable />
+                        <Chip variant={region === "" ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenRegion(true) }} label="Region" clickable />
                     </Grid>
                     <Grid item xs={3}>
-                        <Chip onClick={() => { setOpenProvince(true) }} label="Province" clickable />
+                        <Chip variant={province === "" ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenProvince(true) }} label="Province" clickable />
                     </Grid>
                     <Grid item xs={3}>
-                        <Chip onClick={() => { setOpenLength(true) }} label="Length" clickable />
+                        <Chip variant={length[0] == 0 && length[1] == maxLen ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenLength(true) }} label="Length" clickable />
                     </Grid>
                     <Grid item xs={3}>
-                        <Chip onClick={() => { setOpenExpTime(true) }} label="Expected time" clickable />
+                        <Chip variant={expTime[0] == 0 && expTime[1] == maxExpTime ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenExpTime(true) }} label="Expected time" clickable />
                     </Grid>
                     <Grid item xs={3}>
-                        <Chip onClick={() => { setOpenAscent(true) }} label="Ascent" clickable />
+                        <Chip variant={asc[0] == 0 && asc[1] == maxAsc ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenAscent(true) }} label="Ascent" clickable />
                     </Grid>
                     <Grid item xs={3}>
-                        <Chip onClick={() => { setOpenDiff(true) }} label="Difficulty" clickable />
+                        <Chip variant={diff[0] == 0 && diff[1] == maxDiff ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenDiff(true) }} label="Difficulty" clickable />
                     </Grid>
                     <Grid item xs={4}>
-                        <Chip onClick={() => { setOpenRadius(true) }} label="Radius" clickable />
+                        <Chip variant={chipVariants[0]} onClick={() => { setOpenRadius(true) }} label="Radius" clickable />
                     </Grid>
                     <Grid item container columns={12} zeroMinWidth style={{ display: "flex", justifyContent: "center" }}>
                         <Grid item xs={6} sx={{ display: "flex", justifyContent: "center", marginTop: "15px" }}>
-                            <HTButton text="Apply" color="black" textColor="white" size="14px" />
+                            <HTButton text="Apply" color="black" textColor="white" size="14px" navigate={() => {
+                                props.setFilter(
+                                    {
+                                        "province": province === "" ? null : province,
+                                        "region": region === "" ? null : region,
+                                        "minLength": length[0],
+                                        "maxLength": length[1],
+                                        "expectedTimeMin": expTime[0],
+                                        "expectedTimeMax": expTime[1],
+                                        "difficultyMin": diff[0],
+                                        "difficultyMax": diff[1],
+                                        "ascentMin": asc[0],
+                                        "ascentMax": asc[1]
+                                    }
+                                )
+                            }} />
                         </Grid>
                         <Grid item xs={6} sx={{ display: "flex", justifyContent: "center", marginTop: "15px" }}>
-                            <HTButton text="Reset" color="black" textColor="white" size="14px" />
+                            <HTButton text="Reset" color="black" textColor="white" size="14px" navigate={resetAllFields} />
                         </Grid>
                     </Grid>
                 </Grid >
