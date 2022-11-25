@@ -14,6 +14,7 @@ const MapFilters = (props) => {
     const [openAscent, setOpenAscent] = useState(false);
     const [openDiff, setOpenDiff] = useState(false);
     const [openRadius, setOpenRadius] = useState(false);
+    const chipVariants = ["outlined", "filled"];
 
     var regions = []
     const [region, setRegion] = useState("")
@@ -92,25 +93,25 @@ const MapFilters = (props) => {
             <Paper elevation={5} sx={{ display: displayTypeFlex.pc }} style={{ width: "fit-content", height: "fit-content", borderRadius: "25px", backgroundColor: "#ffffff", marginTop: "85px", marginLeft: "15px", padding: "25px", zIndex: "15", position: "fixed" }}>
                 <Grid zeroMinWidth columns={15} container spacing={1} direction="row">
                     <Grid item md={2} lg={2} xl={2}>
-                        <Chip onClick={() => { setOpenRegion(true) }} label="Region" clickable />
+                        <Chip variant={region === "" ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenRegion(true) }} label="Region" clickable />
                     </Grid>
                     <Grid item md={2} lg={2} xl={2}>
-                        <Chip onClick={() => { setOpenProvince(true) }} label="Province" clickable />
+                        <Chip variant={province === "" ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenProvince(true) }} label="Province" clickable />
                     </Grid>
                     <Grid item md={2} lg={2} xl={2}>
-                        <Chip onClick={() => { setOpenLength(true) }} label="Length" clickable />
+                        <Chip variant={length[0] == 0 && length[1] == maxLen ? chipVariants[0]:chipVariants[1]} onClick={() => { setOpenLength(true) }} label="Length" clickable />
                     </Grid>
                     <Grid item md={3} lg={3} xl={3}>
-                        <Chip onClick={() => { setOpenExpTime(true) }} label="Expected time" clickable />
+                        <Chip variant={expTime[0] == 0 && expTime[1] == maxExpTime  ? chipVariants[0]:chipVariants[1]} onClick={() => { setOpenExpTime(true) }} label="Expected time" clickable />
                     </Grid>
                     <Grid item md={2} lg={2} xl={2}>
-                        <Chip onClick={() => { setOpenAscent(true) }} label="Ascent" clickable />
+                        <Chip variant={asc[0] == 0 && asc[1] == maxAsc  ? chipVariants[0]:chipVariants[1]} onClick={() => { setOpenAscent(true) }} label="Ascent" clickable />
                     </Grid>
                     <Grid item md={2} lg={2} xl={2}>
-                        <Chip onClick={() => { setOpenDiff(true) }} label="Difficulty" clickable />
+                        <Chip variant={diff[0] == 0 && diff[1] == maxDiff  ? chipVariants[0]:chipVariants[1]} onClick={() => { setOpenDiff(true) }} label="Difficulty" clickable />
                     </Grid>
                     <Grid item md={2} lg={2} xl={2}>
-                        <Chip onClick={() => { setOpenRadius(true) }} label="Radius" clickable />
+                        <Chip variant={chipVariants[0]} onClick={() => { setOpenRadius(true) }} label="Radius" clickable />
                     </Grid>
                     <Grid item md={7} lg={7} xl={7} sx={{ display: "flex", justifyContent: "center", marginRight: "24px" }}>
                         <HTButton text="Apply" color="black" textColor="white" size="14px" navigate={() => {
