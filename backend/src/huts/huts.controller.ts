@@ -12,7 +12,6 @@ import { isNil } from 'ramda';
 import {
   CurrentUser,
   Hut,
-  HutWorkerOnly,
   ID,
   LocalGuideAndHutWorkerOnly,
   Point,
@@ -25,6 +24,24 @@ import { HutsService } from './huts.service';
 @Controller('huts')
 export class HutsController {
   constructor(private service: HutsService) {}
+
+  @Get('mine')
+  @LocalGuideAndHutWorkerOnly()
+  async mine(
+    @CurrentUser() user: UserContext,
+  ): Promise<Hut[]> {
+
+    const userId = user.id;
+    const huts = await this.service
+      .getRepository()
+      .createQueryBuilder('h')
+      .leftJoinAndMapOne('h.point', Point, 'p', 'p.id = h."pointId"')
+      .where('h.userId = :userId', { userId })
+      .getMany();
+
+    return huts;
+  }
+
 
   @Post('filter')
   @HttpCode(200)
