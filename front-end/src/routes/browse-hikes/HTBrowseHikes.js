@@ -16,7 +16,7 @@ const HTBrowseHikes = (props) => {
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
     const [listOfHikes, setListOfHikes] = useState([])
-    const [positions, setPositions] = useState([])
+    const [hike2Positions, setHike2Positions] = useState([])
     const gotoLogin = () => {
         navigate("/login", { replace: false })
     }
@@ -32,21 +32,26 @@ const HTBrowseHikes = (props) => {
     }, [])
 
     useEffect(() => {
-        var gpxFiles = []
+        const fillingList = []
         const getGpxFiles = async () => {
             setLoading(false)
-            const listOfPaths = listOfHikes.map(x => x.gpxPath).filter(x => x != undefined && x != "")
-            gpxFiles = await BH_API.getHikeByListOfPaths(listOfPaths)
+            for (let hike of listOfHikes.map(x => x)) {
+                const result = await BH_API.getHikePathByHike(hike)
+                fillingList.push(result)
+            }
         }
         getGpxFiles().then(() => {
             let gpxParser = require('gpxparser');
-            const listOfPositions = []
-            for (var gpxFile in gpxFiles) {
+            const tmpOutput = []
+            for (let hike of fillingList.map(x => x)) {
+                if (hike.positions == undefined || hike.positions == "")
+                    continue
                 const gpx = new gpxParser();
-                gpx.parse(gpxFiles[gpxFile]);
-                listOfPositions.push(gpx.tracks[0].points.map(p => [p.lat, p.lon]))
+                gpx.parse(hike.positions);
+                hike.positions = gpx.tracks[0].points.map(p => [p.lat, p.lon])
+                tmpOutput.push(hike)
             }
-            setPositions(listOfPositions);
+            setHike2Positions(tmpOutput)
             setLoading(true)
         })
     }, [listOfHikes])
@@ -56,7 +61,7 @@ const HTBrowseHikes = (props) => {
             <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
             <MapFilters />
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                {loading ? <MapBrowseHike dataset={positions} /> : <MapLoading></MapLoading>}
+                {loading ? <MapBrowseHike dataset={hike2Positions} /> : <MapLoading></MapLoading>}
             </Grid>
         </Grid>
     );

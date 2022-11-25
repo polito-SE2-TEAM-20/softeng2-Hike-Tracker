@@ -48,18 +48,17 @@ export const MapBrowseHike = (props) => {
                 <ZoomControl position='bottomright' />
                 {
                     props.dataset.map((hike) => {
-                        console.log(hike)
                         return(<>
                             <Marker
-                                key={Math.random()}
-                                position={[hike[0][0], hike[0][1]]}>
-                                <Popup position={[hike[0][0], hike[0][1]]}>
-                                    <HikePopup elem={hike[0]} />
+                                key={hike.id}
+                                position={[hike.positions[0][0], hike.positions[0][1]]}>
+                                <Popup position={[hike.positions[0][0], hike.positions[0][1]]}>
+                                    <HikePopup hike={hike} />
                                 </Popup>
                             </Marker>
                             <Polyline
                                 pathOptions={{ fillColor: 'red', color: 'blue' }}
-                                positions={hike}
+                                positions={hike.positions}
                             />
                         </>)
                     })
