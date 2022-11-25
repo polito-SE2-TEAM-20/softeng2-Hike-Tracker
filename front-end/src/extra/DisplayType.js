@@ -7,8 +7,8 @@ export const displayType = {
         xl: "none"
     },
     tablet: {
-        xs: "flex",
-        sm: "flex",
+        xs: "none",
+        sm: "none",
         md: "flex",
         lg: "none",
         xl: "none"
@@ -16,7 +16,7 @@ export const displayType = {
     pc: {
         xs: "none",
         sm: "none",
-        md: "flex",
+        md: "none",
         lg: "flex",
         xl: "flex"
     }
