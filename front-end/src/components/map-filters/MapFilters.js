@@ -1,158 +1,221 @@
 import { Chip, Grid, Paper } from "@mui/material"
 import * as React from 'react';
-import PropTypes from 'prop-types';
-import Button from '@mui/material/Button';
-import Avatar from '@mui/material/Avatar';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemText from '@mui/material/ListItemText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Dialog from '@mui/material/Dialog';
-import PersonIcon from '@mui/icons-material/Person';
-import AddIcon from '@mui/icons-material/Add';
-import Typography from '@mui/material/Typography';
-import { blue } from '@mui/material/colors';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import HTButton from "../buttons/Button";
-import { TextField } from "@mui/material";
-
-const emails = ['username@gmail.com', 'user02@gmail.com'];
-
-const RadiusProcedure = (props) => {
-    if (props.isVisible) {
-        if (props.step == 0) {
-            return (
-                <>
-                    <Typography variant="h4">1. Select a point on the map</Typography>
-                    <HTButton text="Confirm" />
-                    <HTButton text="Cancel" />
-                </>
-            );
-        }
-        else if (props.step == 1) {
-            return (
-                <>
-                    <Typography variant="h4">2. Insert the desired radius</Typography>
-                    <TextField sx={{ display: "flex", justifyContent: "left", marginRight: "18px", width: "15vw" }} label="Radius in meters" size="small" />
-                    <HTButton text="Confirm" />
-                    <HTButton text="Cancel" />
-                </>
-            );
-        }
-    }
-}
-
-function SimpleDialog(props) {
-    const { onClose, selectedValue, open } = props;
-
-    const handleClose = () => {
-        onClose(selectedValue);
-    };
-
-    const handleListItemClick = (value) => {
-        onClose(value);
-    };
-
-    return (
-        <Dialog onClose={handleClose} open={open}>
-            <DialogTitle>Set backup account</DialogTitle>
-            <List sx={{ pt: 0 }}>
-                {emails.map((email) => (
-                    <ListItem button onClick={() => handleListItemClick(email)} key={email}>
-                        <ListItemAvatar>
-                            <Avatar sx={{ bgcolor: blue[100], color: blue[600] }}>
-                                <PersonIcon />
-                            </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary={email} />
-                    </ListItem>
-                ))}
-
-                <ListItem autoFocus button onClick={() => handleListItemClick('addAccount')}>
-                    <ListItemAvatar>
-                        <Avatar>
-                            <AddIcon />
-                        </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary="Add account" />
-                </ListItem>
-            </List>
-        </Dialog>
-    );
-}
-
-SimpleDialog.propTypes = {
-    onClose: PropTypes.func.isRequired,
-    open: PropTypes.bool.isRequired,
-    selectedValue: PropTypes.string.isRequired,
-};
+import { displayTypeFlex } from '../../extra/DisplayType';
+import { TextDialog, SliderDialog } from './Dialogs'
 
 const MapFilters = (props) => {
-    const [open, setOpen] = useState(false);
-    const [selectedValue, setSelectedValue] = useState(emails[1]);
-    const [isVisible, setIsVisible] = useState(false);
-    const [step, setStep] = useState(-1)
+    const getMax = (a, b) => Math.max(a, b);
+    const [openRegion, setOpenRegion] = useState(false);
+    const [openProvince, setOpenProvince] = useState(false);
+    const [openExpTime, setOpenExpTime] = useState(false);
+    const [openLength, setOpenLength] = useState(false);
+    const [openAscent, setOpenAscent] = useState(false);
+    const [openDiff, setOpenDiff] = useState(false);
+    const [openRadius, setOpenRadius] = useState(false);
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
+    var regions = []
+    const [region, setRegion] = useState("")
 
-    const handleRadiusProcedure = () => {
-        setIsVisible(true)
-        setStep(0)
+    var provinces = []
+    const [province, setProvince] = useState("")
+
+
+    const [maxLen, setMaxLen] = useState(0)
+    const [length, setLength] = useState([0, 0])
+
+
+    const [maxExpTime, setMaxExpTime] = useState(0)
+    const [expTime, setExpTime] = useState([0, 0])
+
+
+    const [maxDiff, setMaxDiff] = useState(0)
+    const [diff, setDiff] = useState([0, 0])
+
+
+    const [maxAsc, setMaxAsc] = useState(0)
+    const [asc, setAsc] = useState([0, 0])
+
+    if (props.loading) {
+        regions = Array.from(
+            props?.listOfHikes.filter(x => { if (province != "") return x.province === province; return true })
+                .map(x => x.region).filter(x => x !== undefined && x !== '')
+                .reduce((set, x) => set.add(x), new Set()))
     }
 
-    const handleClose = (value) => {
-        setOpen(false);
-        setSelectedValue(value);
-    };
+    if (props.loading) {
+        provinces = Array.from(
+            props?.listOfHikes.filter(x => { if (region != "") return x.region === region; return true })
+                .map(x => x.province).filter(x => x !== undefined && x !== '')
+                .reduce((set, x) => set.add(x), new Set()))
+    }
+
+    useEffect(() => {
+        setMaxLen(props?.listOfHikes.map(x => x.length).reduce(getMax, 0))
+        setMaxExpTime(props?.listOfHikes.map(x => x.expectedTime).reduce(getMax, 0))
+        setMaxDiff(props?.listOfHikes.map(x => x.difficulty).reduce(getMax, 0))
+        setMaxAsc(props?.listOfHikes.map(x => x.ascent).reduce(getMax, 0))
+        setLength([0, maxLen])
+        setExpTime([0, maxExpTime])
+        setDiff([0, maxDiff])
+        setAsc([0, maxAsc])
+    }, [props.listOfHikes])
+
+    const resetAllFields = () => {
+        setRegion("")
+        setProvince("")
+        setLength([0, maxLen])
+        setExpTime([0, maxExpTime])
+        setDiff([0, maxDiff])
+        setAsc([0, maxAsc])
+        props.setFilter(
+            {
+                "province": null,
+                "region": null,
+                "minLength": null,
+                "maxLength": null,
+                "expectedTimeMin": null,
+                "expectedTimeMax": null,
+                "difficultyMin": null,
+                "difficultyMax": null,
+                "ascentMin": null,
+                "ascentMax": null
+            }
+        )
+    }
     return (
         <>
-            <Paper elevation={5} style={{ width: "fit-content", height: "140px", borderRadius: "25px", backgroundColor: "#ffffff", marginTop: "85px", marginLeft: "15px", padding: "25px", zIndex: "15", position: "fixed" }}>
-                <Grid zeroMinWidth container spacing={2} direction="row">
-                    <Grid item>
-                        <Chip onClick={handleClickOpen} label="Region" clickable />
+            {/**
+            * PC
+            */}
+            <Paper elevation={5} columns={12} sx={{ display: displayTypeFlex.pc }} style={{ width: "fit-content", height: "fit-content", borderRadius: "25px", backgroundColor: "#ffffff", marginTop: "85px", marginLeft: "15px", padding: "25px", zIndex: "15", position: "fixed" }}>
+                <Grid zeroMinWidth container spacing={1} direction="row">
+                    <Grid item md={2} lg={2} xl={2}>
+                        <Chip onClick={() => { setOpenRegion(true) }} label="Region" clickable />
                     </Grid>
-                    <Grid item>
-                        <Chip onClick={handleClickOpen} label="Province" clickable />
+                    <Grid item md={2} lg={2} xl={2}>
+                        <Chip onClick={() => { setOpenProvince(true) }} label="Province" clickable />
                     </Grid>
-                    <Grid item>
-                        <Chip onClick={handleClickOpen} label="Length" clickable />
+                    <Grid item md={2} lg={2} xl={2}>
+                        <Chip onClick={() => { setOpenLength(true) }} label="Length" clickable />
                     </Grid>
-                    <Grid item>
-                        <Chip onClick={handleClickOpen} label="Expected time" clickable />
+                    <Grid item md={2} lg={2} xl={2}>
+                        <Chip onClick={() => { setOpenExpTime(true) }} label="Expected time" clickable />
                     </Grid>
-                    <Grid item>
-                        <Chip onClick={handleClickOpen} label="Ascent" clickable />
+                    <Grid item md={2} lg={2} xl={2}>
+                        <Chip onClick={() => { setOpenAscent(true) }} label="Ascent" clickable />
                     </Grid>
-                    <Grid item>
-                        <Chip onClick={handleClickOpen} label="Difficulty" clickable />
+                    <Grid item md={2} lg={2} xl={2}>
+                        <Chip onClick={() => { setOpenDiff(true) }} label="Difficulty" clickable />
                     </Grid>
-                    <Grid item>
-                        <Chip onClick={handleRadiusProcedure} label="Radius" clickable />
+                    <Grid item md={6} lg={6} xl={6}>
+                        <Chip onClick={() => { setOpenRadius(true) }} label="Radius" clickable />
                     </Grid>
+                    <Grid item md={2} lg={2} xl={2} sx={{ display: "flex", justifyContent: "center", marginRight: "24px" }}>
+                        <HTButton text="Apply" color="black" textColor="white" size="14px" navigate={() => {
+                            props.setFilter(
+                                {
+                                    "province": province === "" ? null : province,
+                                    "region": region === "" ? null : region,
+                                    "minLength": length[0],
+                                    "maxLength": length[1],
+                                    "expectedTimeMin": expTime[0],
+                                    "expectedTimeMax": expTime[1],
+                                    "difficultyMin": diff[0],
+                                    "difficultyMax": diff[1],
+                                    "ascentMin": asc[0],
+                                    "ascentMax": asc[1]
+                                }
+                            )
+                        }} />
+                    </Grid>
+                    <Grid item md={2} lg={2} xl={2} sx={{ display: "flex", justifyContent: "center" }}>
+                        <HTButton text="Reset" color="black" textColor="white" size="14px" navigate={resetAllFields} />
+                    </Grid>
+                    <TextDialog dataset={regions} open={openRegion} setOpen={setOpenRegion} value={region} setFun={setRegion} text="Region" />
+                    <TextDialog dataset={provinces} open={openProvince} setOpen={setOpenProvince} value={province} setFun={setProvince} text="Province" />
+                    <SliderDialog max={maxLen} open={openLength} setOpen={setOpenLength} value={length} setFun={setLength} text="Length" />
+                    <SliderDialog max={maxExpTime} open={openExpTime} setOpen={setOpenExpTime} value={expTime} setFun={setExpTime} text="Expected time" />
+                    <SliderDialog max={maxDiff} open={openDiff} setOpen={setOpenDiff} value={diff} setFun={setDiff} text="Difficulty" />
+                    <SliderDialog max={maxAsc} open={openAscent} setOpen={setOpenAscent} value={asc} setFun={setAsc} text="Ascent" />
                 </Grid >
-                <SimpleDialog
-                    selectedValue={selectedValue}
-                    open={open}
-                    onClose={handleClose}
-                />
-                <Grid container columns={12} zeroMinWidth style={{ marginTop: "20px", display: "flex", justifyContent: "left" }}>
-                    <Grid item>
-                        <TextField sx={{ display: "flex", justifyContent: "left", marginRight: "18px", width: "15vw" }} label="Search" size="small" />
+
+            </Paper>
+
+            {/**
+            * TABLET
+            */}
+            <Paper elevation={5} columns={12} sx={{ display: displayTypeFlex.tablet }} style={{ width: "fit-content", height: "fit-content", borderRadius: "25px", backgroundColor: "#ffffff", marginTop: "85px", marginLeft: "15px", padding: "25px", zIndex: "15", position: "fixed" }}>
+                <Grid zeroMinWidth container spacing={1} direction="row">
+                    <Grid item md={2} lg={2} xl={2}>
+                        <Chip onClick={() => { setOpenRegion(true) }} label="Region" clickable />
                     </Grid>
-                    <Grid item lg={1} sx={{ display: "flex", justifyContent: "center", marginRight: "24px" }}>
+                    <Grid item md={2} lg={2} xl={2}>
+                        <Chip onClick={() => { setOpenProvince(true) }} label="Province" clickable />
+                    </Grid>
+                    <Grid item md={2} lg={2} xl={2}>
+                        <Chip onClick={() => { setOpenLength(true) }} label="Length" clickable />
+                    </Grid>
+                    <Grid item md={2} lg={2} xl={2}>
+                        <Chip onClick={() => { setOpenExpTime(true) }} label="Expected time" clickable />
+                    </Grid>
+                    <Grid item md={2} lg={2} xl={2}>
+                        <Chip onClick={() => { setOpenAscent(true) }} label="Ascent" clickable />
+                    </Grid>
+                    <Grid item md={2} lg={2} xl={2}>
+                        <Chip onClick={() => { setOpenDiff(true) }} label="Difficulty" clickable />
+                    </Grid>
+                    <Grid item md={6} lg={6} xl={6}>
+                        <Chip onClick={() => { setOpenRadius(true) }} label="Radius" clickable />
+                    </Grid>
+                    <Grid item md={2} lg={2} xl={2} sx={{ display: "flex", justifyContent: "center", marginRight: "24px" }}>
                         <HTButton text="Apply" color="black" textColor="white" size="14px" />
                     </Grid>
-                    <Grid item lg={1} sx={{ display: "flex", justifyContent: "center" }}>
+                    <Grid item md={2} lg={2} xl={2} sx={{ display: "flex", justifyContent: "center" }}>
                         <HTButton text="Reset" color="black" textColor="white" size="14px" />
                     </Grid>
-                </Grid>
+                </Grid >
+
             </Paper>
-            <Grid item style={{ width: "fit-content", height: "140px", borderRadius: "25px", backgroundColor: "#ffffff", marginTop: "85px", marginLeft: "850px", padding: "25px", zIndex: "15", position: "fixed" }}>
-                <RadiusProcedure isVisible={isVisible} step={step} />
-            </Grid>
+
+            {/**
+            * MOBILE
+            */}
+            <Paper elevation={5} sx={{ display: displayTypeFlex.mobile }} style={{ width: "fit-content", height: "200px", backgroundColor: "#ffffff", marginTop: "70px", marginLeft: "auto", marginRight: "auto", padding: "25px", zIndex: "15", position: "fixed" }}>
+                <Grid zeroMinWidth container spacing={1} direction="row">
+                    <Grid item xs={3}>
+                        <Chip onClick={() => { setOpenRegion(true) }} label="Region" clickable />
+                    </Grid>
+                    <Grid item xs={3}>
+                        <Chip onClick={() => { setOpenProvince(true) }} label="Province" clickable />
+                    </Grid>
+                    <Grid item xs={3}>
+                        <Chip onClick={() => { setOpenLength(true) }} label="Length" clickable />
+                    </Grid>
+                    <Grid item xs={3}>
+                        <Chip onClick={() => { setOpenExpTime(true) }} label="Expected time" clickable />
+                    </Grid>
+                    <Grid item xs={3}>
+                        <Chip onClick={() => { setOpenAscent(true) }} label="Ascent" clickable />
+                    </Grid>
+                    <Grid item xs={3}>
+                        <Chip onClick={() => { setOpenDiff(true) }} label="Difficulty" clickable />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Chip onClick={() => { setOpenRadius(true) }} label="Radius" clickable />
+                    </Grid>
+                    <Grid item container columns={12} zeroMinWidth style={{ display: "flex", justifyContent: "center" }}>
+                        <Grid item xs={6} sx={{ display: "flex", justifyContent: "center", marginTop: "15px" }}>
+                            <HTButton text="Apply" color="black" textColor="white" size="14px" />
+                        </Grid>
+                        <Grid item xs={6} sx={{ display: "flex", justifyContent: "center", marginTop: "15px" }}>
+                            <HTButton text="Reset" color="black" textColor="white" size="14px" />
+                        </Grid>
+                    </Grid>
+                </Grid >
+
+            </Paper>
         </>
 
     )
