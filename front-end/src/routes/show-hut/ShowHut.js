@@ -75,6 +75,13 @@ const ShowHut = (props) => {
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        {
+                            !loading ?
+                                <Typography>Altitude: {hut.altitude === "" || hut.altitude === null || hut.altitude === undefined ? "N/A" : hut.altitude}</Typography> :
+                                <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
+                        }
+                    </Grid>
 
                     <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
                         <Chip label="Details" />
@@ -150,9 +157,7 @@ const ShowHut = (props) => {
                                 <ZoomControl position='bottomright' />
                             </MapContainer> :
                             <>
-                                <Skeleton variant='rectangular' height={20} width={400} style={{ marginBottom: "10px" }} />
-                                <Skeleton variant='rectangular' height={20} width={400} style={{ marginBottom: "10px" }} />
-                                <Skeleton variant='rectangular' height={20} width={150} style={{ marginBottom: "10px" }} />
+                                <Skeleton variant='rectangular' height={400} width={900} style={{ marginBottom: "10px" }} />
                             </>
                     }
                 </Grid>
