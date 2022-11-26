@@ -66,6 +66,7 @@ describe('Hikes (e2e)', () => {
     );
     const parkingLots = await mapArray(10, (i) =>
       testService.createParkingLot({
+        userId: localGuide.id,
         maxCars: (i + 1) * 5,
       }),
     );

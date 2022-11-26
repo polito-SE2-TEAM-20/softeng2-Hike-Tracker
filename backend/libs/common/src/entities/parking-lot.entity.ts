@@ -34,6 +34,30 @@ export class ParkingLot {
   })
   maxCars!: number | null;
 
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  country!: string | null;
+
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  region!: string | null;
+
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  province!: string | null;
+
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  city!: string | null;
+
   /**
    * TypeORM sql-gen only
    * @deprecated

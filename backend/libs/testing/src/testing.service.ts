@@ -23,6 +23,8 @@ import {
   WithPoint,
 } from '@app/common';
 
+import { ParkingLotDto } from '@core/parking_lot/parking_lot.dto';
+
 import { CONNECTION_NAME } from './testing.constants';
 
 export interface IJwtService {
@@ -152,9 +154,11 @@ export class TestingService {
     const user = (await this.createBase(User, {
       firstName: 'test',
       lastName: 'test',
-      role: UserRole.hiker,
+      role: UserRole.localGuide,
       email,
       password,
+      verified: true,
+      verificationHash: "123",
       ...data,
     })) as unknown as User;
 
