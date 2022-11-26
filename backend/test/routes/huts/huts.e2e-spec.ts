@@ -153,15 +153,15 @@ describe('Huts (e2e)', () => {
       .post('/huts/filter')
       .send({
         inPointRadius: {
-          lat: 7,
-          lon: 47,
-          radiusKms: 7000
+          lat: 20,
+          lon: 10,
+          radiusKms: null
         } 
       })
       .expect(200)
       .expect(({ body }) => {
-        expect(body).toHaveLength(5);
-        expect(mapToId(body)).toEqual([hut5.id, hut4.id, hut3.id, hut2.id, hut1.id]);
+        expect(body).toHaveLength(3);
+        expect(mapToId(body)).toEqual([hut5.id, hut3.id, hut2.id]);
       });
 
       await restService

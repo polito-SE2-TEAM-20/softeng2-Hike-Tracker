@@ -14,6 +14,7 @@ import { PointsModule } from '../points/points.module';
 
 import { HikesController } from './hikes.controller';
 import { HikesService } from './hikes.service';
+import { HikeModificationController } from './hikeModification.controller';
 
 @Module({
   imports: [
@@ -34,7 +35,7 @@ import { HikesService } from './hikes.service';
     GpxModule,
     PointsModule,
   ],
-  controllers: [HikesController],
+  controllers: [HikesController, HikeModificationController],
   providers: [HikesService],
   exports: [HikesService],
 })

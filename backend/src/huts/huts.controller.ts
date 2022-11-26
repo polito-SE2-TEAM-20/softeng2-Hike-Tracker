@@ -35,8 +35,10 @@ export class HutsController {
     const query = this.service.getRepository().createQueryBuilder('h');
 
     if (!isNil(inPointRadius)) {
-      query.andWhere(`ST_DWithin(ST_MakePoint(${inPointRadius.lon}, ${inPointRadius.lat}), p."position", ${inPointRadius.radiusKms}*1000)`);
-    }
+      const radius = !isNil(inPointRadius.radiusKms) ? inPointRadius.radiusKms*1000 : 10*1000;
+      
+      query.andWhere(`ST_DWithin(ST_MakePoint(${inPointRadius.lon}, ${inPointRadius.lat}), p."position", ${radius})`);
+  }
 
     if (!isNil(priceMin)) {
       query.andWhere('h.price >= :priceMin', { priceMin });
