@@ -148,9 +148,27 @@ async function getSingleHutByID(hutid) {
     }
 }
 
+
+async function getListOfHutsAndParkingLots(radius) {
+    let response = await fetch((APIURL + '/hike-modification/hutsAndParkingLots'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(radius)
+    });
+    if (response.ok) {
+        const hutsAndParkingLots = await response.json();
+        return hutsAndParkingLots
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
 const API = {
     getListOfHikes, getListOfGPXFiles, getPathByID,
     getHikeByListOfPaths, getFilteredListOfHikes, getHikePathByHike,
-    getSingleHikeByID, getHikesForLocalGuide, getListOfHuts, getSingleHutByID
+    getSingleHikeByID, getHikesForLocalGuide, getListOfHuts, getSingleHutByID, getListOfHutsAndParkingLots
 }
 export default API
