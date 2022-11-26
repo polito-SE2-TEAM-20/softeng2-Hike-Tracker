@@ -90,12 +90,14 @@ function App2() {
     navigate('/');
   }
 
-  const doRegister = (credentials, setShow, setErrorMessage) => {
+  const doRegister = (credentials, setShow, setErrorMessage, setInformationMessage, setShowInformation) => {
     API_SignUp.signUp(credentials)
       .then(user => {
         setShow(false);
+        setShowInformation(true);
         console.log(user);
-        setErrorMessage("Check your email to validate your account, then you can login")
+        setInformationMessage("Check your email to validate your account, then you can login");
+
         //navigate('/login');
       })
       .catch(err => {
@@ -120,10 +122,11 @@ function App2() {
        })
    }
 
-   const addNewParkingLot =(parking, setShow, setErrorMessage) =>{
+{/*   const addNewParkingLot =(parking, setShow, setErrorMessage) =>{
     API_NewParkingLot.addNewParkingLot(parking)
        .then(newParking => {
         setShow(false);
+        setErrorMessage('');
         console.log(newParking);
        })
        .catch(err=>{
@@ -134,7 +137,7 @@ function App2() {
 
 
 
-{/*
+
   const addNewGpx = async (formData, hike) => {
     try {
       API_NewHike.addNewGpx(formData)
@@ -169,7 +172,7 @@ function App2() {
         <Route path="/newHut" element={<NewHutForm isLoggedIn={loggedIn} doLogOut={doLogOut} addNewHut={addNewHut}/>}/>
         <Route path="/showhike/:hikeid" element={<ShowHike user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />}/>
         <Route path="/showhut/:hutid" element={<ShowHut user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />}/>
-        <Route path="/newParking" element={<NewParking isLoggedIn={loggedIn} doLogOut={doLogOut} addNewParkingLot={addNewParkingLot}/>}/>
+        <Route path="/newParking" element={<NewParking isLoggedIn={loggedIn} doLogOut={doLogOut} addNewParkingLot={API_NewParkingLot.addNewParkingLot}/>}/>
       </Routes>
     </>
   );

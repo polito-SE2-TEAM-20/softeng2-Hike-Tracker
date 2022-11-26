@@ -48,6 +48,8 @@ function SignUpForm(props) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [informationMessage, setInformationMessage] = useState('');
+  const [showInformation, setShowInformation ] = useState('');
 
 
   const navigate = useNavigate();
@@ -76,6 +78,11 @@ function SignUpForm(props) {
       setShow(true);
       valid = false;
     }
+    if (phoneNumber === '') {
+      setErrorMessage('Please enter a valid phone number ');
+      setShow(true);
+      valid = false;
+    }
     if (confirmPassword !== password) {
       valid = false;
       setErrorMessage('Password do not match');
@@ -83,9 +90,9 @@ function SignUpForm(props) {
     }
     if (valid) {
 
-      const credentials = { email, firstName, lastName, password, role };
+      const credentials = { email, firstName, lastName, password, role, phoneNumber};
       // const credentials = {email, firstName, lastName, password, role, phoneNumber};
-      props.doRegister(credentials, setShow, setErrorMessage);
+      props.doRegister(credentials, setShow, setErrorMessage, setInformationMessage, setShowInformation);
     }
   }
 
@@ -201,6 +208,10 @@ function SignUpForm(props) {
               {
                 show ?
                   <Alert variant="outlined" severity="error" onClose={() => { setErrorMessage(''); setShow(false) }}>{errorMessage}</Alert> : <></>
+              }
+              {
+                showInformation ?
+                  <Alert variant="outlined" severity="success" onClose={() => { setInformationMessage(''); setShowInformation(false) }}>{informationMessage}{<Button onClick={() => { navigate("/login") }}>Login</Button>}</Alert> : <></>
               }
               <Button
                 type="submit"

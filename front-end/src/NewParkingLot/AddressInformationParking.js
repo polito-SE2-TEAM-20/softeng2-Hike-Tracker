@@ -29,18 +29,19 @@ function AddressInformationParking(props) {
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
-            id="elevation"
-            name="elevation"
-            label="Elevation"
+            required
+            id="spots"
+            name="spots"
+            label="Maximum number of spots"
             fullWidth
-            autoComplete="elevation"
+            autoComplete="spots"
             variant="standard"
+            value ={props.spots}
+            onChange={(e) => {props.setSpots(e.target.value)}}
 
-            value ={props.elevation}
-            onChange={(e) => {props.setElevation(e.target.value)}}
-          />
+        />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={6}>
           <TextField
             required
             id="country"
