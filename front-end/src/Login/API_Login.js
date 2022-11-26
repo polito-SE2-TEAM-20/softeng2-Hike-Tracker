@@ -29,6 +29,7 @@ async function logIn(credentials) {
 
 async function logOut() {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
 }
 
 
