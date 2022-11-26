@@ -81,6 +81,7 @@ describe('HikesModification (e2e)', () => {
     const parkingLot1 = await testService.createParkingLot(
       {
         maxCars: 150,
+        userId: localGuide.id,
       },
       { position: { type: 'Point', coordinates: [47.8, 7] } },
     );
@@ -88,6 +89,7 @@ describe('HikesModification (e2e)', () => {
     const parkingLot2 = await testService.createParkingLot(
       {
         maxCars: 200,
+        userId: localGuide.id,
       },
       { position: { type: 'Point', coordinates: [47.5, 7] } },
     );
@@ -95,12 +97,14 @@ describe('HikesModification (e2e)', () => {
     const parkingLot3 = await testService.createParkingLot(
       {
         maxCars: 85,
+        userId: localGuide.id,
       },
       { position: { type: 'Point', coordinates: [48.8, 7] } },
     );
 
     const parkingLot4 = await testService.createParkingLot(
       {
+        userId: localGuide.id,
         maxCars: 70,
       },
       pointData,
@@ -108,6 +112,7 @@ describe('HikesModification (e2e)', () => {
 
     const parkingLot5 = await testService.createParkingLot(
       {
+        userId: localGuide.id,
         maxCars: 300,
       },
       pointData,

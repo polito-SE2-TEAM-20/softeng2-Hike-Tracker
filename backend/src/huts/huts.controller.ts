@@ -78,7 +78,7 @@ export class HutsController {
     }
 
     query
-      .leftJoinAndMapOne('h.point', Point, 'p', 'p.id = h."pointId"')
+      .innerJoinAndMapOne('h.point', Point, 'p', 'p.id = h."pointId"')
       .orderBy('h.id', 'DESC');
     return await query.getMany();
   }

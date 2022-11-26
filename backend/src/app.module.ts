@@ -42,7 +42,6 @@ import { UsersModule } from './users/users.module';
         },
       },
     }),
-
     HealthcheckModule,
     AuthModule,
     HikesModule,
