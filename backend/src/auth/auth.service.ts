@@ -48,7 +48,7 @@ export class AuthService {
       text:
         'Hi ' +
         data.firstName +
-        ', please confirm your e-mail clicking on this link: http://localhost:3500/auth/verify/' +
+        ', please confirm your e-mail clicking on this link: http://hiking-backend.germangorodnev.com/auth/verify/' +
         randomHash,
     });
 

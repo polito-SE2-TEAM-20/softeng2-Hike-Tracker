@@ -42,7 +42,7 @@ export class AuthController {
     return await this.service.register(body);
   }
 
-  @Put('verify/:hash')
+  @Get('verify/:hash')
   @HttpCode(200)
   async verifyMail(@Param('hash') hash: string) {
     return await this.service.validateRegistration(hash);
