@@ -1,5 +1,7 @@
 import { Type } from 'class-transformer';
 import {
+  IsLatitude,
+  IsLongitude,
   IsNumber,
   IsOptional,
   IsString,
@@ -8,6 +10,19 @@ import {
 } from 'class-validator';
 
 import { ReferencePointDto } from '@core/hikes/hikes.dto';
+
+export class PointWithRadius {
+  @IsLatitude()
+  lat!: number;
+
+  @IsLongitude()
+  lon!: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0.00001)
+  radiusKms?: number | null;
+}
 
 export class FilterHutsDto {
   @IsNumber()
@@ -29,6 +44,11 @@ export class FilterHutsDto {
   @Min(0)
   @IsOptional()
   numberOfBedsMax?: number;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => PointWithRadius)
+  inPointRadius?: PointWithRadius | null;
 }
 
 export class CreateHutDto {
