@@ -6,7 +6,10 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import styled from '@emotion/styled'
 
+
 function AddressInformation(props) {
+    const lookup = require('country-code-lookup');
+
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
@@ -40,7 +43,7 @@ function AddressInformation(props) {
             onChange={(e) => {props.setElevation(e.target.value)}}
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} sm={6}>
           <TextField
             required
             id="country"
@@ -49,9 +52,8 @@ function AddressInformation(props) {
             fullWidth
             autoComplete="country"
             variant="standard"
-
             value ={props.country}
-            onChange={(e) => {props.setCountry(e.target.value)}}
+            onChange={(e) => {props.setCountry(e.target.value); console.log(lookup.byCountry(e.target.value))}}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -80,6 +82,21 @@ function AddressInformation(props) {
 
             value ={props.province}
             onChange={(e) => {props.setProvince(e.target.value)}}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <TextField
+            required
+            id="city"
+            name="city"
+            label="City"
+            fullWidth
+            autoComplete="city"
+            variant="standard"
+
+            value ={props.city}
+            onChange={(e) => {props.setCity(e.target.value)}}
           />
         </Grid>
         <Grid item xs={12} sm={6}>

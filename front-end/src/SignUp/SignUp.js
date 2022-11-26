@@ -257,15 +257,17 @@ function RoleSelect(props) {
         <MenuItem value={2}>
           Local Guide
         </MenuItem>
-        <MenuItem value={3}>
+        {/*<MenuItem value={3}>
           Platform Manager
-        </MenuItem>
+</MenuItem>*/}
+
         <MenuItem value={4}>
           Hut Worker
         </MenuItem>
+        {/*}
         <MenuItem value={5}>
           Emergency Operator
-        </MenuItem>
+</MenuItem>*/}
         {/* delete administator because it should be different??*/}
       </Select>
     </FormControl>

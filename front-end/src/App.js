@@ -95,8 +95,8 @@ function App2() {
       .then(user => {
         setShow(false);
         console.log(user);
-        navigate('/login');
-
+        setErrorMessage("Check your email to validate your account, then you can login")
+        //navigate('/login');
       })
       .catch(err => {
         console.log(err);

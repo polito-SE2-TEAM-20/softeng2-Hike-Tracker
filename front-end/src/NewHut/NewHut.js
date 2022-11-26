@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 
 
 import * as React from 'react';
+import {Grid} from '@mui/material'
 import CssBaseline from '@mui/material/CssBaseline';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -19,6 +20,7 @@ import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
+import HTNavbar from '../components/HTNavbar/HTNavbar';
 
 import Alert from '@mui/material/Alert';
 import {MapHut} from './MapHut.js';
@@ -50,6 +52,7 @@ function Copyright() {
 const steps = ['Hut Address', 'Hut information', 'Review hut infos'];
 
 const theme = createTheme(
+
 );
 
 function NewHutForm(props) {
@@ -59,6 +62,7 @@ function NewHutForm(props) {
     const [elevation, setElevation] = useState(''); // elevation in meters
     const [latitude, setLatitude] = useState('');
     const [longitude, setLongitude] = useState('');
+    const [city, setCity] = useState('');
     const [region, setRegion] = useState('');
     const [province, setProvince] = useState('');
     const [address, setAddress] = useState('');
@@ -71,7 +75,7 @@ function NewHutForm(props) {
 
     // services / facilities
     const [beds, setBeds] = useState(''); // number of beds
-    const [foodSupply, setFoodSupply] = useState(''); // one of: none / simple buffet / diner / restaurant
+    // const [foodSupply, setFoodSupply] = useState(''); // one of: none / simple buffet / diner / restaurant
     const [price, setPrice] = useState('');
 
     // other informations
@@ -84,7 +88,7 @@ function NewHutForm(props) {
 
   const handleNext = () => {
     if(activeStep ===(steps.length - 3)){
-        if([name, latitude, longitude, region, province, address].some(t=> t.length ===0)){
+        if([name, latitude, longitude, region, province, address, city].some(t=> t.length ===0)){
         setErrorMessage("All fields with the * should be filled");
         setShow(true);
     }else if(name.match(/^\s+$/)){
@@ -100,6 +104,9 @@ function NewHutForm(props) {
     }else if(!longitude.match(/^([0-9]*[.])?[0-9]+$/)) {
             setErrorMessage("insert a valid value for the longitude ");
             setShow(true);
+    }else if(address.indexOf(',') > -1) {
+            setErrorMessage("insert an address without commas ");
+            setShow(true);
 }else{
         setShow(false);
         setActiveStep(activeStep + 1);
@@ -111,9 +118,10 @@ function NewHutForm(props) {
         setShow(false);
         setActiveStep(activeStep + 1);
     }}else if(activeStep === (steps.length - 1) ){
-
         //cosa cambia tra title e name???
-        let object = {title: name, description: description, numberOfBeds: parseInt(beds), location : {lat: parseFloat(latitude), lon: parseFloat(longitude), name: name, address:address}, price: parseFloat(price)}
+        let add = [address, city, province, region, country];
+        console.log(add.join(','))
+        let object = {title: name, description: description, numberOfBeds: parseInt(beds), location : {lat: parseFloat(latitude), lon: parseFloat(longitude), name: name, address: add.join(",")}, price: parseFloat(price)}
         setShow(false);
         setActiveStep(activeStep + 1);
         props.addNewHut(object).catch((err)=> {setErrorMessage(err); setShow(true)})
@@ -125,7 +133,7 @@ function NewHutForm(props) {
   const handleClear =() =>{
     if(activeStep ===(steps.length - 3)){
     setName(''); setElevation(''); setLatitude(''); setLongitude(''); setRegion(''); setProvince(''); setAddress('');
-    setCountry('');
+    setCountry(''); setCity('');
     }else if(activeStep ===(steps.length - 2)){
          setWebsite(''); setOwner(''); setEmailAddress(''); setBeds(''); setDescription(''); setPrice('');
     }
@@ -145,7 +153,7 @@ function NewHutForm(props) {
       case 0:
         return <AddressInformation name={name} setName = {setName} elevation={elevation} setElevation={setElevation} setLatitude={setLatitude} latitude={latitude} 
         longitude={longitude} setLongitude={setLongitude} region={region} setRegion={setRegion} province={province} 
-       setProvince={setProvince} address={address} setAddress={setAddress} country={country} setCountry={setCountry}/>;
+       setProvince={setProvince} address={address} setAddress={setAddress} city={city} setCity={setCity} country={country} setCountry={setCountry}/>;
       case 1:
         return <HutDescription owner={owner} setOwner={setOwner} website={website} setWebsite={setWebsite} emailAddress={emailAddress} 
         setEmailAddress={setEmailAddress} beds={beds} setBeds={setBeds} description={description} setDescription={setDescription}
@@ -154,34 +162,23 @@ function NewHutForm(props) {
         return <ReviewHutForm name={name}  elevation={elevation}  latitude={latitude} 
         longitude={longitude} region={region}  province={province} 
         address={address} owner={owner}  website={website}  emailAddress={emailAddress} 
-        beds={beds} description={description} price={price} country={country}/>;
+        beds={beds} description={description} price={price} country={country} city={city}/>;
       default:
         throw new Error('Unknown step');
     }
   }
+  const gotoLogin = () => {
+    navigate("/login", { replace: false })
+}
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme} >
       <CssBaseline />
-      {/*<AppBar
-        position="absolute"
-        color="default"
-        elevation={0}
-        sx={{
-          position: 'relative',
-          borderBottom: (t) => `1px solid ${t.palette.divider}`,
-        }}
-      >
-        <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap>
-            Hike Tracking
-          </Typography>
-        </Toolbar>
-      </AppBar>*/}
-
-      <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
+      {/*<HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />*/}
+      <Grid container spacing={0} sx={{ backgroundImage: `url(${login})`, minHeight: "100vh", height: "100%", minWidth: "100vw", width: "100%" }}>
+      <Container component="main" maxWidth="sm" sx={{ mb: 4, mt: 9 }} >
         
-        <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }} style={styles.paperContainer}>
+        <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }} >
           <Typography component="h1" variant="h4" align="center">
             ADD A NEW HUT
           </Typography>
@@ -212,7 +209,7 @@ function NewHutForm(props) {
 
         {
                 show?
-                  <Alert variant="outlined" severity="error"  onClose={() => { setErrorMessage(''); setShow(false) }}>{errorMessage}</Alert> : <></>
+                  <Alert sx={{mt: 3}} variant="outlined" severity="error"  onClose={() => { setErrorMessage(''); setShow(false) }}>{errorMessage}</Alert> : <></>
               }
               <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 {activeStep !== 0 && (
@@ -250,6 +247,7 @@ function NewHutForm(props) {
         <Copyright />
         
       </Container>
+      </Grid>
     </ThemeProvider>
   );
 }
