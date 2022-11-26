@@ -36,8 +36,8 @@ describe('Parking Lots (e2e)', () => {
     {
       "maxCars": 0,
       "location": {
-          "lat": 5.056,
           "lon": 4.0586,
+          "lat": 5.056,
           "name": "test",
           "address": "test"
       }
@@ -46,9 +46,13 @@ describe('Parking Lots (e2e)', () => {
     const lot2 = 
     {
       "maxCars": 2,
+      "country": "Italy",
+      "region": "Piemonte",
+      "province": "Torino",
+      "city": "Torino",
       "location": {
-          "lat": 5.056,
-          "lon": 4.0586,
+          "lon": 4.0587,
+          "lat": 5.0556,
           "name": "test",
           "address": "test"
       }
@@ -70,10 +74,79 @@ describe('Parking Lots (e2e)', () => {
       .expect(({ body }) => {
         expect(body).toMatchObject({
             "pointId": 1,
+            "userId": user.id,
             "maxCars": lot2.maxCars,
+            "country": lot2.country,
+            "region": lot2.region,
+            "province": lot2.province,
+            "city": lot2.city,
+            "location": {
+              "lon": lot2.location.lon,
+              "lat": lot2.location.lat,
+              "name": lot2.location.name,
+              "address": lot2.location.address
+            },
             "id": expect.any(TypeID)
         })
       });
-
   });
+
+  it('should retrieve parking lots created by an user', async () => {
+    const { user } = await setup();
+
+    const lot = 
+    {
+      "maxCars": 2,
+      "country": "Italy",
+      "region": "Piemonte",
+      "province": "Torino",
+      "city": "Torino",
+      "location": {
+          "lon": 4.0587,
+          "lat": 5.0556,
+          "name": "test",
+          "address": "test"
+      }
+    }
+
+    await restService
+    .build(app, user)
+    .request()
+    .post('/parkingLot/insertLot')
+    .send(lot)
+    .expect(201)
+
+    await restService
+    .build(app, user)
+    .request()
+    .get('/parkingLot/lots')
+    .expect(200)
+    .expect(({ body }) => {
+      expect(body).toMatchObject([{
+          "pointId": 1,
+          "userId": user.id,
+          "maxCars": lot.maxCars,
+          "country": lot.country,
+          "region": lot.region,
+          "province": lot.province,
+          "city": lot.city,
+          "point": {
+            "id": 1,
+            "type": 2,
+            "position": {
+                "type": "Point",
+                "coordinates": [
+                    lot.location.lon,
+                    lot.location.lat
+                ]
+            },
+            "address": lot.location.address,
+            "name": lot.location.name
+        },
+          "id": expect.any(TypeID)
+      }])
+    });
+  });
+
+  
 });

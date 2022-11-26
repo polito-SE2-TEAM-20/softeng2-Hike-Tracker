@@ -11,6 +11,7 @@ export class ParkingLotController {
 
     @Get('lots')
     @LocalGuideOnly()
+    @HttpCode(200)
     async getLots(@CurrentUser() user: UserContext): Promise<ParkingLot[]> {
         return await this.parkingLot.retrieveParkingLots(user.id)
     }
