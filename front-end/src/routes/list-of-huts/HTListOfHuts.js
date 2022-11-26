@@ -5,34 +5,28 @@ import HTNavbar from '../../components/HTNavbar/HTNavbar';
 import { Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import API from '../../API/API.js';
-import HikeCard from '../../components/hike-card/HikeCard';
-import HTTopBarFilter from '../../components/side-filter/HTTopBarFilter';
+import HutCard from '../../components/hut-card/HutCard';
+import HTTopBarFilterHut from '../../components/side-filter/HTTopBarFilterHut';
 import Skeleton from '@mui/material/Skeleton';
 
 const HTListOfHikes = (props) => {
-    const [listOfHikes, setListOfHikes] = useState([])
+    const [listOfHuts, setListOfHuts] = useState([])
     const navigate = useNavigate()
     const [filter, setFilter] = useState({
-        "province": null,
-        "region": null,
-        "maxLength": null,
-        "minLength": null,
-        "expectedTimeMin": null,
-        "expectedTimeMax": null,
-        "difficultyMin": null,
-        "difficultyMax": null,
-        "ascentMin": null,
-        "ascentMax": null
+        "priceMin": null,
+        "priceMax": null,
+        "numberOfBedsMin": null,
+        "numberOfBedsMax": null
     })
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         var loh = []
-        const getHikes = async () => {
-            loh = await API.getListOfHikes()
+        const getHuts = async () => {
+            loh = await API.getListOfHuts({})
         }
-        getHikes().then(() => {
-            setListOfHikes(loh)
+        getHuts().then(() => {
+            setListOfHuts(loh)
             setLoading(true)
         });
     }, [])
@@ -41,11 +35,10 @@ const HTListOfHikes = (props) => {
         console.log(filter)
         var loh = []
         const getHikes = async () => {
-            loh = await API.getFilteredListOfHikes({ filter })
+            loh = await API.getListOfHuts(filter)
         }
         getHikes().then(() => {
-            console.log(loh)
-            setListOfHikes(loh)
+            setListOfHuts(loh)
         });
     }, [filter])
 
@@ -58,21 +51,21 @@ const HTListOfHikes = (props) => {
             <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
             <Grid container style={{ marginTop: "75px" }}>
                 <Grid item sm>
-                    <HTTopBarFilter listOfHikes={listOfHikes} loading={loading} setFilter={setFilter} />
+                    <HTTopBarFilterHut listOfHuts={listOfHuts} loading={loading} setFilter={setFilter} />
                 </Grid>
                 <Grid item lg={9}>
                     <Grid container columns={5} style={{ marginTop: "25px", display: "flex", justifyContent: "center" }}>
                         {
                             loading ?
-                                listOfHikes.length == 0 ?
+                                listOfHuts.length == 0 ?
                                     <Typography fontFamily={"Bakbak One, display"} fontWeight="600" fontSize="32px">
                                         No matching hikes.
                                     </Typography>
                                     :
-                                    listOfHikes.map(hike => {
+                                    listOfHuts.map(hut => {
                                         return (
                                             <Grid item md={2} xl={1} style={{ marginLeft: "15px", marginRight: "15px", marginBottom: "15px" }}>
-                                                <HikeCard hike={hike} />
+                                                <HutCard hut={hut} />
                                             </Grid>
                                         );
                                     })

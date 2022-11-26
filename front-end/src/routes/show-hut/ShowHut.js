@@ -1,0 +1,135 @@
+import { Chip, Divider, Grid, Paper, Typography } from "@mui/material";
+import { useNavigate, useParams } from "react-router";
+import { useMatch } from "react-router-dom";
+import HTNavbar from "../../components/HTNavbar/HTNavbar";
+import hutIcon from '../../Assets/hut-icon.png'
+import { useEffect, useState } from "react";
+import API from '../../API/API.js';
+import { Skeleton } from "@mui/material";
+
+const Difficulty = (props) => {
+    if (!props.loading) {
+        return (
+            <>
+                <img src={hutIcon} alt="tourist" width="30px" height="30px" />
+                <div style={{ backgroundColor: "#55B657", color: "white", borderRadius: "8px", paddingLeft: "12px", paddingTop: "3px", paddingBottom: "3px", paddingRight: "12px", width: "fit-content", display: "inline-block", marginLeft: "8px" }}><b>Tourist</b></div>
+            </>
+        );
+    }
+    else {
+        return (
+            <Skeleton variant='rectangular' height={25} width={200} style={{ marginBottom: "10px" }} />
+        );
+    }
+
+}
+
+const ShowHut = (props) => {
+    const navigate = useNavigate()
+    const match = useMatch('/showhut/:hutid')
+    const hutid = (match && match.params && match.params.hutid) ? match.params.hutid : -1
+    const [hut, setHut] = useState({ title: "", numberOfBeds: -1, price: -1, ownerName: "", website: "", point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } })
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        let tmpHike = { title: "", numberOfBeds: -1, price: -1, ownerName: "", website: "", point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } }
+        const getHut = async () => {
+            tmpHike = await API.getSingleHutByID(hutid)
+        }
+        getHut().then(() => {
+            setHut(tmpHike)
+            setLoading(false)
+        })
+    }, [])
+
+
+    const gotoLogin = () => {
+        navigate("/login", { replace: false })
+    }
+
+    return (
+        <Grid container style={{ minHeight: "100vh", height: "100%" }}>
+            <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
+            <Grid style={{ marginTop: "105px", marginLeft: "auto", marginRight: "auto", marginBottom: "25px", height: "40vh" }} item lg={3}>
+                <Paper style={{ padding: "30px", height: "50vh" }}>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        <Typography variant="h4">General information</Typography>
+                    </Grid>
+                    <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
+                        <Chip label="General info about the hut" />
+                    </Divider>
+
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        {
+                            !loading ?
+                                <Typography>Location: {hut.address === "" || hut.address === null || hut.address === undefined ? "N/A" : hut.address}</Typography> :
+                                <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
+                        }
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        {
+                            !loading ?
+                                <Typography>Owner name: {hut.ownerName === "" || hut.ownerName === null || hut.ownerName === undefined ? "N/A" : hut.ownerName}</Typography> :
+                                <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
+                        }
+                    </Grid>
+
+                    <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
+                        <Chip label="Details" />
+                    </Divider>
+
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        {
+                            !loading ? <Typography>Length: {hut.length === "" || hut.length === null || hut.length === undefined ? "N/A" : hut.length}km</Typography> :
+                                <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
+                        }
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        {
+                            !loading ? <Typography>Expected time: {hut.expectedTime === "" || hut.expectedTime === null || hut.expectedTime === undefined ? "N/A" : hut.expectedTime} hours</Typography> :
+                                <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
+                        }
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        {
+                            !loading ? <Typography>Ascent: {hut.ascent === "" || hut.ascent === null || hut.ascent === undefined ? "N/A" : hut.ascent}m</Typography> :
+                                <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
+                        }
+                    </Grid>
+                </Paper>
+            </Grid>
+            <Grid style={{ marginTop: "105px", marginLeft: "auto", marginRight: "auto", marginBottom: "25px", height: "80vh", paddingLeft: "25px", paddingRight: "25px" }} item lg={6}>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
+                    {
+                        !loading ? <Typography variant="h2">{hut.title}</Typography> :
+                            <Skeleton variant='rectangular' height={50} width={600} style={{ marginBottom: "10px" }} />
+                    }
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <Divider>
+                        <Difficulty loading={loading} diff={hut.difficulty} />
+                    </Divider>
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: "30px" }}>
+                    {
+                        !loading ?
+                            <Typography variant="h4">Some information on this hike</Typography>
+                            : <Typography variant="h4">Loading...</Typography>
+                    }
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                    {
+                        !loading ? <Typography>{hut.description === "" || hut.description === null || hut.description === undefined ? "No description provided." : hut.description}</Typography> :
+                            <>
+                                <Skeleton variant='rectangular' height={20} width={400} style={{ marginBottom: "10px" }} />
+                                <Skeleton variant='rectangular' height={20} width={400} style={{ marginBottom: "10px" }} />
+                                <Skeleton variant='rectangular' height={20} width={150} style={{ marginBottom: "10px" }} />
+                            </>
+                    }
+                </Grid>
+            </Grid>
+        </Grid>
+    );
+}
+
+export default ShowHut;

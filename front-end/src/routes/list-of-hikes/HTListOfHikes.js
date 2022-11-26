@@ -6,7 +6,7 @@ import { Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import API from '../../API/API.js';
 import HikeCard from '../../components/hike-card/HikeCard';
-import HTTopBarFilter from '../../components/side-filter/HTTopBarFilter';
+import HTTopBarFilterHike from '../../components/side-filter/HTTopBarFilterHike';
 import Skeleton from '@mui/material/Skeleton';
 
 const HTListOfHikes = (props) => {
@@ -38,13 +38,11 @@ const HTListOfHikes = (props) => {
     }, [])
 
     useEffect(() => {
-        console.log(filter)
         var loh = []
         const getHikes = async () => {
             loh = await API.getFilteredListOfHikes({ filter })
         }
         getHikes().then(() => {
-            console.log(loh)
             setListOfHikes(loh)
         });
     }, [filter])
@@ -58,7 +56,7 @@ const HTListOfHikes = (props) => {
             <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
             <Grid container style={{ marginTop: "75px" }}>
                 <Grid item sm>
-                    <HTTopBarFilter listOfHikes={listOfHikes} loading={loading} setFilter={setFilter} />
+                    <HTTopBarFilterHike listOfHikes={listOfHikes} loading={loading} setFilter={setFilter} />
                 </Grid>
                 <Grid item lg={9}>
                     <Grid container columns={5} style={{ marginTop: "25px", display: "flex", justifyContent: "center" }}>

@@ -1,12 +1,12 @@
 import { Grid, Paper } from "@mui/material";
-import Button from '../../components/buttons/Button'
+import Button from '../buttons/Button'
 import './httopfilter-style.css'
 import HTDropdown from './HTDropdown'
 import { useEffect, useState } from "react";
 import HTSlider from './HTSlider'
 import { displayTypeFlex } from '../../extra/DisplayType';
 
-const HTTopBarFilter = (props) => {
+const HTTopBarFilterHike = (props) => {
     var regions = []
     const [region, setRegion] = useState("")
 
@@ -245,4 +245,4 @@ const HTTopBarFilter = (props) => {
     );
 }
 
-export default HTTopBarFilter
+export default HTTopBarFilterHike
