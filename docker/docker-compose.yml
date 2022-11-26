@@ -1,0 +1,45 @@
+version: "3.6"
+services:
+  frontend:
+    image: ghcr.io/polito-se2-team-20/frontend:demo
+    ports:
+        - "3000:3000"
+
+  backend:
+    ports:
+        - "3500:3500"
+    image: ghcr.io/polito-se2-team-20/backend:demo
+    env_file: .env
+    environment:
+      - NODE_ENV=$NODE_ENV
+      - PORT=$PORT
+      - DB_HOST=$DB_HOST
+      - DB_PORT=$DB_PORT
+      - DB_USERNAME=$DB_USERNAME
+      - DB_PASSWORD=$DB_PASSWORD
+      - DB_NAME=$DB_NAME
+      - JWT_SECRET=$JWT_SECRET
+      - WEB_DOMAIN=$WEB_DOMAIN
+      - SQL_LOGGING=$SQL_LOGGING
+      - SYNCHRONIZE=$SYNCHRONIZE
+    networks:
+      - stacknet
+
+  postgresql:
+    image: postgis/postgis:14-3.3
+    restart: always
+    env_file: .env
+    environment:
+      - POSTGRES_USER=$DB_USERNAME
+      - POSTGRES_PASSWORD=$DB_PASSWORD
+      - POSTGRES_DB=$DB_NAME
+    volumes:
+      - ./.docker/pg-data:/var/lib/postgresql/data
+    networks:
+      - stacknet
+    ports:
+      - '5438:5432'
+
+  networks:
+    app-network:
+      driver: bridge

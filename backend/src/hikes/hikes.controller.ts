@@ -1,5 +1,3 @@
-import { join } from 'path';
-
 import {
   Controller,
   Get,
@@ -29,6 +27,7 @@ import {
   HikePoint,
   Hut,
   ID,
+  latLonToGisPoint,
   LocalGuideOnly,
   mapToId,
   orderEntities,
@@ -65,6 +64,7 @@ export class HikesController {
   }
 
   @Post('/filteredHikes')
+  @HttpCode(HttpStatus.OK)
   async getFilteredHikes(
     @Body()
     { inPointRadius, ...body }: FilteredHikesDto,
@@ -122,7 +122,9 @@ export class HikesController {
       order by h.id asc
     `;
 
-    const rawHikes = await this.service.getRepository().query(queryRaw, params);
+    const rawHikes: Hike[] = await this.service
+      .getRepository()
+      .query(queryRaw, params);
     const hikeIds = mapToId(rawHikes);
     const hikes = await this.service
       .getRepository()
@@ -142,9 +144,15 @@ export class HikesController {
       }),
     )
     file: Express.Multer.File,
-    @Body() body: HikeDto,
+    @Body()
+    {
+      referencePoints: referencePointsArray,
+      startPoint: _startPoint,
+      endPoint: _endPoint,
+      ...body
+    }: HikeDto,
     @CurrentUser() user: UserContext,
-  ): Promise<Hike | null> {
+  ): Promise<HikeFull | null> {
     const gpx = await fs.readFile(file.path);
     const gpxText = gpx.toString('utf8');
     const [parsedHike] = await this.gpxService.parseHikes(gpxText);
@@ -158,31 +166,27 @@ export class HikesController {
       hike: Hike;
       points: Point[];
     }>(async (entityManager) => {
+      const hikePointsRepo = entityManager.getRepository(HikePoint);
+      const pointsRepo = entityManager.getRepository(Point);
+
       const hike = await this.service.getRepository(entityManager).save({
         userId: user.id,
-        gpxPath: join(GPX_FILE_URI, file.filename),
+        gpxPath: [GPX_FILE_URI, file.filename].join('/'),
         ...parsedHike.hike,
         ...body,
       });
 
       //Antonio's code for refPoint insertion starts here
-      const referencePointsArray = body.referencePoints;
 
       const refPointsForDB = referencePointsArray.map((refPoint) => {
-        const pointObject: GPoint = {
-          type: 'Point',
-          coordinates: [refPoint.lon, refPoint.lat],
-        };
-
-        const refPointForDB = {
+        return {
           name: refPoint.name,
           address: refPoint.address,
-          point: pointObject,
+          point: latLonToGisPoint(refPoint),
         };
-        return refPointForDB;
       });
 
-      const referencePoints = await entityManager.getRepository(Point).save(
+      const referencePoints = await pointsRepo.save(
         refPointsForDB.map<Partial<Point>>((point) => ({
           type: 0,
           position: point.point,
@@ -191,7 +195,7 @@ export class HikesController {
         })),
       );
 
-      await entityManager.getRepository(HikePoint).save(
+      await hikePointsRepo.save(
         referencePoints.map<HikePoint>((point, index) => ({
           hikeId: hike.id,
           pointId: point.id,
@@ -201,27 +205,25 @@ export class HikesController {
       );
       //Antonio's code ends here
 
-      // const points = await this.pointsService
-      //   .getRepository(entityManager)
-      //   .save(parsedHike.points);
-
-      // await entityManager.getRepository(HikePoint).save(
-      //   points.map<HikePoint>((point, index) => ({
-      //     hikeId: hike.id,
-      //     pointId: point.id,
-      //     index,
-      //   })),
-      // );
+      // insert start/end points
+      await this.service.upsertStartEndPoints(
+        {
+          id: hike.id,
+          startPoint: _startPoint,
+          endPoint: _endPoint,
+        },
+        entityManager,
+      );
 
       return { hike, points: referencePoints };
     });
 
-    return hike;
+    return await this.service.getFullHike(hike.id);
   }
 
   @Post('linkPoints')
   @LocalGuideOnly()
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   async linkPoints(
     @Body(new GroupValidationPipe()) { hikeId, linkedPoints }: LinkHutToHikeDto,
   ): Promise<HikeFull> {
@@ -287,13 +289,78 @@ export class HikesController {
   @LocalGuideOnly()
   async updateHike(
     @Param('id') id: ID,
-    @Body() data: UpdateHikeDto,
+    @Body()
+    {
+      referencePoints: hikeReferencePoints,
+      startPoint,
+      endPoint,
+      ...data
+    }: UpdateHikeDto,
   ): Promise<Hike> {
     await this.service.ensureExistsOrThrow(id);
 
+    //Antonio's code on Ref Points Update starts here
+    /*
+        OPERATIONS TO DO:
+        - SELECT all Ref Points Id in HikePoint table; ✓
+        - DELETE all Ref Points associated to a certain hike in Point table by IDs previously selected; ✓
+        - INSERT new Ref Points in Points; ✓
+        - INSERT new Ref Points in HikePoints; ✓
+      */
+    if (!isNil(hikeReferencePoints)) {
+      const points = await this.dataSource.getRepository(HikePoint).findBy({
+        hikeId: id,
+      });
+
+      const pointsToDelete = points.map((hikePoint) => hikePoint.pointId);
+
+      await this.pointsService.getRepository().delete({
+        id: In(pointsToDelete),
+      });
+
+      //Creation of proper ref points
+      const refPointsForDB = hikeReferencePoints.map((refPoint) => {
+        const pointObject: GPoint = {
+          type: 'Point',
+          coordinates: [refPoint.lon, refPoint.lat],
+        };
+
+        const refPointForDB = {
+          name: refPoint.name,
+          address: refPoint.address,
+          point: pointObject,
+        };
+        return refPointForDB;
+      });
+
+      //INSERT into Points table of the RefPoints
+      const referencePoints = await this.pointsService.getRepository().save(
+        refPointsForDB.map<Partial<Point>>((point) => ({
+          type: 0,
+          position: point.point,
+          address: point.address,
+          name: point.name,
+        })),
+      );
+
+      //INSERT into HikePoints table of the RefPoints
+      await this.dataSource.getRepository(HikePoint).save(
+        referencePoints.map<HikePoint>((point, index) => ({
+          hikeId: id,
+          pointId: point.id,
+          index,
+          type: PointType.referencePoint,
+        })),
+      );
+    }
+    //Antonio's code ends here
+
+    // update start and end point
+    await this.service.upsertStartEndPoints({ id, startPoint, endPoint });
+
     await this.service.getRepository().update({ id }, data);
 
-    return await this.service.findByIdOrThrow(id);
+    return await this.service.getFullHike(id);
   }
 
   @Get(':id')

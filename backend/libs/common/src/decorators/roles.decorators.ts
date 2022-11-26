@@ -15,12 +15,17 @@ export const Roles = (...roles: UserRole[]) => SetMetadata('roles', roles);
 const createRoleDecorator = (...roles: UserRole[]) =>
   applyDecorators(Roles(...roles), UseGuards(JwtAuthGuard, RolesGuard));
 
+export const RolesOnly = (...roles: UserRole[]) =>
+  applyDecorators(Roles(...roles), UseGuards(JwtAuthGuard, RolesGuard));
+
 export const HikerOnly = () => createRoleDecorator(UserRole.hiker);
 
 export const LocalGuideOnly = () => createRoleDecorator(UserRole.localGuide);
 
-export const HutWorkerOnly = () =>
-  applyDecorators(Roles(UserRole.hutWorker), UseGuards(RolesGuard));
+export const HutWorkerOnly = () => createRoleDecorator(UserRole.hutWorker);
+
+export const LocalGuideAndHutWorkerOnly = () =>
+  createRoleDecorator(UserRole.localGuide, UserRole.hutWorker);
 
 export const PlatformManagerOnly = () =>
-  applyDecorators(Roles(UserRole.platformManager), UseGuards(RolesGuard));
+  createRoleDecorator(UserRole.platformManager);

@@ -1,4 +1,4 @@
-import { join, resolve } from 'path';
+import { resolve } from 'path';
 
 import { applyDecorators } from '@nestjs/common';
 import { IsInt, Min, ValidationOptions } from 'class-validator';
@@ -12,7 +12,7 @@ export const UPLOAD_PATH_VALUE = Symbol('UPLOAD_PATH_VALUE');
 
 export const STATIC_PREFIX = 'static';
 
-export const GPX_FILE_URI = join(`/${STATIC_PREFIX}`, 'gpx');
+export const GPX_FILE_URI = `/${STATIC_PREFIX}/gpx`;
 
 export const FRONTEND_HOST = 'hiking.germangorodnev.com';
 

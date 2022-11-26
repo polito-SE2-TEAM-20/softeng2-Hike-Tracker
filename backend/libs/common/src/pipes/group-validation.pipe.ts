@@ -12,6 +12,10 @@ export class GroupValidationPipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata): Promise<any> {
     const { metatype } = metadata;
 
+    if (!metatype) {
+      throw new Error('metatype is required');
+    }
+
     const instance = plainToInstance(metatype, value);
 
     let groups: string[] = [];

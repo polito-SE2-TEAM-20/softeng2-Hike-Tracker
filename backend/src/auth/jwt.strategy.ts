@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { omit } from 'ramda';
 import { DataSource } from 'typeorm';
 
 import { JWT_SECRET, User, UserContext, UserJwtPayload } from '@app/common';
@@ -24,8 +25,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     const user: User = { ..._user };
 
-    delete user.password;
-
-    return user;
+    return omit(['password'], user);
   }
 }

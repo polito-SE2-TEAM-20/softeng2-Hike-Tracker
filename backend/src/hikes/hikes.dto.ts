@@ -6,6 +6,7 @@ import {
   IsInt,
   IsLatitude,
   IsLongitude,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
@@ -13,6 +14,7 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
+import { isNil } from 'ramda';
 
 import {
   DtoWithGroups,
@@ -21,8 +23,11 @@ import {
   ID,
   IsIdentifier,
   PointLimits,
+  transformToClass,
   valToNumber,
 } from '@app/common';
+
+import { StartEndPointTransformer } from './hikes.utils';
 
 export class PointWithRadius {
   @IsLatitude()
@@ -44,6 +49,14 @@ export class FilteredHikesDto {
   @IsOptional()
   @IsString()
   province?: string;
+
+  @IsOptional()
+  @IsString()
+  city?: string;
+
+  @IsOptional()
+  @IsString()
+  country?: string;
 
   @IsOptional()
   @IsNumber()
@@ -107,6 +120,50 @@ export class ReferencePointDto {
   lon!: number;
 }
 
+export class StartEndPointDto extends DtoWithGroups {
+  protected generateGroups(): string[] {
+    if (!isNil(this.hutId)) return ['hut'];
+    if (!isNil(this.parkingLotId)) return ['parkingLot'];
+    if (!isNil(this.name)) return ['name'];
+    if (!isNil(this.address)) return ['address'];
+    if (!isNil(this.lat)) return ['position'];
+
+    throw new Error('name, address, or lat/lon should be defined');
+  }
+
+  @IsOptional()
+  @IsIdentifier({ groups: ['hut'] })
+  hutId?: ID | null;
+
+  @IsOptional()
+  @IsIdentifier({ groups: ['parkingLot'] })
+  parkingLotId?: ID | null;
+
+  @IsString({ groups: ['name'] })
+  @IsNotEmpty({ groups: ['name'] })
+  @IsOptional()
+  @MaxLength(PointLimits.name)
+  name?: string;
+
+  @IsString({ groups: ['address'] })
+  @IsNotEmpty({ groups: ['address'] })
+  @IsOptional()
+  @MaxLength(PointLimits.address)
+  address?: string;
+
+  @IsOptional()
+  @IsNotEmpty({ groups: ['position'] })
+  @IsLatitude({ groups: ['position'] })
+  @Transform(({ value }) => valToNumber(value))
+  lat!: number;
+
+  @IsOptional()
+  @IsNotEmpty({ groups: ['position'] })
+  @IsLongitude({ groups: ['position'] })
+  @Transform(({ value }) => valToNumber(value))
+  lon!: number;
+}
+
 export class HikeDto {
   @IsNumber()
   @Min(0)
@@ -143,6 +200,14 @@ export class HikeDto {
   @MaxLength(HikeLimits.province)
   province!: string;
 
+  @IsString()
+  @MaxLength(HikeLimits.city)
+  city!: string;
+
+  @IsString()
+  @MaxLength(HikeLimits.country)
+  country!: string;
+
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ReferencePointDto)
@@ -152,32 +217,26 @@ export class HikeDto {
         return value;
       }
 
-      return JSON.parse(value).map((entry: any) => {
-        const dto = new ReferencePointDto();
-
-        Object.entries(entry).forEach(([key, v]) => {
-          dto[key] = v;
-        });
-
-        return dto;
-      });
+      return transformToClass(ReferencePointDto, JSON.parse(value));
     },
     { toClassOnly: true },
   )
   referencePoints!: ReferencePointDto[];
-}
 
-export class UpdateHikeDto extends OmitType(PartialType(HikeDto), [
-  'referencePoints',
-] as const) {
-  @IsArray()
   @IsOptional()
-  @ValidateNested({ each: true })
-  @Type(() => ReferencePointDto)
-  referencePoints?: ReferencePointDto[];
+  @ValidateNested()
+  @Type(() => StartEndPointDto)
+  @StartEndPointTransformer()
+  startPoint?: StartEndPointDto | null;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => StartEndPointDto)
+  @StartEndPointTransformer()
+  endPoint?: StartEndPointDto | null;
 }
 
-class LinkedPointDto extends DtoWithGroups {
+export class LinkedPointDto extends DtoWithGroups {
   protected generateGroups() {
     if (this.hutId) {
       return ['hut'];
@@ -196,6 +255,37 @@ class LinkedPointDto extends DtoWithGroups {
   @IsIdentifier({ groups: ['parkingLot'] })
   @IsOptional({ groups: ['hut'] })
   parkingLotId!: ID;
+}
+
+export class UpdateHikeDto extends OmitType(PartialType(HikeDto), [
+  'referencePoints',
+  'startPoint',
+  'endPoint',
+] as const) {
+  @IsArray()
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => ReferencePointDto)
+  referencePoints?: ReferencePointDto[];
+
+  @ValidateNested()
+  @Type(() => StartEndPointDto)
+  startPoint?: StartEndPointDto | null;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => StartEndPointDto)
+  endPoint?: StartEndPointDto | null;
+
+  // @IsOptional()
+  // @ValidateNested()
+  // @Type(() => LinkedPointDto)
+  // startPoint?: LinkedPointDto | null;
+
+  // @IsOptional()
+  // @ValidateNested()
+  // @Type(() => LinkedPointDto)
+  // endPoint?: LinkedPointDto | null;
 }
 
 export class LinkHutToHikeDto {

@@ -13,11 +13,18 @@ import {
 } from '../constants';
 
 import { Point } from './point.entity';
+import { User } from './user.entity';
 
 @Entity('huts')
 export class Hut {
   @PrimaryGeneratedColumn('increment')
   id!: number;
+
+  @Column({
+    type: 'integer',
+    nullable: false,
+  })
+  userId!: number;
 
   @Column({
     type: 'varchar',
@@ -48,6 +55,19 @@ export class Hut {
   })
   price!: number | null;
 
+  @Column({
+    type: 'varchar',
+    length: HutLimits.ownerName,
+    nullable: true,
+  })
+  ownerName!: string;
+
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  website!: string;
+
   /**
    * TypeORM sql-gen only
    * @deprecated
@@ -58,4 +78,15 @@ export class Hut {
     referencedColumnName: 'id',
   })
   point?: Point;
+
+  /**
+   * TypeORM sql-gen only
+   * @deprecated
+   */
+  @ManyToOne(() => User, (entity) => entity.__joiner, FOREIGN_OPTIONS_CASCADE)
+  @JoinColumn({
+    name: 'userId',
+    referencedColumnName: 'id',
+  })
+  user?: User;
 }

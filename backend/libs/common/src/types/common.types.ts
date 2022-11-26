@@ -1,4 +1,4 @@
-import { Hike, Hut, ParkingLot, Point, User } from '../entities';
+import { Hike, HikePoint, Hut, ParkingLot, Point, User } from '../entities';
 
 export type ID = number;
 
@@ -21,9 +21,21 @@ export type LinkedPoint =
   | {
       type: 'parkingLot';
       entity: WithPoint<ParkingLot>;
+    }
+  | {
+      type: 'point';
+      point: Point;
     };
 
 export type HikeFull = Hike & {
   linkedPoints: LinkedPoint[];
   referencePoints: Point[];
+  startPoint?: LinkedPoint | null;
+  endPoint?: LinkedPoint | null;
+};
+
+export type StartEndPoint = Point & {
+  hikePoint: HikePoint;
+  hut?: Hut;
+  parkingLot?: ParkingLot;
 };

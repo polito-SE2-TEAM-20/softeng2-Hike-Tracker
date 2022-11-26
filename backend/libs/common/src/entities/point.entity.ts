@@ -21,9 +21,10 @@ export class Point {
     type: 'geography',
     spatialFeatureType: 'Point',
     srid: 4326,
-    nullable: false,
+    nullable: true,
+    default: null,
   })
-  position!: GPoint;
+  position!: GPoint | null;
 
   @Column({
     type: 'varchar',
