@@ -38,7 +38,7 @@ export class PointWithRadius {
 
   @IsNumber()
   @Min(0.00001)
-  radiusKms!: number ;
+  radiusKms!: number;
 }
 
 export class FilteredHikesDto {
