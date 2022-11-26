@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Post, HttpException } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Get } from '@nestjs/common';
 import { ParkingLotService } from './parking_lot.service';
 import { LocalGuideOnly, ParkingLot, CurrentUser, UserContext } from '@app/common';
 import { ParkingLotDto } from './parking_lot.dto';
@@ -8,6 +8,12 @@ import { ParkingLotDto } from './parking_lot.dto';
 export class ParkingLotController {
 
     constructor(private parkingLot: ParkingLotService){}
+
+    @Get('lots')
+    @LocalGuideOnly()
+    async getLots(@CurrentUser() user: UserContext): Promise<ParkingLot[]> {
+        return await this.parkingLot.retrieveParkingLots(user.id)
+    }
 
     @Post('insertLot')
     @LocalGuideOnly()
