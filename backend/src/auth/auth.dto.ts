@@ -1,4 +1,11 @@
-import { IsIn, IsString, MaxLength, MinLength, IsEmail, Length, IsOptional } from 'class-validator';
+import {
+  IsIn,
+  IsString,
+  MaxLength,
+  MinLength,
+  IsEmail,
+  IsOptional,
+} from 'class-validator';
 
 import { UserLimits, UserRole } from '@app/common';
 

@@ -12,9 +12,9 @@ import { GpxModule } from '@app/gpx';
 
 import { PointsModule } from '../points/points.module';
 
+import { HikeModificationController } from './hikeModification.controller';
 import { HikesController } from './hikes.controller';
 import { HikesService } from './hikes.service';
-import { HikeModificationController } from './hikeModification.controller';
 
 @Module({
   imports: [

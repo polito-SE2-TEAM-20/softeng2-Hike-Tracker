@@ -23,8 +23,6 @@ import {
   WithPoint,
 } from '@app/common';
 
-import { ParkingLotDto } from '@core/parking_lot/parking_lot.dto';
-
 import { CONNECTION_NAME } from './testing.constants';
 
 export interface IJwtService {
@@ -158,7 +156,7 @@ export class TestingService {
       email,
       password,
       verified: true,
-      verificationHash: "123",
+      verificationHash: '123',
       ...data,
     })) as unknown as User;
 

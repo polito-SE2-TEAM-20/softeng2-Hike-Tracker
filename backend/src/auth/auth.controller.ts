@@ -7,7 +7,7 @@ import {
   Body,
   HttpCode,
   Param,
-  HttpException
+  HttpException,
 } from '@nestjs/common';
 
 import { AuthenticatedOnly, CurrentUser, UserContext } from '@app/common';
@@ -32,10 +32,13 @@ export class AuthController {
   @Post('register')
   @HttpCode(201)
   async register(@Body() body: RegisterDto): Promise<UserContext> {
-    if(body.role === 1)
-      throw new HttpException("Friend is not a valid role to register",403)
-    if(body.role !==0 && (body.phoneNumber === null || body.phoneNumber === undefined))
-      throw new HttpException("Phone Number for this role is required",403)
+    if (body.role === 1)
+      throw new HttpException('Friend is not a valid role to register', 403);
+    if (
+      body.role !== 0 &&
+      (body.phoneNumber === null || body.phoneNumber === undefined)
+    )
+      throw new HttpException('Phone Number for this role is required', 403);
     return await this.service.register(body);
   }
 
@@ -50,5 +53,4 @@ export class AuthController {
   async me(@CurrentUser() user: UserContext) {
     return user;
   }
-
 }

@@ -1,3 +1,6 @@
+import { randomBytes } from 'crypto';
+
+import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable, HttpException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
@@ -7,15 +10,16 @@ import { User, UserContext, UserJwtPayload } from '@app/common';
 import { safeUser } from '@core/users/users.utils';
 
 import { RegisterDto } from './auth.dto';
-import { MailerService } from '@nestjs-modules/mailer';
-import { randomBytes } from 'crypto'; 
-
 
 @Injectable()
 export class AuthService {
   private readonly HASH_ROUNDS = 10;
 
-  constructor(private dataSource: DataSource, private jwtService: JwtService, private mailService: MailerService) {}
+  constructor(
+    private dataSource: DataSource,
+    private jwtService: JwtService,
+    private mailService: MailerService,
+  ) {}
 
   async validateUser(email: string, password: string): Promise<User | null> {
     const user = await this.dataSource.getRepository(User).findOneBy({ email });
@@ -34,14 +38,18 @@ export class AuthService {
     const user = await this.dataSource.getRepository(User).save({
       ...data,
       password: hashedPassword,
-      verificationHash: randomHash
+      verificationHash: randomHash,
     });
 
     await this.mailService.sendMail({
-      to:data.email,
-      from:"hikingofficial@protonmail.com",
+      to: data.email,
+      from: 'hikingofficial@protonmail.com',
       subject: 'E-mail verification ✔',
-      text: 'Hi '+data.firstName+', please confirm your e-mail clicking on this link: http://localhost:3500/auth/verify/'+randomHash 
+      text:
+        'Hi ' +
+        data.firstName +
+        ', please confirm your e-mail clicking on this link: http://localhost:3500/auth/verify/' +
+        randomHash,
     });
 
     // const token = await this.jwtService.signAsync({ id: user.id });
@@ -71,17 +79,18 @@ export class AuthService {
   }
 
   async validateRegistration(verificationHash: string) {
-    const user = await this.dataSource.getRepository(User).findOneBy({ verificationHash });
-    if(user===null) {
-      throw new HttpException("User doesn't exists",422)
-    }
-    else if(user.verified === true)
-      throw new HttpException("User already verified",409)
+    const user = await this.dataSource
+      .getRepository(User)
+      .findOneBy({ verificationHash });
+    if (user === null) {
+      throw new HttpException("User doesn't exists", 422);
+    } else if (user.verified === true)
+      throw new HttpException('User already verified', 409);
     else
       await this.dataSource.getRepository(User).save({
         ...user,
-        verified: true
-      })
-      return {"Account Verification": "Successful"}
+        verified: true,
+      });
+    return { 'Account Verification': 'Successful' };
   }
 }

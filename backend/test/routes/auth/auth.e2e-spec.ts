@@ -1,12 +1,13 @@
 import { TypeID, User, UserRole } from '@app/common';
-import { finishTest, TestingService } from '@app/testing';
+import { finishTest } from '@app/testing';
 import { prepareTestApp, prepareVars } from '@test/base';
 
 describe('Auth (e2e)', () => {
   let { dbName, app, restService, moduleRef, testService } = prepareVars();
 
   beforeEach(async () => {
-    ({ dbName, moduleRef, app, restService, testService } = await prepareTestApp());
+    ({ dbName, moduleRef, app, restService, testService } =
+      await prepareTestApp());
   });
 
   afterEach(async () => {
@@ -37,8 +38,8 @@ describe('Auth (e2e)', () => {
         expect(body).not.toHaveProperty('password');
       });
 
-      await testService.repo(User).update({id: user.id},{verified: true})
-      
+    await testService.repo(User).update({ id: user.id }, { verified: true });
+
     const {
       body: { token },
     } = await restService

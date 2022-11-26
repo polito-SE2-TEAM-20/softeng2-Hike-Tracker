@@ -1,7 +1,7 @@
+import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MailerModule } from '@nestjs-modules/mailer';
 
 import {
   AppTypeormOptionsModule,
@@ -15,9 +15,9 @@ import { AuthModule } from './auth/auth.module';
 import { HealthcheckModule } from './healthcheck/healthcheck.module';
 import { HikesModule } from './hikes/hikes.module';
 import { HutsModule } from './huts/huts.module';
+import { ParkingLotModule } from './parking_lot/parking_lot.module';
 import { PointsModule } from './points/points.module';
 import { UsersModule } from './users/users.module';
-import { ParkingLotModule } from './parking_lot/parking_lot.module';
 
 @Module({
   imports: [
@@ -29,19 +29,19 @@ import { ParkingLotModule } from './parking_lot/parking_lot.module';
       ],
       useExisting: AppTypeormOptionsService,
     }),
-      ServeStaticModule.forRoot({
-        rootPath: SERVE_FOLDER,
-        serveRoot: `/${STATIC_PREFIX}`,
-      }),
-      MailerModule.forRoot({
-        transport: {
-          host: 'in-v3.mailjet.com',
-          auth: {
-            user: '47db18f553e8840696f204e9b37b6978',
-            pass: '45ad1cf87fb6d35d829c4a6a449cda0f',
-          },
-        }
-      }),
+    ServeStaticModule.forRoot({
+      rootPath: SERVE_FOLDER,
+      serveRoot: `/${STATIC_PREFIX}`,
+    }),
+    MailerModule.forRoot({
+      transport: {
+        host: 'in-v3.mailjet.com',
+        auth: {
+          user: '47db18f553e8840696f204e9b37b6978',
+          pass: '45ad1cf87fb6d35d829c4a6a449cda0f',
+        },
+      },
+    }),
 
     HealthcheckModule,
     AuthModule,

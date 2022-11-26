@@ -47,21 +47,22 @@ export class User {
     type: 'varchar',
     length: UserLimits.phoneNumber,
     nullable: true,
-    default:null
+    default: null,
   })
-  phoneNumber!: string|null;
+  phoneNumber!: string | null;
 
   @Column({
     type: 'boolean',
     nullable: false,
-    default: false
+    default: false,
   })
   verified!: boolean;
 
   @Column({
     type: 'varchar',
     length: 256,
-    nullable: false,
+    nullable: true,
+    default: null,
   })
   verificationHash!: string;
 

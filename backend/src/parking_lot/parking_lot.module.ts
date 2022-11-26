@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
-import { ParkingLotService } from './parking_lot.service';
-import { ParkingLotController } from './parking_lot.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { ParkingLot, Point } from '@app/common';
 
+import { ParkingLotController } from './parking_lot.controller';
+import { ParkingLotService } from './parking_lot.service';
+
 @Module({
-  imports: [TypeOrmModule.forFeature([ParkingLot,Point])],
+  imports: [TypeOrmModule.forFeature([ParkingLot, Point])],
   providers: [ParkingLotService],
   controllers: [ParkingLotController],
   exports: [ParkingLotService],
