@@ -17,7 +17,7 @@ export class ParkingLotService extends BaseService<ParkingLot> {
     });
   }
 
-  async insertParkingLot(lot: ParkingLotDto, entityManager?: EntityManager) {
+  async insertParkingLot(lot: ParkingLotDto, userId: number) {
 
     const position : GPoint = {
       type: 'Point',
@@ -33,8 +33,9 @@ export class ParkingLotService extends BaseService<ParkingLot> {
 
     const parkingLot = await this.parkingLotRepository.save(
         {
+            userId: userId,
             pointId: point.id,
-            maxCars: lot.maxCars
+            ...lot
         }
     )
     

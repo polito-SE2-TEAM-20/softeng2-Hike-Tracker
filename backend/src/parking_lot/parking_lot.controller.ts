@@ -1,6 +1,6 @@
 import { Body, Controller, HttpCode, Post, HttpException } from '@nestjs/common';
 import { ParkingLotService } from './parking_lot.service';
-import { LocalGuideOnly, ParkingLot } from '@app/common';
+import { LocalGuideOnly, ParkingLot, CurrentUser, UserContext } from '@app/common';
 import { ParkingLotDto } from './parking_lot.dto';
 
 
@@ -12,13 +12,8 @@ export class ParkingLotController {
     @Post('insertLot')
     @LocalGuideOnly()
     @HttpCode(201)
-    async insertParkingLot(@Body() body: ParkingLotDto): Promise<ParkingLot> {
-        try {
-            return await this.parkingLot.insertParkingLot(body) 
-        }
-        catch {
-            throw new HttpException('There is no point with this id', 422);
-        }       
+    async insertParkingLot(@Body() body: ParkingLotDto,@CurrentUser() user: UserContext): Promise<ParkingLot> {
+        return await this.parkingLot.insertParkingLot(body, user.id) 
     }
 
 
