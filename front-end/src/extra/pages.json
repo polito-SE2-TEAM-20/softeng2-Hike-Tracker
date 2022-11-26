@@ -8,5 +8,10 @@
     "title": "List of hikes",
     "URL": "/listofhikes",
     "reqLogin": false
+  },
+  {
+    "title": "List of huts",
+    "URL": "/listofhuts",
+    "reqLogin": true
   }
 ]
