@@ -136,7 +136,7 @@ async function getListOfHuts(filter) {
 }
 
 async function getSingleHutByID(hutid) {
-    let response = await fetch((APIURL + '/hut/' + hutid), {
+    let response = await fetch((APIURL + '/huts/' + hutid), {
         method: 'GET'
     });
     if (response.ok) {

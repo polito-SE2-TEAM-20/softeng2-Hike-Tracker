@@ -6,13 +6,15 @@ import hutIcon from '../../Assets/hut-icon.png'
 import { useEffect, useState } from "react";
 import API from '../../API/API.js';
 import { Skeleton } from "@mui/material";
+import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, useMapEvents, ZoomControl, Polyline, useMap } from 'react-leaflet'
+
 
 const Difficulty = (props) => {
     if (!props.loading) {
         return (
             <>
                 <img src={hutIcon} alt="tourist" width="30px" height="30px" />
-                <div style={{ backgroundColor: "#55B657", color: "white", borderRadius: "8px", paddingLeft: "12px", paddingTop: "3px", paddingBottom: "3px", paddingRight: "12px", width: "fit-content", display: "inline-block", marginLeft: "8px" }}><b>Tourist</b></div>
+                <div style={{ backgroundColor: "#f2f250", color: "#1a1a1a", borderRadius: "8px", paddingLeft: "12px", paddingTop: "3px", paddingBottom: "3px", paddingRight: "12px", width: "fit-content", display: "inline-block", marginLeft: "8px" }}><b>Hut</b></div>
             </>
         );
     }
@@ -56,13 +58,13 @@ const ShowHut = (props) => {
                         <Typography variant="h4">General information</Typography>
                     </Grid>
                     <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
-                        <Chip label="General info about the hut" />
+                        <Chip label="Where we are" />
                     </Divider>
 
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
                             !loading ?
-                                <Typography>Location: {hut.address === "" || hut.address === null || hut.address === undefined ? "N/A" : hut.address}</Typography> :
+                                <Typography>Location: {hut.address === "" || hut.address === null || hut.address === undefined ? "N/A" : hut.point.address}</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
@@ -80,19 +82,19 @@ const ShowHut = (props) => {
 
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
-                            !loading ? <Typography>Length: {hut.length === "" || hut.length === null || hut.length === undefined ? "N/A" : hut.length}km</Typography> :
+                            !loading ? <Typography>Price: {hut.price === "" || hut.price === null || hut.price === undefined ? "N/A" : hut.price}€ per night</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
-                            !loading ? <Typography>Expected time: {hut.expectedTime === "" || hut.expectedTime === null || hut.expectedTime === undefined ? "N/A" : hut.expectedTime} hours</Typography> :
+                            !loading ? <Typography>Number of beds: {hut.numberOfBeds === "" || hut.numberOfBeds === null || hut.numberOfBeds === undefined ? "N/A" : hut.numberOfBeds} beds</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
-                            !loading ? <Typography>Ascent: {hut.ascent === "" || hut.ascent === null || hut.ascent === undefined ? "N/A" : hut.ascent}m</Typography> :
+                            !loading ? <Typography>Website: {hut.website === "" || hut.website === null || hut.website === undefined ? "not provided" : hut.website}</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
@@ -113,13 +115,40 @@ const ShowHut = (props) => {
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: "30px" }}>
                     {
                         !loading ?
-                            <Typography variant="h4">Some information on this hike</Typography>
+                            <Typography variant="h4">Find us on the map</Typography>
                             : <Typography variant="h4">Loading...</Typography>
                     }
                 </Grid>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                     {
-                        !loading ? <Typography>{hut.description === "" || hut.description === null || hut.description === undefined ? "No description provided." : hut.description}</Typography> :
+                        !loading ?
+                            <MapContainer center={hut.point.position.coordinates} zoom={9}
+                                scrollWheelZoom={{ xs: false, sm: false, md: false, lg: true, xl: false }} zoomControl={false}
+                                style={{ width: "auto", minHeight: "20vh", height: "40vh" }}>
+                                <TileLayer
+                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                    url={"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}
+                                />
+                                <Marker
+                                    key={hut.id}
+                                    position={[hut.point.position.coordinates[0], hut.point.position.coordinates[1]]}>
+                                    <Popup position={[hut.point.position.coordinates[0], hut.point.position.coordinates[1]]}>
+                                        <div>
+                                            <div className='popup-line'><b>{hut.title}</b></div>
+
+                                            <Divider style={{ marginTop: "2px", marginBottom: "2px" }} />
+
+                                            <div className='popup-line'>{hut.point.address}</div>
+
+                                            <Divider style={{ marginTop: "2px", marginBottom: "2px" }} />
+
+                                            <div className='popup-line'>Latitude: {hut.point.position.coordinates[0]}</div>
+                                            <div className='popup-line'>Longitude: {hut.point.position.coordinates[1]}</div>
+                                        </div>
+                                    </Popup>
+                                </Marker>
+                                <ZoomControl position='bottomright' />
+                            </MapContainer> :
                             <>
                                 <Skeleton variant='rectangular' height={20} width={400} style={{ marginBottom: "10px" }} />
                                 <Skeleton variant='rectangular' height={20} width={400} style={{ marginBottom: "10px" }} />
