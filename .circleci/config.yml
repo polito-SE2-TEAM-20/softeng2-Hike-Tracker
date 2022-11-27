@@ -76,8 +76,15 @@ jobs:
 workflows:
   build-demo-backend:
     jobs:
-      - build-backend:
-          image_tag: demo
+      - demo-db:
+          context:
+            - deploy
+          filters:
+            branches:
+              only: demo-db
+  build-demo:
+    jobs:
+      - demo-backend:
           filters:
             branches:
               only: demo
