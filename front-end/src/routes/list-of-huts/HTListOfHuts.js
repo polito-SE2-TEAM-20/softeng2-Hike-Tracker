@@ -59,7 +59,7 @@ const HTListOfHikes = (props) => {
                             loading ?
                                 listOfHuts.length == 0 ?
                                     <Typography fontFamily={"Bakbak One, display"} fontWeight="600" fontSize="32px">
-                                        No matching hikes.
+                                        No matching huts.
                                     </Typography>
                                     :
                                     listOfHuts.map(hut => {
