@@ -33,10 +33,6 @@ const HTTopBarFilterHike = (props) => {
     const resetAllFields = () => {
         setRegion("")
         setProvince("")
-        setLength([0, maxLen])
-        setExpTime([0, maxExpTime])
-        setDiff([0, maxDiff])
-        setAsc([0, maxAsc])
         props.setFilter(
             {
                 "province": null,
@@ -70,11 +66,20 @@ const HTTopBarFilterHike = (props) => {
         setMaxExpTime(props?.listOfHikes.map(x => x.expectedTime).reduce(getMax, 0))
         setMaxDiff(props?.listOfHikes.map(x => x.difficulty).reduce(getMax, 0))
         setMaxAsc(props?.listOfHikes.map(x => x.ascent).reduce(getMax, 0))
-        setLength([0, maxLen])
-        setExpTime([0, maxExpTime])
-        setDiff([0, maxDiff])
-        setAsc([0, maxAsc])
     }, [props.listOfHikes])
+
+    useEffect(() => {
+        setLength([0, maxLen])
+    }, [maxLen])
+    useEffect(() => {
+        setExpTime([0, maxExpTime])
+    }, [maxExpTime])
+    useEffect(() => {
+        setDiff([0, maxDiff])
+    }, [maxDiff])
+    useEffect(() => {
+        setAsc([0, maxAsc])
+    }, [maxAsc])
 
     return (
         <>

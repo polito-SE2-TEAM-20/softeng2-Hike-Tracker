@@ -54,6 +54,10 @@ function ReviewHutForm(props) {
             <ListItemText primary='Longitude' />
             <Typography variant="body2">{props.longitude}</Typography>
           </ListItem>
+          <ListItem key={props.elevation} sx={{ py: 1, px: 0 }}>
+            <ListItemText primary='Elevation' />
+            <Typography variant="body2">{props.elevation}</Typography>
+          </ListItem>
 
           <ListItem key={props.owner} sx={{ py: 1, px: 0 }}>
             <ListItemText primary='Owner' />
@@ -84,11 +88,11 @@ function ReviewHutForm(props) {
             <Typography variant="body2">{props.price}</Typography>
           </ListItem>
 
-
+{/*
           <ListItem key={props.description} sx={{ py: 1, px: 0 }}>
             <ListItemText primary='Description' />
             <Typography variant="body2" sx={{ml: 12}}>{props.description}</Typography>
-          </ListItem>
+  </ListItem>*/}
       </List>
       
     </React.Fragment>

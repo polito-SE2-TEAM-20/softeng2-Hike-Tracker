@@ -116,7 +116,7 @@ function StartHut(props) {
             props.setStartPointLat(null);
             props.setStartPointLon(null);
             var loh = []
-        let radiusPoint= {lon: parseFloat(props.positionsState[0][1]), lat: parseFloat(props.positionsState[0][0]), radiusKms:400}
+        let radiusPoint= {lon: parseFloat(props.positionsState[0][1]), lat: parseFloat(props.positionsState[0][0]), radiusKms:100}
         const getHutsPlot = async () => {
             loh = await API.getListOfHutsAndParkingLots(radiusPoint);
         }
@@ -132,7 +132,7 @@ function StartHut(props) {
     }, [])
 
     useEffect(() => {
-      if(props.hutId !== null && props.setHutId !== ''){
+      if(props.hutId !== null || props.hutId !== ''){
           let element = listHuts.filter((el)=> el.id === props.hutId);
           console.log(element);
           console.log(element[0]?.point.address);
