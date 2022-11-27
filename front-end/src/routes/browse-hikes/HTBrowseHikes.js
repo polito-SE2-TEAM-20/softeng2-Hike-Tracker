@@ -30,8 +30,33 @@ const HTBrowseHikes = (props) => {
         "difficultyMin": null,
         "difficultyMax": null,
         "ascentMin": null,
-        "ascentMax": null
+        "ascentMax": null,
+        "inPointRadius" : {
+            "lat": null,
+            "lon": null,
+            "radiusKms": null
+        }
     })
+
+    useEffect(() => {
+        setFilter({
+            "province": filter.province,
+            "region": filter.region,
+            "maxLength": filter.maxLength,
+            "minLength": filter.minLength,
+            "expectedTimeMin": filter.expectedTimeMin,
+            "expectedTimeMax": filter.expectedTimeMax,
+            "difficultyMin": filter.difficultyMin,
+            "difficultyMax": filter.difficultyMax,
+            "ascentMin": filter.ascentMin,
+            "ascentMax": filter.ascentMax,
+            "inPointRadius" : {
+                "lat": radiusFilter[0][0],
+                "lon": radiusFilter[0][1],
+                "radiusKms": radiusFilter[1]
+            }
+        })
+    }, [radiusFilter])
 
     useEffect(() => {
         var loh = []
