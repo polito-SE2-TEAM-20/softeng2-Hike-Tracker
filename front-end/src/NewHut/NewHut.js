@@ -99,10 +99,10 @@ function NewHutForm(props) {
             setShow(true);
             //check if the coordinate are with the comma or the point*/}
     }
-    else if(!latitude.toString().match(/^([0-9]*[.])?[0-9]+$/)) {
+    else if(!latitude.toString().match(/^[-+]?([0-9]*[.])?[0-9]+$/)) {
             setErrorMessage("insert a valid value for the latitude ");
             setShow(true);
-    }else if(!longitude.toString().match(/^([0-9]*[.])?[0-9]+$/)) {
+    }else if(!longitude.toString().match(/^[-+]?([0-9]*[.])?[0-9]+$/)) {
             setErrorMessage("insert a valid value for the longitude ");
             setShow(true);
     }else if(address.indexOf(',') > -1) {
@@ -112,17 +112,17 @@ function NewHutForm(props) {
         setShow(false);
         setActiveStep(activeStep + 1);
     }}else if(activeStep===(steps.length - 2)){
-        if([beds, description, price].some(t=> t.length ===0)){
-            setErrorMessage("All fields with the * should be filled");
+        if(beds === '' || price === '' || beds === null || price === null){
+ setErrorMessage("All fields with the * should be filled");
             setShow(true);
-    }else{
+        }else{
         setShow(false);
         setActiveStep(activeStep + 1);
     }}else if(activeStep === (steps.length - 1) ){
         //cosa cambia tra title e name???
         let add = [address, city, province, region, country];
         console.log(add.join(','))
-        let object = {title: name, description: description, website: website, ownerName: owner, numberOfBeds: parseInt(beds), location : {lat: parseFloat(latitude), lon: parseFloat(longitude), name: name, address: add.join(",")}, price: parseFloat(price)}
+        let object = {title: name, elevation: parseFloat(elevation), description: 'd',  website: website, ownerName: owner, numberOfBeds: parseInt(beds), location : {lat: parseFloat(latitude), lon: parseFloat(longitude), name: name, address: add.join(",")}, price: parseFloat(price)}
         setShow(false);
         setActiveStep(activeStep + 1);
         props.addNewHut(object).catch((err)=> {setErrorMessage(err); setShow(true)})
@@ -134,7 +134,7 @@ function NewHutForm(props) {
   const handleClear =() =>{
     if(activeStep ===(steps.length - 3)){
     setName(''); setElevation(''); setLatitude(''); setLongitude(''); setRegion(''); setProvince(''); setAddress('');
-    setCountry(''); setCity('');
+    setCountry(''); setCity(''); setElevation('');
     }else if(activeStep ===(steps.length - 2)){
          setWebsite(''); setOwner(''); setEmailAddress(''); setBeds(''); setDescription(''); setPrice('');
     }

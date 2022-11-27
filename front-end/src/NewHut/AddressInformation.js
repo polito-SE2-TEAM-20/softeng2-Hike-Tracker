@@ -37,11 +37,11 @@ function AddressInformation(props) {
           <TextField
             id="elevation"
             name="elevation"
-            label="Elevation"
+            label="Elevation [m]"
             fullWidth
             autoComplete="elevation"
             variant="standard"
-
+            required
             value ={props.elevation}
             onChange={(e) => {props.setElevation(e.target.value)}}
           />
@@ -145,6 +145,7 @@ function AddressInformation(props) {
             onChange={(e) => {props.setAddress(e.target.value)}}
           />
         </Grid>
+        
         
       </Grid>
       <Grid sx={{mt:2}}>
