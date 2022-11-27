@@ -44,7 +44,7 @@ function MyHikesPage(props) {
                             myHikes.map(hike => {
                                 return (
                                     <Grid item style={{ marginLeft: "8px", marginRight: "8px", marginBottom: "4px", marginTop: "4px" }}>
-                                        <HikeCard hike={hike} />
+                                        <HikeCard hike={hike} editable="true" />
                                     </Grid>
                                 );
                             })

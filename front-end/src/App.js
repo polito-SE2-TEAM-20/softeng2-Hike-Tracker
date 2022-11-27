@@ -9,7 +9,6 @@ import SingleHike from './components/single-hike/SingleHike.js';
 import HTMainPage from './routes/main-page/HTMainPage';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { LocalGuide } from './Visuals/localGuide';
 import { NavigationBar } from './Visuals/Navbar'
 import HTListOfHikes from './routes/list-of-hikes/HTListOfHikes';
 import { HTAddHike } from './NewHike/HTAddHike';
@@ -34,7 +33,6 @@ import {
   Route,
 } from "react-router-dom";
 import ShowHike from './routes/show-hike/ShowHike';
-import API_NewParking from './NewParkingLot/API_NewParkingLot';
 import { MyHutsPage } from './routes/hut/MyHutsPage';
 import { MyHikesPage } from './routes/my-hikes/MyHikesPage';
 
@@ -49,7 +47,6 @@ function App() {
 function App2() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState({});
-  const [role, setRole] = useState();
   const navigate = useNavigate();
 
   useEffect(()=>{
@@ -67,7 +64,6 @@ function App2() {
         setUser(user);
         setShow(false);
         navigate('/')
-        setRole(user.user.role);
       })
       .catch(err => {
         console.log(err);
@@ -83,7 +79,6 @@ function App2() {
     localStorage.clear();
     setLoggedIn(false);
     setUser({});
-    setRole();
     navigate('/');
   }
 

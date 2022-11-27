@@ -31,7 +31,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "export GERMAN_TEST=true && react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "build:demo": "sh -ac '. .env.demo; react-scripts build'",
     "test": "react-scripts test",
