@@ -54,8 +54,8 @@ export const MapBrowseHike = (props) => {
     }
 
     const _circleCreated = (e) => {
-        props.setRadiusFilter([e.layer.toGeoJSON().geometry.coordinates, e.layer.getRadius()])
-        console.log([e.layer.toGeoJSON().geometry.coordinates, e.layer.getRadius()])
+        props.setRadiusFilter([[e.layer.toGeoJSON().geometry.coordinates[1],e.layer.toGeoJSON().geometry.coordinates[0]], e.layer.getRadius()/1000.0])
+        console.log([[e.layer.toGeoJSON().geometry.coordinates[1],e.layer.toGeoJSON().geometry.coordinates[0]], e.layer.getRadius()/1000.0])
     }
 
     const _circleEdited = (e) => {
