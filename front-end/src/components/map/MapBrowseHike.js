@@ -89,6 +89,7 @@ export const MapBrowseHike = (props) => {
                 <ZoomControl position='bottomright' />
                 {
                     props.dataset.filter(x => x.gpxFile !== undefined || x.gpxFile !== "" || x.positions === null || x.positions === undefined || x.positions.length === 0).map((hike) => {
+                        if (!hike?.positions?.[0]) {return null;}
                         if (selected == hike?.id) {
                             return (
                                 <>
