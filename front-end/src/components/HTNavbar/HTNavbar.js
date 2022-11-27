@@ -156,7 +156,7 @@ function HTNavbar(props) {
                                     <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "18px", marginRight: "12px" }}
                                         key={page.title}
                                         onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}
-                                        sx={{ my: 2, color: 'white', display: 'block' }}
+                                        sx={{ my: 1, color: 'white', display: 'block' }}
                                     >
                                         {page.title}
                                         <Divider orientation='vertical' flexItem />
