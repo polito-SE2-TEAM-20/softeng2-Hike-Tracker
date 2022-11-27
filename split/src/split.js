@@ -4,7 +4,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import chalk from 'chalk';
 import glob from 'globule';
-import { uniqBy, prop } from 'ramda';
+import { uniqBy, prop, clamp } from 'ramda';
 import { randomInt } from 'crypto';
 import escape from 'pg-escape';
 import { hash } from 'bcrypt';
@@ -12,6 +12,8 @@ import { exec } from 'child_process';
 import { faker } from '@faker-js/faker';
 import * as xml from 'xml2js';
 import {countries} from 'country-data'
+
+faker.locale = 'it';
 
 const SOURCE_DIR = './source/';
 const DEST_DIR = './result/';
@@ -61,6 +63,8 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
 
         const points = feature.geometry.coordinates.map(([lon, lat]) => ({ lat, lon }));
 
+        if (!points.length) { continue; }
+        
         featuresPrepared.push({
           name,
           country: 'USA',
@@ -205,13 +209,31 @@ async function prepareUsersSql() {
 function prepareHikesSql(hikes) {
   let sql = '';
 
+  let maxPoints = 0;
   hikes.forEach(({
     fileName,
     name,
-    country,
     difficulty,
+    points
   }) => {
+    if (points.length > maxPoints) {
+      maxPoints = points.length;
+    }
+
     const gpxPath = `/static/gpx/${fileName}`;
+
+    const country = 'USA';
+    const city = faker.address.city()
+    const province = '';
+    const region = faker.address.state();
+
+    const pointsCount = points.length;
+    const lengthMin = clamp(0.05, 1, pointsCount / 100) * 1.5 + 0.5;
+    const lengthMax = clamp(0.05, 1, pointsCount / 100) * 10 + 0.5;
+    const length = faker.datatype.float({ precision: 0.1, min: lengthMin, max: lengthMax });
+    const ascent = faker.datatype.float({ precision: 0.1, min: 5, max: 30 });
+    const expectedTime = pointsCount * faker.datatype.number({ min: 10, max: 15 });
+    const description = '';
 
     sql += `
       INSERT INTO "public"."hikes" (
@@ -219,16 +241,32 @@ function prepareHikesSql(hikes) {
         "title",
         "difficulty",
         "gpxPath",
-        "country"
+        "country",
+        "region",
+        "province",
+        "city",
+        "length",
+        "ascent",
+        "expectedTime",
+        "description"
       ) VALUES(
         ${LOCAL_GUIDE_ID},
         ${escape.literal(name)},
         ${difficulty},
         ${escape.literal(gpxPath)},
-        ${escape.literal(country)}
+        ${escape.literal(country)},
+        ${escape.literal(region)},
+        ${escape.literal(province)},
+        ${escape.literal(city)},
+        ${length},
+        ${ascent},
+        ${expectedTime},
+        ${escape.literal(description)}
       );
     `;
   });
+
+  console.log('----- MNAX POINTS' ,maxPoints)
 
   return sql;
 }
@@ -445,7 +483,7 @@ function saveGPXFile({ fileIndex, hike: { name, difficulty, points } }) {
   lines.push(`    </trkseg>`);
   lines.push(`  </trk>`);
   lines.push(`</gpx>`);
-  console.log(` Saving ${chalk.cyan(count)} points to ${chalk.cyan(filePath)}`);
+  // console.log(` Saving ${chalk.cyan(count)} points to ${chalk.cyan(filePath)}`);
   writeFileSync(filePath, lines.join('\n'));
 
   return {

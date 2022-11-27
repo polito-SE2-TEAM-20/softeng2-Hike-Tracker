@@ -9,7 +9,7 @@ npm run split
 rm "$GPX_ZIP"
 
 cd result
-zip -r -D "../$GPX_ZIP" *
+zip -r -q -D "../$GPX_ZIP" *
 cd ..
 # move to backend folder
 cp "$GPX_ZIP" "../backend/demo/$GPX_ZIP"
