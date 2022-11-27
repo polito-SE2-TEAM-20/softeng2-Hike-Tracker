@@ -64,21 +64,21 @@ const ShowHut = (props) => {
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
                             !loading ?
-                                <Typography>Location: {hut.address === "" || hut.address === null || hut.address === undefined ? "N/A" : hut.point.address}</Typography> :
+                                <Typography><b>Location:</b> {hut.point.address === "" || hut.point.address === null || hut.point.address === undefined ? "N/A" : hut.point.address}</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
                             !loading ?
-                                <Typography>Owner name: {hut.ownerName === "" || hut.ownerName === null || hut.ownerName === undefined ? "N/A" : hut.ownerName}</Typography> :
+                                <Typography><b>Owner name:</b> {hut.ownerName === "" || hut.ownerName === null || hut.ownerName === undefined ? "N/A" : hut.ownerName}</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
                             !loading ?
-                                <Typography>Altitude: {hut.altitude === "" || hut.altitude === null || hut.altitude === undefined ? "N/A" : hut.altitude}</Typography> :
+                                <Typography><b>Altitude:</b> {hut.altitude === "" || hut.altitude === null || hut.altitude === undefined ? "N/A" : hut.altitude}</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
@@ -89,19 +89,19 @@ const ShowHut = (props) => {
 
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
-                            !loading ? <Typography>Price: {hut.price === "" || hut.price === null || hut.price === undefined ? "N/A" : hut.price}€ per night</Typography> :
+                            !loading ? <Typography><b>Price:</b> {hut.price === "" || hut.price === null || hut.price === undefined ? "N/A" : hut.price}€ per night</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
-                            !loading ? <Typography>Number of beds: {hut.numberOfBeds === "" || hut.numberOfBeds === null || hut.numberOfBeds === undefined ? "N/A" : hut.numberOfBeds} beds</Typography> :
+                            !loading ? <Typography><b>Number of beds:</b> {hut.numberOfBeds === "" || hut.numberOfBeds === null || hut.numberOfBeds === undefined ? "N/A" : hut.numberOfBeds} beds</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
-                            !loading ? <Typography>Website: {hut.website === "" || hut.website === null || hut.website === undefined ? "not provided" : hut.website}</Typography> :
+                            !loading ? <Typography><b>Website:</b> {hut.website === "" || hut.website === null || hut.website === undefined ? "not provided" : hut.website}</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
@@ -129,7 +129,7 @@ const ShowHut = (props) => {
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                     {
                         !loading ?
-                            <MapContainer center={hut.point.position.coordinates} zoom={9}
+                            <MapContainer center={[hut.point.position.coordinates[1], hut.point.position.coordinates[0]]} zoom={9}
                                 scrollWheelZoom={{ xs: false, sm: false, md: false, lg: true, xl: false }} zoomControl={false}
                                 style={{ width: "auto", minHeight: "20vh", height: "40vh" }}>
                                 <TileLayer
@@ -138,8 +138,8 @@ const ShowHut = (props) => {
                                 />
                                 <Marker
                                     key={hut.id}
-                                    position={[hut.point.position.coordinates[0], hut.point.position.coordinates[1]]}>
-                                    <Popup position={[hut.point.position.coordinates[0], hut.point.position.coordinates[1]]}>
+                                    position={[hut.point.position.coordinates[1], hut.point.position.coordinates[0]]}>
+                                    <Popup position={[hut.point.position.coordinates[1], hut.point.position.coordinates[0]]}>
                                         <div>
                                             <div className='popup-line'><b>{hut.title}</b></div>
 
@@ -149,8 +149,8 @@ const ShowHut = (props) => {
 
                                             <Divider style={{ marginTop: "2px", marginBottom: "2px" }} />
 
-                                            <div className='popup-line'>Latitude: {hut.point.position.coordinates[0]}</div>
-                                            <div className='popup-line'>Longitude: {hut.point.position.coordinates[1]}</div>
+                                            <div className='popup-line'>Latitude: {hut.point.position.coordinates[1]}</div>
+                                            <div className='popup-line'>Longitude: {hut.point.position.coordinates[0]}</div>
                                         </div>
                                     </Popup>
                                 </Marker>

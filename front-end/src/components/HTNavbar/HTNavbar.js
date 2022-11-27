@@ -40,8 +40,8 @@ function HTNavbar(props) {
 
     return (
         <AppBar position="fixed" style={{
-            backgroundColor: "#202020", marginBottom: "auto", paddingLeft: "35px",
-            paddingRight: "35px", borderRadius: "0px 0px 0px 0px"
+            backgroundColor: "#202020c0", marginBottom: "auto", paddingLeft: 36,
+            paddingRight: 36, borderRadius: 0
         }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
@@ -92,7 +92,7 @@ function HTNavbar(props) {
                             }}
                         >
                             {pages.map((page) => {
-                                if (props.isLoggedIn) {
+                                if (props.isLoggedIn && page.role.includes(props.user?.role)) {
                                     return (
                                         <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}>
                                             <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Bakbak One, display" }}>{page.title}</Typography>
@@ -129,7 +129,7 @@ function HTNavbar(props) {
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         {pages.map((page) => {
-                            if (props.isLoggedIn) {
+                            if (props.isLoggedIn && page.role.includes(props.user?.role)) {
                                 return (
                                     <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "18px", marginRight: "24px" }}
                                         key={page.title}
