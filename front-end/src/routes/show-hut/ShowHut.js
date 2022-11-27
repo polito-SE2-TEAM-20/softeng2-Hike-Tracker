@@ -125,6 +125,23 @@ const ShowHut = (props) => {
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: "30px" }}>
                     {
                         !loading ?
+                            <Typography variant="h4">Some information on this hike</Typography>
+                            : <Typography variant="h4">Loading...</Typography>
+                    }
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                    {
+                        !loading ? <Typography>{hut.description === "" || hut.description === undefined || hut.description === null ? "No description provided." : hut.description}</Typography> :
+                            <>
+                                <Skeleton variant='rectangular' height={20} width={400} style={{ marginBottom: "10px" }} />
+                                <Skeleton variant='rectangular' height={20} width={400} style={{ marginBottom: "10px" }} />
+                                <Skeleton variant='rectangular' height={20} width={150} style={{ marginBottom: "10px" }} />
+                            </>
+                    }
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: "30px" }}>
+                    {
+                        !loading ?
                             <Typography variant="h4">Find us on the map</Typography>
                             : <Typography variant="h4">Loading...</Typography>
                     }
@@ -133,7 +150,7 @@ const ShowHut = (props) => {
                     {
                         !loading ?
                             <MapContainer center={[hut.point.position.coordinates[1], hut.point.position.coordinates[0]]} zoom={9}
-                                scrollWheelZoom={{ xs: false, sm: false, md: false, lg: true, xl: false }} zoomControl={false}
+                                scrollWheelZoom={{ xs: false, sm: false, md: false, lg: false, xl: false }} zoomControl={false}
                                 style={{ width: "auto", minHeight: "20vh", height: "40vh" }}>
                                 <TileLayer
                                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
