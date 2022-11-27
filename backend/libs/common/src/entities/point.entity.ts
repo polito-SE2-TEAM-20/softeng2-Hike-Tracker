@@ -1,8 +1,11 @@
 import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
+import { PointLimits } from '../constants';
 import { PointType } from '../enums';
+import { GPoint } from '../types';
 
 @Entity('points')
+@Index('points_position_idx', ['position'], { spatial: true })
 export class Point {
   @PrimaryGeneratedColumn('increment')
   id!: number;
@@ -14,25 +17,25 @@ export class Point {
   })
   type!: PointType;
 
-  @Index({ spatial: true })
   @Column({
     type: 'geography',
     spatialFeatureType: 'Point',
     srid: 4326,
-    nullable: false,
+    nullable: true,
+    default: null,
   })
-  position!: any;
+  position!: GPoint | null;
 
   @Column({
     type: 'varchar',
-    length: 256,
+    length: PointLimits.address,
     nullable: true,
   })
   address!: string | null;
 
   @Column({
     type: 'varchar',
-    length: 256,
+    length: PointLimits.name,
     nullable: true,
   })
   name!: string | null;

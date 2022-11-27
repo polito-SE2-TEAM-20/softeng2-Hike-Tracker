@@ -1,7 +1,11 @@
 export enum PointType {
   point = 0,
-  hut = 1,
-  parkingLot = 2,
+  hut,
+  parkingLot,
+  referencePoint,
+  linkedPoint,
+  startPoint,
+  endPoint,
 }
 
 /**
