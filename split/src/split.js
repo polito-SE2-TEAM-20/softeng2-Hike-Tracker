@@ -4,14 +4,16 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import chalk from 'chalk';
 import glob from 'globule';
-import { uniqBy, prop } from 'ramda';
+import { uniqBy, prop, clamp } from 'ramda';
 import { randomInt } from 'crypto';
 import escape from 'pg-escape';
 import { hash } from 'bcrypt';
 import { exec } from 'child_process';
 import { faker } from '@faker-js/faker';
 import * as xml from 'xml2js';
-import {countries} from 'country-data'
+import { countries } from 'country-data'
+
+faker.locale = 'it';
 
 const SOURCE_DIR = './source/';
 const DEST_DIR = './result/';
@@ -40,54 +42,57 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
   }
 
   const allHikesSaved = []
+  let fileIndex = 1;
+
   for (const file of fileList) {
-    try {
-      console.log('reading file', file);
-      const contents = JSON.parse((readFileSync(file)));
+    console.log('reading file', file);
+    const contents = JSON.parse((readFileSync(file)));
 
-      const features = contents.features;
+    const features = contents.features;
+    const featuresPrepared = [];
 
-      const featuresPrepared = [];
-      for (const feature of features) {
-        const name = feature.properties.TRAILNAME;
-        const difficulty = feature.properties.TRAILSURF
-          ? feature.properties.TRAILSURF.includes('Unpaved')
-            ? 2
-            : randomInt(0, 3)
-          : 0;
+    for (const feature of features) {
+      const name = feature.properties.TRAILNAME;
+      const difficulty = feature.properties.TRAILSURF
+        ? feature.properties.TRAILSURF.includes('Unpaved')
+          ? 2
+          : randomInt(0, 3)
+        : 0;
 
-        if (!feature.geometry?.coordinates || !name
-          || feature.geometry.type !== 'LineString') continue;
+      if (!feature.geometry?.coordinates || !name
+        || feature.geometry.type !== 'LineString') continue;
 
-        const points = feature.geometry.coordinates.map(([lon, lat]) => ({ lat, lon }));
+      const points = feature.geometry.coordinates.map(([lon, lat]) => ({ lat, lon }));
 
-        featuresPrepared.push({
-          name,
-          country: 'USA',
-          difficulty,
-          points,
-        });
-      }
+      if (!points.length
+        || points.length < 25) { continue; }
 
-      const hikes = uniqBy(prop('name'), featuresPrepared);
-
-      // write all hikes to gpx
-      for (let i = 0, fileIndex = 1; i < hikes.length; ++i, ++fileIndex) {
-        const hike = hikes[i];
-
-        const { fileName } = await saveGPXFile({
-          hike,
-          fileIndex,
-        });
-
-        hike.fileName = fileName;
-
-        allHikesSaved.push(hike);
-      }
-
-    } catch (error) {
-      console.error(chalk.red(error));
+      featuresPrepared.push({
+        name,
+        country: 'USA',
+        difficulty,
+        points,
+      });
     }
+
+    const hikes = uniqBy(prop('name'), featuresPrepared);
+
+    // write all hikes to gpx
+    for (let i = 0; i < hikes.length; ++i) {
+      const hike = hikes[i];
+
+      const { fileName } = await saveGPXFile({
+        hike,
+        fileIndex,
+      });
+      ++fileIndex;
+
+      hike.fileName = fileName;
+
+      allHikesSaved.push(hike);
+    }
+
+    console.log('prepared', allHikesSaved.length, 'hikes');
   }
 
   // now prepare sql for inserting them
@@ -205,13 +210,31 @@ async function prepareUsersSql() {
 function prepareHikesSql(hikes) {
   let sql = '';
 
+  let maxPoints = 0;
   hikes.forEach(({
     fileName,
     name,
-    country,
     difficulty,
+    points
   }) => {
+    if (points.length > maxPoints) {
+      maxPoints = points.length;
+    }
+
     const gpxPath = `/static/gpx/${fileName}`;
+
+    const country = 'USA';
+    const city = faker.address.city()
+    const province = '';
+    const region = faker.address.state();
+
+    const pointsCount = points.length;
+    const lengthMin = clamp(0.05, 1, pointsCount / 1500) * 1 + 0.5;
+    const lengthMax = clamp(0.05, 1, pointsCount / 1500) * 20 + 0.5;
+    const length = faker.datatype.float({ precision: 0.1, min: lengthMin, max: lengthMax });
+    const ascent = faker.datatype.float({ precision: 0.1, min: 5, max: 30 });
+    const expectedTime = +((length / faker.datatype.float({ precision: 0.01, min: 3.5, max: 5 }) * 60).toFixed(3));
+    const description = '';
 
     sql += `
       INSERT INTO "public"."hikes" (
@@ -219,16 +242,32 @@ function prepareHikesSql(hikes) {
         "title",
         "difficulty",
         "gpxPath",
-        "country"
+        "country",
+        "region",
+        "province",
+        "city",
+        "length",
+        "ascent",
+        "expectedTime",
+        "description"
       ) VALUES(
         ${LOCAL_GUIDE_ID},
         ${escape.literal(name)},
         ${difficulty},
         ${escape.literal(gpxPath)},
-        ${escape.literal(country)}
+        ${escape.literal(country)},
+        ${escape.literal(region)},
+        ${escape.literal(province)},
+        ${escape.literal(city)},
+        ${length},
+        ${ascent},
+        ${expectedTime},
+        ${escape.literal(description)}
       );
     `;
   });
+
+  console.log('----- MNAX POINTS', maxPoints)
 
   return sql;
 }
@@ -252,7 +291,8 @@ function prepareHutsSql() {
         ${escape.literal(name)},
         ${escape.literal(address)},
         ${escape.literal(faker.name.fullName())},
-        ${escape.literal(faker.internet.url())}
+        ${escape.literal(faker.internet.url())},
+        null
       );
     `;
   }).join('\n');
@@ -267,7 +307,8 @@ function prepareHutsSql() {
         title varchar,
         address varchar,
         owner_name varchar,
-        website varchar
+        website varchar,
+        elevation numeric(12,2)
     )  RETURNS VOID AS
     $func$
     DECLARE
@@ -289,7 +330,8 @@ function prepareHutsSql() {
       "price",
       "title",
       "ownerName",
-      "website"
+      "website",
+      "elevation"
     ) VALUES (
       user_id,
       point_id,
@@ -297,7 +339,8 @@ function prepareHutsSql() {
       price,
       title,
       owner_name,
-      website
+      website,
+      elevation
     );
     END
     $func$ LANGUAGE plpgsql;
@@ -318,16 +361,16 @@ async function prepareParkingLotsSql() {
   const getTag = (tags, name) => tags ? tags.find(t => t.$.k === name)?.$?.v : undefined;
 
   const parkingsSql = parkings.map(parking => {
-    const tags = parking.tag 
+    const tags = parking.tag
     const lat = parking.$.lat;
     const lon = parking.$.lon;
     const name = getTag(tags, 'name');
-    
+
     const maybeCap = getTag(tags, 'capacity');
-    const capacity = maybeCap ? +maybeCap : faker.datatype.number({min: 25, max: 300});
-    
+    const capacity = maybeCap && !Number.isNaN(+maybeCap) ? +maybeCap : faker.datatype.number({ min: 25, max: 300 });
+
     const mbcountry = getTag(tags, 'addr:country');
-    const country = mbcountry ?  countries[mbcountry.toUpperCase()]?.name : 'Italy';
+    const country = mbcountry ? countries[mbcountry.toUpperCase()]?.name : 'Italy';
     const city = getTag(tags, 'addr:city') || faker.address.city();
     const street = getTag(tags, 'addr:street') || faker.address.street();
     const housenumber = getTag(tags, 'addr:housenumber') || faker.address.buildingNumber();
@@ -441,7 +484,7 @@ function saveGPXFile({ fileIndex, hike: { name, difficulty, points } }) {
   lines.push(`    </trkseg>`);
   lines.push(`  </trk>`);
   lines.push(`</gpx>`);
-  console.log(` Saving ${chalk.cyan(count)} points to ${chalk.cyan(filePath)}`);
+  // console.log(` Saving ${chalk.cyan(count)} points to ${chalk.cyan(filePath)}`);
   writeFileSync(filePath, lines.join('\n'));
 
   return {
