@@ -3,5 +3,6 @@
 ## Instructions
 - Run 
 ```shell
-$ docker-compose up
+$ chmod a+x ./run.sh
+$ ./run.sh
 ```
