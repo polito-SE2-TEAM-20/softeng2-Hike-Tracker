@@ -5,10 +5,13 @@ import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import styled from '@emotion/styled'
+import { MapHut } from './MapHut';
 
 
 function AddressInformation(props) {
     const lookup = require('country-code-lookup');
+
+    
 
   return (
     <React.Fragment>
@@ -144,8 +147,13 @@ function AddressInformation(props) {
         </Grid>
         
       </Grid>
+      <Grid sx={{mt:2}}>
+      <MapHut {...props}/>
+      </Grid>
     </React.Fragment>
   );
 }
 
 export {AddressInformation}
+
+

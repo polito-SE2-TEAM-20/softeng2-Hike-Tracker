@@ -2,8 +2,6 @@ import { HutDescription } from "./HutDescription";
 import { AddressInformation } from './AddressInformation';
 import { ReviewHutForm } from "./ReviewHutForm";
 import { useState, useEffect } from 'react';
-
-
 import * as React from 'react';
 import {Grid} from '@mui/material'
 import CssBaseline from '@mui/material/CssBaseline';
@@ -28,6 +26,8 @@ import {MapHut} from './MapHut.js';
 
 import login from '../Assets//login.jpg'; // Import using relative path
 import { useNavigate } from "react-router";
+
+
 
 
 const styles = {
@@ -98,10 +98,10 @@ function NewHutForm(props) {
             setErrorMessage("insert a valid name for region and province");
             setShow(true);
             //check if the coordinate are with the comma or the point
-    }else if(!latitude.match(/^([0-9]*[.])?[0-9]+$/)) {
+    }else if(!latitude.toString().match(/^([0-9]*[.])?[0-9]+$/)) {
             setErrorMessage("insert a valid value for the latitude ");
             setShow(true);
-    }else if(!longitude.match(/^([0-9]*[.])?[0-9]+$/)) {
+    }else if(!longitude.toString().match(/^([0-9]*[.])?[0-9]+$/)) {
             setErrorMessage("insert a valid value for the longitude ");
             setShow(true);
     }else if(address.indexOf(',') > -1) {

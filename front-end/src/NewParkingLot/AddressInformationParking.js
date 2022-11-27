@@ -4,7 +4,9 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import styled from '@emotion/styled'
+import styled from '@emotion/styled';
+import { MapHut } from '../NewHut/MapHut';
+
 
 function AddressInformationParking(props) {
   return (
@@ -141,6 +143,9 @@ function AddressInformationParking(props) {
           />
         </Grid>
         
+      </Grid>
+      <Grid sx={{mt:2}}>
+      <MapHut {...props}/>
       </Grid>
     </React.Fragment>
   );
