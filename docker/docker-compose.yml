@@ -34,7 +34,7 @@ services:
     environment:
       - POSTGRES_USER=$DB_USERNAME
       - POSTGRES_PASSWORD=$DB_PASSWORD
-      - POSTGRES_DB=$DB_NAME
+      # - POSTGRES_DB=$DB_NAME
     volumes:
       - ./.docker/pg-data:/var/lib/postgresql/data
     networks:
