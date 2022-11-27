@@ -228,11 +228,11 @@ function prepareHikesSql(hikes) {
     const region = faker.address.state();
 
     const pointsCount = points.length;
-    const lengthMin = clamp(0.05, 1, pointsCount / 100) * 1.5 + 0.5;
-    const lengthMax = clamp(0.05, 1, pointsCount / 100) * 10 + 0.5;
+    const lengthMin = clamp(0.05, 1, pointsCount / 1500) * 1 + 0.5;
+    const lengthMax = clamp(0.05, 1, pointsCount / 1500) * 20 + 0.5;
     const length = faker.datatype.float({ precision: 0.1, min: lengthMin, max: lengthMax });
     const ascent = faker.datatype.float({ precision: 0.1, min: 5, max: 30 });
-    const expectedTime = pointsCount * faker.datatype.number({ min: 10, max: 15 });
+    const expectedTime = +((length / faker.datatype.float({ precision: 0.01, min: 3.5, max: 5 }) * 60).toFixed(3));
     const description = '';
 
     sql += `
