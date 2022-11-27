@@ -28,11 +28,11 @@ const HikeCard = (props) => {
             <CardContent>
 
                 {HikeItemImage(props.hike.difficulty)}
-                
+
                 <Typography variant="h5" component="div" style={{ fontFamily: "Bakbak One, display", fontWeight: "100" }}>
                     {props.hike.title}
                 </Typography>
-                <Typography  color="text.secondary">
+                <Typography color="text.secondary">
                     {props.hike.province} {bull} {props.hike.region}
                 </Typography>
                 <Typography variant="body2">
@@ -41,16 +41,14 @@ const HikeCard = (props) => {
                     Ascent: {props.hike.ascent}m<br />
                 </Typography>
             </CardContent>
-            <Row>
-                { props.editable && 
-                    <Col style={{marginLeft: 8, marginBottom: 8, disply:'flex', justifyContent:'left'}}>
-                        <Button text="Edit" fontSize="14px" color="#03c2fc" textColor="white" navigate={() => { navigate(`/edithike/${props.hike.id}`) }} />
-                    </Col>
-                }
-                <Col style={{marginRight: 8, marginBottom: 8, disply:'flex', justifyContent:'right'}}>
-                    <Button text="Read more about" fontSize="14px" color="#1a1a1a" textColor="white" navigate={() => { navigate(`/showhike/${props.hike.id}`) }} />
-                </Col>
-            </Row>
+            <div style={{ marginRight: "12px", marginBottom: "12px", display: "flex", justifyContent: "right" }}>
+                <Button text="Read more about" fontSize="14px" color="#1a1a1a" textColor="white" navigate={() => { navigate(`/showhut/${props.hut.id}`) }} />
+            </div>
+            {
+                props.editable ? <div style={{ marginRight: "12px", marginBottom: "12px", display: "flex", justifyContent: "right" }}>
+                    <Button text="Edit" fontSize="14px" color="#1a1a1a" textColor="white" navigate={() => { navigate(`/edithike/${props.hike.id}`) }} />
+                </div> : <></>
+            }
         </Card >
     );
 }
@@ -60,12 +58,12 @@ function HikeItemImage(difficulty) {
     let text;
     let bgColor;
     switch (difficulty) {
-        case HikeDifficultyLevel.Tourist: 
+        case HikeDifficultyLevel.Tourist:
             icon = touristIcon;
             text = "Tourist";
             bgColor = "#55B657";
             break;
-        case HikeDifficultyLevel.Hiker: 
+        case HikeDifficultyLevel.Hiker:
             icon = hikerIcon;
             text = "Hiker";
             bgColor = "#1a79aa";
@@ -77,7 +75,7 @@ function HikeItemImage(difficulty) {
             break;
     };
 
-    return(<>
+    return (<>
         <div style={{ backgroundColor: bgColor, display: "flex", justifyContent: "center", margin: 4, padding: 24, borderRadius: 12 }}>
             <img src={icon} alt={text} width="75px" height="75px" />
         </div>
