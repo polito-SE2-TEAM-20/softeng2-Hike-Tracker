@@ -64,7 +64,7 @@ const ShowHut = (props) => {
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
                             !loading ?
-                                <Typography>Location: {hut.address === "" || hut.address === null || hut.address === undefined ? "N/A" : hut.point.address}</Typography> :
+                                <Typography>Location: {hut.point.address === "" || hut.point.address === null || hut.point.address === undefined ? "N/A" : hut.point.address}</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
