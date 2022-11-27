@@ -9,7 +9,7 @@ import hikerIcon from '../../Assets/hiker-icon.png'
 import proIcon from '../../Assets/pro-icon.png'
 import { Route, useNavigate } from 'react-router';
 import { HikeDifficultyLevel } from '../../lib/common/Hike';
-import { Col, Row } from 'react-bootstrap';
+import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours';
 
 const bull = (
     <Box
@@ -36,8 +36,8 @@ const HikeCard = (props) => {
                     {props.hike.province} {bull} {props.hike.region}
                 </Typography>
                 <Typography variant="body2">
-                    Length: {props.hike.length}km<br />
-                    Expected time: {props.hike.expectedTime} hours<br />
+                    Length: {(Math.round(props.hike.length * 10) / 10000).toFixed(2)}km<br />
+                    Expected time: {fromMinutesToHours(props.hike.expectedTime)}<br />
                     Ascent: {props.hike.ascent}m<br />
                 </Typography>
             </CardContent>
