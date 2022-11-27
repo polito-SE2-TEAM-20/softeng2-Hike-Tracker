@@ -216,6 +216,7 @@ export class HikesService extends BaseService<Hike> {
 
       let point: Point | null = null;
 
+      console.log('we inside', type, field);
       if (hutId) {
         point = await this.pointsService
           .getPointFromJoined(
@@ -246,6 +247,8 @@ export class HikesService extends BaseService<Hike> {
         );
       }
 
+      console.log(type, point);
+
       if (!point) {
         continue;
       }
@@ -263,6 +266,8 @@ export class HikesService extends BaseService<Hike> {
         hikeId: id,
         pointId: point.id,
       });
+
+      console.log('created hike point', type, point);
 
       result.push({ hikePoint, point });
     }

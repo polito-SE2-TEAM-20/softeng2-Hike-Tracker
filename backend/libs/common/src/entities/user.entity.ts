@@ -43,6 +43,29 @@ export class User {
   })
   role!: UserRole;
 
+  @Column({
+    type: 'varchar',
+    length: UserLimits.phoneNumber,
+    nullable: true,
+    default: null,
+  })
+  phoneNumber!: string | null;
+
+  @Column({
+    type: 'boolean',
+    nullable: false,
+    default: false,
+  })
+  verified!: boolean;
+
+  @Column({
+    type: 'varchar',
+    length: 256,
+    nullable: true,
+    default: null,
+  })
+  verificationHash!: string;
+
   /**
    * For TypeORM metadata only
    * @deprecated
