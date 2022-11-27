@@ -12,7 +12,7 @@ jobs:
     steps:
         - setup_remote_docker
         - checkout:
-            path: ~/softeng2-Hike-Tracker/demo-db
+            path: ~/softeng2-Hike-Tracker
         - docker/check:
             registry: ghcr.io
             docker-username: GITHUB_USERNAME
