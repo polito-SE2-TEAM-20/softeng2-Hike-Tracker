@@ -104,7 +104,7 @@ const ShowHut = (props) => {
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
-                            !loading ? <Typography><b>Website:</b> {hut.website === "" || hut.website === null || hut.website === undefined ? "not provided" : hut.website}</Typography> :
+                            !loading ? <Typography><b>Website:</b> {hut.website === "" || hut.website === null || hut.website === undefined ? "not provided" : <a href={`https://${hut.website}`}>{hut.website}</a>}</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
