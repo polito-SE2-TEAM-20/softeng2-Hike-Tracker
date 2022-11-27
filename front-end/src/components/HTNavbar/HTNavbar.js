@@ -92,23 +92,19 @@ function HTNavbar(props) {
                             }}
                         >
                             {pages.map((page) => {
-                                if (props.isLoggedIn) {
-                                    if (page.requirments.roles === null ||
-                                        page.requirments.roles.includes(props.user?.role)) {
-                                        return (
-                                            <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}>
-                                                <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Bakbak One, display" }}>{page.title}</Typography>
-                                            </MenuItem>
-                                        )
-                                    }
-                                } else {
-                                    if (!page.requirments.login) {
-                                        return (
-                                            <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}>
-                                                <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Bakbak One, display" }}>{page.title}</Typography>
-                                            </MenuItem>
-                                        )
-                                    }
+                                if (props.isLoggedIn && page.role.includes(props.user?.role)) {
+                                    return (
+                                        <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}>
+                                            <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Bakbak One, display" }}>{page.title}</Typography>
+                                        </MenuItem>
+                                    )
+                                }
+                                if (!props.isLoggedIn && !page.reqLogin) {
+                                    return (
+                                        <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}>
+                                            <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Bakbak One, display" }}>{page.title}</Typography>
+                                        </MenuItem>
+                                    )
                                 }
                             })}
                         </Menu>
@@ -133,33 +129,29 @@ function HTNavbar(props) {
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         {pages.map((page) => {
-                            if (props.isLoggedIn) {
-                                if (page.requirments.roles === null ||
-                                    page.requirments.roles.includes(props.user?.role)) {
-                                    return (
-                                        <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "18px", marginRight: "24px" }}
-                                            key={page.title}
-                                            onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}
-                                            sx={{ my: 2, color: 'white', display: 'block' }}
-                                        >
-                                            {page.title}
-                                            <Divider orientation='vertical' flexItem />
-                                        </Button>
-                                    )
-                                }
-                            } else {
-                                if (!page.requirments.login) {
-                                    return (
-                                        <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "18px", marginRight: "24px" }}
-                                            key={page.title}
-                                            onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}
-                                            sx={{ my: 2, color: 'white', display: 'block' }}
-                                        >
-                                            {page.title}
-                                            <Divider orientation='vertical' flexItem />
-                                        </Button>
-                                    )
-                                }
+                            if (props.isLoggedIn && page.role.includes(props.user?.role)) {
+                                return (
+                                    <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "18px", marginRight: "24px" }}
+                                        key={page.title}
+                                        onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}
+                                        sx={{ my: 2, color: 'white', display: 'block' }}
+                                    >
+                                        {page.title}
+                                        <Divider orientation='vertical' flexItem />
+                                    </Button>
+                                )
+                            }
+                            if (!props.isLoggedIn && !page.reqLogin) {
+                                return (
+                                    <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "18px", marginRight: "24px" }}
+                                        key={page.title}
+                                        onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}
+                                        sx={{ my: 2, color: 'white', display: 'block' }}
+                                    >
+                                        {page.title}
+                                        <Divider orientation='vertical' flexItem />
+                                    </Button>
+                                )
                             }
                         }
                         )}

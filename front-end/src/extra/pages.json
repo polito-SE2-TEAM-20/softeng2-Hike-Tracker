@@ -1,38 +1,56 @@
 [
     {
-        "title": "List of hikes",
-        "URL": "/listofhikes",
-        "requirments" : {
-            "login" : false,
-            "roles" : null
-        }
+      "title": "Browse hikes",
+      "URL": "/browsehikes",
+      "reqLogin": true,
+      "role": [
+        0,
+        2
+      ]
     },
     {
-        "title": "Browse hikes",
-        "URL": "/browsehikes",
-        "requirments" : {
-            "login" : true,
-            "roles" : null
-        }
+      "title": "List of hikes",
+      "URL": "/listofhikes",
+      "reqLogin": false,
+      "role": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
     },
     {
-        "title": "My Hikes",
-        "URL": "/myhikes",
-        "requirments" : {
-            "login" : true,
-            "roles" : [
-                2
-            ]
-        }
+      "title": "List of huts",
+      "URL": "/listofhuts",
+      "reqLogin": true,
+      "role": [
+        0, 2
+      ]
     },
     {
-        "title": "New Hike",
-        "URL": "/newHike",
-        "requirments" : {
-            "login" : true,
-            "roles" : [
-                2
-            ]
-        }
+      "title": "Local guide dashboard",
+      "URL": "/localGuide",
+      "reqLogin": true,
+      "role": [
+        2
+      ]
+    },
+    {
+      "title": "My Hikes",
+      "URL": "/myhikes",
+      "reqLogin": true,
+      "role": [
+        2
+      ]
+    },
+    {
+      "title": "New Hike",
+      "URL": "/newHike",
+      "reqLogin": true,
+      "role": [
+        2
+      ]
     }
-]
+  ]
