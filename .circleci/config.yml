@@ -74,7 +74,7 @@ jobs:
       - run: ssh -o "StrictHostKeyChecking=no" ${DEPLOY_USER}@${SERVER_IP} docker service update hiking_backend --image ghcr.io/polito-se2-team-20/backend:${CIRCLE_SHA1} --with-registry-auth
 
 workflows:
-  build-demo-backend:
+  demo-db:
     jobs:
       - demo-db:
           context:
@@ -88,8 +88,6 @@ workflows:
           filters:
             branches:
               only: demo
-  build-demo-frontend:
-    jobs:
       - build-frontend:
           image_tag: demo
           filters:
