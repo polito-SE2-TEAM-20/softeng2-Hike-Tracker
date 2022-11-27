@@ -21,18 +21,14 @@ const MapFilters = (props) => {
     var provinces = []
     const [province, setProvince] = useState("")
 
-
     const [maxLen, setMaxLen] = useState(0)
     const [length, setLength] = useState([0, 0])
-
 
     const [maxExpTime, setMaxExpTime] = useState(0)
     const [expTime, setExpTime] = useState([0, 0])
 
-
     const [maxDiff, setMaxDiff] = useState(0)
     const [diff, setDiff] = useState([0, 0])
-
 
     const [maxAsc, setMaxAsc] = useState(0)
     const [asc, setAsc] = useState([0, 0])
@@ -56,19 +52,24 @@ const MapFilters = (props) => {
         setMaxExpTime(props?.listOfHikes.map(x => x.expectedTime).reduce(getMax, 0))
         setMaxDiff(props?.listOfHikes.map(x => x.difficulty).reduce(getMax, 0))
         setMaxAsc(props?.listOfHikes.map(x => x.ascent).reduce(getMax, 0))
-        setLength([0, maxLen])
-        setExpTime([0, maxExpTime])
-        setDiff([0, maxDiff])
-        setAsc([0, maxAsc])
     }, [props.listOfHikes])
+
+    useEffect(() => {
+        setLength([0, maxLen])
+    }, [maxLen])
+    useEffect(() => {
+        setExpTime([0, maxExpTime])
+    }, [maxExpTime])
+    useEffect(() => {
+        setDiff([0, maxDiff])
+    }, [maxDiff])
+    useEffect(() => {
+        setAsc([0, maxAsc])
+    }, [maxAsc])
 
     const resetAllFields = () => {
         setRegion("")
         setProvince("")
-        setLength([0, maxLen])
-        setExpTime([0, maxExpTime])
-        setDiff([0, maxDiff])
-        setAsc([0, maxAsc])
         props.setFilter(
             {
                 "province": null,
