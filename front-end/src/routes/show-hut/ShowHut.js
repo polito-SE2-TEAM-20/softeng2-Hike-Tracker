@@ -122,7 +122,7 @@ const ShowHut = (props) => {
                         <Difficulty loading={loading} diff={hut.difficulty} />
                     </Divider>
                 </Grid>
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: "30px" }}>
+                {/* <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: "30px" }}>
                     {
                         !loading ?
                             <Typography variant="h4">Some information on this hike</Typography>
@@ -138,7 +138,7 @@ const ShowHut = (props) => {
                                 <Skeleton variant='rectangular' height={20} width={150} style={{ marginBottom: "10px" }} />
                             </>
                     }
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: "30px" }}>
                     {
                         !loading ?
