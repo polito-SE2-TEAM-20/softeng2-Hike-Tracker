@@ -142,13 +142,15 @@ workflows:
             - deploy
           filters:
             branches:
-              only: demo-db
-  build-demo:
+              only: demo
+  demo-backend:
     jobs:
       - demo-backend:
           filters:
             branches:
               only: demo
+  demo-frontend:
+    jobs:
       - demo-frontend:
           filters:
             branches:
