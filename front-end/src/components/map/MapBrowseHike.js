@@ -54,8 +54,8 @@ export const MapBrowseHike = (props) => {
     }
 
     const _circleCreated = (e) => {
-        props.setRadiusFilter([[e.layer.toGeoJSON().geometry.coordinates[1],e.layer.toGeoJSON().geometry.coordinates[0]], e.layer.getRadius()/1000.0])
-        console.log([[e.layer.toGeoJSON().geometry.coordinates[1],e.layer.toGeoJSON().geometry.coordinates[0]], e.layer.getRadius()/1000.0])
+        props.setRadiusFilter([[e.layer.toGeoJSON().geometry.coordinates[1], e.layer.toGeoJSON().geometry.coordinates[0]], e.layer.getRadius() / 1000.0])
+        console.log([[e.layer.toGeoJSON().geometry.coordinates[1], e.layer.toGeoJSON().geometry.coordinates[0]], e.layer.getRadius() / 1000.0])
     }
 
     const _circleEdited = (e) => {
@@ -88,20 +88,20 @@ export const MapBrowseHike = (props) => {
                 <FlyToSelected {...props} index={flyIndex} />
                 <ZoomControl position='bottomright' />
                 {
-                    props.dataset.map((hike) => {
-                        if (selected == hike.id) {
+                    props.dataset.filter(x => x.gpxFile !== undefined || x.gpxFile !== "" || x.positions === null || x.positions === undefined || x.positions.length === 0).map((hike) => {
+                        if (selected == hike?.id) {
                             return (
                                 <>
                                     <Marker
                                         key={hike.id}
-                                        position={[hike.positions[0][0], hike.positions[0][1]]}>
-                                        <Popup position={[hike.positions[0][0], hike.positions[0][1]]}>
+                                        position={[hike?.positions[0][0], hike?.positions[0][1]]}>
+                                        <Popup position={[hike?.positions[0][0], hike?.positions[0][1]]}>
                                             <HikePopup hike={hike} />
                                         </Popup>
                                     </Marker>
                                     <Polyline
                                         pathOptions={{ fillColor: 'red', color: 'blue' }}
-                                        positions={hike.positions}
+                                        positions={hike?.positions}
                                     />
                                 </>
                             );
@@ -109,9 +109,9 @@ export const MapBrowseHike = (props) => {
                             return (
                                 <>
                                     <Marker
-                                        key={hike.id}
-                                        position={[hike.positions[0][0], hike.positions[0][1]]}>
-                                        <Popup position={[hike.positions[0][0], hike.positions[0][1]]}>
+                                        key={hike?.id}
+                                        position={[hike?.positions[0][0], hike?.positions[0][1]]}>
+                                        <Popup position={[hike?.positions[0][0], hike?.positions[0][1]]}>
                                             <HikePopup hike={hike} OnClickSelectHike={OnClickSelectHike} />
                                         </Popup>
                                     </Marker>
