@@ -34,6 +34,7 @@
     "start": "export GERMAN_TEST=true && react-scripts start",
     "build": "react-scripts build",
     "build:demo": "sh -ac '. .env.demo; react-scripts build'",
+    "build:demo:d": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

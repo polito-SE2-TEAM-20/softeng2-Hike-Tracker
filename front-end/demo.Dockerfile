@@ -16,7 +16,7 @@ ADD . /srv
 
 ENV REACT_APP_API_BASE=http://localhost:3500
 
-RUN npm run build:demo
+RUN npm run build:demo:d
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
