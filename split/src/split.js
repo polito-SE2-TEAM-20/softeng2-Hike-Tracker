@@ -252,7 +252,8 @@ function prepareHutsSql() {
         ${escape.literal(name)},
         ${escape.literal(address)},
         ${escape.literal(faker.name.fullName())},
-        ${escape.literal(faker.internet.url())}
+        ${escape.literal(faker.internet.url())},
+        null
       );
     `;
   }).join('\n');
@@ -267,7 +268,8 @@ function prepareHutsSql() {
         title varchar,
         address varchar,
         owner_name varchar,
-        website varchar
+        website varchar,
+        elevation numeric(12,2)
     )  RETURNS VOID AS
     $func$
     DECLARE
@@ -289,7 +291,8 @@ function prepareHutsSql() {
       "price",
       "title",
       "ownerName",
-      "website"
+      "website",
+      "elevation"
     ) VALUES (
       user_id,
       point_id,
@@ -297,7 +300,8 @@ function prepareHutsSql() {
       price,
       title,
       owner_name,
-      website
+      website,
+      elevation
     );
     END
     $func$ LANGUAGE plpgsql;
@@ -324,7 +328,7 @@ async function prepareParkingLotsSql() {
     const name = getTag(tags, 'name');
     
     const maybeCap = getTag(tags, 'capacity');
-    const capacity = maybeCap ? +maybeCap : faker.datatype.number({min: 25, max: 300});
+    const capacity = maybeCap && !Number.isNaN(+maybeCap) ? +maybeCap : faker.datatype.number({min: 25, max: 300});
     
     const mbcountry = getTag(tags, 'addr:country');
     const country = mbcountry ?  countries[mbcountry.toUpperCase()]?.name : 'Italy';
