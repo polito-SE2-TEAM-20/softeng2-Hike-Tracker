@@ -1,0 +1,8 @@
+node_modules/
+dist/
+source/
+dest/
+build/
+result/
+
+.env
