@@ -30,8 +30,6 @@ import { warning } from '@remix-run/router';
 
 import API_NewHike from './API_Newhike';
 
-
-
 function HTAddHike(props) {
 
   const navigate = useNavigate();
@@ -340,7 +338,7 @@ function HTAddHike(props) {
   return (
     <React.Fragment>
       <Grid >
-        {/*<HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} navigate={gotoLocalGuide} />*/}
+        <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
 
         <Typography variant="h6" gutterBottom sx={{ p: 2 }} mt={12}>
           INSERT A NEW HIKE

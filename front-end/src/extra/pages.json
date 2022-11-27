@@ -38,6 +38,22 @@
       ]
     },
     {
+      "title": "New Hut",
+      "URL": "/newHut",
+      "reqLogin": true,
+      "role": [
+        2
+      ]
+    },
+    {
+      "title": "New Parking",
+      "URL": "/newParking",
+      "reqLogin": true,
+      "role": [
+        2
+      ]
+    },
+    {
       "title": "My Hikes",
       "URL": "/myhikes",
       "reqLogin": true,
@@ -46,3 +62,4 @@
       ]
     }
   ]
+
