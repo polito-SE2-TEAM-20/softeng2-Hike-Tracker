@@ -42,7 +42,7 @@ const HikeCard = (props) => {
                 </Typography>
             </CardContent>
             <div style={{ marginRight: "12px", marginBottom: "12px", display: "flex", justifyContent: "right" }}>
-                <Button text="Read more about" fontSize="14px" color="#1a1a1a" textColor="white" navigate={() => { navigate(`/showhut/${props.hut.id}`) }} />
+                <Button text="Read more about" fontSize="14px" color="#1a1a1a" textColor="white" navigate={() => { navigate(`/showhut/${props.hike.id}`) }} />
             </div>
             {
                 props.editable ? <div style={{ marginRight: "12px", marginBottom: "12px", display: "flex", justifyContent: "right" }}>
