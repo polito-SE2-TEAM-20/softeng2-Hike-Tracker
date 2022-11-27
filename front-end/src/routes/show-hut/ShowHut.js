@@ -129,7 +129,7 @@ const ShowHut = (props) => {
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                     {
                         !loading ?
-                            <MapContainer center={hut.point.position.coordinates} zoom={9}
+                            <MapContainer center={[hut.point.position.coordinates[1], hut.point.position.coordinates[0]]} zoom={9}
                                 scrollWheelZoom={{ xs: false, sm: false, md: false, lg: true, xl: false }} zoomControl={false}
                                 style={{ width: "auto", minHeight: "20vh", height: "40vh" }}>
                                 <TileLayer
@@ -138,8 +138,8 @@ const ShowHut = (props) => {
                                 />
                                 <Marker
                                     key={hut.id}
-                                    position={[hut.point.position.coordinates[0], hut.point.position.coordinates[1]]}>
-                                    <Popup position={[hut.point.position.coordinates[0], hut.point.position.coordinates[1]]}>
+                                    position={[hut.point.position.coordinates[1], hut.point.position.coordinates[0]]}>
+                                    <Popup position={[hut.point.position.coordinates[1], hut.point.position.coordinates[0]]}>
                                         <div>
                                             <div className='popup-line'><b>{hut.title}</b></div>
 
@@ -149,8 +149,8 @@ const ShowHut = (props) => {
 
                                             <Divider style={{ marginTop: "2px", marginBottom: "2px" }} />
 
-                                            <div className='popup-line'>Latitude: {hut.point.position.coordinates[0]}</div>
-                                            <div className='popup-line'>Longitude: {hut.point.position.coordinates[1]}</div>
+                                            <div className='popup-line'>Latitude: {hut.point.position.coordinates[1]}</div>
+                                            <div className='popup-line'>Longitude: {hut.point.position.coordinates[0]}</div>
                                         </div>
                                     </Popup>
                                 </Marker>
