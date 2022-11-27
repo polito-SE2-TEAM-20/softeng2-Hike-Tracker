@@ -66,7 +66,7 @@ const HTListOfHikes = (props) => {
             <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
             <Grid container style={{ marginTop: "75px" }}>
                 <Grid item sm>
-                    <HTTopBarFilterHike listOfHikes={listOfHikes} loading={loading} setFilter={setFilter} />
+                    <HTTopBarFilterHike listOfHikes={listOfHikes} loading={loading} setFilter={setFilter} filter={filter} />
                 </Grid>
                 <Grid item lg={9}>
                     <Grid container columns={5} style={{ marginTop: "25px", display: "flex", justifyContent: "center" }}>
