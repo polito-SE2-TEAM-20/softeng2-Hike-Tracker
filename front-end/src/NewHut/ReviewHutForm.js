@@ -34,6 +34,11 @@ function ReviewHutForm(props) {
             <Typography variant="body2">{props.province}</Typography>
           </ListItem>
 
+          <ListItem key={props.city} sx={{ py: 1, px: 0 }}>
+            <ListItemText primary='City' />
+            <Typography variant="body2">{props.city}</Typography>
+          </ListItem>
+
 
           <ListItem key={props.address} sx={{ py: 1, px: 0 }}>
             <ListItemText primary='Address' />
@@ -75,14 +80,14 @@ function ReviewHutForm(props) {
             <Typography variant="body2">{props.beds}</Typography>
           </ListItem>
           <ListItem key={props.price} sx={{ py: 1, px: 0 }}>
-            <ListItemText primary='Price' />
+            <ListItemText primary='Price $' />
             <Typography variant="body2">{props.price}</Typography>
           </ListItem>
 
 
           <ListItem key={props.description} sx={{ py: 1, px: 0 }}>
             <ListItemText primary='Description' />
-            <Typography variant="body2">{props.description}</Typography>
+            <Typography variant="body2" sx={{ml: 12}}>{props.description}</Typography>
           </ListItem>
       </List>
       

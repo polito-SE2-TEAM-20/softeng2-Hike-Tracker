@@ -7,6 +7,15 @@
     - env.pg-prod
     - env.backend
 
+- name: Deploy rabbitmq configuration
+  template:
+    src: "{{ item }}"
+    dest: /srv/{{ item }}
+    mode: '0755'
+  loop:
+    - definitions.json
+    - rabbitmq.config
+
 - name: Create volume directories
   file:
     path: /srv/{{ item }}
@@ -16,6 +25,24 @@
     mode: '0755'
   loop:
     - pg-prod-data
+
+- name: Create volume for uploads
+  file:
+    path: /srv/{{ item }}
+    state: directory
+    owner: root
+    group: root
+    mode: '0777'
+  loop:
+    - uploads/gpx
+
+- name: Create rabbit data dir
+  file:
+    path: /srv/rabbitmq-data
+    state: directory
+    owner: root
+    group: root
+    mode: '0777'
 
 - name: Deploy hiking stack
   docker_stack:
@@ -52,6 +79,8 @@
             image: ghcr.io/polito-se2-team-20/backend
             env_file:
               - /srv/env.backend
+            volumes:
+              - /srv/uploads:/srv/uploads
             deploy:
               labels:
                 - "traefik.enable=true"
@@ -65,6 +94,30 @@
           ####################
           ## infrastructure ##
           ####################
+          rabbit:
+            image: rabbitmq:3-management
+            hostname: hiking
+            deploy:
+              placement:
+                constraints:
+                  - node.role == manager
+            ports:
+              - "5672:5672"
+              - "15672:15672"
+            volumes:
+              - /srv/rabbitmq-data/:/var/lib/rabbitmq/mnesia/:rw
+              - /srv/rabbitmq.config:/etc/rabbitmq/rabbitmq.config:rw
+              - /srv/definitions.json:/etc/rabbitmq/definitions.json:ro
+            deploy:
+              labels:
+                - "traefik.enable=true"
+                - "traefik.port=15672"
+                - "traefik.frontend.rule=Host:hiking-rabbit.germangorodnev.com"
+                - "traefik.docker.network=traefiknet"
+            networks:
+              - stacknet
+              - traefiknet
+
           postgresql:
             image: postgis/postgis:14-3.3
             restart: always

@@ -15,10 +15,6 @@ function ReviewParkingForm(props) {
             <ListItemText primary='Name'  />
             <Typography variant="body2">{props.name}</Typography>
           </ListItem>
-          <ListItem key={props.elevation} sx={{ py: 1, px: 0 }}>
-            <ListItemText primary='Elevation' />
-            <Typography variant="body2">{props.elevation}</Typography>
-          </ListItem>
           <ListItem key={props.country} sx={{ py: 1, px: 0 }}>
             <ListItemText primary='Country' />
             <Typography variant="body2">{props.country}</Typography>
@@ -54,16 +50,8 @@ function ReviewParkingForm(props) {
             <Typography variant="body2">{props.longitude}</Typography>
           </ListItem>
           <ListItem key={props.spots} sx={{ py: 1, px: 0 }}>
-            <ListItemText primary='Beds' />
+            <ListItemText primary='Spots' />
             <Typography variant="body2">{props.spots}</Typography>
-          </ListItem>
-          <ListItem key={props.price} sx={{ py: 1, px: 0 }}>
-            <ListItemText primary='Price per hour' />
-            <Typography variant="body2">{props.price}</Typography>
-          </ListItem>
-          <ListItem key={props.description} sx={{ py: 1, px: 0 }}>
-            <ListItemText primary='Description' />
-            <Typography variant="body2">{props.description}</Typography>
           </ListItem>
       </List>
       

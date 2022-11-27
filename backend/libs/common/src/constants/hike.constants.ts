@@ -4,4 +4,6 @@ export enum HikeLimits {
   gpxPath = 1024,
   region = 256,
   province = 256,
+  city = 512,
+  country = 256,
 }

@@ -24,6 +24,12 @@ const HTMainPage = (props) => {
                     className="main-page"
                     alt="Paella dish">
                 </CardMedia>
+                <CardMedia sx={{ display: displayTypeFlex.tablet }} component="img"
+                    height="600px"
+                    style={{ gridRow: "1/2" }}
+                    className="main-page"
+                    alt="Paella dish">
+                </CardMedia>
                 <CardMedia sx={{ display: displayTypeFlex.mobile }} component="img"
                     height="400px"
                     style={{ gridRow: "1/2" }}
@@ -35,6 +41,21 @@ const HTMainPage = (props) => {
                     noWrap className="unselectable"
                     sx={{
                         display: displayTypeFlex.pc,
+                        fontFamily: "Crimson Text, serif",
+                        fontWeight: 700, justifyContent: "center",
+                        textAlign: "center",
+                        color: '#ffffff',
+                        textDecoration: 'none',
+                        gridRow: "2/2"
+                    }}
+                >
+                    where will your next adventure be?
+                </Typography>
+                <Typography
+                    variant="h4"
+                    noWrap className="unselectable"
+                    sx={{
+                        display: displayTypeFlex.tablet,
                         fontFamily: "Crimson Text, serif",
                         fontWeight: 700, justifyContent: "center",
                         textAlign: "center",

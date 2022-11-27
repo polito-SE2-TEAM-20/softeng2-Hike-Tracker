@@ -52,7 +52,7 @@ function getDiaDist(puntiDaTrack){
 
 
 
-const Inner = ({positionsState, setPuntiDaTrack, setReferencePoint, puntiDaTrack}) => {
+const Inner = ({positionsState, setPuntiDaTrack, setReferencePoint, puntiDaTrack, startPointLat, startPointLon}) => {
     const map = useMap();
 
     var popup = L.popup();
@@ -84,10 +84,6 @@ useEffect(()=>{
       .openOn(map);
     }
         }
-
-
-
-
 }, [puntiDaTrack])
 
 {/*
@@ -109,10 +105,22 @@ useEffect(() => {
 
 }, [positionsState]);
 
+
+useEffect(() => {
+  if (!startPointLat === null && !startPointLon===null && !startPointLat=== '' && !startPointLon === ''){
+    return(<>
+                            <Marker
+                                key={startPointLat}
+                                position={[startPointLat, startPointLon]}>
+                                <Popup position={[startPointLat, startPointLon]}>
+                                   Your new Start point {startPointLat} , {startPointLon}
+                                </Popup>
+                            </Marker>
+                        </>)
+  }
+}, [startPointLat, startPointLon]);
+
 }
-
-
-
 
 
 const Map = props => {

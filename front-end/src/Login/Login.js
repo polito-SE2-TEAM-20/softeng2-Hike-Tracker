@@ -12,7 +12,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import  Alert  from '@mui/material/Alert';
 import HikingIcon from '@mui/icons-material/Hiking';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './Login.css'
 
 function Copyright(props) {
@@ -44,6 +44,10 @@ export default function LoginForm(props) {
 	const [errorMessage, setErrorMessage] = useState('');
 	const navigate = useNavigate();
 
+  useEffect(()=>{
+    setErrorMessage('');
+  }, [])
+
 
 const handleSubmit = async (event) => {
     event.preventDefault();
@@ -52,10 +56,10 @@ const handleSubmit = async (event) => {
     setErrorMessage('');
     const credentials = { email, password };
     let valid = true;
-    if (email === '' || password === '') {
-        valid = false;
-        setErrorMessage('Incorrect username or password');
-        setShow(true);
+    if(email.trim().length===0 || password.trim().length===0){
+      setErrorMessage('Incorrect username or password');
+      setShow(true);
+      valid = false;
     }
     if (valid) {
         props.login(credentials, setShow, setErrorMessage);
@@ -128,7 +132,7 @@ const handleSubmit = async (event) => {
         />*/}
         {
             show?
-            <Alert variant="outlined" severity="error" onClose={() => {setErrorMessage(''); setShow(false)}}>Incorrect username or password</Alert> : <></>
+            <Alert variant="outlined" severity="error" onClose={() => {setErrorMessage(''); setShow(false)}}>{errorMessage}</Alert> : <></>
         }
               <Button
                 type="submit"

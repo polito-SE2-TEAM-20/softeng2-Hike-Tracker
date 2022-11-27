@@ -48,44 +48,29 @@ function SignUpForm(props) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-
+  const [informationMessage, setInformationMessage] = useState('');
+  const [showInformation, setShowInformation ] = useState('');
 
   const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
     setErrorMessage('');
+    setInformationMessage('');
     let valid = true;
-    if (firstName === '' || lastName === '') {
-      setErrorMessage('Please insert a valid name');
+    if(firstName.trim().length=== 0 || lastName.trim().length===0 || email.trim().length===0 || password.trim().length===0){
+      setErrorMessage('Please fill all the requested fields');
       setShow(true);
       valid = false;
-    }
-    if (email === '') {
-      setErrorMessage('Please insert a valid email');
-      setShow(true);
-      valid = false;
-    }
-    if (password === '') {
-      setErrorMessage('Please insert a valid password');
-      setShow(true);
-      valid = false;
-    }
-    if (confirmPassword === '') {
-      setErrorMessage('Please confirm your password');
-      setShow(true);
-      valid = false;
-    }
-    if (confirmPassword !== password) {
+    }else if(confirmPassword !== password){
       valid = false;
       setErrorMessage('Password do not match');
       setShow(true);
-    }
-    if (valid) {
+    } else if (valid) {
 
-      const credentials = { email, firstName, lastName, password, role };
+      const credentials = { email, firstName, lastName, password, role, phoneNumber};
       // const credentials = {email, firstName, lastName, password, role, phoneNumber};
-      props.doRegister(credentials, setShow, setErrorMessage);
+      props.doRegister(credentials, setShow, setErrorMessage, setInformationMessage, setShowInformation);
     }
   }
 
@@ -198,10 +183,18 @@ function SignUpForm(props) {
                   />
                 </Grid>
               </Grid>
+              <Grid>
               {
                 show ?
-                  <Alert variant="outlined" severity="error" onClose={() => { setErrorMessage(''); setShow(false) }}>{errorMessage}</Alert> : <></>
+                  <Alert variant="outlined" sx={{mt: 3}} severity="error" onClose={() => { setErrorMessage(''); setShow(false) }}>{errorMessage}</Alert> : <></>
               }
+              </Grid>
+              <Grid>
+              {
+                showInformation ?
+                  <Alert variant="outlined" severity="success" onClose={() => { setInformationMessage(''); setShowInformation(false) }}>{informationMessage} && {<Button onClick={() => { navigate("/login") }}>Login</Button>}</Alert> : <></>
+              }
+              </Grid>
               <Button
                 type="submit"
                 fullWidth
@@ -226,7 +219,6 @@ function SignUpForm(props) {
           </Box>
           <Copyright sx={{ mt: 5 }} />
         </Grid>
-
       </Grid>
     </ThemeProvider>
   );
@@ -241,13 +233,11 @@ function RoleSelect(props) {
     <FormControl fullWidth>
       <InputLabel id="demo-simple-select-label">Role</InputLabel>
       <Select
-
         labelId="demo-simple-select-label"
         id="demo-seimple-select"
         value={props.role}
         fullWidth
         name="role"
-
         label="role"
         onChange={ev => props.setRole(ev.target.value)}
       >
@@ -257,16 +247,15 @@ function RoleSelect(props) {
         <MenuItem value={2}>
           Local Guide
         </MenuItem>
-        <MenuItem value={3}>
+        {/*<MenuItem value={3}>
           Platform Manager
-        </MenuItem>
+</MenuItem>*/}
         <MenuItem value={4}>
           Hut Worker
         </MenuItem>
         <MenuItem value={5}>
           Emergency Operator
         </MenuItem>
-        {/* delete administator because it should be different??*/}
       </Select>
     </FormControl>
   </>

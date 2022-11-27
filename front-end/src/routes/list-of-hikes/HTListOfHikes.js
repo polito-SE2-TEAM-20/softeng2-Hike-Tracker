@@ -4,10 +4,20 @@ import { useEffect, useState } from 'react';
 import HTNavbar from '../../components/HTNavbar/HTNavbar';
 import { Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import LOH_API from './LOH-API';
+import API from '../../API/API.js';
 import HikeCard from '../../components/hike-card/HikeCard';
-import HTTopBarFilter from '../../components/side-filter/HTTopBarFilter';
+import HTTopBarFilterHike from '../../components/side-filter/HTTopBarFilterHike';
 import Skeleton from '@mui/material/Skeleton';
+
+const HikeLoading = () => {
+    return (
+        <Grid lg={1} item sx={{ width: 120, marginRight: 0.5, my: 5 }}>
+            <Skeleton variant='rectangular' height={150} width={250} style={{ marginBottom: "10px" }} />
+            <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
+            <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
+        </Grid>
+    );
+}
 
 const HTListOfHikes = (props) => {
     const [listOfHikes, setListOfHikes] = useState([])
@@ -29,7 +39,7 @@ const HTListOfHikes = (props) => {
     useEffect(() => {
         var loh = []
         const getHikes = async () => {
-            loh = await LOH_API.getListOfHikes()
+            loh = await API.getListOfHikes()
         }
         getHikes().then(() => {
             setListOfHikes(loh)
@@ -38,13 +48,11 @@ const HTListOfHikes = (props) => {
     }, [])
 
     useEffect(() => {
-        console.log(filter)
         var loh = []
         const getHikes = async () => {
-            loh = await LOH_API.getFilteredListOfHikes({ filter })
+            loh = await API.getFilteredListOfHikes({ filter })
         }
         getHikes().then(() => {
-            console.log(loh)
             setListOfHikes(loh)
         });
     }, [filter])
@@ -58,7 +66,7 @@ const HTListOfHikes = (props) => {
             <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
             <Grid container style={{ marginTop: "75px" }}>
                 <Grid item sm>
-                    <HTTopBarFilter listOfHikes={listOfHikes} loading={loading} setFilter={setFilter} />
+                    <HTTopBarFilterHike listOfHikes={listOfHikes} loading={loading} setFilter={setFilter} filter={filter} />
                 </Grid>
                 <Grid item lg={9}>
                     <Grid container columns={5} style={{ marginTop: "25px", display: "flex", justifyContent: "center" }}>
@@ -72,52 +80,20 @@ const HTListOfHikes = (props) => {
                                     listOfHikes.map(hike => {
                                         return (
                                             <Grid item md={2} xl={1} style={{ marginLeft: "15px", marginRight: "15px", marginBottom: "15px" }}>
-                                                <HikeCard hike={hike} />
+                                                <HikeCard hike={hike} editable={false} />
                                             </Grid>
                                         );
                                     })
                                 :
                                 <>
-                                    <Grid lg={1} item sx={{ width: 120, marginRight: 0.5, my: 5 }}>
-                                        <Skeleton variant='rectangular' height={150} width={250} style={{ marginBottom: "10px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
-                                    </Grid>
-                                    <Grid lg={1} item sx={{ width: 120, marginRight: 0.5, my: 5 }}>
-                                        <Skeleton variant='rectangular' height={150} width={250} style={{ marginBottom: "10px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
-                                    </Grid>
-                                    <Grid lg={1} item sx={{ width: 120, marginRight: 0.5, my: 5 }}>
-                                        <Skeleton variant='rectangular' height={150} width={250} style={{ marginBottom: "10px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
-                                    </Grid>
-                                    <Grid lg={1} item sx={{ width: 120, marginRight: 0.5, my: 5 }}>
-                                        <Skeleton variant='rectangular' height={150} width={250} style={{ marginBottom: "10px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
-                                    </Grid>
-                                    <Grid lg={1} item sx={{ width: 120, marginRight: 0.5, my: 5 }}>
-                                        <Skeleton variant='rectangular' height={150} width={250} style={{ marginBottom: "10px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
-                                    </Grid>
-                                    <Grid lg={1} item sx={{ width: 120, marginRight: 0.5, my: 5 }}>
-                                        <Skeleton variant='rectangular' height={150} width={250} style={{ marginBottom: "10px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
-                                    </Grid>
-                                    <Grid lg={1} item sx={{ width: 120, marginRight: 0.5, my: 5 }}>
-                                        <Skeleton variant='rectangular' height={150} width={250} style={{ marginBottom: "10px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
-                                    </Grid>
-                                    <Grid lg={1} item sx={{ width: 120, marginRight: 0.5, my: 5 }}>
-                                        <Skeleton variant='rectangular' height={150} width={250} style={{ marginBottom: "10px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "4px" }} />
-                                        <Skeleton variant='rectangular' height={20} width={140} style={{ marginBottom: "4px" }} />
-                                    </Grid>
+                                    <HikeLoading />
+                                    <HikeLoading />
+                                    <HikeLoading />
+                                    <HikeLoading />
+                                    <HikeLoading />
+                                    <HikeLoading />
+                                    <HikeLoading />
+                                    <HikeLoading />
                                 </>
                         }
                     </Grid>

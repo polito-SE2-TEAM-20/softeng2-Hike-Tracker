@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import 'leaflet/dist/leaflet.css'
+import 'leaflet-draw/dist/leaflet.draw.css'
 
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents, ZoomControl, Polyline, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, useMapEvents, ZoomControl, Polyline, useMap } from 'react-leaflet'
 import L from 'leaflet';
 import HikePopup from '../hike-popup/HikePopup';
 import sampledata from '../../extra/sample-data/sample-data.json'
 import { Paper } from '@mui/material'
+import { EditControl } from 'react-leaflet-draw'
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -37,7 +39,7 @@ export const LocationMarker = () => {
 export const MapBrowseHike = (props) => {
     const [clickedCenter, setClickedCenter] = useState([45.07412045176881, 7.621063528883495])
     const [selected, setSelected] = useState(-1)
-    const [flyIndex, setFlyIndex] = useState(-1);
+    const [flyIndex, setFlyIndex] = useState(-1)
 
     const OnClickSelectHike = (index) => {
         setSelected(index)
@@ -51,11 +53,34 @@ export const MapBrowseHike = (props) => {
         map.flyTo(props.dataset.filter(x => x.id == props.index)[0].positions[0], 14)
     }
 
+    const _circleCreated = (e) => {
+        props.setRadiusFilter([[e.layer.toGeoJSON().geometry.coordinates[1], e.layer.toGeoJSON().geometry.coordinates[0]], e.layer.getRadius() / 1000.0])
+        console.log([[e.layer.toGeoJSON().geometry.coordinates[1], e.layer.toGeoJSON().geometry.coordinates[0]], e.layer.getRadius() / 1000.0])
+    }
+
+    const _circleEdited = (e) => {
+        console.log(e)
+    }
+
+    const _circleDeleted = (e) => {
+        console.log(e)
+    }
+
     return (
         <div style={{ marginTop: "0px" }}>
             <MapContainer center={clickedCenter} zoom={9}
                 scrollWheelZoom={{ xs: false, sm: false, md: false, lg: true, xl: true }} zoomControl={false}
                 style={{ width: "auto", minHeight: "100vh", height: "100%" }}>
+                <FeatureGroup>
+                    <EditControl position="bottomright" draw={{
+                        rectangle: false,
+                        circle: true,
+                        circlemarker: false,
+                        marker: false,
+                        polygon: false,
+                        polyline: false
+                    }} onCreated={e => _circleCreated(e)} onEdited={e => _circleEdited(e)} onDeleted={e => _circleDeleted(e)} />
+                </FeatureGroup>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url={"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}
@@ -63,20 +88,20 @@ export const MapBrowseHike = (props) => {
                 <FlyToSelected {...props} index={flyIndex} />
                 <ZoomControl position='bottomright' />
                 {
-                    props.dataset.map((hike) => {
-                        if (selected == hike.id) {
+                    props.dataset.filter(x => x.gpxFile !== undefined || x.gpxFile !== "" || x.positions === null || x.positions === undefined || x.positions.length === 0).map((hike) => {
+                        if (selected == hike?.id) {
                             return (
                                 <>
                                     <Marker
                                         key={hike.id}
-                                        position={[hike.positions[0][0], hike.positions[0][1]]}>
-                                        <Popup position={[hike.positions[0][0], hike.positions[0][1]]}>
+                                        position={[hike?.positions[0][0], hike?.positions[0][1]]}>
+                                        <Popup position={[hike?.positions[0][0], hike?.positions[0][1]]}>
                                             <HikePopup hike={hike} />
                                         </Popup>
                                     </Marker>
                                     <Polyline
                                         pathOptions={{ fillColor: 'red', color: 'blue' }}
-                                        positions={hike.positions}
+                                        positions={hike?.positions}
                                     />
                                 </>
                             );
@@ -84,9 +109,9 @@ export const MapBrowseHike = (props) => {
                             return (
                                 <>
                                     <Marker
-                                        key={hike.id}
-                                        position={[hike.positions[0][0], hike.positions[0][1]]}>
-                                        <Popup position={[hike.positions[0][0], hike.positions[0][1]]}>
+                                        key={hike?.id}
+                                        position={[hike?.positions[0][0], hike?.positions[0][1]]}>
+                                        <Popup position={[hike?.positions[0][0], hike?.positions[0][1]]}>
                                             <HikePopup hike={hike} OnClickSelectHike={OnClickSelectHike} />
                                         </Popup>
                                     </Marker>

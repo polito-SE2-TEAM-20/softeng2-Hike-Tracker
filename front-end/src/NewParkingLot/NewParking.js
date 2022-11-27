@@ -1,4 +1,3 @@
-import { ParkingDescription } from "./ParkingDescription";
 import { AddressInformationParking } from './AddressInformationParking';
 import { ReviewParkingForm } from "./ReviewParkingForm";
 import { useState, useEffect } from 'react';
@@ -19,6 +18,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Alert from '@mui/material/Alert';
 import login from '../Assets//login.jpg'; // Import using relative path
 import { useNavigate } from "react-router";
+import {Grid} from '@mui/material'
+import HTNavbar from '../components/HTNavbar/HTNavbar'
+
 
 
 const styles = {
@@ -40,7 +42,7 @@ function Copyright() {
   );
 }
 
-const steps = ['Parking address', 'Parking information', 'Review parking infos'];
+const steps = ['Parking information',  'Review parking infos'];
 
 const theme = createTheme(
 );
@@ -49,7 +51,7 @@ function NewParking(props) {
     const navigate = useNavigate();
     const [name, setName] = useState(''); 
     // location of the hut
-    const [elevation, setElevation] = useState(''); // elevation in meters
+    //const [elevation, setElevation] = useState(''); // elevation in meters
     const [latitude, setLatitude] = useState('');
     const [longitude, setLongitude] = useState('');
     const [region, setRegion] = useState('');
@@ -59,10 +61,9 @@ function NewParking(props) {
     const [city, setCity] = useState('');
 
     const [spots, setSpots] = useState(''); // number of spots
-    const [price, setPrice] = useState('');
-
+    // const [price, setPrice] = useState('');
     // other informations
-    const [description, setDescription] = useState('');
+  // const [description, setDescription] = useState('');
   const [activeStep, setActiveStep] = React.useState(0);
 
   const [errorMessage, setErrorMessage] = useState('');
@@ -70,57 +71,59 @@ function NewParking(props) {
 
 
   const handleNext = () => {
-    if(activeStep ===(steps.length - 3)){
+    if(activeStep === (steps.length - 2)){
         if([name, latitude, longitude, country, region, province, city, address].some(t=> t.length ===0)){
         setErrorMessage("All fields with the * should be filled");
         setShow(true);
-    }else if(name.match(/^\s+$/)){
+    }else if(name.toString().match(/^\s+$/)){
         setErrorMessage("insert a valid name for the hut");
         setShow(true);
     }else if(!province.match(/^[a-zA-Z]+[a-zA-Z]+$/) || !region.match(/^[a-zA-Z]+[a-zA-Z]+$/) || !country.match(/^[a-zA-Z]+[a-zA-Z]+$/) || !city.match(/^[a-zA-Z]+[a-zA-Z]+$/)){
             setErrorMessage("insert a valid name for country, region, province and city");
             setShow(true);
             //check if the coordinate are with the comma or the point
-    }else if(!latitude.match(/^([0-9]*[.])?[0-9]+$/)) {
+    }else if(!latitude.toString().match(/^([0-9]*[.])?[0-9]+$/)) {
             setErrorMessage("insert a valid value for the latitude ");
             setShow(true);
-    }else if(!longitude.match(/^([0-9]*[.])?[0-9]+$/)) {
+    }else if(!longitude.toString().match(/^([0-9]*[.])?[0-9]+$/)) {
             setErrorMessage("insert a valid value for the longitude ");
             setShow(true);
+        }else if([spots].some(t=> t.length ===0)){
+                setErrorMessage("All fields with the * should be filled");
+                setShow(true);
 }else{
         setShow(false);
         setActiveStep(activeStep + 1);
-    }}else if(activeStep===(steps.length - 2)){
-        if([spots, description, price].some(t=> t.length ===0)){
-            setErrorMessage("All fields with the * should be filled");
-            setShow(true);
-    }else{
-        setShow(false);
-        setActiveStep(activeStep + 1);
     }}else if(activeStep === (steps.length - 1) ){
-
-        //cosa cambia tra title e name???
-        //let object = {title: name, description: description, numberOfSpots: parseInt(spots), location : {lat: parseFloat(latitude), lon: parseFloat(longitude), name: name, address:address}, price: parseFloat(price)}
+        let object = {maxCars: parseInt(spots), country: country, region: region, province : province, city: city, location :{lat: parseFloat(latitude), lon: parseFloat(longitude), name: name, address: address}}
         setShow(false);
         setActiveStep(activeStep + 1);
-        // props.addNewHut(object).catch((err)=> {setErrorMessage(err); setShow(true)})
-
+        props.addNewParkingLot(object).catch((err)=> {setErrorMessage(err); setShow(true)});
+        {/*{ 
+    "maxCars": 2, 
+    "country": "Italy", 
+    "region": "Piemonte", 
+    "province": "Torino", 
+    "city": "Torino", 
+    "location": { 
+        "lat": 5.056, 
+        "lon": 4.0586, 
+        "name": "testF", 
+        "address": "testF" 
+    } 
+}*/ }
     }
   };
 
 
   const handleClear =() =>{
     if(activeStep ===(steps.length - 3)){
-    setName(''); setElevation(''); setLatitude(''); setLongitude(''); setCountry(''); setRegion(''); setProvince(''); 
-    setCity('');  setAddress('');
+    setName('');  setLatitude(''); setLongitude(''); setCountry(''); setRegion(''); setProvince(''); 
+    setCity('');  setAddress('');  setSpots(''); 
     setCountry('');
-    }else if(activeStep ===(steps.length - 2)){
-         setSpots(''); setDescription(''); setPrice('');
-
     }
-    
-
   };
+
   const goBackLocalGuide = () => {
     navigate('/localGuide');
   };
@@ -132,28 +135,34 @@ function NewParking(props) {
   function getStepContent(step) {
     switch (step) {
       case 0:
-        return <AddressInformationParking name={name} setName = {setName} elevation={elevation} setElevation={setElevation} 
+        return <AddressInformationParking name={name} setName = {setName} 
         setLatitude={setLatitude} latitude={latitude} longitude={longitude} setLongitude={setLongitude} region={region} 
         setRegion={setRegion} province={province} 
        setProvince={setProvince} address={address} setAddress={setAddress} country={country} setCountry={setCountry} city={city} 
-       setCity={setCity}/>;
+       setCity={setCity} spots={spots} setSpots={setSpots} />;
       case 1:
-        return <ParkingDescription spots={spots} setSpots={setSpots} description={description} setDescription={setDescription}
-         price={price} setPrice={setPrice}/>;
-      case 2:
-        return <ReviewParkingForm name={name}  elevation={elevation}  latitude={latitude} 
+        return <ReviewParkingForm name={name}    latitude={latitude} 
         longitude={longitude} region={region}  province={province}  country={country} city={city}
-        address={address} spots={spots} description={description} price={price} />;
+        address={address} spots={spots}  />;
       default:
         throw new Error('Unknown step');
     }
   }
 
+  const gotoLogin = () => {
+    navigate("/login", { replace: false })
+  }
+  const gotoLocalGuide = () => {
+    navigate("/localGuide", { replace: false })
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container component="main" maxWidth="sm" sx={{ mb: 4 }}>
-        <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }} style={styles.paperContainer}>
+      <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
+      <Grid container spacing={0} sx={{ backgroundImage: `url(${login})`, minHeight: "100vh", height: "100%", minWidth: "100vw", width: "100%" }}>
+      <Container component="main" maxWidth="sm" sx={{ mb: 4 , mt:8 }}>
+        <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }} >
           <Typography component="h1" variant="h4" align="center">
             ADD A NEW PARKING LOT
           </Typography>
@@ -184,7 +193,7 @@ function NewParking(props) {
 
         {
                 show?
-                  <Alert variant="outlined" severity="error"  onClose={() => { setErrorMessage(''); setShow(false) }}>{errorMessage}</Alert> : <></>
+                  <Alert sx={{mt: 3}}variant="outlined" severity="error"  onClose={() => { setErrorMessage(''); setShow(false) }}>{errorMessage}</Alert> : <></>
               }
               <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 {activeStep !== 0 && (
@@ -222,6 +231,7 @@ function NewParking(props) {
         <Copyright />
         
       </Container>
+      </Grid>
     </ThemeProvider>
   );
 }
