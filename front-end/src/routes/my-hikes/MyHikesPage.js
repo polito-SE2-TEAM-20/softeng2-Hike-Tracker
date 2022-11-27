@@ -17,7 +17,7 @@ function MyHikesPage(props) {
     useEffect(() => {
         setLoading(true);
         API.getHikesForLocalGuide().then((hikes) => {
-            setMyHikes(oldHikes => [])
+            setMyHikes(oldHikes => hikes)
             setLoading(false)
         });
     }, [])
