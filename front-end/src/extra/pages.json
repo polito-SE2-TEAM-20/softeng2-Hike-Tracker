@@ -1,17 +1,17 @@
 [
     {
-        "title": "Browse hikes",
-        "URL": "/browsehikes",
-        "requirments" : {
-            "login" : true,
-            "roles" : null
-        }
-    },
-    {
         "title": "List of hikes",
         "URL": "/listofhikes",
         "requirments" : {
             "login" : false,
+            "roles" : null
+        }
+    },
+    {
+        "title": "Browse hikes",
+        "URL": "/browsehikes",
+        "requirments" : {
+            "login" : true,
             "roles" : null
         }
     },

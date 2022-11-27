@@ -40,8 +40,8 @@ function HTNavbar(props) {
 
     return (
         <AppBar position="fixed" style={{
-            backgroundColor: "#202020", marginBottom: "auto", paddingLeft: "35px",
-            paddingRight: "35px", borderRadius: "0px 0px 0px 0px"
+            backgroundColor: "#202020c0", marginBottom: "auto", paddingLeft: 36,
+            paddingRight: 36, borderRadius: 0
         }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
@@ -101,14 +101,14 @@ function HTNavbar(props) {
                                             </MenuItem>
                                         )
                                     }
-                                }
-                                if (!props.isLoggedIn && !page.requirments.login &&
-                                    page.requirments.roles === null) {
-                                    return (
-                                        <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}>
-                                            <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Bakbak One, display" }}>{page.title}</Typography>
-                                        </MenuItem>
-                                    )
+                                } else {
+                                    if (!page.requirments.login) {
+                                        return (
+                                            <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}>
+                                                <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Bakbak One, display" }}>{page.title}</Typography>
+                                            </MenuItem>
+                                        )
+                                    }
                                 }
                             })}
                         </Menu>
@@ -147,20 +147,19 @@ function HTNavbar(props) {
                                         </Button>
                                     )
                                 }
-                            }
-                            if (!props.isLoggedIn && !page.reqLogin &&
-                                page.requirments.roles === null
-                            ) {
-                                return (
-                                    <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "18px", marginRight: "24px" }}
-                                        key={page.title}
-                                        onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}
-                                        sx={{ my: 2, color: 'white', display: 'block' }}
-                                    >
-                                        {page.title}
-                                        <Divider orientation='vertical' flexItem />
-                                    </Button>
-                                )
+                            } else {
+                                if (!page.requirments.login) {
+                                    return (
+                                        <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "18px", marginRight: "24px" }}
+                                            key={page.title}
+                                            onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}
+                                            sx={{ my: 2, color: 'white', display: 'block' }}
+                                        >
+                                            {page.title}
+                                            <Divider orientation='vertical' flexItem />
+                                        </Button>
+                                    )
+                                }
                             }
                         }
                         )}

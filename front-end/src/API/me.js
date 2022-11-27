@@ -1,4 +1,4 @@
-import { APIURL } from "./common";
+import { APIURL } from "./API";
 
 async function getMyHikesAsLocalGuide(){
     let response = await fetch(( APIURL + 'me/hikes'), {
