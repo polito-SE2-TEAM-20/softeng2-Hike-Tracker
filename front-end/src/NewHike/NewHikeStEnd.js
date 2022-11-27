@@ -261,30 +261,29 @@ function NewHikeStEnd(props) {
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log(title);
-    if (title.length === 0) {
+    if (title === '' || title === null) {
       setErrorMessage('The title cannot be empty');
       setShow(true);
-    } else if (lengthStr.length === 0) {
-
+    } else if (lengthStr === '' || lengthStr === null) {
       setErrorMessage('The length cannot be empty');
       setShow(true);
 
-    } else if (expectedTimeStr.trim().length === 0) {
+    } else if (expectedTimeStr === null || expectedTimeStr === '') {
 
       setErrorMessage('The time expected for the hike cannot be empty')
       setShow(true);
 
-    } else if (ascentStr === '') {
+    } else if (ascentStr === '' || ascentStr === null ) {
 
       setErrorMessage('The ascent for the hike cannot be empty');
       setShow(true);
 
-    } else if (difficultyStr=== '') {
+    } else if (difficultyStr=== '' || difficultyStr=== null) {
       setErrorMessage('The difficulty for the hike cannot be empty');
       setShow(true);
 
 
-    } else if (description === '') {
+    } else if (description === '' ||  description === null) {
 
       setErrorMessage('The description for the hike cannot be empty');
       setShow(true);
