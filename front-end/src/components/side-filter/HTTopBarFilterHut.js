@@ -54,9 +54,14 @@ const HTTopBarFilterHut = (props) => {
                 <Grid item lg={12} xl={12} style={{ display: "flex", justifyContent: "center" }}>
                     <HTSlider value={numOfBeds} setFun={setNumOfBeds} max={maxNumOfBeds} text="Number of beds" />
                 </Grid>
-                <Grid item lg={12} xl={12} style={{ display: "flex", justifyContent: "center" }}>
+                {
+                    /**
+                     * <Grid item lg={12} xl={12} style={{ display: "flex", justifyContent: "center" }}>
                     <HTSlider value={altitude} setFun={setAltitude} max={maxAltitude} text="Altitude" />
                 </Grid>
+                     */
+                }
+
 
                 <Grid lg={12} item style={{ display: "flex", justifyContent: "center" }}>
                     <Grid item>
