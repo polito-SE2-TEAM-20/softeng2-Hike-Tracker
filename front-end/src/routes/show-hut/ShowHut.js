@@ -75,13 +75,16 @@ const ShowHut = (props) => {
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
-                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                        {
-                            !loading ?
-                                <Typography><b>Altitude:</b> {hut.altitude === "" || hut.altitude === null || hut.altitude === undefined ? "N/A" : hut.altitude}</Typography> :
-                                <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
-                        }
-                    </Grid>
+                    {
+                        // <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        //     {
+                        //         !loading ?
+                        //             <Typography><b>Altitude:</b> {hut.altitude === "" || hut.altitude === null || hut.altitude === undefined ? "N/A" : hut.altitude}</Typography> :
+                        //             <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
+                        //     }
+                        // </Grid>
+                    }
+
 
                     <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
                         <Chip label="Details" />
