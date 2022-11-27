@@ -28,7 +28,7 @@ services:
       - postgresql
 
   postgresql:
-    image: ghcr.io/polito-se2-team-20/demo-db:demo
+    image: ghcr.io/polito-se2-team-20/demo-db:latest
     restart: always
     env_file: .env
     environment:
