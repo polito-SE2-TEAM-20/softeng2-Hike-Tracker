@@ -68,11 +68,7 @@ function App2() {
         setLoggedIn(true);
         setUser(user);
         setShow(false);
-        if(user.user.role === 0){
-          navigate('/browsehikes')
-        }else if(user.user.role=== 2){
-          navigate('/localGuide');
-        }
+        navigate('/')
         setRole(user.user.role);
       })
       .catch(err => {
@@ -166,7 +162,6 @@ function App2() {
         <Route path="/listofhuts" element={<HTListOfHuts user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/browsehikes" element={<HTBrowseHikes user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/singlehike" element={<SingleHike user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
-        <Route path="/localGuide" element={<LocalGuide isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
         <Route path="/navbar" element={<NavigationBar user={user} />} />
         <Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut}/>} />
         <Route path="/newHike" element={<HTAddHike addNewGpx={API_NewHike.addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />

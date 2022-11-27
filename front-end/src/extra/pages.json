@@ -24,5 +24,15 @@
                 2
             ]
         }
+    },
+    {
+        "title": "New Hike",
+        "URL": "/newHike",
+        "requirments" : {
+            "login" : true,
+            "roles" : [
+                2
+            ]
+        }
     }
 ]
