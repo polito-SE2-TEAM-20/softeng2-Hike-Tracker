@@ -68,6 +68,12 @@ export class Hut {
   })
   website!: string;
 
+  @Column({
+    ...numericOptionsConfig(null),
+    nullable: true,
+  })
+  elevation!: number | null;
+
   /**
    * TypeORM sql-gen only
    * @deprecated

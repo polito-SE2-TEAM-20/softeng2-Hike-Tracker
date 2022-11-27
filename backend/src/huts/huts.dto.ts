@@ -71,6 +71,10 @@ export class CreateHutDto {
   @IsOptional()
   price?: number;
 
+  @IsNumber()
+  @IsOptional()
+  elevation?: number;
+
   @IsString()
   @IsOptional()
   ownerName!: string;
