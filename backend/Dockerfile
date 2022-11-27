@@ -1,6 +1,7 @@
 FROM node:16.14.0-alpine
 
-ENV PORT 3500
+ARG PORT=3500
+ENV PORT ${PORT}
 
 WORKDIR /srv
 
@@ -17,7 +18,7 @@ RUN npm run build
 
 RUN mkdir -p /srv/uploads/gpx
 
-RUN chown node:node /srv
+RUN chown -R node:node /srv/uploads
 
 HEALTHCHECK CMD node healthcheck.js localhost ${PORT} /healthcheck 200
 

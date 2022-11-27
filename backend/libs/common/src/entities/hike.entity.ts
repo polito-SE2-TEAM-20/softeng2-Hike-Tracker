@@ -109,6 +109,20 @@ export class Hike {
   })
   province!: string;
 
+  @Column({
+    type: 'citext',
+    nullable: false,
+    default: '',
+  })
+  city!: string;
+
+  @Column({
+    type: 'citext',
+    nullable: false,
+    default: '',
+  })
+  country!: string;
+
   /**
    * TypeORM sql-gen only
    * @deprecated
@@ -125,4 +139,6 @@ export class Hike {
    * @deprecated
    */
   __joiner?: any;
+
+  gpx?: string | null;
 }

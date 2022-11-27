@@ -17,7 +17,7 @@ module.exports = {
   },
   setupFiles: ['dotenv/config'],
   reporters: ['default', 'jest-junit'],
-  setupFilesAfterEnv: [],
+  setupFilesAfterEnv: ['jest-extended/all'],
   forceExit: true,
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
     prefix: '<rootDir>/',

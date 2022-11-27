@@ -1,6 +1,7 @@
 FROM node:16.14.0-slim
 
-ENV PORT 3600
+ARG PORT=3600
+ENV PORT ${PORT}
 
 WORKDIR /srv
 
@@ -20,6 +21,6 @@ ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
 USER node
 
-EXPOSE 3600
+EXPOSE ${PORT}
 
-CMD  ["serve", "-s", "build", "-l", "3600"]
+CMD  ["serve", "-s", "build", "-l", "$PORT"]
