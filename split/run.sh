@@ -20,6 +20,7 @@ cp "$GPX_ZIP" "../backend/demo/$GPX_ZIP"
 psql -U ${DB_USERNAME} -c "DROP DATABASE IF EXISTS $DB_NAME;"
 psql -U ${DB_USERNAME} -c "CREATE DATABASE $DB_NAME;"
 psql -U ${DB_USERNAME} -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USERNAME;"
+# psql -U ${DB_USERNAME} -c "alter database $DB_NAME set search_path = public, postgis;"
 
 psql -U ${DB_USERNAME} -d ${DB_NAME} -f ./result/init.sql
 
