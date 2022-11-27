@@ -2,7 +2,7 @@ const APIURL = 'http://hiking-backend.germangorodnev.com/';
 async function addNewParkingLot(parking) {
   console.log(parking)
   console.log(localStorage)
-    let response = await fetch((APIURL + 'parking/'), {
+    let response = await fetch((APIURL + 'parkingLot/insertLot/'), {
       method: 'POST',
 
     headers: {
@@ -10,8 +10,6 @@ async function addNewParkingLot(parking) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(parking)
-
-     
     });
     if(response.ok) {
       const newParking = await response.json();
@@ -28,6 +26,6 @@ async function addNewParkingLot(parking) {
       }
     }
   }
-
   const API_NewParkingLot = {addNewParkingLot};
   export default API_NewParkingLot;
+

@@ -16,27 +16,54 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png')
 });
 
-
-const Inner = ({latitude, longitude}) => {
+async function getInformation(lat, lon) {
+    let response = await fetch((`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&addressdetails=1`), {
+      method: 'GET'
+    });
+    if (response.ok) {
+      console.log(response)
+      const informations = await response.json();
+      console.log(informations);
+      // setInformation(informations);
+      return informations;
+    } else {
+      const errDetail = await response.json();
+      throw errDetail.message;
+    }
+  }
+  
+  const ChoosenPoint = ({latitude, longitude, setLatitude, setLongitude, setRegion, setProvince, setCity, setCountry}) =>{
+  
+  
     const map = useMap();
-
+  
     var popup = L.popup();
+  
+    map.on('click', function(e) {
+      let prov = [e.latlng.lat, e.latlng.lng];
+      setLongitude(e.latlng.lng);
+      setLatitude(e.latlng.lat);
+      let punti = e.latlng;
+  popup
+      .setLatLng(punti)
+      .setContent("You clicked the map at " + punti.toString())
+      .openOn(map);
+  });
 
-
-
-
-
-useEffect(() => {
-    if (!latitude && !longitude) { return; }
-
-    map.flyTo([latitude, longitude])
-
-}, [latitude, longitude] );
-
-}
-
-
-
+          useEffect(()=>{
+            if(latitude!== null && longitude!==null){
+                getInformation(latitude, longitude)
+          .then(informations => {
+            setRegion(informations?.address?.state? informations.address.state : '');
+            setProvince(informations?.address?.county? informations.address.county : '');
+            setCountry(informations?.address?.country? informations.address.country : '');
+            setCity(informations?.address?.village? informations.address.village: '');
+          })
+            }
+        }, [latitude, longitude])
+  
+  
+  }
 
 
 
@@ -45,16 +72,28 @@ const MapHut = props => {
     let position = [props.latitude, props.longitude];
 
     return(
-        <MapContainer
-                    className='map'
-                    center={[props.latitude, props.longitude].length ? [props.latitude, props.longitude].length/2 : [45.4408474, 12.3155151]}
-                    zoom={13}
-                    scrollWheelZoom={false}
-                >
-                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                    <Inner {...props}/>
+        <MapContainer 
                     
-                </MapContainer>
+                    className='map'
+                    center={[45.4408474, 12.3155151]}
+                    zoom={13}
+                    scrollWheelZoom={true}
+                >
+                    
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                   <ChoosenPoint {...props}/>
+                     {props.latitude!== null && props.longitude!==null &&
+                        (<>
+                            <Marker
+                                key={props.latitude}
+                                position={[props.latitude, props.longitude]}>
+                                <Popup position={[props.latitude, props.longitude]}>
+                                   You selected here {props.latitude} , {props.longitude}
+                                </Popup>
+                            </Marker>
+                        </>)
+                    }
+                  </MapContainer>
     )
     
 }

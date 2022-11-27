@@ -118,5 +118,57 @@ async function getHikePathByHike(hike) {
     return outHike;
 }
 
-const API = { getListOfHikes, getListOfGPXFiles, getPathByID, getHikeByListOfPaths, getFilteredListOfHikes, getHikePathByHike, getSingleHikeByID, getHikesForLocalGuide }
+async function getListOfHuts(filter) {
+    let response = await fetch((APIURL + '/huts/filter'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(filter)
+    });
+    if (response.ok) {
+        const listOfHuts = await response.json();
+        return listOfHuts
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+async function getSingleHutByID(hutid) {
+    let response = await fetch((APIURL + '/huts/' + hutid), {
+        method: 'GET'
+    });
+    if (response.ok) {
+        const hut = await response.json();
+        return hut
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+
+async function getListOfHutsAndParkingLots(radius) {
+    let response = await fetch((APIURL + '/hike-modification/hutsAndParkingLots'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(radius)
+    });
+    if (response.ok) {
+        const hutsAndParkingLots = await response.json();
+        return hutsAndParkingLots
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const API = {
+    getListOfHikes, getListOfGPXFiles, getPathByID,
+    getHikeByListOfPaths, getFilteredListOfHikes, getHikePathByHike,
+    getSingleHikeByID, getHikesForLocalGuide, getListOfHuts, getSingleHutByID, getListOfHutsAndParkingLots
+}
 export default API

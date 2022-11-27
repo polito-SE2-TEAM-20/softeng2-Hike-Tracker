@@ -16,13 +16,12 @@
         }
     },
     {
-        "title": "My Huts",
-        "URL": "/myhuts",
+        "title": "My Hikes",
+        "URL": "/myhikes",
         "requirments" : {
             "login" : true,
             "roles" : [
-                2,
-                4
+                2
             ]
         }
     }
