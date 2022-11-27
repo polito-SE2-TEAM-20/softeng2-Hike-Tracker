@@ -128,6 +128,17 @@ function EndHut(props) {
         });
         }
     }, [])
+
+
+    useEffect(() => {
+        if(props.hutIdEnd !== null || props.hutIdEnd!== ''){
+            let element = listHuts.filter((el)=> el.id === props.hutIdEnd);
+            console.log(element);
+            console.log(element[0]?.point?.address);
+            props.setEndPointAdd(element[0]?.point?.address)
+        }
+        
+    }, [props.hutIdEnd])
     
   
   return <>
@@ -213,6 +224,16 @@ function EndParking(props) {
         });
         }
     }, [])
+
+
+    useEffect(() => {
+        if(props.parkingIdEnd !== null || props.parkingIdEnd!== ''){
+            let element = listParking.filter((el)=> el.id === props.parkingIdEnd);
+            console.log(element);
+            console.log(element[0]?.point?.address);
+            props.setEndPointAdd(element[0]?.point?.address)
+        }
+    }, [props.parkingId])
     
   
   return <>
@@ -243,6 +264,29 @@ function EndParking(props) {
                       disabled
                       variant="standard"
                       value={el.name}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={3}>
+                    <TextField
+                      name="spots"
+                      label="Spots"
+                      fullWidth
+                      disabled
+                      variant="standard"
+                      value={el?.maxCars}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={3}>
+                    <TextField
+                      name="address"
+                      label="Address"
+                      fullWidth
+                      disabled
+                      variant="standard"
+                      value={el.point.address}
+
                     />
                   </Grid>
           </MenuItem>

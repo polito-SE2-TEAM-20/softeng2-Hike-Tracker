@@ -17,6 +17,17 @@ import './navbar-style.css'
 import { Divider } from '@mui/material';
 import { displayTypeFlex, displayTypeBlock } from '../../extra/DisplayType';
 
+const bull = (
+    <Box
+        component="span"
+        sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
+    >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-square-fill" viewBox="0 0 16 16">
+            <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2z" />
+        </svg>   
+    </Box>
+);
+
 function HTNavbar(props) {
     const settings = ['Login', 'Logout'];
     const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -40,8 +51,8 @@ function HTNavbar(props) {
 
     return (
         <AppBar position="fixed" style={{
-            backgroundColor: "#202020c0", marginBottom: "auto", paddingLeft: 36,
-            paddingRight: 36, borderRadius: 0
+            backgroundColor: "#202020c0", marginBottom: "auto", paddingLeft: 10,
+            paddingRight: 10, borderRadius: 0
         }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
@@ -51,7 +62,7 @@ function HTNavbar(props) {
                         noWrap
                         onClick={() => { navigate("/") }}
                         sx={{
-                            mr: 12,
+                            mr: 5,
                             display: displayTypeFlex.pc,
                             fontFamily: "Bakbak One, display",
                             fontWeight: 700,
@@ -62,7 +73,7 @@ function HTNavbar(props) {
                         HackTheHike
                     </Typography>
 
-                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                    <Box sx={{ flexGrow: 1, display: displayTypeFlex.mobile }}>
                         <IconButton
                             size="large"
                             aria-label="account of current user"
@@ -131,22 +142,21 @@ function HTNavbar(props) {
                         {pages.map((page) => {
                             if (props.isLoggedIn && page.role.includes(props.user?.role)) {
                                 return (
-                                    <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "18px", marginRight: "24px" }}
+                                    <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "18px", marginRight: "12px" }}
                                         key={page.title}
                                         onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}
-                                        sx={{ my: 2, color: 'white', display: 'block' }}
+                                        sx={{ my: 1, color: 'white', display: 'block' }}
                                     >
                                         {page.title}
-                                        <Divider orientation='vertical' flexItem />
                                     </Button>
                                 )
                             }
                             if (!props.isLoggedIn && !page.reqLogin) {
                                 return (
-                                    <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "18px", marginRight: "24px" }}
+                                    <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "18px", marginRight: "12px" }}
                                         key={page.title}
                                         onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}
-                                        sx={{ my: 2, color: 'white', display: 'block' }}
+                                        sx={{ my: 1, color: 'white', display: 'block' }}
                                     >
                                         {page.title}
                                         <Divider orientation='vertical' flexItem />
@@ -229,8 +239,8 @@ function HTNavbar(props) {
                             {
                                 props.isLoggedIn ?
                                     <>
-                                        <div className='unselectable' style={{marginLeft: "12px", marginRight: "12px"}} key={settings[1]}>
-                                            <Typography color="black" fontFamily={"Bakbak One, display"} fontSize="20px" style={{display: "flex", justifyContent: "center"}}>
+                                        <div className='unselectable' style={{ marginLeft: "12px", marginRight: "12px" }} key={settings[1]}>
+                                            <Typography color="black" fontFamily={"Bakbak One, display"} fontSize="20px" style={{ display: "flex", justifyContent: "center" }}>
                                                 {props.user?.firstName} {props.user?.lastName}
                                             </Typography>
                                             <Typography color="black" fontFamily={"Bakbak One, display"} fontSize="16px">

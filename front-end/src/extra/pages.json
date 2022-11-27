@@ -30,8 +30,24 @@
       ]
     },
     {
-      "title": "Local guide dashboard",
-      "URL": "/localGuide",
+      "title": "New Hike",
+      "URL": "/newHike",
+      "reqLogin": true,
+      "role": [
+        2
+      ]
+    },
+    {
+      "title": "New Hut",
+      "URL": "/newHut",
+      "reqLogin": true,
+      "role": [
+        2
+      ]
+    },
+    {
+      "title": "New Parking",
+      "URL": "/newParking",
       "reqLogin": true,
       "role": [
         2
@@ -44,13 +60,6 @@
       "role": [
         2
       ]
-    },
-    {
-      "title": "New Hike",
-      "URL": "/newHike",
-      "reqLogin": true,
-      "role": [
-        2
-      ]
     }
   ]
+

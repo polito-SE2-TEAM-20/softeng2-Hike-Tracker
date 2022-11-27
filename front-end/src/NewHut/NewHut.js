@@ -94,11 +94,12 @@ function NewHutForm(props) {
     }else if(name.match(/^\s+$/)){
         setErrorMessage("insert a valid name for the hut");
         setShow(true);
-    }else if(!province.match(/^[a-zA-Z]+[a-zA-Z]+$/) || !region.match(/^[a-zA-Z]+[a-zA-Z]+$/) ){
+    {/*else if(!province.match(/^[a-zA-Z]+[a-zA-Z]+$/) || !region.match(/^[a-zA-Z]+[a-zA-Z]+$/) ){
             setErrorMessage("insert a valid name for region and province");
             setShow(true);
-            //check if the coordinate are with the comma or the point
-    }else if(!latitude.toString().match(/^([0-9]*[.])?[0-9]+$/)) {
+            //check if the coordinate are with the comma or the point*/}
+    }
+    else if(!latitude.toString().match(/^([0-9]*[.])?[0-9]+$/)) {
             setErrorMessage("insert a valid value for the latitude ");
             setShow(true);
     }else if(!longitude.toString().match(/^([0-9]*[.])?[0-9]+$/)) {
@@ -121,7 +122,7 @@ function NewHutForm(props) {
         //cosa cambia tra title e name???
         let add = [address, city, province, region, country];
         console.log(add.join(','))
-        let object = {title: name, description: description, numberOfBeds: parseInt(beds), location : {lat: parseFloat(latitude), lon: parseFloat(longitude), name: name, address: add.join(",")}, price: parseFloat(price)}
+        let object = {title: name, description: description, website: website, ownerName: owner, numberOfBeds: parseInt(beds), location : {lat: parseFloat(latitude), lon: parseFloat(longitude), name: name, address: add.join(",")}, price: parseFloat(price)}
         setShow(false);
         setActiveStep(activeStep + 1);
         props.addNewHut(object).catch((err)=> {setErrorMessage(err); setShow(true)})

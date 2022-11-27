@@ -159,7 +159,7 @@ function NewParking(props) {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} navigate={gotoLocalGuide} />
+      <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
       <Grid container spacing={0} sx={{ backgroundImage: `url(${login})`, minHeight: "100vh", height: "100%", minWidth: "100vw", width: "100%" }}>
       <Container component="main" maxWidth="sm" sx={{ mb: 4 , mt:8 }}>
         <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }} >

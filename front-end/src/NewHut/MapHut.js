@@ -61,6 +61,17 @@ async function getInformation(lat, lon) {
           })
             }
         }, [latitude, longitude])
+
+        useEffect(() => {
+          if ((latitude===null || latitude==='') && (longitude===null || longitude ==='')) { 
+            return; 
+          }else{
+            map.flyTo([latitude, longitude])
+          }
+      
+          
+      
+      }, [latitude, longitude]);
   
   
   }
@@ -75,7 +86,7 @@ const MapHut = props => {
         <MapContainer 
                     
                     className='map'
-                    center={[45.4408474, 12.3155151]}
+                    center={props.latitude? [props.latitude, props.longitude] : [45.4408474, 12.3155151]}
                     zoom={13}
                     scrollWheelZoom={true}
                 >

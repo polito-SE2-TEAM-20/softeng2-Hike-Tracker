@@ -1,9 +1,10 @@
+import API from '../../API/API.js';
+
 import { useEffect, useState } from 'react';
 import HTNavbar from '../../components/HTNavbar/HTNavbar';
 import { Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import HikeCard from '../../components/hike-card/HikeCard';
-import { getMyHikesAsLocalGuide } from '../../API/me';
 import HikeItemLoadingEffect from './HikeItemLoadingEffect';
 
 function MyHikesPage(props) {
@@ -13,7 +14,7 @@ function MyHikesPage(props) {
 
     useEffect(() => {
         setLoading(true);
-        getMyHikesAsLocalGuide().then((hikes) => {
+        API.getHikesForLocalGuide().then((hikes) => {
             setMyHikes(oldHikes => hikes)
             setLoading(false)
         });
