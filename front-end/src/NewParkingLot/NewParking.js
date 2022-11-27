@@ -75,17 +75,17 @@ function NewParking(props) {
         if([name, latitude, longitude, country, region, province, city, address].some(t=> t.length ===0)){
         setErrorMessage("All fields with the * should be filled");
         setShow(true);
-    }else if(name.match(/^\s+$/)){
+    }else if(name.toString().match(/^\s+$/)){
         setErrorMessage("insert a valid name for the hut");
         setShow(true);
     }else if(!province.match(/^[a-zA-Z]+[a-zA-Z]+$/) || !region.match(/^[a-zA-Z]+[a-zA-Z]+$/) || !country.match(/^[a-zA-Z]+[a-zA-Z]+$/) || !city.match(/^[a-zA-Z]+[a-zA-Z]+$/)){
             setErrorMessage("insert a valid name for country, region, province and city");
             setShow(true);
             //check if the coordinate are with the comma or the point
-    }else if(!latitude.match(/^([0-9]*[.])?[0-9]+$/)) {
+    }else if(!latitude.toString().match(/^([0-9]*[.])?[0-9]+$/)) {
             setErrorMessage("insert a valid value for the latitude ");
             setShow(true);
-    }else if(!longitude.match(/^([0-9]*[.])?[0-9]+$/)) {
+    }else if(!longitude.toString().match(/^([0-9]*[.])?[0-9]+$/)) {
             setErrorMessage("insert a valid value for the longitude ");
             setShow(true);
         }else if([spots].some(t=> t.length ===0)){

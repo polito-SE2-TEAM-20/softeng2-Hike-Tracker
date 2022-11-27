@@ -29,10 +29,38 @@ import HTNavbar from '../components/HTNavbar/HTNavbar'
 import { warning } from '@remix-run/router';
 
 import API_NewHike from './API_Newhike';
+import {DifficultySelect} from './DifficultySelect'
+import {StartPointSelect} from './SelectStart'
+import {EndPointSelect} from './SelectEnd'
 
+      {/*
+        
+        if([title, lengthStr, expectedTimeStr, ascentStr, difficultyStr, description, region, province, startPointName, startPointLat, startPointLon,  endPointName,  endPointLat, endPointLon].some(t=> t.length ===0)){
+          setErrorMessage("All fields with the * should be filled");
+          setShow(true);
+      }else if(title.match(/^\s+$/)){
+          setErrorMessage("insert a valid name for the hut");
+          setShow(true);
+      }else if(!province.match(/^[a-zA-Z]+[a-zA-Z]+$/) || !region.match(/^[a-zA-Z]+[a-zA-Z]+$/) ){
+              setErrorMessage("insert a valid name for region and province");
+              setShow(true);
+              //check if the coordinate are with the comma or the point
+      }else if((!startPointLat.match(/^([0-9]*[.])?[0-9]+$/)) || !startPointLon.match(/^([0-9]*[.])?[0-9]+$/)  ) {
+              setErrorMessage("insert a valid value for the latitude and longitude of the starting point e.g 45.1253 ");
+              setShow(true);
+      }else if(!endPointLat.match(/^([0-9]*[.])?[0-9]+$/) || !endPointLon.match(/^([0-9]*[.])?[0-9]+$/)  ) {
+              setErrorMessage("insert a valid value for the latitude and longitude of the ending point e.g 45.1253 ");
+              setShow(true);
+      }else if(!ascentStr.match(/^([0-9]*[.])?[0-9]+$/)) {
+              setErrorMessage("insert a valid value for the ascent ");
+              setShow(true);
+      }else if(!expectedTimeStr.match(/^(([0-9][0-9])+[:]([0-9][0-9]))+$/)) {
+              setErrorMessage("insert a valid value for the expected time e.g (10:13, 00:10, 15:00)");
+              setShow(true);
 
+        */ }
 
-function HTAddHike(props) {
+function NewHikeStEnd(props) {
 
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState(null);
@@ -56,18 +84,27 @@ function HTAddHike(props) {
 
   const [puntiDaTrack, setPuntiDaTrack] = useState([]);
   const [information, setInformation] = useState('');
+  const [informationEnd, setInformationEnd] = useState('');
 
   const [startPoint, setStartPoint] = useState({ name: "", address: null, lat: "", lon: "" });
   const [startPointLon, setStartPointLon] = useState('');
   const [startPointLat, setStartPointLat] = useState('');
   const [startPointName, setStartPointName] = useState('Start Point');
   const [startPointAdd, setStartPointAdd] = useState('');
+  const [startPointType, setStartPointType] = useState('');
+
+  const [hutId, setHutId] = useState('');
+  const [parkingId, setParkingId] = useState('');
+
+  const [hutIdEnd, setHutIdEnd] = useState('');
+  const [parkingIdEnd, setParkingIdEnd] = useState('');
 
   const [endPoint, setEndPoint] = useState({ name: "", address: null, lat: "", lon: "" });
   const [endPointLat, setEndPointLat] = useState('');
   const [endPointLon, setEndPointLon] = useState('');
   const [endPointName, setEndPointName] = useState('End Point');
   const [endPointAdd, setEndPointAdd] = useState('');
+  const [endPointType, setEndPointType] = useState('');
 
   const [newReferencePoint, setNewReferencePoint] = useState(false);
   const [listReferencePoint, setListReferencePoint] = useState([]);
@@ -121,7 +158,6 @@ function HTAddHike(props) {
       setNewReferencePoint(true);
     }
     if (referencePoint) {
-
       setReferencePointLat(referencePoint.lat);
       setReferencePointLon(referencePoint.lon);
     }
@@ -156,17 +192,12 @@ function HTAddHike(props) {
         console.log(prova);
         setListReferencePoint(prova);
       })
-
-
       //set List reference point con i waypoints se presenti nel gpx file
       setReferencePoint([]);
-      setStartPointLat(positions[0][0]);
-      setStartPointLon(positions[0][1]);
-      setEndPointLat(positions[positions.length - 1][0]);
-      setEndPointLon(positions[positions.length - 1][1]);
+      
       setPositionsState(positions);
-      setStartPoint([{ name: startPointName, address: startPointAdd, lat: positions[0][0], lon: positions[0][1] }]);
-      setEndPoint([{ name: endPointName, address: endPointAdd, lat: positions[positions.length - 1][0], lon: positions[positions.length - 1][1] }]);
+      // setStartPoint([{ name: startPointName, address: startPointAdd, lat: positions[0][0], lon: positions[0][1] }]);
+      // setEndPoint([{ name: endPointName, address: endPointAdd, lat: positions[positions.length - 1][0], lon: positions[positions.length - 1][1] }]);
       setDescription(gpx.tracks[0].desc);
       setDifficultyStr(gpx.tracks[0].type);
       setAscentStr(gpx.tracks[0].elevation.pos);
@@ -181,12 +212,12 @@ function HTAddHike(props) {
           setProvince(informations.address.county);
           setCountry(informations.address.country);
           setCity(informations.address.village);
-          setStartPointAdd(informations.display_name);
+          //setStartPointAdd(informations.display_name);
 
         })
       getInformation(positions[positions.length - 1][0], positions[positions.length - 1][1])
         .then(informations => {
-          setEndPointAdd(informations.display_name);
+          setInformationEnd(informations);
         })
     }
   }, [fileContents]);
@@ -248,12 +279,11 @@ function HTAddHike(props) {
       setShow(true);
 
     } else if (difficultyStr.length === 0) {
-
       setErrorMessage('The difficulty for the hike cannot be empty');
       setShow(true);
 
 
-    } else if (description.trim().length === 0) {
+    } else if (description.length === 0) {
 
       setErrorMessage('The description for the hike cannot be empty');
       setShow(true);
@@ -273,35 +303,31 @@ function HTAddHike(props) {
 
       setErrorMessage('The name, latitude and longitude of the ending point cannot be empty');
       setShow(true);
-      {/*
-        
-        if([title, lengthStr, expectedTimeStr, ascentStr, difficultyStr, description, region, province, startPointName, startPointLat, startPointLon,  endPointName,  endPointLat, endPointLon].some(t=> t.length ===0)){
-          setErrorMessage("All fields with the * should be filled");
-          setShow(true);
-      }else if(title.match(/^\s+$/)){
-          setErrorMessage("insert a valid name for the hut");
-          setShow(true);
-      }else if(!province.match(/^[a-zA-Z]+[a-zA-Z]+$/) || !region.match(/^[a-zA-Z]+[a-zA-Z]+$/) ){
-              setErrorMessage("insert a valid name for region and province");
-              setShow(true);
-              //check if the coordinate are with the comma or the point
-      }else if((!startPointLat.match(/^([0-9]*[.])?[0-9]+$/)) || !startPointLon.match(/^([0-9]*[.])?[0-9]+$/)  ) {
-              setErrorMessage("insert a valid value for the latitude and longitude of the starting point e.g 45.1253 ");
-              setShow(true);
-      }else if(!endPointLat.match(/^([0-9]*[.])?[0-9]+$/) || !endPointLon.match(/^([0-9]*[.])?[0-9]+$/)  ) {
-              setErrorMessage("insert a valid value for the latitude and longitude of the ending point e.g 45.1253 ");
-              setShow(true);
-      }else if(!ascentStr.match(/^([0-9]*[.])?[0-9]+$/)) {
-              setErrorMessage("insert a valid value for the ascent ");
-              setShow(true);
-      }else if(!expectedTimeStr.match(/^(([0-9][0-9])+[:]([0-9][0-9]))+$/)) {
-              setErrorMessage("insert a valid value for the expected time e.g (10:13, 00:10, 15:00)");
-              setShow(true);
+    }else if((hutId!== null && parkingId!== null && startPointLat!==null && startPointLon!==null) || (hutId!== null && parkingId!== null) || (hutId!== null  && startPointLat!==null && startPointLon!==null) ){
+        setErrorMessage('Choose only a starting point');
+      setShow(true);
+    }else if((hutIdEnd!== null && parkingIdEnd!== null && endPointLat!==null && endPointLon!==null) || (hutIdEnd!== null && parkingIdEnd!== null) || (hutIdEnd!== null  && endPointLat!==null && endPointLon!==null)){
+        setErrorMessage('Choose only a ending point');
+      setShow(true);
+    }else {
+    let start= {};
+    let end={};
+      if(hutId!==null){
+        start = {hutId : hutId, address: 'prova' };
+      }else if(parkingId !== null){
+        start = {parkingLotId: parkingId, address: 'rpova'};
+      }else{
 
-        */ }
+        start = { name: startPointName, address: information.display_name, lat: startPointLat, lon: startPointLon };
+      }
 
-
-    } else {
+      if(hutIdEnd!==null){
+        end = {hutId : hutIdEnd, address: 'prova' };
+      }else if(parkingIdEnd !== null){
+        end = {parkingLotId: parkingIdEnd, address: 'prova'};
+      }else{
+        end = { name: endPointName, address: endPointAdd, lat: endPointLat, lon: endPointLon }
+    }
       const length = parseFloat(lengthStr);
       let a = expectedTimeStr.split(':'); // split it at the colons
       let minutes = parseInt(a[0]) * 60 + parseInt(a[1]);
@@ -319,8 +345,8 @@ function HTAddHike(props) {
       formData.append('region', region);
       formData.append('province', province);
       formData.append('referencePoints', JSON.stringify(listReferencePoint));
-      formData.append('startPoint', JSON.stringify({ name: startPointName, address: startPointAdd, lat: startPointLat, lon: startPointLon }));
-      formData.append('endPoint', JSON.stringify({ name: endPointName, address: endPointAdd, lat: endPointLat, lon: endPointLon }));
+      formData.append('startPoint', JSON.stringify(start));
+      formData.append('endPoint', JSON.stringify(end));
       //controllare che questi ultimi due funzionino 
       formData.append('country', country);
       formData.append('city', city);
@@ -463,97 +489,31 @@ function HTAddHike(props) {
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                     />
-                  </Grid>
+                  </Grid> 
                   <Grid item xs={12} sm={12}><Typography variant="h8" gutterBottom>START POINT</Typography></Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      required id="startPointName"
-                      name="startPointName" label="Start Point Name"
-                      fullWidth autoComplete="startPointName"
-                      variant="standard" type="text"
-                      value={startPointName}
-                      onChange={(e) => setStartPointName(e.target.value)}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      id="startPointAdd"
-                      name="startPointAdd" label="Start  Point Address"
-                      fullWidth autoComplete="startPointAdd" variant="standard"
-                      value={startPointAdd}
-                      onChange={(e) => setStartPointAdd(e.target.value)}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      required
-                      name="startPointLat"
-                      label="Start Point Latitude"
-                      variant="standard"
-                      type="text"
-                      fullWidth
-                      value={startPointLat}
-                      onChange={(e) => setStartPointLat(e.target.value)}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      required
-                      name="startPointLon"
-                      label="Start Point Longitude"
-                      fullWidth
-                      variant="standard"
-                      min={0}
-                      value={startPointLon}
-                      onChange={(e) => setStartPointLon(e.target.value)}
-                    />
+                  <Grid item xs={12} sm={12}>
+                    <StartPointSelect startPointName={startPointName} setStartPointName={setStartPointName} 
+                                         setStartPointAdd={setStartPointAdd} startPointAdd={startPointAdd} 
+                                         setStartPointLat={setStartPointLat} setStartPointLon={setStartPointLon}
+                                         startPointLat={startPointLat} startPointLon={startPointLon} 
+                                         setStartPointType={setStartPointType} startPointType={startPointType}
+                                         setHutId={setHutId} hutId={hutId} setParkingId={setParkingId} parkingId={parkingId}
+                                          positionsState={positionsState} information={information}
+                                         ></StartPointSelect>
+                                        
                   </Grid>
                   <Grid item xs={12} sm={12}><Typography variant="h8" gutterBottom>END POINT</Typography></Grid>
-
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      required
-                      id="endPointName" name="endPointName"
-                      label="End Point Name" fullWidth
-                      autoComplete="endPointName" variant="standard"
-                      value={endPointName}
-                      onChange={(e) => setEndPointName(e.target.value)}
-                    />
-                  </Grid>
-
-
-
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      id="endPointAdd"
-                      name="endPointAdd" label=" End Point Address"
-                      fullWidth autoComplete="endPointAdd" variant="standard"
-                      value={endPointAdd}
-                      onChange={(e) => setEndPointAdd(e.target.value)}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      required
-                      name="endPointLat" label="End Point Latitude"
-                      fullWidth autoComplete="endPointLat" variant="standard"
-
-                      disabled
-                      id="outlined-disabled"
-                      value={endPointLat}
-                      onChange={(e) => setEndPointLat(e.target.value)}
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      required
-                      name="endPointLon" label="End Point Longitude"
-                      fullWidth autoComplete="endPointLon" variant="standard"
-                      disabled
-                      id="outlined-disabled"
-                      value={endPointLon}
-                      onChange={(e) => setEndPointLon(e.target.value)}
-                    />
+                  <Grid item xs={12} sm={12}>
+                    <EndPointSelect 
+                                         setEndPointType={setEndPointType} endPointType={endPointType}
+                                         setHutIdEnd={setHutIdEnd} hutId={hutIdEnd} setParkingIdEnd={setParkingIdEnd} parkingId={parkingIdEnd}
+                                         endPointAdd={endPointAdd} setEndPointAdd={setEndPointAdd}  endPointName={endPointName}
+                                         setEndPointName={setEndPointName} 
+                                         setEndPointLat={setEndPointLat} endPointLat={endPointLat} 
+                                         setEndPointLon={setEndPointLon}  informationEnd= {informationEnd}
+                                         endPointLon={endPointLon} positionsState={positionsState}
+                                         ></EndPointSelect>
+                                        
                   </Grid>
 
                   {
@@ -700,35 +660,10 @@ function HTAddHike(props) {
   );
 }
 
-export { HTAddHike }
+export { NewHikeStEnd }
 
 
-function DifficultySelect(props) {
-  return <>
 
-    <FormControl fullWidth required>
-      <InputLabel id="demo-simple-select-label">Difficulty</InputLabel>
-      <Select
-        labelId="demo-simple-select-label"
-        id="demo-seimple-select"
-        value={props.difficultyStr}
-        fullWidth
-        name="difficultyStr"
-        variant="standard"
-        label="difficultyStr"
-        onChange={ev => props.setDifficultyStr(ev.target.value)}
-      >
-        <MenuItem value={0}>
-          Tourist
-        </MenuItem>
-        <MenuItem value={1}>
-          Hiker
-        </MenuItem>
-        <MenuItem value={2}>
-          Professional Hiker
-        </MenuItem>
-      </Select>
-    </FormControl>
-  </>
-}
+
+
 
