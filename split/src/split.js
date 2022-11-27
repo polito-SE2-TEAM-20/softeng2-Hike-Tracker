@@ -103,7 +103,7 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
 
 async function prepareSchemaSql() {
   return new Promise((res, rej) => {
-    exec(`source .env && echo "$DB_PASSWORD" | pg_dump --no-owner --no-acl --username ${DB_USERNAME} hiking`, (error, stdout, stderr) => {
+    exec(`source .env && echo "$DB_PASSWORD" | pg_dump -s --no-owner --no-acl --username ${DB_USERNAME} hiking`, (error, stdout, stderr) => {
       if (error) {
         return rej(error);
       }
