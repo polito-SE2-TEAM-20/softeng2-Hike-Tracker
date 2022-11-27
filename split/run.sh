@@ -2,6 +2,8 @@ export GPX_ZIP="demo_gpx.zip"
 export DB_USERNAME="germangorodnev"
 export DB_NAME=hiking_demo
 
+rm -rf ./result/*
+
 # split geojsons to gpx, generate sql
 npm run split
 
