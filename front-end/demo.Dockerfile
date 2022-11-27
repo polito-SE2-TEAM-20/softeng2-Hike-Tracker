@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y git dumb-init
 
 RUN npm install -g serve
 
-ADD package*.json /srv/
+ADD package*.json .env.demo /srv/
 
 RUN npm install
 
