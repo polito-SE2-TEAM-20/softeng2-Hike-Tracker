@@ -36,5 +36,21 @@
     "role": [
       2
     ]
+  },
+  {
+    "title": "My Hikes",
+    "URL": "/myhikes",
+    "reqLogin": true,
+    "role": [
+      2
+    ]
+  },
+  {
+    "title": "New Hike",
+    "URL": "/newHike",
+    "reqLogin": true,
+    "role": [
+      2
+    ]
   }
 ]
