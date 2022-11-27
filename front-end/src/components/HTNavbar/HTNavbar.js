@@ -92,7 +92,7 @@ function HTNavbar(props) {
                             }}
                         >
                             {pages.map((page) => {
-                                if (props.isLoggedIn) {
+                                if (props.isLoggedIn && page.role.includes(props.user?.role)) {
                                     return (
                                         <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}>
                                             <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Bakbak One, display" }}>{page.title}</Typography>
@@ -129,7 +129,7 @@ function HTNavbar(props) {
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         {pages.map((page) => {
-                            if (props.isLoggedIn) {
+                            if (props.isLoggedIn && page.role.includes(props.user?.role)) {
                                 return (
                                     <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "18px", marginRight: "24px" }}
                                         key={page.title}
