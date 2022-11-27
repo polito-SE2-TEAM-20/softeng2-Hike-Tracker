@@ -9,24 +9,22 @@ import SingleHike from './components/single-hike/SingleHike.js';
 import HTMainPage from './routes/main-page/HTMainPage';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import API_Login from './Login/API_Login';
-import API_NewHike from './NewHike/API_Newhike';
 import { LocalGuide } from './Visuals/localGuide';
 import { NavigationBar } from './Visuals/Navbar'
-import API_SignUp from './SignUp/API_SignUp';
 import HTListOfHikes from './routes/list-of-hikes/HTListOfHikes';
-import API_NewHut from './NewHut/API_NewHut';
-import API_NewParkingLot from './NewParkingLot/API_NewParkingLot';
 import { HTAddHike } from './NewHike/HTAddHike';
 import { NewHutForm } from './NewHut/NewHut';
 import { NewParking } from './NewParkingLot/NewParking';
 import HTListOfHuts from './routes/list-of-huts/HTListOfHuts'
 import ShowHut from './routes/show-hut/ShowHut'
 
+import { NewHikeStEnd } from './NewHike/NewHikeStEnd';
 
 import LoginForm from './Login/Login';
 import {SignUpForm} from './SignUp/SignUp';
 import HTHutPage from './routes/hut-page/HTHutPage';
+
+import API from './API/API';
 
 
 
@@ -36,7 +34,6 @@ import {
   Route,
 } from "react-router-dom";
 import ShowHike from './routes/show-hike/ShowHike';
-import API_NewParking from './NewParkingLot/API_NewParkingLot';
 
 function App() {
   return (
@@ -61,7 +58,7 @@ function App2() {
 
 
   const doLogIn = (credentials, setShow, setErrorMessage) => {
-    API_Login.logIn(credentials)
+    API.logIn(credentials)
       .then(user => {
         setLoggedIn(true);
         setUser(user);
@@ -83,7 +80,7 @@ function App2() {
 
 
   const doLogOut = async (returnToHome="true") => {
-    await API_Login.logOut();
+    await API.logOut();
     setLoggedIn(false);
     setUser({});
     setRole();
@@ -91,7 +88,7 @@ function App2() {
   }
 
   const doRegister = (credentials, setShow, setErrorMessage, setInformationMessage, setShowInformation) => {
-    API_SignUp.signUp(credentials)
+    API.signUp(credentials)
       .then(user => {
         setShow(false);
         setShowInformation(true);
@@ -111,7 +108,7 @@ function App2() {
    }
 
    const addNewHut =(hut, setShow, setErrorMessage) =>{
-    API_NewHut.addNewHut(hut)
+    API.addNewHut(hut)
        .then(newHut => {
         setShow(false);
         console.log(newHut);
@@ -122,38 +119,6 @@ function App2() {
        })
    }
 
-{/*   const addNewParkingLot =(parking, setShow, setErrorMessage) =>{
-    API_NewParkingLot.addNewParkingLot(parking)
-       .then(newParking => {
-        setShow(false);
-        setErrorMessage('');
-        console.log(newParking);
-       })
-       .catch(err=>{
-        setShow(true);
-        setErrorMessage(err);
-       })
-   }
-
-
-
-
-  const addNewGpx = async (formData, hike) => {
-    try {
-      API_NewHike.addNewGpx(formData)
-        .then((newHike) => {
-          console.log((newHike));
-          console.log((newHike.gpxPath));
-          API_NewHike.addHike({ id: newHike.id, ...hike })
-            .then(() => { })
-            .catch(err => { throw err })
-        })
-    } catch (err) {
-      throw err;
-      //setMessage({msg: err, type: 'danger'});
-    }
-  }
-*/}
 
   return (
     <>
@@ -166,13 +131,14 @@ function App2() {
         <Route path="/localGuide" element={<LocalGuide isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
         <Route path="/navbar" element={<NavigationBar user={user} />} />
         <Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut}/>} />
-        <Route path="/newHike" element={<HTAddHike addNewGpx={API_NewHike.addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
+        <Route path="/newHike" element={<HTAddHike addNewGpx={API.addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
         <Route path="/signup" element={<SignUpForm doRegister={doRegister} />} />
         <Route path="/hutpage" element={<HTHutPage isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/newHut" element={<NewHutForm isLoggedIn={loggedIn} doLogOut={doLogOut} addNewHut={addNewHut}/>}/>
         <Route path="/showhike/:hikeid" element={<ShowHike user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />}/>
         <Route path="/showhut/:hutid" element={<ShowHut user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />}/>
-        <Route path="/newParking" element={<NewParking isLoggedIn={loggedIn} doLogOut={doLogOut} addNewParkingLot={API_NewParkingLot.addNewParkingLot}/>}/>
+        <Route path="/newParking" element={<NewParking isLoggedIn={loggedIn} doLogOut={doLogOut} addNewParkingLot={API.addNewParkingLot}/>}/>
+        <Route path="/newHikeStEnd" element={<NewHikeStEnd addNewGpx={API.addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
       </Routes>
     </>
   );
