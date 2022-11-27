@@ -46,7 +46,11 @@ async function getSingleHikeByID(hikeid) {
 //Antonio's API Function for getting list of hikes inserted by a local guide
 async function getHikesForLocalGuide() {
     let response = await fetch((APIURL + '/me/hikes'), {
-        method: 'GET'
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*',
+        }
     });
     if (response.ok) {
         const listOfHikes = await response.json();
