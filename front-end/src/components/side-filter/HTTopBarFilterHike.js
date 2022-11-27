@@ -141,22 +141,22 @@ const HTTopBarFilterHike = (props) => {
                 zIndex: "1", height: "70vh", marginTop: "25px", marginLeft: "auto", marginRight: "auto",
                 borderRadius: "8px", backgroundColor: "#fbfbfb"
             }}>
-                <Grid item xs={12} sm={12} sx={{display: "flex", justifyContent: "center"}}>
+                <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                     <HTDropdown dataset={regions} hint="Region" setFun={setRegion} val={region} />
                 </Grid>
-                <Grid item xs={12} sm={12} sx={{display: "flex", justifyContent: "center"}}>
+                <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                     <HTDropdown dataset={provinces} hint="Province" setFun={setProvince} val={province} />
                 </Grid>
-                <Grid item xs={12} sm={12} sx={{display: "flex", justifyContent: "center"}}>
+                <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                     <HTSlider value={length} setFun={setLength} max={maxLen} text="Length" />
                 </Grid>
-                <Grid item xs={12} sm={12} sx={{display: "flex", justifyContent: "center"}}>
+                <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                     <HTSlider value={expTime} setFun={setExpTime} max={maxExpTime} text="Expected time" />
                 </Grid>
-                <Grid item xs={12} sm={12} sx={{display: "flex", justifyContent: "center"}}>
+                <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                     <HTSlider value={diff} setFun={setDiff} max={maxDiff} text="Difficulty" />
                 </Grid>
-                <Grid item xs={12} sm={12} sx={{display: "flex", justifyContent: "center"}}>
+                <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                     <HTSlider value={asc} setFun={setAsc} max={maxAsc} text="Ascent" />
                 </Grid>
 
@@ -196,22 +196,22 @@ const HTTopBarFilterHike = (props) => {
                 zIndex: "1", height: "70vh", marginTop: "25px", marginLeft: "auto", marginRight: "auto",
                 borderRadius: "8px", backgroundColor: "#fbfbfb"
             }}>
-                <Grid item md={12} sx={{display: "flex", justifyContent: "center"}}>
+                <Grid item md={12} sx={{ display: "flex", justifyContent: "center" }}>
                     <HTDropdown dataset={regions} hint="Region" setFun={setRegion} val={region} />
                 </Grid>
-                <Grid item md={12} sx={{display: "flex", justifyContent: "center"}}>
+                <Grid item md={12} sx={{ display: "flex", justifyContent: "center" }}>
                     <HTDropdown dataset={provinces} hint="Province" setFun={setProvince} val={province} />
                 </Grid>
-                <Grid item md={12} sx={{display: "flex", justifyContent: "center"}}>
+                <Grid item md={12} sx={{ display: "flex", justifyContent: "center" }}>
                     <HTSlider value={length} setFun={setLength} max={maxLen} text="Length" />
                 </Grid>
-                <Grid item md={12} sx={{display: "flex", justifyContent: "center"}}>
+                <Grid item md={12} sx={{ display: "flex", justifyContent: "center" }}>
                     <HTSlider value={expTime} setFun={setExpTime} max={maxExpTime} text="Expected time" />
                 </Grid>
-                <Grid item md={12} sx={{display: "flex", justifyContent: "center"}}>
+                <Grid item md={12} sx={{ display: "flex", justifyContent: "center" }}>
                     <HTSlider value={diff} setFun={setDiff} max={maxDiff} text="Difficulty" />
                 </Grid>
-                <Grid item md={12} sx={{display: "flex", justifyContent: "center"}}>
+                <Grid item md={12} sx={{ display: "flex", justifyContent: "center" }}>
                     <HTSlider value={asc} setFun={setAsc} max={maxAsc} text="Ascent" />
                 </Grid>
 
