@@ -174,7 +174,7 @@ jobs:
   sonar-frontend:
     working_directory: ~/softeng2-Hike-Tracker/frontend
     docker:
-        - image: cimg/node:18.12.1
+      - image: cimg/node:18.12.1
     steps:
       - checkout:
           path: ~/softeng2-Hike-Tracker
