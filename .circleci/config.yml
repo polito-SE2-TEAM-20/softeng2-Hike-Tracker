@@ -169,7 +169,7 @@ jobs:
       - store_artifacts:
           path: test-results
       - sonarcloud/scan
-  # sonar-frontend:
+  ## sonar-frontend:
   #   working_directory: ~/softeng2-Hike-Tracker/frontend
   #   docker:
   #       - image: cimg/node@19.1.0
