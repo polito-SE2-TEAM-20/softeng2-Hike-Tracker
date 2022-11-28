@@ -116,7 +116,7 @@ function EndHut(props) {
             props.setEndPointLat(null);
             props.setEndPointLon(null);
             var loh = []
-        let radiusPoint= {lon: parseFloat(props.positionsState[props.positionsState.length - 1][1]), lat:props.positionsState[props.positionsState.length - 1][0], radiusKms:400}
+        let radiusPoint= {lon: parseFloat(props.positionsState[props.positionsState.length - 1][1]), lat: (props.positionsState[props.positionsState.length - 1][0]), radiusKms:400}
         const getHutsPlot = async () => {
             loh = await API.getListOfHutsAndParkingLots(radiusPoint);
         }
@@ -128,6 +128,17 @@ function EndHut(props) {
         });
         }
     }, [])
+
+
+    useEffect(() => {
+        if(props.hutIdEnd !== null || props.hutIdEnd!== ''){
+            let element = listHuts.filter((el)=> el.id === props.hutIdEnd);
+            console.log(element);
+            console.log(element[0]?.point.address);
+            props.setEndPointAdd(element[0]?.point.address)
+        }
+        
+    }, [props.hutIdEnd])
     
   
   return <>
@@ -139,7 +150,7 @@ function EndHut(props) {
           id="demo-seimple-select"
           value={props.hutIdEnd}
           fullWidth
-          name="hutId"
+          name="hutIdEnd"
           variant="standard"
           label="Hut"
           onChange={ev => {props.setHutIdEnd(ev.target.value)}}
@@ -177,7 +188,7 @@ function EndHut(props) {
                       fullWidth
                       disabled
                       variant="standard"
-                      value={el.point?.address}
+                      value={el.point.address}
                     />
                   </Grid>
           </MenuItem>
@@ -197,7 +208,7 @@ function EndParking(props) {
 
     useEffect(() => {
         if(props.startPointType===1){
-            props.setendPointAdd('');
+            props.setEndPointAdd('');
             props.setEndPointLat(null);
             props.setEndPointLon(null);
             var loh = []
@@ -213,6 +224,19 @@ function EndParking(props) {
         });
         }
     }, [])
+
+
+    useEffect(() => {
+        if(props.parkingIdEnd !== null || props.parkingIdEnd!== ''){
+            let element = listParking.filter((el)=> el.id === props.parkingIdEnd);
+            console.log(element);
+            console.log(element[0]?.point?.address);
+            props.setEndPointAdd(element[0]?.point?.address);
+            props.setEndPointLat(element[0]?.point?.position.coordinates[0]);
+            props.setEndPointLon(element[0]?.point?.position.coordinates[1]);
+
+        }
+    }, [props.parkingId])
     
   
   return <>
@@ -229,8 +253,7 @@ function EndParking(props) {
           label="Parking"
           onChange={ev => props.setParkingIdEnd(ev.target.value)}
         >
-            {listParking.length!==0 &&
-                
+            {
                 listParking.map((el) => { 
                     return(
                         
@@ -242,7 +265,30 @@ function EndParking(props) {
                       fullWidth
                       disabled
                       variant="standard"
-                      value={el.name}
+                      value={el?.point.name}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={3}>
+                    <TextField
+                      name="spots"
+                      label="Spots"
+                      fullWidth
+                      disabled
+                      variant="standard"
+                      value={el?.maxCars}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={3}>
+                    <TextField
+                      name="address"
+                      label="Address"
+                      fullWidth
+                      disabled
+                      variant="standard"
+                      value={el.point.address}
+
                     />
                   </Grid>
           </MenuItem>

@@ -1,20 +1,65 @@
 [
-  {
-    "title": "Browse hikes",
-    "URL": "/browsehikes",
-    "reqLogin": true,
-    "role": 0
-  },
-  {
-    "title": "List of hikes",
-    "URL": "/listofhikes",
-    "reqLogin": false,
-    "role": 0
-  },
-  {
-    "title": "List of huts",
-    "URL": "/listofhuts",
-    "reqLogin": true,
-    "role": 0
-  }
-]
+    {
+      "title": "Browse hikes",
+      "URL": "/browsehikes",
+      "reqLogin": true,
+      "role": [
+        0,
+        2
+      ]
+    },
+    {
+      "title": "List of hikes",
+      "URL": "/listofhikes",
+      "reqLogin": false,
+      "role": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    {
+      "title": "List of huts",
+      "URL": "/listofhuts",
+      "reqLogin": true,
+      "role": [
+        0, 2
+      ]
+    },
+    {
+      "title": "New Hike",
+      "URL": "/newHike",
+      "reqLogin": true,
+      "role": [
+        2
+      ]
+    },
+    {
+      "title": "New Hut",
+      "URL": "/newHut",
+      "reqLogin": true,
+      "role": [
+        2
+      ]
+    },
+    {
+      "title": "New Parking",
+      "URL": "/newParking",
+      "reqLogin": true,
+      "role": [
+        2
+      ]
+    },
+    {
+      "title": "My Hikes",
+      "URL": "/myhikes",
+      "reqLogin": true,
+      "role": [
+        -1
+      ]
+    }
+  ]
+

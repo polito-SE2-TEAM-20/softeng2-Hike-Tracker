@@ -50,7 +50,7 @@ function ReviewParkingForm(props) {
             <Typography variant="body2">{props.longitude}</Typography>
           </ListItem>
           <ListItem key={props.spots} sx={{ py: 1, px: 0 }}>
-            <ListItemText primary='Beds' />
+            <ListItemText primary='Spots' />
             <Typography variant="body2">{props.spots}</Typography>
           </ListItem>
       </List>

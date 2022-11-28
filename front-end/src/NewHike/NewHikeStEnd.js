@@ -260,38 +260,38 @@ function NewHikeStEnd(props) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (title.trim().length === 0) {
+    console.log(title);
+    if (title === '' || title === null) {
       setErrorMessage('The title cannot be empty');
       setShow(true);
-    } else if (lengthStr.length === 0) {
-
+    } else if (lengthStr === '' || lengthStr === null) {
       setErrorMessage('The length cannot be empty');
       setShow(true);
 
-    } else if (expectedTimeStr.trim().length === 0) {
+    } else if (expectedTimeStr === null || expectedTimeStr === '') {
 
       setErrorMessage('The time expected for the hike cannot be empty')
       setShow(true);
 
-    } else if (ascentStr.length === 0) {
+    } else if (ascentStr === '' || ascentStr === null ) {
 
       setErrorMessage('The ascent for the hike cannot be empty');
       setShow(true);
 
-    } else if (difficultyStr.length === 0) {
+    } else if (difficultyStr=== '' || difficultyStr=== null) {
       setErrorMessage('The difficulty for the hike cannot be empty');
       setShow(true);
 
 
-    } else if (description.length === 0) {
+    } else if (description === '' ||  description === null) {
 
       setErrorMessage('The description for the hike cannot be empty');
       setShow(true);
-    } else if (region.length === 0) {
+    } else if (region === '') {
 
       setErrorMessage('The rgion for the hike cannot be empty');
       setShow(true);
-    } else if (province.length === 0) {
+    } else if (province === '') {
 
       setErrorMessage('The province for the hike cannot be empty');
       setShow(true);
@@ -313,18 +313,18 @@ function NewHikeStEnd(props) {
     let start= {};
     let end={};
       if(hutId!==null){
-        start = {hutId : hutId, address: 'prova' };
+        start = {hutId : hutId, address: startPointAdd };
       }else if(parkingId !== null){
-        start = {parkingLotId: parkingId, address: 'rpova'};
+        start = {parkingLotId: parkingId, address: startPointAdd};
       }else{
 
         start = { name: startPointName, address: information.display_name, lat: startPointLat, lon: startPointLon };
       }
 
       if(hutIdEnd!==null){
-        end = {hutId : hutIdEnd, address: 'prova' };
+        end = {hutId : hutIdEnd, address: endPointAdd };
       }else if(parkingIdEnd !== null){
-        end = {parkingLotId: parkingIdEnd, address: 'prova'};
+        end = {parkingLotId: parkingIdEnd, address: endPointAdd};
       }else{
         end = { name: endPointName, address: endPointAdd, lat: endPointLat, lon: endPointLon }
     }
@@ -512,7 +512,7 @@ function NewHikeStEnd(props) {
                                          setEndPointLat={setEndPointLat} endPointLat={endPointLat} 
                                          setEndPointLon={setEndPointLon}  informationEnd= {informationEnd}
                                          endPointLon={endPointLon} positionsState={positionsState}
-                                         ></EndPointSelect>
+                     ></EndPointSelect>
                                         
                   </Grid>
 
@@ -524,8 +524,6 @@ function NewHikeStEnd(props) {
                           return (
                             <>
                               <>
-
-
                                 <Grid item xs={12} sm={3.5}>
                                   <TextField id="referencename" name="referencename"
                                     label="Reference Point Name" fullWidth
@@ -652,7 +650,7 @@ function NewHikeStEnd(props) {
             ) : (<h1></h1>)
           }
           <Grid sx={{ p: 2 }}>
-            <Map positionsState={positionsState} setPuntiDaTrack={setPuntiDaTrack} puntiDaTrack={puntiDaTrack} referencePoint={referencePoint} setReferencePoint={setReferencePoint} listReferencePoint={listReferencePoint} />
+            <Map startPointLat ={startPointLat} startPointLon={startPointLon} endPointLat={endPointLat} endPointLon={endPointLon} positionsState={positionsState} setPuntiDaTrack={setPuntiDaTrack} puntiDaTrack={puntiDaTrack} referencePoint={referencePoint} setReferencePoint={setReferencePoint} listReferencePoint={listReferencePoint} />
           </Grid>
         </Grid>
       </Grid>

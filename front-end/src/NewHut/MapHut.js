@@ -44,10 +44,11 @@ async function getInformation(lat, lon) {
       setLongitude(e.latlng.lng);
       setLatitude(e.latlng.lat);
       let punti = e.latlng;
+      {/*}
   popup
       .setLatLng(punti)
       .setContent("You clicked the map at " + punti.toString())
-      .openOn(map);
+    .openOn(map);*/}
   });
 
           useEffect(()=>{
@@ -61,6 +62,18 @@ async function getInformation(lat, lon) {
           })
             }
         }, [latitude, longitude])
+{/*
+        useEffect(() => {
+          if ((latitude===null || latitude==='') && (longitude===null || longitude ==='')) { 
+            return; 
+          }else{
+            map.flyTo([latitude, longitude])
+          }
+        
+      
+          
+      
+      }, [latitude, longitude]);*/}
   
   
   }
@@ -75,7 +88,7 @@ const MapHut = props => {
         <MapContainer 
                     
                     className='map'
-                    center={[45.4408474, 12.3155151]}
+                    center={props.latitude? [props.latitude, props.longitude] : [45.4408474, 12.3155151]}
                     zoom={13}
                     scrollWheelZoom={true}
                 >
@@ -87,9 +100,10 @@ const MapHut = props => {
                             <Marker
                                 key={props.latitude}
                                 position={[props.latitude, props.longitude]}>
+                                  
                                 <Popup position={[props.latitude, props.longitude]}>
                                    You selected here {props.latitude} , {props.longitude}
-                                </Popup>
+                        </Popup>
                             </Marker>
                         </>)
                     }

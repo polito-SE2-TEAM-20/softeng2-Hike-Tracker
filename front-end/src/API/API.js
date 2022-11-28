@@ -1,4 +1,4 @@
-const APIURL = process.env.REACT_APP_API_BASE || 'https://hiking-backend.germangorodnev.com';
+export const APIURL = process.env.REACT_APP_API_BASE || 'https://hiking-backend.germangorodnev.com';
 
 async function getListOfHikes() {
     let response = await fetch((APIURL + '/hikes'), {
@@ -46,7 +46,11 @@ async function getSingleHikeByID(hikeid) {
 //Antonio's API Function for getting list of hikes inserted by a local guide
 async function getHikesForLocalGuide() {
     let response = await fetch((APIURL + '/me/hikes'), {
-        method: 'GET'
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*',
+        }
     });
     if (response.ok) {
         const listOfHikes = await response.json();
@@ -195,6 +199,8 @@ async function logIn(credentials) {
 }
 
 async function logOut() {
+    //Erfan: Here we need to call an API to logout from server too. the previous token should not be working.
+    //Clearing the local storage should not be handled here!
     localStorage.removeItem('token');
     localStorage.removeItem('user');
 }

@@ -72,9 +72,10 @@ function NewParking(props) {
 
   const handleNext = () => {
     if(activeStep === (steps.length - 2)){
-        if([name, latitude, longitude, country, region, province, city, address].some(t=> t.length ===0)){
+        if([name, latitude, longitude, country, region, province, city, address, spots].some(t=> t.length ===0)){
         setErrorMessage("All fields with the * should be filled");
         setShow(true);
+        {/*
     }else if(name.toString().match(/^\s+$/)){
         setErrorMessage("insert a valid name for the hut");
         setShow(true);
@@ -87,10 +88,7 @@ function NewParking(props) {
             setShow(true);
     }else if(!longitude.toString().match(/^([0-9]*[.])?[0-9]+$/)) {
             setErrorMessage("insert a valid value for the longitude ");
-            setShow(true);
-        }else if([spots].some(t=> t.length ===0)){
-                setErrorMessage("All fields with the * should be filled");
-                setShow(true);
+    setShow(true);*/}
 }else{
         setShow(false);
         setActiveStep(activeStep + 1);
@@ -125,7 +123,7 @@ function NewParking(props) {
   };
 
   const goBackLocalGuide = () => {
-    navigate('/localGuide');
+    navigate('/');
   };
 
   const handleBack = () => {
@@ -152,14 +150,11 @@ function NewParking(props) {
   const gotoLogin = () => {
     navigate("/login", { replace: false })
   }
-  const gotoLocalGuide = () => {
-    navigate("/localGuide", { replace: false })
-  }
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} navigate={gotoLocalGuide} />
+      <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
       <Grid container spacing={0} sx={{ backgroundImage: `url(${login})`, minHeight: "100vh", height: "100%", minWidth: "100vw", width: "100%" }}>
       <Container component="main" maxWidth="sm" sx={{ mb: 4 , mt:8 }}>
         <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }} >
@@ -182,7 +177,7 @@ function NewParking(props) {
                 Your new parking lot {name} has been inserted
               </Typography>
               <Button onClick={goBackLocalGuide} sx={{ mt: 3, ml: 1 }}>
-                    Go to my page
+                    Go Back
                   </Button>
             </React.Fragment>
           ) : (

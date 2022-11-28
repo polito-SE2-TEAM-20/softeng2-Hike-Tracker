@@ -9,7 +9,6 @@ import SingleHike from './components/single-hike/SingleHike.js';
 import HTMainPage from './routes/main-page/HTMainPage';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { LocalGuide } from './Visuals/localGuide';
 import { NavigationBar } from './Visuals/Navbar'
 import HTListOfHikes from './routes/list-of-hikes/HTListOfHikes';
 import { HTAddHike } from './NewHike/HTAddHike';
@@ -34,6 +33,8 @@ import {
   Route,
 } from "react-router-dom";
 import ShowHike from './routes/show-hike/ShowHike';
+import { MyHutsPage } from './routes/hut/MyHutsPage';
+import { MyHikesPage } from './routes/my-hikes/MyHikesPage';
 
 function App() {
   return (
@@ -46,7 +47,6 @@ function App() {
 function App2() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState({});
-  const [role, setRole] = useState();
   const navigate = useNavigate();
 
   useEffect(()=>{
@@ -63,12 +63,7 @@ function App2() {
         setLoggedIn(true);
         setUser(user);
         setShow(false);
-        if(user.user.role === 0){
-          navigate('/browsehikes')
-        }else if(user.user.role=== 2){
-          navigate('/localGuide');
-        }
-        setRole(user.user.role);
+        navigate('/')
       })
       .catch(err => {
         console.log(err);
@@ -81,9 +76,9 @@ function App2() {
 
   const doLogOut = async (returnToHome="true") => {
     await API.logOut();
+    localStorage.clear();
     setLoggedIn(false);
     setUser({});
-    setRole();
     navigate('/');
   }
 
@@ -128,16 +123,17 @@ function App2() {
         <Route path="/listofhuts" element={<HTListOfHuts user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/browsehikes" element={<HTBrowseHikes user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/singlehike" element={<SingleHike user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
-        <Route path="/localGuide" element={<LocalGuide isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
         <Route path="/navbar" element={<NavigationBar user={user} />} />
         <Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut}/>} />
-        <Route path="/newHike" element={<HTAddHike addNewGpx={API.addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
+        <Route path="/newHike" element={<HTAddHike user={user?.user} addNewGpx={API.addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/signup" element={<SignUpForm doRegister={doRegister} />} />
         <Route path="/hutpage" element={<HTHutPage isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
-        <Route path="/newHut" element={<NewHutForm isLoggedIn={loggedIn} doLogOut={doLogOut} addNewHut={addNewHut}/>}/>
+        <Route path="/newHut" element={<NewHutForm user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} addNewHut={addNewHut}/>}/>
+        <Route path="/myHuts" element={<MyHutsPage isLoggedIn={loggedIn} doLogOut={doLogOut}/>}/>
+        <Route path="/myHikes" element={<MyHikesPage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />}/>
         <Route path="/showhike/:hikeid" element={<ShowHike user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />}/>
         <Route path="/showhut/:hutid" element={<ShowHut user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />}/>
-        <Route path="/newParking" element={<NewParking isLoggedIn={loggedIn} doLogOut={doLogOut} addNewParkingLot={API.addNewParkingLot}/>}/>
+        <Route path="/newParking" element={<NewParking user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} addNewParkingLot={API.addNewParkingLot}/>}/>
         <Route path="/newHikeStEnd" element={<NewHikeStEnd addNewGpx={API.addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
       </Routes>
     </>
