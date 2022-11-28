@@ -9,7 +9,9 @@ import { AppModule } from './app.module';
 import { prepareApp } from './prepare-app';
 
 async function bootstrap() {
+  console.log({ UPLOAD_PATH });
   if (isTest()) {
+    console.log('ensuring that', UPLOAD_PATH, 'exists');
     await ensureDir(UPLOAD_PATH, { mode: 0o777 });
   }
 

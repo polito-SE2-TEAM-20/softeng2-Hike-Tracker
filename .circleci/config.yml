@@ -145,6 +145,7 @@ jobs:
           POSTGRES_USER: circleci
           POSTGRES_DB: circleci
           POSTGRES_HOST_AUTH_METHOD: "trust"
+      - image: sonarsource/sonarcloud@1.0.3
     environment:
       NODE_ENV: test
       TEST_DB_HOST: localhost
@@ -164,6 +165,7 @@ jobs:
           name: e2e tests
           command: |
             mkdir -p test-results
+            mkdir -p uploads/gpx
             npm run test:e2e:cov
       - store_test_results:
           path: test-results
