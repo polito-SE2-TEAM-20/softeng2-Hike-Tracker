@@ -77,7 +77,7 @@ function HutDescription(props) {
                         onChange={(e) => { props.setEmailAddress(e.target.value) }}
                     />
                 </Grid>
-            
+            {/*
                 <Grid item xs={12} >
                     <TextField
                         required
@@ -95,7 +95,7 @@ function HutDescription(props) {
                         value={props.description}
                         onChange={(e) => { props.setDescription(e.target.value) }}
                     />
-                </Grid>
+                    </Grid>*/}
             </Grid>
         </React.Fragment>
     );

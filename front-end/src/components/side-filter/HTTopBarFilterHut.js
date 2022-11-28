@@ -17,8 +17,6 @@ const HTTopBarFilterHut = (props) => {
 
     const getMax = (a, b) => Math.max(a, b);
     const resetAllFields = () => {
-        setPrice([0, maxPrice])
-        setNumOfBeds([0, maxNumOfBeds])
         props.setFilter(
             {
                 "priceMin": null,
@@ -33,10 +31,14 @@ const HTTopBarFilterHut = (props) => {
         setMaxPrice(props?.listOfHuts.map(x => x.price).reduce(getMax, 0))
         setMaxNumOfBeds(props?.listOfHuts.map(x => x.numberOfBeds).reduce(getMax, 0))
         setMaxAltitude(props?.listOfHuts.map(x => x.altitude).reduce(getMax, 0))
-        setPrice([0, maxPrice])
-        setNumOfBeds([0, maxNumOfBeds])
-        setAltitude([0, maxAltitude])
     }, [props.listOfHuts])
+
+    useEffect(() => {
+        setPrice([0, maxPrice])
+    }, [maxPrice])
+    useEffect(() => {
+        setNumOfBeds([0, maxNumOfBeds])
+    }, [maxNumOfBeds])
 
     return (
         <>

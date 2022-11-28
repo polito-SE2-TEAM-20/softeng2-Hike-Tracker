@@ -20,6 +20,7 @@ import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import FormGroup from '@mui/material/FormGroup';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import Stack from "@mui/material/Stack";
 
 import WarningIcon from '@mui/icons-material/Warning';
@@ -95,6 +96,20 @@ function HTAddHike(props) {
   const hiddenFileInput = React.useRef(null);
   const handleClick = event => {
     hiddenFileInput.current.click();
+
+  setTitle(''); setLengthStr(''); setAscentStr(''); setExpectedTimeStr('');
+  setDifficultyStr(0); setCountry(''); setRegion('');
+  setProvince(''); setCity('');  setDescription(''); setPositionsState([]); setErrorMessage(''); setShow('');
+  setPuntiDaTrack([]); setInformation(''); setStartPoint({ name: "", address: null, lat: "", lon: "" }); setStartPointLon('');
+    setStartPointLat(''); setStartPointName('Start Point'); setStartPointAdd('');
+  setEndPoint({ name: "", address: null, lat: "", lon: "" });
+  setEndPointLat('');
+  setEndPointLon('');
+  setEndPointName('End Point');
+  setEndPointAdd('');
+  setNewReferencePoint(false);
+  setListReferencePoint([]); setReferencePoint({});  setReferencePointLat(' '); setReferencePointLon(' '); 
+  setReferencePointName(''); setReferencePointAdd('');
   };
 
 
@@ -102,6 +117,7 @@ function HTAddHike(props) {
     const fileUploaded = event.target.files[0];
     setIsFilePicked(true);
     setSelectedFile(fileUploaded);
+
 
     const reader = new FileReader()
     reader.onload = (e) => {
@@ -116,11 +132,11 @@ function HTAddHike(props) {
   useEffect(() => {
 
     if (puntiDaTrack?.length !== 0) {
-      setNewReferencePoint(true);
+      
     }
-    if (referencePoint) {
-
-      setReferencePointLat(referencePoint.lat);
+    if (referencePoint!== {} && referencePoint!== null && referencePoint!=='') {
+      setNewReferencePoint(true);
+            setReferencePointLat(referencePoint.lat);
       setReferencePointLon(referencePoint.lon);
     }
   }, [puntiDaTrack, referencePoint])
@@ -199,6 +215,24 @@ function HTAddHike(props) {
     setListReferencePoint(listReferencePoint.filter(el => el.name !== prova.name));
   }
 
+  function handleEditReferencePoint(n) {
+    const indexOfObject = listReferencePoint.findIndex(object => object.name === n)
+    const elemento = listReferencePoint[indexOfObject]
+    console.log(listReferencePoint.filter(el => el.name === elemento.name))
+    console.log(listReferencePoint.filter(el => el.name === elemento.name)[0].lat);
+    setReferencePointLat(listReferencePoint.filter(el => el.name === elemento.name)[0].lat);
+    console.log(listReferencePoint.filter(el => el.name === elemento.name)[0].lon);
+    setReferencePointLon(listReferencePoint.filter(el => el.name === elemento.name)[0].lon);
+    console.log(listReferencePoint.filter(el => el.name === elemento.name)[0].name);
+    setReferencePointName(listReferencePoint.filter(el => el.name === elemento.name)[0].name);
+    console.log(listReferencePoint.filter(el => el.name === elemento.name)[0].address);
+  setReferencePointAdd(listReferencePoint.filter(el => el.name === elemento.name)[0].address);
+  setNewReferencePoint(true)
+
+const prova = listReferencePoint.splice(indexOfObject, 1);
+  setListReferencePoint(listReferencePoint.filter(el => el.name !== prova.name));
+  }
+
   const handleListreferencePoints = (event) => {
     const indexOfReference = listReferencePoint.filter(object => (object.lat === referencePointLat && object.lon === referencePointLon));
     let prova = false;
@@ -219,58 +253,67 @@ function HTAddHike(props) {
       setErrorMessage("Coordinates are not part of the track");
       setShow(true);
     } else {
-      setListReferencePoint([...listReferencePoint, { name: referencePointName, address: referencePointAdd, lat: referencePointLat, lon: referencePointLon }]);
+      let stringaNome = referencePointName.toString();
+      setListReferencePoint([...listReferencePoint, { name: stringaNome, address: referencePointAdd, lat: referencePointLat, lon: referencePointLon }]);
+
       setNewReferencePoint(false);
       setReferencePoint(null);
+      setReferencePointLat('');
+      setReferencePointLon('');
+      setReferencePointAdd('');
+      setReferencePointName('');
+
+
     }
   }
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (title.trim().length === 0) {
+    if (title === null || title === '' || title=== undefined) {
       setErrorMessage('The title cannot be empty');
       setShow(true);
-    } else if (lengthStr.length === 0) {
+    } else if (lengthStr=== 0 || lengthStr=== '' || lengthStr=== undefined ) {
 
       setErrorMessage('The length cannot be empty');
       setShow(true);
 
-    } else if (expectedTimeStr.trim().length === 0) {
+   
 
-      setErrorMessage('The time expected for the hike cannot be empty')
-      setShow(true);
-
-    } else if (ascentStr.length === 0) {
+    } else if (ascentStr === 0 || ascentStr === '' || ascentStr === undefined) {
 
       setErrorMessage('The ascent for the hike cannot be empty');
       setShow(true);
-
-    } else if (difficultyStr.length === 0) {
-
-      setErrorMessage('The difficulty for the hike cannot be empty');
+    
+    } else if (expectedTimeStr === 0 || expectedTimeStr === null || expectedTimeStr === undefined || expectedTimeStr === '') {
+      setErrorMessage('The time expected for the hike cannot be empty')
       setShow(true);
 
-
-    } else if (description.trim().length === 0) {
+    } else if (difficultyStr=== null || difficultyStr=== '' || difficultyStr=== undefined) {
+      setErrorMessage('The difficulty for the hike cannot be empty');
+      setShow(true);
+    } else if (description  === null || description=== '' || description=== undefined) {
 
       setErrorMessage('The description for the hike cannot be empty');
       setShow(true);
-    } else if (region.length === 0) {
-
+    } else if (region=== null || region === '' || region === undefined) {
+      console.log('The rgion for the hike cannot be empty')
       setErrorMessage('The rgion for the hike cannot be empty');
       setShow(true);
-    } else if (province.length === 0) {
+    } else if (province === null|| province=== '' || province === undefined) {
 
       setErrorMessage('The province for the hike cannot be empty');
       setShow(true);
-    } else if (startPointName === '' || startPointLat === '' || endPointLon === '') {
+    } else if (startPointName === '' || startPointLat === '' || startPointLon === '' ||startPointName === null || startPointLat === null || startPointLon === null || startPointAdd === '' || startPointAdd === null) {
 
       setErrorMessage('The name, latitude and longitude of the starting point cannot be empty');
       setShow(true);
-    } else if (endPointName === '' || endPointLat === '' || endPointLon === '') {
+    } else if (endPointName === '' || endPointLat === '' || endPointLon === '' || endPointName === null || endPointLat === null || endPointLon === null || endPointAdd==='' || endPointAdd=== null) {
 
       setErrorMessage('The name, latitude and longitude of the ending point cannot be empty');
       setShow(true);
+    }else if((!startPointLat.toString().match(/^(\+|-)?([0-9]*[.])?[0-9]+$/)) || !startPointLon.toString().match(/^(\+|-)?([0-9]*[.])?[0-9]+$/)  ) {
+              setErrorMessage("insert a valid value for the latitude and longitude of the starting point e.g 45.1253 ");
+              setShow(true);
       {/*
         
         if([title, lengthStr, expectedTimeStr, ascentStr, difficultyStr, description, region, province, startPointName, startPointLat, startPointLon,  endPointName,  endPointLat, endPointLon].some(t=> t.length ===0)){
@@ -292,9 +335,7 @@ function HTAddHike(props) {
       }else if(!ascentStr.match(/^([0-9]*[.])?[0-9]+$/)) {
               setErrorMessage("insert a valid value for the ascent ");
               setShow(true);
-      }else if(!expectedTimeStr.match(/^(([0-9][0-9])+[:]([0-9][0-9]))+$/)) {
-              setErrorMessage("insert a valid value for the expected time e.g (10:13, 00:10, 15:00)");
-              setShow(true);
+      }
 
         */ }
 
@@ -323,7 +364,23 @@ function HTAddHike(props) {
       formData.append('country', country);
       formData.append('city', city);
       props.addNewGpx(formData).catch((err) => { setErrorMessage(err); setShow(true) })
-      navigate('/localGuide');
+      setSelectedFile(null);
+  setFileContents(null);
+  setIsFilePicked(false);
+  setTitle(''); setLengthStr(''); setAscentStr(''); setExpectedTimeStr('');
+setDifficultyStr(0); setCountry(''); setRegion('');
+setProvince(''); setCity('');  setDescription(''); setPositionsState([]); setErrorMessage(''); setShow('');
+setPuntiDaTrack([]); setInformation(''); setStartPoint({ name: "", address: null, lat: "", lon: "" }); setStartPointLon('');
+  setStartPointLat(''); setStartPointName('Start Point'); setStartPointAdd('');
+setEndPoint({ name: "", address: null, lat: "", lon: "" });
+setEndPointLat('');
+setEndPointLon('');
+setEndPointName('End Point');
+setEndPointAdd('');
+setNewReferencePoint(false);
+setListReferencePoint([]); setReferencePoint({});  setReferencePointLat(' '); setReferencePointLon(' '); 
+setReferencePointName(''); setReferencePointAdd('');
+navigate('/'); 
     }
 
   }
@@ -535,9 +592,6 @@ function HTAddHike(props) {
                       required
                       name="endPointLat" label="End Point Latitude"
                       fullWidth autoComplete="endPointLat" variant="standard"
-
-                      disabled
-                      id="outlined-disabled"
                       value={endPointLat}
                       onChange={(e) => setEndPointLat(e.target.value)}
                     />
@@ -547,8 +601,6 @@ function HTAddHike(props) {
                       required
                       name="endPointLon" label="End Point Longitude"
                       fullWidth autoComplete="endPointLon" variant="standard"
-                      disabled
-                      id="outlined-disabled"
                       value={endPointLon}
                       onChange={(e) => setEndPointLon(e.target.value)}
                     />
@@ -564,7 +616,7 @@ function HTAddHike(props) {
                               <>
 
 
-                                <Grid item xs={12} sm={3.5}>
+                                <Grid item xs={12} sm={2}>
                                   <TextField id="referencename" name="referencename"
                                     label="Reference Point Name" fullWidth
                                     autoComplete="referencename" variant="standard"
@@ -573,7 +625,6 @@ function HTAddHike(props) {
                                 </Grid>
                                 <Grid item xs={12} sm={3.5}>
                                   <TextField
-                                    required
                                     name="referencePointAdd"
                                     label="Reference Point Address"
                                     fullWidth
@@ -586,7 +637,6 @@ function HTAddHike(props) {
                                   <TextField name="referencelat"
                                     label="Reference Point Latitude" fullWidth
                                     autoComplete="referencelat" variant="standard"
-                                    disabled
 
                                     id="outlined-disabled"
                                     value={reference.lat}
@@ -599,17 +649,21 @@ function HTAddHike(props) {
                                     fullWidth
                                     autoComplete="referencePointLon"
                                     variant="standard"
-                                    disabled
                                     id="outlined-disabled"
                                     value={reference.lon}
                                   />
                                 </Grid>
-
+                                <Grid item xs={12} sm={1} mt={2}>
+                                  <Button edge="end" onClick={() => handleEditReferencePoint(reference.name)} >
+                                    <EditIcon />
+                                  </Button>
+                                </Grid>
+                                
                                 <Grid item xs={12} sm={1} mt={2}>
                                   <Button edge="end" onClick={() => handleDeleteReferencePoint(reference.name)} >
                                     <DeleteIcon />
                                   </Button>
-                                </Grid>
+                          </Grid>
 
                               </>
                             </>
@@ -644,7 +698,7 @@ function HTAddHike(props) {
 
                         <Grid item xs={12} sm={3.5}>
                           <TextField
-                            required id="referencePointAdd"
+                            id="referencePointAdd"
                             name="referencePointAdd" label="Reference Point Address"
                             fullWidth autoComplete="referencePointAdd" variant="standard"
                             value={referencePointAdd}
