@@ -240,8 +240,8 @@ workflows:
           filters:
             branches:
               only: main
-      - sonar-frontend:
-          context: SonarCloud
-          filters:
-            branches:
-              only: main
+      # - sonar-frontend:
+      #     context: SonarCloud
+      #     filters:
+      #       branches:
+      #         only: main
