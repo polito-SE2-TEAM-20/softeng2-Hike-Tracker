@@ -1,7 +1,6 @@
 version: 2.1
 
 orbs:
-  node: cimg/node@19.1.0
   docker: circleci/docker@2.0.3
   sonarcloud: sonarsource/sonarcloud@1.0.3
 
