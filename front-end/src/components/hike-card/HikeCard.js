@@ -36,7 +36,7 @@ const HikeCard = (props) => {
                     {props.hike.province} {bull} {props.hike.region}
                 </Typography>
                 <Typography variant="body2">
-                    Length: {(Math.round(props.hike.length * 10) / 10000).toFixed(2)}km<br />
+                    Length: {(Math.round(props.hike.length)).toFixed(2)}km<br />
                     Expected time: {fromMinutesToHours(props.hike.expectedTime)}<br />
                     Ascent: {props.hike.ascent}m<br />
                 </Typography>

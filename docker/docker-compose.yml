@@ -37,6 +37,11 @@ services:
       # - POSTGRES_DB=$DB_NAME
     volumes:
       - ./.docker/pg-data:/var/lib/postgresql/data
+    # healthcheck:
+    #   test: /usr/bin/pg_isready
+    #   interval: 5s
+    #   timeout: 10s
+    #   retries: 20
     networks:
       - stacknet
     ports:
