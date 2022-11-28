@@ -3,10 +3,10 @@ import API from '../../API/API.js';
 import { useEffect, useState } from 'react';
 import HTNavbar from '../../components/HTNavbar/HTNavbar';
 import { Grid, Typography } from '@mui/material';
-import HikeCard from '../../components/hike-card/HikeCard';
 import HikeItemLoadingEffect from './HikeItemLoadingEffect';
 import emptyStateImage from '../../Assets/empty-state.jpg'
 import { useNavigate } from 'react-router';
+import HikeCard from './HikeCard.js';
 
 
 function MyHikesPage(props) {
@@ -43,7 +43,7 @@ function MyHikesPage(props) {
                     myHikes.map(hike => {
                         return (
                             <Grid item style={{ marginLeft: "8px", marginRight: "8px", marginBottom: "4px", marginTop: "4px" }}>
-                                <HikeCard hike={hike} editable="true" />
+                                <HikeCard hike={hike} editable={false} />
                             </Grid>
                         );
                     })
