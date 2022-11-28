@@ -1,6 +1,7 @@
 version: 2.1
 
 orbs:
+  node: circleci/node@5.0.0
   docker: circleci/docker@2.0.3
   sonarcloud: sonarsource/sonarcloud@1.0.3
 
@@ -157,7 +158,6 @@ jobs:
       - checkout:
           path: ~/softeng2-Hike-Tracker
       - node/install-packages:
-          cache-path: ~/project/node_modules
           override-ci-command: npm install
       - run:
           name: e2e tests
