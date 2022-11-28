@@ -145,7 +145,6 @@ jobs:
           POSTGRES_USER: circleci
           POSTGRES_DB: circleci
           POSTGRES_HOST_AUTH_METHOD: "trust"
-      - image: sonarsource/sonarcloud@1.0.3
     environment:
       NODE_ENV: test
       TEST_DB_HOST: localhost
@@ -172,6 +171,7 @@ jobs:
       - store_artifacts:
           path: test-results
       - sonarcloud/scan
+
   ## sonar-frontend:
   #   working_directory: ~/softeng2-Hike-Tracker/frontend
   #   docker:
