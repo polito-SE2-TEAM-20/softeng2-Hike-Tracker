@@ -1,8 +1,9 @@
 version: 2.1
 
 orbs:
-  node: circleci/node@5.0.0
+  node: cimg/node@19.1.0
   docker: circleci/docker@2.0.3
+  sonarcloud: sonarsource/sonarcloud@1.0.3
 
 jobs:
 # demo
@@ -133,7 +134,32 @@ jobs:
           fingerprints:
             - "44:ee:6c:d8:1a:2b:a7:e3:20:b1:a2:84:89:74:0e:b0"
       - run: ssh -o "StrictHostKeyChecking=no" ${DEPLOY_USER}@${SERVER_IP} docker service update hiking_backend --image ghcr.io/polito-se2-team-20/backend:${CIRCLE_SHA1} --with-registry-auth
-
+# sonarcloud
+  sonar-backend:
+    working_directory: ~/softeng2-Hike-Tracker/backend
+    docker:
+        - image: node
+      steps:
+        - checkout:
+            path: ~/softeng2-Hike-Tracker
+        - run:
+            name: Install deps
+            command: npm install
+        - run:
+            name: Run tests
+            run: npm run test:e2e:cov
+        - sonarcloud/scan
+  sonar-frontend:
+    working_directory: ~/softeng2-Hike-Tracker/frontend
+    docker:
+        - image: node
+      steps:
+        - checkout:
+            path: ~/softeng2-Hike-Tracker
+        - run:
+            name: Install deps
+            command: npm install
+        - sonarcloud/scan
 workflows:
   demo-db:
     jobs:
@@ -187,3 +213,15 @@ workflows:
           filters:
             branches:
               only: frontend
+  sonarcloud:
+    jobs:
+      - sonar-backend:
+          context: SonarCloud
+          filters:
+            branches:
+              only: main
+      - sonar-frontend:
+          context: SonarCloud
+          filters:
+            branches:
+              only: main
