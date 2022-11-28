@@ -91,9 +91,6 @@ function NewHutForm(props) {
         if([name, latitude, longitude, region, province, address, city].some(t=> t.length ===0)){
         setErrorMessage("All fields with the * should be filled");
         setShow(true);
-    }else if(name.match(/^\s+$/)){
-        setErrorMessage("insert a valid name for the hut");
-        setShow(true);
     {/*else if(!province.match(/^[a-zA-Z]+[a-zA-Z]+$/) || !region.match(/^[a-zA-Z]+[a-zA-Z]+$/) ){
             setErrorMessage("insert a valid name for region and province");
             setShow(true);
@@ -142,7 +139,7 @@ function NewHutForm(props) {
 
   };
   const goBackLocalGuide = () => {
-    navigate('/localGuide');
+    navigate('/');
   };
 
   const handleBack = () => {
@@ -199,7 +196,7 @@ function NewHutForm(props) {
                 Your new hut {name} has been inserted
               </Typography>
               <Button onClick={goBackLocalGuide} sx={{ mt: 3, ml: 1 }}>
-                    Go to my page
+                    Go Back
                   </Button>
             </React.Fragment>
           ) : (

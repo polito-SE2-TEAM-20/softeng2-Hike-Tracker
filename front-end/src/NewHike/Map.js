@@ -130,7 +130,8 @@ const Map = props => {
                     className='map'
                      center={props.positionsState.length ? props.positionsState.length/2 : [45.4408474, 12.3155151]}
                     zoom={13}
-                    scrollWheelZoom={false}
+                    scrollWheelZoom={{ xs: false, sm: false, md: false, lg: true, xl: true }} zoomControl={false}
+                style={{ width: "auto", minHeight: "100vh", height: "100%" }}
                 >
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                     <Polyline
@@ -145,9 +146,10 @@ const Map = props => {
                             <Marker
                                 key={el.name}
                                 position={[el.lat, el.lon]}>
+                                  {/*
                                 <Popup position={[el.lat, el.lon]}>
                                     <HikePopup elem={el.name} />
-                                </Popup>
+                        </Popup>*/}
                             </Marker>
                         </>)
                     })

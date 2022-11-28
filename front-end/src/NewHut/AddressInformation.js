@@ -148,6 +148,10 @@ function AddressInformation(props) {
         
         
       </Grid>
+
+      <Typography variant="h6" gutterBottom>
+       Choose a Point from the map!
+      </Typography>
       <Grid sx={{mt:2}}>
       <MapHut {...props}/>
       </Grid>
