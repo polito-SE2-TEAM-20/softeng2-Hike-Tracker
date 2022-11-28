@@ -152,11 +152,11 @@ jobs:
       TEST_DB_USERNAME: circleci
       TEST_DB_PASSWORD: 
     steps:
+      - checkout:
+          path: ~/softeng2-Hike-Tracker
       - run:
           name: Waiting for Postgres to be ready
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
-      - checkout:
-          path: ~/softeng2-Hike-Tracker
       - node/install-packages:
           override-ci-command: npm install
       - run:
