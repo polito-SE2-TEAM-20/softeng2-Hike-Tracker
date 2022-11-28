@@ -22,6 +22,7 @@ import FormGroup from '@mui/material/FormGroup';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import Stack from "@mui/material/Stack";
+import { Paper } from '@mui/material';
 
 import WarningIcon from '@mui/icons-material/Warning';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
@@ -97,19 +98,19 @@ function HTAddHike(props) {
   const handleClick = event => {
     hiddenFileInput.current.click();
 
-  setTitle(''); setLengthStr(''); setAscentStr(''); setExpectedTimeStr('');
-  setDifficultyStr(0); setCountry(''); setRegion('');
-  setProvince(''); setCity('');  setDescription(''); setPositionsState([]); setErrorMessage(''); setShow('');
-  setPuntiDaTrack([]); setInformation(''); setStartPoint({ name: "", address: null, lat: "", lon: "" }); setStartPointLon('');
+    setTitle(''); setLengthStr(''); setAscentStr(''); setExpectedTimeStr('');
+    setDifficultyStr(0); setCountry(''); setRegion('');
+    setProvince(''); setCity(''); setDescription(''); setPositionsState([]); setErrorMessage(''); setShow('');
+    setPuntiDaTrack([]); setInformation(''); setStartPoint({ name: "", address: null, lat: "", lon: "" }); setStartPointLon('');
     setStartPointLat(''); setStartPointName('Start Point'); setStartPointAdd('');
-  setEndPoint({ name: "", address: null, lat: "", lon: "" });
-  setEndPointLat('');
-  setEndPointLon('');
-  setEndPointName('End Point');
-  setEndPointAdd('');
-  setNewReferencePoint(false);
-  setListReferencePoint([]); setReferencePoint({});  setReferencePointLat(' '); setReferencePointLon(' '); 
-  setReferencePointName(''); setReferencePointAdd('');
+    setEndPoint({ name: "", address: null, lat: "", lon: "" });
+    setEndPointLat('');
+    setEndPointLon('');
+    setEndPointName('End Point');
+    setEndPointAdd('');
+    setNewReferencePoint(false);
+    setListReferencePoint([]); setReferencePoint({}); setReferencePointLat(' '); setReferencePointLon(' ');
+    setReferencePointName(''); setReferencePointAdd('');
   };
 
 
@@ -132,11 +133,11 @@ function HTAddHike(props) {
   useEffect(() => {
 
     if (puntiDaTrack?.length !== 0) {
-      
+
     }
-    if (referencePoint!== {} && referencePoint!== null && referencePoint!=='') {
+    if (referencePoint !== {} && referencePoint !== null && referencePoint !== '') {
       setNewReferencePoint(true);
-            setReferencePointLat(referencePoint.lat);
+      setReferencePointLat(referencePoint.lat);
       setReferencePointLon(referencePoint.lon);
     }
   }, [puntiDaTrack, referencePoint])
@@ -226,11 +227,11 @@ function HTAddHike(props) {
     console.log(listReferencePoint.filter(el => el.name === elemento.name)[0].name);
     setReferencePointName(listReferencePoint.filter(el => el.name === elemento.name)[0].name);
     console.log(listReferencePoint.filter(el => el.name === elemento.name)[0].address);
-  setReferencePointAdd(listReferencePoint.filter(el => el.name === elemento.name)[0].address);
-  setNewReferencePoint(true)
+    setReferencePointAdd(listReferencePoint.filter(el => el.name === elemento.name)[0].address);
+    setNewReferencePoint(true)
 
-const prova = listReferencePoint.splice(indexOfObject, 1);
-  setListReferencePoint(listReferencePoint.filter(el => el.name !== prova.name));
+    const prova = listReferencePoint.splice(indexOfObject, 1);
+    setListReferencePoint(listReferencePoint.filter(el => el.name !== prova.name));
   }
 
   const handleListreferencePoints = (event) => {
@@ -269,51 +270,51 @@ const prova = listReferencePoint.splice(indexOfObject, 1);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (title === null || title === '' || title=== undefined) {
+    if (title === null || title === '' || title === undefined) {
       setErrorMessage('The title cannot be empty');
       setShow(true);
-    } else if (lengthStr=== 0 || lengthStr=== '' || lengthStr=== undefined ) {
+    } else if (lengthStr === 0 || lengthStr === '' || lengthStr === undefined) {
 
       setErrorMessage('The length cannot be empty');
       setShow(true);
 
-   
+
 
     } else if (ascentStr === 0 || ascentStr === '' || ascentStr === undefined) {
 
       setErrorMessage('The ascent for the hike cannot be empty');
       setShow(true);
-    
+
     } else if (expectedTimeStr === 0 || expectedTimeStr === null || expectedTimeStr === undefined || expectedTimeStr === '') {
       setErrorMessage('The time expected for the hike cannot be empty')
       setShow(true);
 
-    } else if (difficultyStr=== null || difficultyStr=== '' || difficultyStr=== undefined) {
+    } else if (difficultyStr === null || difficultyStr === '' || difficultyStr === undefined) {
       setErrorMessage('The difficulty for the hike cannot be empty');
       setShow(true);
-    } else if (description  === null || description=== '' || description=== undefined) {
+    } else if (description === null || description === '' || description === undefined) {
 
       setErrorMessage('The description for the hike cannot be empty');
       setShow(true);
-    } else if (region=== null || region === '' || region === undefined) {
+    } else if (region === null || region === '' || region === undefined) {
       console.log('The rgion for the hike cannot be empty')
       setErrorMessage('The rgion for the hike cannot be empty');
       setShow(true);
-    } else if (province === null|| province=== '' || province === undefined) {
+    } else if (province === null || province === '' || province === undefined) {
 
       setErrorMessage('The province for the hike cannot be empty');
       setShow(true);
-    } else if (startPointName === '' || startPointLat === '' || startPointLon === '' ||startPointName === null || startPointLat === null || startPointLon === null || startPointAdd === '' || startPointAdd === null) {
+    } else if (startPointName === '' || startPointLat === '' || startPointLon === '' || startPointName === null || startPointLat === null || startPointLon === null || startPointAdd === '' || startPointAdd === null) {
 
       setErrorMessage('The name, latitude and longitude of the starting point cannot be empty');
       setShow(true);
-    } else if (endPointName === '' || endPointLat === '' || endPointLon === '' || endPointName === null || endPointLat === null || endPointLon === null || endPointAdd==='' || endPointAdd=== null) {
+    } else if (endPointName === '' || endPointLat === '' || endPointLon === '' || endPointName === null || endPointLat === null || endPointLon === null || endPointAdd === '' || endPointAdd === null) {
 
       setErrorMessage('The name, latitude and longitude of the ending point cannot be empty');
       setShow(true);
-    }else if((!startPointLat.toString().match(/^(\+|-)?([0-9]*[.])?[0-9]+$/)) || !startPointLon.toString().match(/^(\+|-)?([0-9]*[.])?[0-9]+$/)  ) {
-              setErrorMessage("insert a valid value for the latitude and longitude of the starting point e.g 45.1253 ");
-              setShow(true);
+    } else if ((!startPointLat.toString().match(/^(\+|-)?([0-9]*[.])?[0-9]+$/)) || !startPointLon.toString().match(/^(\+|-)?([0-9]*[.])?[0-9]+$/)) {
+      setErrorMessage("insert a valid value for the latitude and longitude of the starting point e.g 45.1253 ");
+      setShow(true);
       {/*
         
         if([title, lengthStr, expectedTimeStr, ascentStr, difficultyStr, description, region, province, startPointName, startPointLat, startPointLon,  endPointName,  endPointLat, endPointLon].some(t=> t.length ===0)){
@@ -365,22 +366,22 @@ const prova = listReferencePoint.splice(indexOfObject, 1);
       formData.append('city', city);
       props.addNewGpx(formData).catch((err) => { setErrorMessage(err); setShow(true) })
       setSelectedFile(null);
-  setFileContents(null);
-  setIsFilePicked(false);
-  setTitle(''); setLengthStr(''); setAscentStr(''); setExpectedTimeStr('');
-setDifficultyStr(0); setCountry(''); setRegion('');
-setProvince(''); setCity('');  setDescription(''); setPositionsState([]); setErrorMessage(''); setShow('');
-setPuntiDaTrack([]); setInformation(''); setStartPoint({ name: "", address: null, lat: "", lon: "" }); setStartPointLon('');
-  setStartPointLat(''); setStartPointName('Start Point'); setStartPointAdd('');
-setEndPoint({ name: "", address: null, lat: "", lon: "" });
-setEndPointLat('');
-setEndPointLon('');
-setEndPointName('End Point');
-setEndPointAdd('');
-setNewReferencePoint(false);
-setListReferencePoint([]); setReferencePoint({});  setReferencePointLat(' '); setReferencePointLon(' '); 
-setReferencePointName(''); setReferencePointAdd('');
-navigate('/'); 
+      setFileContents(null);
+      setIsFilePicked(false);
+      setTitle(''); setLengthStr(''); setAscentStr(''); setExpectedTimeStr('');
+      setDifficultyStr(0); setCountry(''); setRegion('');
+      setProvince(''); setCity(''); setDescription(''); setPositionsState([]); setErrorMessage(''); setShow('');
+      setPuntiDaTrack([]); setInformation(''); setStartPoint({ name: "", address: null, lat: "", lon: "" }); setStartPointLon('');
+      setStartPointLat(''); setStartPointName('Start Point'); setStartPointAdd('');
+      setEndPoint({ name: "", address: null, lat: "", lon: "" });
+      setEndPointLat('');
+      setEndPointLon('');
+      setEndPointName('End Point');
+      setEndPointAdd('');
+      setNewReferencePoint(false);
+      setListReferencePoint([]); setReferencePoint({}); setReferencePointLat(' '); setReferencePointLon(' ');
+      setReferencePointName(''); setReferencePointAdd('');
+      navigate('/');
     }
 
   }
@@ -397,7 +398,7 @@ navigate('/');
       <Grid >
         <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
 
-        <Typography variant="h6" gutterBottom sx={{ p: 2 }} mt={12}>
+        <Typography fontFamily="Bakbak One, display" fontWeight="700" variant="h4" gutterBottom sx={{ p: 2 }} mt={12}>
           INSERT A NEW HIKE
         </Typography>
         <Grid container spacing={3} sx={{ p: 2 }}>
@@ -658,12 +659,12 @@ navigate('/');
                                     <EditIcon />
                                   </Button>
                                 </Grid>
-                                
+
                                 <Grid item xs={12} sm={1} mt={2}>
                                   <Button edge="end" onClick={() => handleDeleteReferencePoint(reference.name)} >
                                     <DeleteIcon />
                                   </Button>
-                          </Grid>
+                                </Grid>
 
                               </>
                             </>
@@ -743,8 +744,10 @@ navigate('/');
               </Stack>
             ) : (<h1></h1>)
           }
-          <Grid sx={{ p: 2 }}>
-            <Map positionsState={positionsState} setPuntiDaTrack={setPuntiDaTrack} puntiDaTrack={puntiDaTrack} referencePoint={referencePoint} setReferencePoint={setReferencePoint} listReferencePoint={listReferencePoint} />
+          <Grid sx={{ p: 2, marginLeft: "250px", marginRight: "250px" }}>
+            <Paper elevation={5}>
+              <Map positionsState={positionsState} setPuntiDaTrack={setPuntiDaTrack} puntiDaTrack={puntiDaTrack} referencePoint={referencePoint} setReferencePoint={setReferencePoint} listReferencePoint={listReferencePoint} />
+            </Paper>
           </Grid>
         </Grid>
       </Grid>
