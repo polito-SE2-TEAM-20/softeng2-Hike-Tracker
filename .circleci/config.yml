@@ -136,30 +136,51 @@ jobs:
       - run: ssh -o "StrictHostKeyChecking=no" ${DEPLOY_USER}@${SERVER_IP} docker service update hiking_backend --image ghcr.io/polito-se2-team-20/backend:${CIRCLE_SHA1} --with-registry-auth
 # sonarcloud
   sonar-backend:
+    resource_class: large
     working_directory: ~/softeng2-Hike-Tracker/backend
     docker:
-        - image: node
-      steps:
-        - checkout:
-            path: ~/softeng2-Hike-Tracker
-        - run:
-            name: Install deps
-            command: npm install
-        - run:
-            name: Run tests
-            run: npm run test:e2e:cov
-        - sonarcloud/scan
-  sonar-frontend:
-    working_directory: ~/softeng2-Hike-Tracker/frontend
-    docker:
-        - image: node
-      steps:
-        - checkout:
-            path: ~/softeng2-Hike-Tracker
-        - run:
-            name: Install deps
-            command: npm install
-        - sonarcloud/scan
+      - image: cimg/node:18.12.1
+      - image: postgis/postgis:14-3.3
+        environment:
+          POSTGRES_USER: circleci
+          POSTGRES_DB: circleci
+          POSTGRES_HOST_AUTH_METHOD: "trust"
+    environment:
+      NODE_ENV: test
+      TEST_DB_HOST: localhost
+      TEST_DB_NAME: circleci
+      TEST_DB_USERNAME: circleci
+      TEST_DB_PASSWORD: 
+    steps:
+      - run:
+          name: Waiting for Postgres to be ready
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - checkout:
+          path: ~/softeng2-Hike-Tracker
+      - node/install-packages:
+          cache-path: ~/project/node_modules
+          override-ci-command: npm install
+      - run:
+          name: e2e tests
+          command: |
+            mkdir -p test-results
+            npm run test:e2e:cov
+      - store_test_results:
+          path: test-results
+      - store_artifacts:
+          path: test-results
+      - sonarcloud/scan
+  # sonar-frontend:
+  #   working_directory: ~/softeng2-Hike-Tracker/frontend
+  #   docker:
+  #       - image: cimg/node@19.1.0
+  #     steps:
+  #       - checkout:
+  #           path: ~/softeng2-Hike-Tracker
+  #       - run:
+  #           name: Install deps
+  #           command: npm install
+  #       - sonarcloud/scan
 workflows:
   demo-db:
     jobs:
