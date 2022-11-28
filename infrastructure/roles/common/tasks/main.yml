@@ -1,0 +1,43 @@
+---
+- name: Create groups
+  group:
+    name: docker
+
+- name: Add accounts
+  user:
+    name: "{{ item }}"
+    groups: "root, sudo, docker"
+    shell: /bin/bash
+  loop:
+    - germangorodnev
+    - circleci
+
+- name: Add ssh keys
+  authorized_key:
+    user: "{{ item.username }}"
+    key: "{{ item.key }}"
+  loop:
+    - username: germangorodnev
+      key: "{{ lookup('file', 'keys/germangorodnev.pub') }}"
+    - username: circleci
+      key: "{{ lookup('file', 'keys/circleci.pub') }}"
+
+- name: Add docker.com GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+
+- name: Add apt repository
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable
+
+- name: Install required packages
+  apt:
+    name:
+      - docker-ce
+      - python3-pip
+
+- name: Install required python docker modules
+  pip:
+    name:
+      - docker
+      - jsondiff

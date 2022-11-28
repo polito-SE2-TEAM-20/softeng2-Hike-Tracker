@@ -1,0 +1,6 @@
+.main-page {
+  background-image: url('../../Assets/main-page.jpg');
+  background-position: absolute;
+  background-size: cover;
+  background-repeat: no-repeat;
+}

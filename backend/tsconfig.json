@@ -14,20 +14,44 @@
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
-    "strictNullChecks": false,
+    "strictNullChecks": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
+      "@core": ["src"],
+      "@core/*": ["src/*"],
+      "@test/*": ["test/*"],
+      "@test": ["test"],
       "@app/common": [
         "libs/common/src"
       ],
       "@app/common/*": [
         "libs/common/src/*"
+      ],
+      "@app/gpx": [
+        "libs/gpx/src"
+      ],
+      "@app/gpx/*": [
+        "libs/gpx/src/*"
+      ],
+      "@app/testing": [
+        "libs/testing/src"
+      ],
+      "@app/testing/*": [
+        "libs/testing/src/*"
       ]
     }
   },
-  "include": ["src/**/*", "test", "libs"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*",
+    "test",
+    "libs"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
+  "files": ["test/global.d.ts"]
 }

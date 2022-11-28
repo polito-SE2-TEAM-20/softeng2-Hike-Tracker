@@ -1,11 +1,20 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+} from 'typeorm';
 
 import { FOREIGN_OPTIONS_CASCADE } from '../constants';
+import { PointType } from '../enums';
 
 import { Hike } from './hike.entity';
 import { Point } from './point.entity';
 
 @Entity('hike_points')
+@Index('hike_points_hikeId_index_idx', ['hikeId', 'index'])
 export class HikePoint {
   @PrimaryColumn({
     type: 'integer',
@@ -30,12 +39,20 @@ export class HikePoint {
   })
   index!: number;
 
+  @Column({
+    type: 'smallint',
+    nullable: false,
+    default: PointType.point,
+  })
+  type!: PointType;
+
   /**
    * TypeORM sql-gen only
    * @deprecated
    */
   @ManyToOne(() => Hike, (entity) => entity.__joiner, FOREIGN_OPTIONS_CASCADE)
   @JoinColumn({
+    foreignKeyConstraintName: 'hike_points_hikeId_fk',
     name: 'hikeId',
     referencedColumnName: 'id',
   })
@@ -47,8 +64,11 @@ export class HikePoint {
    */
   @ManyToOne(() => Point, (entity) => entity.__joiner, FOREIGN_OPTIONS_CASCADE)
   @JoinColumn({
+    foreignKeyConstraintName: 'hike_points_pointId_fk',
     name: 'pointId',
     referencedColumnName: 'id',
   })
   point?: Point;
 }
+
+export type HikePointPrimaryKey = 'hikeId' | 'pointId';

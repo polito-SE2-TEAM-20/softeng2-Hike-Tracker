@@ -1,0 +1,43 @@
+---
+  - name: Init the swarm
+    docker_swarm:
+      state: present
+      advertise_addr: "{{ swarm_manager_interface }}"
+
+  - name: Create traefiknet network
+    docker_network:
+      name: traefiknet
+      driver: overlay
+
+  - name: Get swarm info
+    docker_swarm_info:
+      nodes: yes
+    register: swarm
+
+  - name: Store join tokens
+    set_fact:
+      worker_join_token: "{{ swarm.swarm_facts.JoinTokens.Worker }}"
+      manager_join_token: "{{ swarm.swarm_facts.JoinTokens.Manager }}"
+
+  - name: Login to github container registry
+    become: yes
+    become_user: "{{ item }}"
+    docker_login:
+      registry_url: ghcr.io
+      username: "{{ ghcr_login }}"
+      password: "{{ ghcr_password }}"
+    loop:
+      - root
+      - circleci
+
+  - name: Add postgresql.org GPG key
+    apt_key:
+      url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+
+  - name: Add postgresql.org APT repo
+    apt_repository:
+      repo: deb https://apt.postgresql.org/pub/repos/apt bionic-pgdg main
+
+  # - name: Install postgresql client
+  #   apt:
+  #     name: postgresql-client-12

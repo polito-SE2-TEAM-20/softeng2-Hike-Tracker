@@ -12,8 +12,4 @@ describe('HikesController', () => {
 
     controller = module.get<HikesController>(HikesController);
   });
-
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
 });

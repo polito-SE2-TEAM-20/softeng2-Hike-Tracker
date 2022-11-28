@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="Maps 3D" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+	<trk>
+<name>rocciamelone vero</name>
+<extensions>
+<Maps3D:TrackExtensions xmlns:Maps3D="http://www.movingworld.de/xmlschemas/GpxExtensions/v1">
+<Maps3D:RealSpeed>1.018955</Maps3D:RealSpeed>
+<Maps3D:RealSecondsSpent>16237</Maps3D:RealSecondsSpent>
+</Maps3D:TrackExtensions>
+</extensions>
+<trkseg>
+<trkpt lat="45.177786" lon="7.083372">
+   <ele>2147.107666</ele>
+   <time>2021-07-02T07:18:42Z</time>
+</trkpt>
+<trkpt lat="45.177913" lon="7.083268">
+   <ele>2148.453125</ele>
+   <time>2021-07-02T07:18:58Z</time>
+</trkpt>
+</trkseg></trk></gpx>

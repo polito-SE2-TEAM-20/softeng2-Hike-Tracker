@@ -9,11 +9,18 @@ import {
 import { FOREIGN_OPTIONS_CASCADE } from '../constants';
 
 import { Point } from './point.entity';
+import { User } from './user.entity';
 
 @Entity('parking_lots')
 export class ParkingLot {
   @PrimaryGeneratedColumn('increment')
-  id!: string;
+  id!: number;
+
+  @Column({
+    type: 'integer',
+    nullable: false,
+  })
+  userId!: number;
 
   @Column({
     type: 'integer',
@@ -27,6 +34,30 @@ export class ParkingLot {
   })
   maxCars!: number | null;
 
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  country!: string | null;
+
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  region!: string | null;
+
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  province!: string | null;
+
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  city!: string | null;
+
   /**
    * TypeORM sql-gen only
    * @deprecated
@@ -37,4 +68,15 @@ export class ParkingLot {
     referencedColumnName: 'id',
   })
   point?: Point;
+
+  /**
+   * TypeORM sql-gen only
+   * @deprecated
+   */
+  @ManyToOne(() => User, (entity) => entity.__joiner, FOREIGN_OPTIONS_CASCADE)
+  @JoinColumn({
+    name: 'userId',
+    referencedColumnName: 'id',
+  })
+  user?: User;
 }

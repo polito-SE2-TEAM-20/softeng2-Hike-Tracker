@@ -1,0 +1,58 @@
+version: 2.1
+orbs:
+  python: circleci/python@0.3.2
+
+jobs:
+  build:
+    executor:
+      name: python/default
+      tag: 3.8.7
+    steps:
+      - checkout
+      - python/load-cache
+      - python/install-deps
+      - python/save-cache
+      - run:
+          name: Install ansible roles
+          command: ansible-galaxy install -r requirements.yml
+
+      - run:
+          name: Lint the playbook
+          command: ansible-lint --exclude ~/.ansible/roles/andrewsomething.do-agent/tasks/main.yml
+  deploy:
+    machine:
+      image: ubuntu-2004:202201-02
+    steps:
+      - checkout
+      - run: 
+          name: Install python
+          command: |
+            pyenv install -s 3.8.5
+            pyenv global 3.8.5
+      - run: pip install -r requirements.txt
+      - run:
+          name: Restore ansible vault key
+          command: echo ${ANSIBLE_VAULT_KEY} > ~/.vault-key-softeng
+      - run:
+          name: Install ansible roles
+          command: ansible-galaxy install -r requirements.yml
+      - add_ssh_keys:
+          fingerprints:
+            - "44:ee:6c:d8:1a:2b:a7:e3:20:b1:a2:84:89:74:0e:b0"
+      - run:
+          name: Run the play
+          command: ansible-playbook site.yml
+
+workflows:
+  version: 2
+  continuous-update:
+    jobs:
+      - build
+      - deploy:
+          context:
+            - deploy
+          requires:
+            - build
+          filters:
+            branches:
+              only: master

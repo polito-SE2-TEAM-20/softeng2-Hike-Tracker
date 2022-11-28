@@ -1,0 +1,42 @@
+[
+    {
+        "title": "Scalata del mezzogiorno",
+        "expectedTime": 5400,
+        "ascent": "150",
+        "difficulty": 0,
+        "length": "1500",
+        "province": "Turin",
+        "region": "Piedmont",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin scelerisque eu nisl id molestie. Duis vitae felis id sapien rhoncus sollicitudin vitae vel felis. Maecenas pellentesque, enim et aliquam efficitur, nisi sapien varius tellus, eu faucibus sapien massa nec leo. Duis tempus metus metus, sit amet hendrerit sapien maximus vitae. Nullam tristique pharetra velit, eu sodales diam rutrum a. Phasellus faucibus lacus ut malesuada aliquam. Donec vulputate fringilla ipsum, nec vestibulum enim mattis non. Suspendisse potenti. Mauris ultrices leo a nulla bibendum pharetra."
+    },
+    {
+        "title": "Magica Torino",
+        "expectedTime": 8500,
+        "ascent": "320",
+        "difficulty": 2,
+        "length": "2500",
+        "province": "Turin",
+        "region": "Piedmont",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin scelerisque eu nisl id molestie. Duis vitae felis id sapien rhoncus sollicitudin vitae vel felis. Maecenas pellentesque, enim et aliquam efficitur, nisi sapien varius tellus, eu faucibus sapien massa nec leo. Duis tempus metus metus, sit amet hendrerit sapien maximus vitae. Nullam tristique pharetra velit, eu sodales diam rutrum a. Phasellus faucibus lacus ut malesuada aliquam. Donec vulputate fringilla ipsum, nec vestibulum enim mattis non. Suspendisse potenti. Mauris ultrices leo a nulla bibendum pharetra."
+    },
+    {
+        "title": "Lago dei sogni",
+        "expectedTime": 1400,
+        "ascent": "50",
+        "difficulty": 0,
+        "length": "500",
+        "province": "Naples",
+        "region": "Campania",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin scelerisque eu nisl id molestie. Duis vitae felis id sapien rhoncus sollicitudin vitae vel felis. Maecenas pellentesque, enim et aliquam efficitur, nisi sapien varius tellus, eu faucibus sapien massa nec leo. Duis tempus metus metus, sit amet hendrerit sapien maximus vitae. Nullam tristique pharetra velit, eu sodales diam rutrum a. Phasellus faucibus lacus ut malesuada aliquam. Donec vulputate fringilla ipsum, nec vestibulum enim mattis non. Suspendisse potenti. Mauris ultrices leo a nulla bibendum pharetra."
+    },
+    {
+        "title": "Notti magiche",
+        "expectedTime": 2400,
+        "ascent": "350",
+        "difficulty": 1,
+        "length": "2000",
+        "province": "Milan",
+        "region": "Lombardia",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin scelerisque eu nisl id molestie. Duis vitae felis id sapien rhoncus sollicitudin vitae vel felis. Maecenas pellentesque, enim et aliquam efficitur, nisi sapien varius tellus, eu faucibus sapien massa nec leo. Duis tempus metus metus, sit amet hendrerit sapien maximus vitae. Nullam tristique pharetra velit, eu sodales diam rutrum a. Phasellus faucibus lacus ut malesuada aliquam. Donec vulputate fringilla ipsum, nec vestibulum enim mattis non. Suspendisse potenti. Mauris ultrices leo a nulla bibendum pharetra."
+    }
+]

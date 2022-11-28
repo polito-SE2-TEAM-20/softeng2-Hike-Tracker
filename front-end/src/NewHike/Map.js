@@ -1,0 +1,151 @@
+import 'leaflet/dist/leaflet.css'
+import { useEffect } from 'react';
+import './map.css';
+import { useState } from 'react';
+import 'leaflet/dist/leaflet.css'
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, ZoomControl, Polyline, useMap } from 'react-leaflet'
+import L from 'leaflet';
+
+import HikePopup from '../components/hike-popup/HikePopup';
+
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+});
+
+function getDiaDist(puntiDaTrack){
+    return Math.sqrt(Math.pow(puntiDaTrack.x,2) + Math.pow(puntiDaTrack.y,2))
+  }
+  
+  function getDistance(p1,p2){
+    return getDiaDist({x:p1[0] - p2[0], y:p1[0] - p2[0]})
+  }
+
+  function getDistanceFromLatLonInKm(p1, p2) {
+    var p = 0.017453292519943295;    //This is  Math.PI / 180
+    var c = Math.cos;
+    var a = 0.5 - c((p2[0] - p1[0]) * p)/2 + 
+            c(p1[0] * p) * c(p2[0] * p) * 
+            (1 - c((p2[1] - p1[1]) * p))/2;
+    var R = 6371; //  Earth distance in km so it will return the distance in km
+    var dist = 2 * R * Math.asin(Math.sqrt(a)); 
+    return dist; 
+  }
+
+  
+  function getNearestPoint(arr,point){
+    let min = Infinity;
+    let result = arr[0]
+    arr.forEach(a => {
+      // let dist = getDistance(a,point);
+      let dist = getDistanceFromLatLonInKm(a, point)
+      if(dist < min){
+        min = dist
+        result = a;
+      }
+    })
+    return result;
+  }
+
+
+
+const Inner = ({positionsState, setPuntiDaTrack, setReferencePoint, puntiDaTrack}) => {
+    const map = useMap();
+
+    var popup = L.popup();
+    setPuntiDaTrack(null);
+    const [punti, setPunti] = useState(null);
+    if(positionsState?.length!==0){
+
+    map.on('click', function(e) {
+        let prov = [e.latlng.lat, e.latlng.lng];
+        setPuntiDaTrack(prov);
+        setPunti(e.latlng);
+        
+
+    });
+    }
+useEffect(()=>{
+    if(puntiDaTrack){
+        if(positionsState?.length){
+                getNearestPoint(positionsState, puntiDaTrack);
+    let nearest = (getNearestPoint(positionsState, puntiDaTrack));
+    let object = {lat: nearest[0], lon: nearest[1]}
+    punti.lat = nearest[0];
+    punti.lng = nearest[1];
+    setReferencePoint(object);
+    
+    popup
+      .setLatLng(punti)
+      .setContent("You clicked the map at " + punti.toString())
+      .openOn(map);
+    }
+        }
+
+
+
+
+}, [puntiDaTrack])
+
+{/*
+useEffect(()=>{
+    if(listReferencePoint.length!==0){
+        listReferencePoint.map((e) => {
+
+    var marker = L.marker(e).addTo(map)
+        })
+    }
+}, [listReferencePoint.length]);
+*/}
+
+
+useEffect(() => {
+    if (!positionsState?.length) { return; }
+
+    map.flyTo(positionsState[0])
+
+}, [positionsState]);
+
+}
+
+
+
+
+
+const Map = props => {
+
+    return(
+        <MapContainer
+                    className='map'
+                     center={props.positionsState.length ? props.positionsState.length/2 : [45.4408474, 12.3155151]}
+                    zoom={13}
+                    scrollWheelZoom={false}
+                >
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    <Polyline
+                        pathOptions={{ fillColor: 'red', color: 'blue' }}
+                        positions={props.positionsState}
+                    />
+                    <Inner {...props}/>
+                    {
+                    props.listReferencePoint.map((el) => {
+                        console.log(el)
+                        return(<>
+                            <Marker
+                                key={el.name}
+                                position={[el.lat, el.lon]}>
+                                <Popup position={[el.lat, el.lon]}>
+                                    <HikePopup elem={el.name} />
+                                </Popup>
+                            </Marker>
+                        </>)
+                    })
+                }
+                </MapContainer>
+    )
+    
+}
+export {Map}
