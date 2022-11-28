@@ -26,7 +26,7 @@ describe('HikesModification (e2e)', () => {
     };
   };
 
-  it('should return parking lots and huts in a certain radius', async () => {
+  it.skip('should return parking lots and huts in a certain radius', async () => {
     const { user, localGuide } = await setup();
 
     const pointData: Partial<Point> = {
