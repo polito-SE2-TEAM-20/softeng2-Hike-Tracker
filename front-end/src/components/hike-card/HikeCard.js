@@ -10,6 +10,7 @@ import proIcon from '../../Assets/pro-icon.png'
 import { Route, useNavigate } from 'react-router';
 import { HikeDifficultyLevel } from '../../lib/common/Hike';
 import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours';
+import './hike-card-style.css'
 
 const bull = (
     <Box
@@ -24,7 +25,7 @@ const HikeCard = (props) => {
     const navigate = useNavigate();
 
     return (
-        <Card style={{ minWidth: 275, maxWidth: 275 }}>
+        <Card className="zoom" style={{ minWidth: 275, maxWidth: 275 }}>
             <CardContent>
 
                 {HikeItemImage(props.hike.difficulty)}

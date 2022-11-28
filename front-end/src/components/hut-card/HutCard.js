@@ -5,12 +5,13 @@ import Button from '../buttons/Button'
 import Typography from '@mui/material/Typography';
 import { useNavigate } from 'react-router';
 import hutIcon from '../../Assets/hut-icon.png'
+import './hut-card-style.css'
 
 const HutCard = (props) => {
     const navigate = useNavigate()
 
     return (
-        <Card sx={{ minWidth: 275, maxWidth: 275 }}>
+        <Card className="zoom" sx={{ minWidth: 275, maxWidth: 275 }}>
             <CardContent>
                 <div style={{ backgroundColor: "#f2f250", display: "flex", justifyContent: "center", margin: "16px", padding: "18px", borderRadius: "32px" }}>
                     <img src={hutIcon} alt="hutIcon" width="75px" height="75px" />

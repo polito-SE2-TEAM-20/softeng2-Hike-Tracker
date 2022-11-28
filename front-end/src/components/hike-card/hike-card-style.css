@@ -1,9 +1,19 @@
 .tourist {
   background-image: url('../../Assets/tourist-icon.png');
 }
+
 .hiker {
   background-image: url('../../Assets/hiker-icon.png');
 }
+
 .pro {
   background-image: url('../../Assets/pro-icon.png');
+}
+
+.zoom {
+  transition: transform .2s;
+}
+
+.zoom:hover {
+  transform: scale(1.04);
 }
