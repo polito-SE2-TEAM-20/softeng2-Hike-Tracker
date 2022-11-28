@@ -66,6 +66,13 @@ export class User {
   })
   verificationHash!: string;
 
+  @Column({
+    type: 'boolean',
+    nullable: false,
+    default: false,
+  })
+  approved!: boolean;
+
   /**
    * For TypeORM metadata only
    * @deprecated
