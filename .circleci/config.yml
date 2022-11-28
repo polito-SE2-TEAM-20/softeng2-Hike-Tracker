@@ -171,18 +171,17 @@ jobs:
       - store_artifacts:
           path: test-results
       - sonarcloud/scan
-
-  ## sonar-frontend:
-  #   working_directory: ~/softeng2-Hike-Tracker/frontend
-  #   docker:
-  #       - image: cimg/node@19.1.0
-  #     steps:
-  #       - checkout:
-  #           path: ~/softeng2-Hike-Tracker
-  #       - run:
-  #           name: Install deps
-  #           command: npm install
-  #       - sonarcloud/scan
+  sonar-frontend:
+    working_directory: ~/softeng2-Hike-Tracker/frontend
+    docker:
+        - image: cimg/node:18.12.1
+    steps:
+      - checkout:
+          path: ~/softeng2-Hike-Tracker
+      - run:
+          name: Install deps
+          command: npm install
+      - sonarcloud/scan
 workflows:
   demo-db:
     jobs:
@@ -243,8 +242,8 @@ workflows:
           filters:
             branches:
               only: main
-      # - sonar-frontend:
-      #     context: SonarCloud
-      #     filters:
-      #       branches:
-      #         only: main
+      - sonar-frontend:
+          context: SonarCloud
+          filters:
+            branches:
+              only: main
