@@ -26,7 +26,7 @@ describe('HikesModification (e2e)', () => {
     };
   };
 
-  it.skip('should return parking lots and huts in a certain radius', async () => {
+  it('should return parking lots and huts in a certain radius', async () => {
     const { user, localGuide } = await setup();
 
     const pointData: Partial<Point> = {
@@ -122,7 +122,7 @@ describe('HikesModification (e2e)', () => {
       .build(app, user)
       .request()
       .post('/hike-modification/hutsAndParkingLots')
-      .send({ lat: 7.0, lon: 47.0, radiusKms: 100 })
+      .send({ lat: 7.0, lon: 47.0, radiusKms: 3000 })
       .expect(200)
       .expect(({ body }) => {
         expect(body.huts).toHaveLength(2);
