@@ -42,6 +42,13 @@ export class AuthController {
     return await this.service.register(body);
   }
 
+  @Put('approve_user/:id')
+  @HttpCode(200)
+  async approveUser(@Param('id') id: number) {
+    return await this.service.approveUser(id);
+  }
+
+
   @Get('verify/:hash')
   @HttpCode(200)
   async verifyMail(@Param('hash') hash: string) {

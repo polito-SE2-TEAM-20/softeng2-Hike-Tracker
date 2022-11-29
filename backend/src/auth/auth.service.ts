@@ -79,15 +79,17 @@ export class AuthService {
     return await hash(password, this.HASH_ROUNDS);
   }
 
-  async validateRegistration(verificationHash: string) {
+  async validateRegistration(verificationHash: string): Promise<Object> {
     const user = await this.dataSource
       .getRepository(User)
       .findOneBy({ verificationHash });
-    if (user === null) {
+      
+    if (user === null) 
       throw new HttpException("User doesn't exists", 422);
-    } else if (user.verified === true)
+    
+    if (user.verified === true)
       throw new HttpException('User already verified', 409);
-    else
+    
       await this.dataSource.getRepository(User).save({
         ...user,
         verified: true,
@@ -126,4 +128,27 @@ export class AuthService {
 
     return safeUsers
   }
+
+  async approveUser(id: number): Promise<Object>{
+    const user = await this.dataSource
+    .getRepository(User)
+    .findOneBy({ id });
+
+    if (user === null) 
+      throw new HttpException("User doesn't exists", 422);
+
+    if (user.role !== 2 && user.role !== 4)
+      throw new HttpException('User with this role does not need to be approved', 409);
+    
+    if (user.verified !== true) 
+      throw new HttpException('User needs to verify his email before to be approved', 409);
+
+    await this.dataSource.getRepository(User).save({
+      ...user,
+      approved: true,
+    });
+    
+    return { 'Account Approvation': 'Successful' };
+  }
+
 }
