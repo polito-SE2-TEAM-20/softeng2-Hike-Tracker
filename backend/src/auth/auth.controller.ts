@@ -48,6 +48,18 @@ export class AuthController {
     return await this.service.validateRegistration(hash);
   }
 
+  @Get('not_approved/local_guides')
+  @HttpCode(200)
+  async retrieveNotApprovedLocalGuides() {
+    return await this.service.retrieveNotApprovedLocalGuides();
+  }
+
+  @Get('not_approved/hut_workers')
+  @HttpCode(200)
+  async retrieveNotApprovedHutWorkers() {
+    return await this.service.retrieveNotApprovedHutWorkers();
+  }
+
   @AuthenticatedOnly()
   @Get('me')
   async me(@CurrentUser() user: UserContext) {

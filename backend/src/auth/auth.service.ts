@@ -4,12 +4,13 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable, HttpException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
-import { DataSource } from 'typeorm';
+import { Brackets, DataSource } from 'typeorm';
 
 import { User, UserContext, UserJwtPayload } from '@app/common';
 import { safeUser } from '@core/users/users.utils';
 
 import { RegisterDto } from './auth.dto';
+import { where } from 'ramda';
 
 @Injectable()
 export class AuthService {
@@ -92,5 +93,37 @@ export class AuthService {
         verified: true,
       });
     return { 'Account Verification': 'Successful' };
+  }
+
+  async retrieveNotApprovedLocalGuides():Promise<UserContext[]> {
+    const users = await this.dataSource
+    .getRepository(User)
+    .createQueryBuilder('user')
+    .where('user.verified = true')
+    .andWhere('user.approved = false')
+    .andWhere('user.role = 2')
+    .getMany()
+
+    const safeUsers: UserContext[] = users.map((u) => {
+      return safeUser(u)
+    })
+
+    return safeUsers
+  }
+
+  async retrieveNotApprovedHutWorkers():Promise<UserContext[]> {
+    const users = await this.dataSource
+    .getRepository(User)
+    .createQueryBuilder('user')
+    .where('user.verified = true')
+    .andWhere('user.approved = false')
+    .andWhere('user.role = 4')
+    .getMany()
+
+    const safeUsers: UserContext[] = users.map((u) => {
+      return safeUser(u)
+    })
+
+    return safeUsers
   }
 }
