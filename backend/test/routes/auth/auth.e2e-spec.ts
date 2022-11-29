@@ -14,7 +14,6 @@ describe('Auth (e2e)', () => {
     await finishTest({ moduleRef, dbName });
   });
 
-  // todo: account confirm
   it('should register user and support this data to login', async () => {
     const userData = {
       email: 'test@email.com',
