@@ -10,7 +10,7 @@ import {
   HttpException,
 } from '@nestjs/common';
 
-import { AuthenticatedOnly, CurrentUser, UserContext } from '@app/common';
+import { AuthenticatedOnly, CurrentUser, PlatformManagerOnly, UserContext } from '@app/common';
 
 import { RegisterDto } from './auth.dto';
 import { AuthService } from './auth.service';
@@ -34,6 +34,8 @@ export class AuthController {
   async register(@Body() body: RegisterDto): Promise<UserContext> {
     if (body.role === 1)
       throw new HttpException('Friend is not a valid role to register', 403);
+    if (body.role === 3)
+      throw new HttpException('Platform Manager is not a valid role to register', 403);
     if (
       body.role !== 0 &&
       (body.phoneNumber === null || body.phoneNumber === undefined)
@@ -43,6 +45,7 @@ export class AuthController {
   }
 
   @Put('approve_user/:id')
+  @PlatformManagerOnly()
   @HttpCode(204)
   async approveUser(@Param('id') id: number) {
     return await this.service.approveUser(id);
@@ -56,12 +59,14 @@ export class AuthController {
   }
 
   @Get('not_approved/local_guides')
+  @PlatformManagerOnly()
   @HttpCode(200)
   async retrieveNotApprovedLocalGuides() {
     return await this.service.retrieveNotApprovedLocalGuides();
   }
 
   @Get('not_approved/hut_workers')
+  @PlatformManagerOnly()
   @HttpCode(200)
   async retrieveNotApprovedHutWorkers() {
     return await this.service.retrieveNotApprovedHutWorkers();
