@@ -43,7 +43,7 @@ export class AuthController {
   }
 
   @Put('approve_user/:id')
-  @HttpCode(200)
+  @HttpCode(204)
   async approveUser(@Param('id') id: number) {
     return await this.service.approveUser(id);
   }
