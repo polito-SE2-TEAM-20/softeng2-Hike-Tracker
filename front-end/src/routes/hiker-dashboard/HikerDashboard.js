@@ -43,7 +43,7 @@ const HikerDashboard = (props) => {
                         </Typography>
                     </Grid>
                     <Grid item lg={12} sx={{ marginTop: "12px" }}>
-                        <Typography fontSize={18} sx={{ backgroundColor: "white", color: "black", borderStyle: "solid", borderWidth: "1px", borderRadius: "18px", width: "fit-content", padding: "4px 12px 4px 12px", fontFamily: "Bakbak One, display", fontWeight: "50" }}>
+                        <Typography className="unselectable" fontSize={18} sx={{ backgroundColor: "white", color: "black", borderStyle: "solid", borderWidth: "1px", borderRadius: "18px", width: "fit-content", padding: "4px 12px 4px 12px", fontFamily: "Bakbak One, display", fontWeight: "50" }}>
                             <b>
                                 {props?.user?.role == 0 ? "Hiker" : ""}
                                 {props?.user?.role == 1 ? "Friend" : ""}

@@ -1,16 +1,15 @@
-import { Grid, Switch, TextField, Typography } from "@mui/material";
+import { Grid, Switch, Typography } from "@mui/material";
 import { useNavigate } from "react-router";
 import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import { displayTypeFlex } from "../../extra/DisplayType";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import EditIcon from '@mui/icons-material/Edit';
 import './admin-dashboard-style.css'
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, useMapEvents, ZoomControl, Polyline, useMap } from 'react-leaflet'
-import HikePopup from "../../components/hike-popup/HikePopup";
+import BadgeIcon from '@mui/icons-material/Badge';
+import GroupsIcon from '@mui/icons-material/Groups';
 import HTButton from "../../components/buttons/Button";
 import { FormControlLabel } from "@mui/material";
 import { useState, useEffect } from "react";
@@ -71,7 +70,7 @@ const AdminDashboard = (props) => {
                         </Typography>
                     </Grid>
                     <Grid item lg={12} sx={{ marginTop: "12px" }}>
-                        <Typography fontSize={18} sx={{ backgroundColor: "white", color: "black", borderStyle: "solid", borderWidth: "1px", borderRadius: "18px", width: "fit-content", padding: "4px 12px 4px 12px", fontFamily: "Bakbak One, display", fontWeight: "50" }}>
+                        <Typography className="unselectable" fontSize={18} sx={{ backgroundColor: "white", color: "black", borderStyle: "solid", borderWidth: "1px", borderRadius: "18px", width: "fit-content", padding: "4px 12px 4px 12px", fontFamily: "Bakbak One, display", fontWeight: "50" }}>
                             <b>
                                 {props?.user?.role == 0 ? "Hiker" : ""}
                                 {props?.user?.role == 1 ? "Friend" : ""}
@@ -115,7 +114,8 @@ const AdminDashboard = (props) => {
                                 <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
                                     Frank Freak
                                 </Typography>
-                                <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}>Local guide</Typography>
+                                <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}><GroupsIcon sx={{marginRight: "20px"}} />Local guide</Typography>
+                                {/* <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}><BadgeIcon sx={{marginRight: "20px"}} />Hut worker</Typography> */}
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Grid container>
