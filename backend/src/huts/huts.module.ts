@@ -10,6 +10,7 @@ import {
   UploadPathModule,
 } from '@app/common';
 
+import { HutPicturesController } from './hut-pictures.controller';
 import { HutsController } from './huts.controller';
 import { HutsService } from './huts.service';
 
@@ -32,7 +33,7 @@ import { HutsService } from './huts.service';
   ],
 
   providers: [HutsService],
-  controllers: [HutsController],
+  controllers: [HutsController, HutPicturesController],
   exports: [HutsService],
 })
 export class HutsModule {}

@@ -99,4 +99,10 @@ export class Hut {
     referencedColumnName: 'id',
   })
   user?: User;
+
+  /**
+   * For TypeORM metadata only
+   * @deprecated
+   */
+  __joiner?: any;
 }

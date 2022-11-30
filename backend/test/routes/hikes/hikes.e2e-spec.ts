@@ -201,6 +201,52 @@ describe('Hikes (e2e)', () => {
     ).toHaveLength(3);
   });
 
+  it('should return an error when gpx is empty', async () => {
+    const { localGuide } = await setup();
+
+    const hikeData = hikeBasic;
+
+    await restService
+      .build(app, localGuide)
+      .request()
+      .post('/hikes/import')
+      .attach('gpxFile', resolve(ROOT, './test-data/empty.gpx'))
+      .field(withoutCompositeFields(hikeData))
+      .field('referencePoints', JSON.stringify([]))
+      .field('startPoint', JSON.stringify([]))
+      .field('endPoint', JSON.stringify([]))
+      .expect(400)
+      .expect(({ body }) => {
+        expect(body).toMatchObject({
+          message: 'Unable to find hikes in gpx file',
+        });
+      });
+  });
+
+  it('shoule retrieve hike by id', async () => {
+    const { localGuide } = await setup();
+
+    const hike = await testService.createHike({
+      ...hikeBasic,
+      userId: localGuide.id,
+    });
+
+    await restService
+      .build(app, localGuide)
+      .request()
+      .get(`/hikes/${hike.id}`)
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toMatchObject({
+          id: hike.id,
+          ...hikeBasic,
+          referencePoints: [],
+          startPoint: null,
+          endPoint: null,
+        });
+      });
+  });
+
   it('should link hut as a start/end point', async () => {
     const { localGuide, huts, hike: otherHike } = await setup();
 

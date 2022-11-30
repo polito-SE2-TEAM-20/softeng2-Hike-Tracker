@@ -5,10 +5,12 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  MaxLength,
   Min,
   ValidateNested,
 } from 'class-validator';
 
+import { HutLimits } from '@app/common';
 import { ReferencePointDto } from '@core/hikes/hikes.dto';
 
 export class PointWithRadius {
@@ -82,4 +84,10 @@ export class CreateHutDto {
   @IsString()
   @IsOptional()
   website!: string;
+}
+
+export class HutPicturesReorderDto {
+  @IsString({ each: true })
+  @MaxLength(HutLimits.picture, { each: true })
+  pictures!: string[];
 }

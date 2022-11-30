@@ -157,7 +157,6 @@ describe('Huts (e2e)', () => {
         inPointRadius: {
           lat: 20,
           lon: 10,
-          radiusKms: null,
         },
       })
       .expect(200)
@@ -255,13 +254,14 @@ describe('Huts (e2e)', () => {
       userId: localGuide.id,
       numberOfBeds: 1,
       price: 100,
+      pictures: ['test1.png'],
     });
 
     const testPics = ['img1.png', 'img2.jpeg', 'img3.jpeg'];
     const req = restService
       .build(app, localGuide)
       .request()
-      .put(`/huts/${hut.id}`);
+      .post(`/hut-pictures/${hut.id}`);
 
     testPics.forEach((file) =>
       req.attach('pictures', join(ROOT, './test-data', file)),
@@ -272,12 +272,38 @@ describe('Huts (e2e)', () => {
         id: hut.id,
       });
 
-      expect(body.pictures).toHaveLength(testPics.length);
-      body.pictures.forEach((picture, i) => {
+      expect(body.pictures).toHaveLength(testPics.length + 1);
+      expect(body.pictures[0]).toEqual('test1.png');
+      body.pictures.slice(1).forEach((picture, i) => {
         expect(picture).toMatch(
           new RegExp(`^\\/static\\/images\\/.+\\${extname(testPics[i])}$`),
         );
       });
     });
+  });
+
+  it('should reorder hut pictures', async () => {
+    const { localGuide } = await setup();
+
+    const hut = await testService.createHut({
+      userId: localGuide.id,
+      numberOfBeds: 1,
+      price: 100,
+      pictures: ['test1.png', 'test2.jpeg', 'test3.png'],
+    });
+
+    const reordered = ['test3.jpeg', 'test1.png', 'test2.png'];
+    await restService
+      .build(app, localGuide)
+      .request()
+      .post(`/hut-pictures/${hut.id}/reorder`)
+      .send({ pictures: reordered })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toMatchObject({
+          id: hut.id,
+          pictures: reordered,
+        });
+      });
   });
 });

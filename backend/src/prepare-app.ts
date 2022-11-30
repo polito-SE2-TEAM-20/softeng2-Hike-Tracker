@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
@@ -14,7 +16,7 @@ export function prepareApp(app: NestExpressApplication | INestApplication) {
     credentials: true,
   });
 
-  if (!isTest() || true) {
+  if (!isTest()) {
     app.enableShutdownHooks();
   }
 
