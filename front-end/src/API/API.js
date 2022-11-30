@@ -362,7 +362,7 @@ const getNotApprovedHutWorkers = async () => {
 }
 
 const approveUserByID = async (id) => {
-    const response = await fetch((APIURL + '/auth/approve_user/:id'), {
+    const response = await fetch((APIURL + '/auth/approve_user/' + id), {
         method: 'PUT'
     });
     if(!response.ok) {
