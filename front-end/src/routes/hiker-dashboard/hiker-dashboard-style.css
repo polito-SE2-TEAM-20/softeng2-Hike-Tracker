@@ -1,0 +1,18 @@
+.pencil:hover {
+    color: #555555;
+}
+
+a {
+    color: black;
+    background: none;
+}
+
+a::selection {
+    color: black;
+    background: none;
+}
+
+a::-moz-selection {
+    color: black;
+    background: none;
+}
