@@ -125,8 +125,9 @@ const HTMainPage = (props) => {
                             listOfHikes.length > 6 ?
                                 <div style={{ marginTop: "28px", display: "flex", justifyContent: "right", marginRight: "200px" }}>
                                     <Button variant="outlined"
-                                    onClick={() => {navigate('/listofhikes')}}
-                                        sx={{ borderRadius: "60px", borderColor: "white", color: "white" }}>
+                                        textDecoration="none"
+                                        onClick={() => { navigate('/listofhikes') }}
+                                        sx={{ borderRadius: "60px", borderColor: "white", color: "white", textTransform: "none" }}>
                                         See more...
                                     </Button>
                                 </div>
