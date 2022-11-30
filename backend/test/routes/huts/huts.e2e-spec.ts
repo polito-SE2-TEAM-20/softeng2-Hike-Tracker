@@ -1,8 +1,10 @@
 import { extname, join } from 'path';
 
+import { omit } from 'ramda';
+
 import { mapToId, Point, ROOT, UserRole } from '@app/common';
 import { finishTest } from '@app/testing';
-import { prepareTestApp, prepareVars } from '@test/base';
+import { anyId, prepareTestApp, prepareVars } from '@test/base';
 
 describe('Huts (e2e)', () => {
   let { dbName, app, restService, moduleRef, testService } = prepareVars();
@@ -243,6 +245,49 @@ describe('Huts (e2e)', () => {
           point: {
             position: { type: 'Point', coordinates: [50.33, -30.133] },
           },
+        });
+      });
+  });
+
+  it('should throw an error when hut is not found', async () => {
+    const { user } = await setup();
+
+    await restService
+      .build(app, user)
+      .request()
+      .get(`/huts/1000`)
+      .expect(400)
+      .expect(({ body }) => {
+        expect(body).toMatchObject({
+          message: 'Hut 1000 not found',
+        });
+      });
+  });
+
+  it('should create a new hut', async () => {
+    const { localGuide } = await setup();
+
+    const hutData = {
+      title: 'test',
+      description: 'test',
+      location: { lat: 10, lon: 7, address: 'via torino 100' },
+      numberOfBeds: 2,
+      price: 100,
+      elevation: 100,
+      ownerName: 'Ricardo',
+      website: 'https://own.go/co',
+    };
+
+    await restService
+      .build(app, localGuide)
+      .request()
+      .post('/huts/createHut')
+      .send(hutData)
+      .expect(201)
+      .expect(({ body }) => {
+        expect(body).toMatchObject({
+          id: anyId(),
+          ...omit(['location'], hutData),
         });
       });
   });
