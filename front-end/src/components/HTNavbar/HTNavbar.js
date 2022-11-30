@@ -29,7 +29,7 @@ const bull = (
 );
 
 function HTNavbar(props) {
-    const settings = ['Login', 'Logout'];
+    const settings = ['Sign in', 'Sign out'];
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const navigate = useNavigate()
@@ -312,49 +312,6 @@ function HTNavbar(props) {
                                             </Typography>
                                         </MenuItem>
                                     </>
-                                    :
-                                    <MenuItem key={settings[0]} onClick={handleCloseUserMenu}>
-                                        <Typography onClick={props.gotoLogin} textAlign="center">
-                                            {settings[0]}
-                                        </Typography>
-                                    </MenuItem>
-                            }
-                        </Menu>
-
-                        <Menu
-                            sx={{ mt: '45px', display: { xs: "none", sm: "none", md: "flex", lg: "flex", xl: "flex" } }}
-                            id="menu-appbar"
-                            anchorEl={anchorElUser}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
-                        >
-                            {
-                                props.isLoggedIn ?
-                                    <MenuItem key={settings[1]} onClick={handleCloseUserMenu}>
-                                        <Typography className='unselectable' color="black" fontFamily={"Bakbak One, display"} fontSize="24px">
-                                            {props.user?.firstName} {props.user?.lastName}
-                                        </Typography>
-                                        <Typography color="black" fontFamily={"Bakbak One, display"} fontSize="14px">
-                                            {props.user?.role == 0 ? "Hiker" : ""}
-                                            {props.user?.role == 1 ? "Friend" : ""}
-                                            {props.user?.role == 2 ? "Local guide" : ""}
-                                            {props.user?.role == 3 ? "Platform manager" : ""}
-                                            {props.user?.role == 4 ? "Hut worker" : ""}
-                                            {props.user?.role == 5 ? "Emergency operator" : ""}
-                                        </Typography>
-                                        <Typography onClick={props.doLogOut} textAlign="center">
-                                            {settings[1]}
-                                        </Typography>
-                                    </MenuItem>
                                     :
                                     <MenuItem key={settings[0]} onClick={handleCloseUserMenu}>
                                         <Typography onClick={props.gotoLogin} textAlign="center">
