@@ -52,8 +52,6 @@ export class AuthService {
         randomHash,
     });
 
-    // const token = await this.jwtService.signAsync({ id: user.id });
-
     return safeUser(user);
   }
 

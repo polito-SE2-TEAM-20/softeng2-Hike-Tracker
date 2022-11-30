@@ -7,8 +7,9 @@ import {
   E2ETestingModule,
   generateTestDatabase,
   getTestDbOptions,
+  TestingRestService,
+  TestingService
 } from '@app/testing';
-import { TestingRestService, TestingService } from '@app/testing';
 
 import { AppModule } from '../../src/app.module';
 import { AuthService } from '../../src/auth/auth.service';
@@ -62,13 +63,6 @@ export async function prepareTestApp({
     // pass jwtService to testing service
     const jwtService = moduleRef.get(AuthService);
     testService.setJwtService(jwtService);
-
-    try {
-      // const jwtService = moduleRef.get(JwtAuthService);
-      // testService.setJwtService(jwtService);
-    } catch (error) {
-      throw error;
-    }
 
     return { dbName, moduleRef, app, testService, restService };
   } catch (error) {

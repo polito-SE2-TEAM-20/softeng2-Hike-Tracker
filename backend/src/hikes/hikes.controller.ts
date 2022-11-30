@@ -368,21 +368,4 @@ export class HikesController {
     return await this.service.getFullHike(id);
   }
 
-  // @Get(':id')
-  // async getHike(@Param('id') id: ID): Promise<Hike | null> {
-  //   const hike = await this.service.findById(id);
-
-  //   if (!hike) {
-  //     return null;
-  //   }
-
-  //   return {
-  //     ...hike,
-  //     gpx: hike.gpxPath
-  //       ? (
-  //           await fs.readFile(join(GPX_FILE_PATH, path.basename(hike.gpxPath)))
-  //         ).toString()
-  //       : null,
-  //   };
-  // }
 }

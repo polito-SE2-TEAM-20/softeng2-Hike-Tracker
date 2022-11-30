@@ -25,12 +25,6 @@ describe('Parking Lots (e2e)', () => {
   it('should create a parking lot', async () => {
     const { user } = await setup();
 
-    // const pointData: Partial<Point> = {
-    //     position: { type: 'Point', coordinates: [10, 20] },
-    // };
-
-    // await testService.createPoint(pointData)
-
     const lot1 = {
       maxCars: 0,
       location: {
