@@ -13,8 +13,13 @@ sections:
 ### Macro statistics
 
 - Number of stories committed vs. done 
+- 8 committed vs 4 done 
+
 - Total points committed vs. done 
+- 64 points committed vs 32 done
+
 - Nr of hours planned vs. spent (as a team)
+- 72h estimated vs. 78h 45m spent
 
 **Remember**a story is done ONLY if it fits the Definition of Done:
  
@@ -29,14 +34,36 @@ sections:
 
 | Story  | # Tasks | Points | Hours est. | Hours actual |
 |--------|---------|--------|------------|--------------|
-| _#0_   |         |       |            |              |
-| n      |         |        |            |              |
+| _#0_   |   8     |        |   12h30m   |   14h30m     |
+
+  - from issues
+|  #1    |   2     |   3    |    2h 15m  |   2h 15m     |
+|  #2    |   3     |   3    |     7h     |   8h         |
+|  #3    |   3     |   5    |     5h15m  |   5h 10m     |
+
+  - stories done
+|  #4    |   2     |   5    |     4h     |   4h 20m     |
+|  #5    |   2     |   3    |     5h     |   11h 30m    |
+|  #6    |   3     |   5    |  6h 30m    |   11h        |
+|  #7    |   2     |   8    |     4h     |   4h 15m     |
+
+  - stories committed but not done
+|  #8    |   6     |   8    |     10h    |   9h 45m     |
+|  #9    |   3     |   8    |     4h     |   2h         |
+|  #33   |   4     |   8    |    7h30m   |   6h         |
+|  #10   |   2     |   8    |    4h30m   |   0h         |
    
 
 > place technical tasks corresponding to story `#0` and leave out story points (not applicable in this case)
 
 - Hours per task average, standard deviation (estimate and actual)
+
+    - hours estimated per task average: 2h 20m
+    - hours spent per task average: 2h 40m
+    - estimate standard deviation: 54m 
+    - average standard deviation: 1h 38m
 - Total task estimation error ratio: sum of total hours estimation / sum of total hours spent - 1
+    - 0.0155
 
   
 ## QUALITY MEASURES 
