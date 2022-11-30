@@ -42,8 +42,8 @@ const HikerDashboard = (props) => {
                             {props?.user?.email}
                         </Typography>
                     </Grid>
-                    <Grid item lg={12} sx={{marginTop: "12px"}}>
-                        <Typography fontSize={18} sx={{ backgroundColor: "white", color: "black", borderStyle: "solid", borderWidth: "1px", borderRadius: "18px", width: "fit-content", padding: "4px 12px 4px 12px", fontFamily: "Bakbak One, display", fontWeight: "700" }}>
+                    <Grid item lg={12} sx={{ marginTop: "12px" }}>
+                        <Typography fontSize={18} sx={{ backgroundColor: "white", color: "black", borderStyle: "solid", borderWidth: "1px", borderRadius: "18px", width: "fit-content", padding: "4px 12px 4px 12px", fontFamily: "Bakbak One, display", fontWeight: "50" }}>
                             <b>
                                 {props?.user?.role == 0 ? "Hiker" : ""}
                                 {props?.user?.role == 1 ? "Friend" : ""}
@@ -55,7 +55,7 @@ const HikerDashboard = (props) => {
                         </Typography>
                     </Grid>
                 </Grid>
-                <Grid container item lg={6} justifyContent="center" sx={{ marginLeft: "25px" }}>
+                <Grid container item lg={6} height="fit-content" justifyContent="center" sx={{ marginLeft: "25px" }}>
                     <Grid lg={12}>
                         <Typography fontSize={32}>
                             <b>Preferences</b>

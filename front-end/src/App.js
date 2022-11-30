@@ -36,6 +36,7 @@ import ShowHike from './routes/show-hike/ShowHike';
 import { MyHutsPage } from './routes/hut/MyHutsPage';
 import { MyHikesPage } from './routes/my-hikes/MyHikesPage';
 import HikerDashboard from './routes/hiker-dashboard/HikerDashboard';
+import AdminDashboard from './routes/admin-dashboard/AdminDashboard';
 
 function App() {
   return (
@@ -137,6 +138,7 @@ function App2() {
         <Route path="/newParking" element={<NewParking user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} addNewParkingLot={API.addNewParkingLot}/>}/>
         <Route path="/newHikeStEnd" element={<NewHikeStEnd addNewGpx={API.addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
         <Route path="/hikerdashboard" element={<HikerDashboard user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
+        <Route path="/admindashboard" element={<AdminDashboard user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
       </Routes>
     </>
   );
