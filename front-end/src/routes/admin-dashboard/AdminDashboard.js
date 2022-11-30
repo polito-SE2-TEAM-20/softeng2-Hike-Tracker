@@ -1,4 +1,4 @@
-import { Grid, TextField, Typography } from "@mui/material";
+import { Grid, Switch, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router";
 import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import { displayTypeFlex } from "../../extra/DisplayType";
@@ -12,12 +12,40 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, useMapEvents, ZoomControl, Polyline, useMap } from 'react-leaflet'
 import HikePopup from "../../components/hike-popup/HikePopup";
 import HTButton from "../../components/buttons/Button";
+import { FormControlLabel } from "@mui/material";
+import { useState, useEffect } from "react";
+import API from "../../API/API";
 
 const AdminDashboard = (props) => {
     const navigate = useNavigate()
     const gotoLogin = () => {
         navigate("/login", { replace: false })
     }
+    const [loaded, setLoaded] = useState(false)
+    const [localGuides, setLocalGuides] = useState([])
+    const [hutWorkers, setHutWorkers] = useState([])
+
+    useEffect(() => {
+        var listOfLocalGuides = []
+        var listOfHutWorkers = []
+
+        const getLocalGuides = async () => {
+            listOfLocalGuides = await API.getNotApprovedLocalGuides()
+        }
+        const getHutWorkers = async () => {
+            listOfHutWorkers = await API.getNotApprovedHutWorkers()
+        }
+
+        getLocalGuides().then(() => {
+            setLocalGuides(listOfLocalGuides)
+            console.log(localGuides)
+        })
+        getHutWorkers().then(() => {
+            setHutWorkers(listOfHutWorkers)
+            console.log(hutWorkers)
+        })
+
+    }, [])
 
     return (
         <>
@@ -56,16 +84,28 @@ const AdminDashboard = (props) => {
                     </Grid>
                 </Grid>
                 <Grid container item lg={6} justifyContent="center" height="fit-content" sx={{ marginLeft: "25px" }}>
-                    <Grid lg={12}>
-                        <Typography fontSize={32}>
-                            <b>Admin dashboard</b>
-                        </Typography>
+                    <Grid item lg={6}>
+                        <Grid lg={12}>
+                            <Typography fontSize={32}>
+                                <b>Admin dashboard</b>
+                            </Typography>
+                        </Grid>
+                        <Grid lg={12}>
+                            <Typography fontSize={14} color="#555555">
+                                Here, the admin is allowed to accept or reject any sign up request for either local guides and hut workers.
+                            </Typography>
+                        </Grid>
                     </Grid>
-                    <Grid lg={12}>
-                        <Typography fontSize={14} color="#555555">
-                            Here, the admin is allowed to accept or reject any sign up request for either local guides and hut workers.
-                        </Typography>
+
+                    <Grid item lg={6}>
+                        <Grid lg={12} style={{ display: "flex", justifyContent: "right" }}>
+                            <FormControlLabel control={<Switch defaultChecked />} label="Show local guides requests" />
+                        </Grid>
+                        <Grid lg={12} style={{ display: "flex", justifyContent: "right" }}>
+                            <FormControlLabel control={<Switch defaultChecked />} label="Show hut workers requests" />
+                        </Grid>
                     </Grid>
+
                     <Grid lg={12} sx={{ marginTop: "28px" }}>
                         {/* <Typography variant="h5">
                             There are no incoming requests.
@@ -89,7 +129,7 @@ const AdminDashboard = (props) => {
                                         <Typography><b>Email</b>: frankfreek@gmail.com</Typography>
                                     </Grid>
                                     <Grid item lg={12} sx={{ display: "flex", justifyContent: "right" }}>
-                                        <div style={{marginRight: "24px"}}>
+                                        <div style={{ marginRight: "24px" }}>
                                             <HTButton text="Accept" textSize="18px" textColor="white" color="#33aa33" />
                                         </div>
                                         <HTButton text="Reject" textSize="18px" textColor="white" color="#aa3333" />
