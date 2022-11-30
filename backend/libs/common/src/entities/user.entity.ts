@@ -1,3 +1,4 @@
+import { PreferencesDto } from '@core/users/preferences.dto';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 import { UserLimits } from '../constants';
@@ -72,6 +73,13 @@ export class User {
     default: false,
   })
   approved!: boolean;
+
+  @Column({
+    type: 'jsonb',
+    nullable: true,
+    default: null  
+  })
+  preferences!: PreferencesDto;
 
   /**
    * For TypeORM metadata only

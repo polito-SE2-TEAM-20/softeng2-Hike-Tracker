@@ -4,13 +4,12 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable, HttpException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
-import { Brackets, DataSource } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { User, UserContext, UserJwtPayload } from '@app/common';
 import { safeUser } from '@core/users/users.utils';
 
 import { RegisterDto } from './auth.dto';
-import { where } from 'ramda';
 
 @Injectable()
 export class AuthService {
