@@ -43,7 +43,7 @@ export class UsersService extends BaseService<User> {
       throw new HttpException("User doesn't exists", 422);
 
     if (user.preferences === null) 
-      throw new HttpException("You still need to set your preferences", 422);
+      throw new HttpException("You still need to set your preferences", 404);
 
     return user.preferences
   }

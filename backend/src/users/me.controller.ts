@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
 
 import { AuthenticatedOnly, CurrentUser, Hike, UserContext } from '@app/common';
 import { HikesService } from '@core/hikes/hikes.service';
@@ -21,12 +21,14 @@ export class MeControlelr {
   }
 
   @AuthenticatedOnly()
+  @HttpCode(200)
   @Get('preferences')
   async getPreferences(@CurrentUser() user: UserContext) {
     return await this.usersService.getPreferences(user.id);
   }
 
   @AuthenticatedOnly()
+  @HttpCode(201)
   @Post('set_preferences')
   async setPreferences(@CurrentUser() user: UserContext, @Body() body: PreferencesDto) {
     return await this.usersService.setPreferences(user.id, body);
