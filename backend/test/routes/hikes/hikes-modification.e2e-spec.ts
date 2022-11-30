@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 import { mapToId, Point, UserRole } from '@app/common';
 import { finishTest } from '@app/testing';
 import { prepareTestApp, prepareVars } from '@test/base';
@@ -35,7 +36,7 @@ describe('HikesModification (e2e)', () => {
 
     const hut1 = await testService.createHut(
       {
-        userId: localGuide.id,
+        userId: user.id,
         numberOfBeds: 5,
         price: 55.3,
       },
@@ -44,7 +45,7 @@ describe('HikesModification (e2e)', () => {
 
     const hut2 = await testService.createHut(
       {
-        userId: localGuide.id,
+        userId: user.id,
         numberOfBeds: 2,
         price: 80.5,
       },
@@ -53,7 +54,7 @@ describe('HikesModification (e2e)', () => {
 
     const hut3 = await testService.createHut(
       {
-        userId: localGuide.id,
+        userId: user.id,
         numberOfBeds: 1,
         price: 100,
       },
@@ -62,7 +63,7 @@ describe('HikesModification (e2e)', () => {
 
     const hut4 = await testService.createHut(
       {
-        userId: localGuide.id,
+        userId: user.id,
         numberOfBeds: 3,
         price: 45,
       },
@@ -71,7 +72,7 @@ describe('HikesModification (e2e)', () => {
 
     const hut5 = await testService.createHut(
       {
-        userId: localGuide.id,
+        userId: user.id,
         numberOfBeds: 6,
         price: 130,
       },
@@ -81,7 +82,7 @@ describe('HikesModification (e2e)', () => {
     const parkingLot1 = await testService.createParkingLot(
       {
         maxCars: 150,
-        userId: localGuide.id,
+        userId: user.id,
       },
       { position: { type: 'Point', coordinates: [47.8, 7] } },
     );
@@ -89,7 +90,7 @@ describe('HikesModification (e2e)', () => {
     const parkingLot2 = await testService.createParkingLot(
       {
         maxCars: 200,
-        userId: localGuide.id,
+        userId: user.id,
       },
       { position: { type: 'Point', coordinates: [47.5, 7] } },
     );
@@ -97,14 +98,14 @@ describe('HikesModification (e2e)', () => {
     const parkingLot3 = await testService.createParkingLot(
       {
         maxCars: 85,
-        userId: localGuide.id,
+        userId: user.id,
       },
       { position: { type: 'Point', coordinates: [48.8, 7] } },
     );
 
     const parkingLot4 = await testService.createParkingLot(
       {
-        userId: localGuide.id,
+        userId: user.id,
         maxCars: 70,
       },
       pointData,
@@ -112,7 +113,7 @@ describe('HikesModification (e2e)', () => {
 
     const parkingLot5 = await testService.createParkingLot(
       {
-        userId: localGuide.id,
+        userId: user.id,
         maxCars: 300,
       },
       pointData,
@@ -122,7 +123,7 @@ describe('HikesModification (e2e)', () => {
       .build(app, user)
       .request()
       .post('/hike-modification/hutsAndParkingLots')
-      .send({ lat: 7.0, lon: 47.0, radiusKms: 3000 })
+      .send({ lat: 7.0, lon: 47.0, radiusKms: 100 })
       .expect(200)
       .expect(({ body }) => {
         expect(body.huts).toHaveLength(2);

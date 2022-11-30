@@ -6,13 +6,18 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { isNil } from 'ramda';
 
 import {
   CurrentUser,
   Hut,
   ID,
+  IMAGES_URI,
   LocalGuideAndHutWorkerOnly,
   Point,
   UserContext,
@@ -106,5 +111,23 @@ export class HutsController {
     @CurrentUser() user: UserContext,
   ): Promise<Hut> {
     return await this.service.createNewHut(body, user.id);
+  }
+
+  @Put(':id')
+  @UseInterceptors(FilesInterceptor('pictures', 20))
+  @LocalGuideAndHutWorkerOnly()
+  async updateHutPhotos(
+    @Param('id', ParseIntPipe) id: ID,
+    @CurrentUser() user: UserContext,
+    @UploadedFiles()
+    files: Express.Multer.File[],
+  ): Promise<Hut> {
+    await this.service.findByIdOrThrow(id);
+
+    const pictures = files.map(({ filename }) =>
+      [IMAGES_URI, filename].join('/'),
+    );
+
+    return await this.service.getRepository().save({ id, pictures });
   }
 }

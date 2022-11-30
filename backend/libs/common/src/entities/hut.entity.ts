@@ -9,6 +9,7 @@ import {
 import {
   FOREIGN_OPTIONS_CASCADE,
   HutLimits,
+  makePgJsonbArray,
   numericOptionsConfig,
 } from '../constants';
 
@@ -73,6 +74,9 @@ export class Hut {
     nullable: true,
   })
   elevation!: number | null;
+
+  @Column(makePgJsonbArray(false))
+  pictures!: string[];
 
   /**
    * TypeORM sql-gen only

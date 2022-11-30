@@ -10,7 +10,7 @@ import {
   orderEntities,
   Point,
   PointType,
-  User,
+  UserContext,
 } from '@app/common';
 
 import { CreateHutDto } from './huts.dto';
@@ -40,7 +40,11 @@ export class HutsService extends BaseService<Hut> {
     orderEntities(huts, ids, propEq('id'));
   }
 
-  async validatePermissions(hut: Hut, user: User): Promise<void> {
+  async getFullHut(id: ID, entityManager?: EntityManager): Promise<Hut> {
+    return await this.findByIdOrThrow(id, entityManager);
+  }
+
+  async validatePermissions(hut: Hut, user: UserContext): Promise<void> {
     if (hut.userId !== user.id) {
       throw new Error('Permissions error');
     }
@@ -50,10 +54,14 @@ export class HutsService extends BaseService<Hut> {
    * Create a new hut
    */
   async createNewHut({ ...data }: CreateHutDto, userId: number): Promise<Hut> {
+    if (!data.location) {
+      throw new Error('Location is required');
+    }
+
     //Create hut point
     const position: GPoint = {
       type: 'Point',
-      coordinates: [data.location!.lon, data.location!.lat],
+      coordinates: [data.location.lon, data.location.lat],
     };
 
     const point = await this.pointRepository.save({

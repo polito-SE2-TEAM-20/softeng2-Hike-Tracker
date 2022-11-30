@@ -165,6 +165,7 @@ jobs:
           command: |
             mkdir -p test-results
             mkdir -p uploads/gpx
+            mkdir -p uploads/images
             npm run test:e2e:cov -- --silent --maxWorkers=2
       - store_test_results:
           path: test-results

@@ -1,4 +1,6 @@
-import { mapToId, Point, UserRole } from '@app/common';
+import { extname, join } from 'path';
+
+import { mapToId, Point, ROOT, UserRole } from '@app/common';
 import { finishTest } from '@app/testing';
 import { prepareTestApp, prepareVars } from '@test/base';
 
@@ -244,5 +246,38 @@ describe('Huts (e2e)', () => {
           },
         });
       });
+  });
+
+  it('should put hut pictures', async () => {
+    const { localGuide } = await setup();
+
+    const hut = await testService.createHut({
+      userId: localGuide.id,
+      numberOfBeds: 1,
+      price: 100,
+    });
+
+    const testPics = ['img1.png', 'img2.jpeg', 'img3.jpeg'];
+    const req = restService
+      .build(app, localGuide)
+      .request()
+      .put(`/huts/${hut.id}`);
+
+    testPics.forEach((file) =>
+      req.attach('pictures', join(ROOT, './test-data', file)),
+    );
+
+    await req.expect(200).expect(({ body }) => {
+      expect(body).toMatchObject({
+        id: hut.id,
+      });
+
+      expect(body.pictures).toHaveLength(testPics.length);
+      body.pictures.forEach((picture, i) => {
+        expect(picture).toMatch(
+          new RegExp(`^\\/static\\/images\\/.+\\${extname(testPics[i])}$`),
+        );
+      });
+    });
   });
 });

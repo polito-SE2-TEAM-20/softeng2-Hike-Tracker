@@ -14,7 +14,7 @@ export function prepareApp(app: NestExpressApplication | INestApplication) {
     credentials: true,
   });
 
-  if (!isTest()) {
+  if (!isTest() || true) {
     app.enableShutdownHooks();
   }
 

@@ -45,3 +45,13 @@ export const JWT_SECRET: string = process.env.JWT_SECRET
   : (() => {
       throw new Error('process.env.JWT_SECRET is not defined');
     })();
+
+export const makePgJsonbArray = (
+  nullable: boolean,
+  defaultValue: () => string = () => "'[]'",
+): ColumnOptions => ({
+  type: 'jsonb',
+  array: false,
+  nullable,
+  default: defaultValue,
+});
