@@ -36,7 +36,7 @@ export class UsersService extends BaseService<User> {
     return user.preferences
   }
 
-  async getPreferences(id: number) {
+  async getPreferences(id: number): Promise<PreferencesDto> {
     const user = await this.usersRepository.findOneBy({ id })
 
     if (user === null) 
