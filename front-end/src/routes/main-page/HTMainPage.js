@@ -5,6 +5,8 @@ import HTNavbar from '../../components/HTNavbar/HTNavbar'
 import './main-page-style.css'
 import { CardMedia } from "@mui/material";
 import mainPagePicture from '../../Assets/mainpage.jpg'
+import mainPagePicture2 from '../../Assets/mainpage2.jpg'
+import mainPagePicture3 from '../../Assets/mainpage3.jpg'
 import API from "../../API/API";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@mui/material";
@@ -41,7 +43,7 @@ const HTMainPage = (props) => {
     }
 
     return (
-        <div style={{ backgroundColor: "#1a1a1a", height: "100%", minHeight: "100vh", paddingBottom: "60px" }}>
+        <div style={{ backgroundColor: "#1a1a1a", height: "100%", minHeight: "100vh", paddingBottom: "5px" }}>
             <Grid columns={12} container spacing={0} style={{ height: "fit-content" }}>
                 <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} navigate={props.navigate} />
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -64,7 +66,31 @@ const HTMainPage = (props) => {
                             color: '#ffffff',
                             textDecoration: 'none',
                             marginTop: "-250px",
-                            color: "#EBC824"
+                            "@keyframes mainTitleMovement": {
+                                '0%': {
+                                    textShadow: "0 0 1.00rem white",
+                                    color: "black"
+                                },
+                                '25%': {
+                                    textShadow: "0 0 0.75rem black",
+                                    color: "white"
+                                },
+                                '50%': {
+                                    textShadow: "0 0 0.50rem white",
+                                    color: "black"
+                                },
+                                '75%': {
+                                    textShadow: "0 0 0.75rem black",
+                                    color: "white"
+                                },
+                                '100%': {
+                                    textShadow: "0 0 1.00rem white",
+                                    color: "black"
+                                }
+                            },
+                            animationIterationCount: "infinite",
+                            animationDuration: "5s",
+                            animationName: "mainTitleMovement"
                         }}
                         fontSize={{ xs: "25px", sm: "25px", md: "45px", lg: "60px", xl: "60px" }}
                     >
@@ -86,7 +112,26 @@ const HTMainPage = (props) => {
                                         color: '#ffffff',
                                         textDecoration: 'none',
                                         marginTop: "32px",
-                                        textShadow: "0 0 0.75rem #EBC824"
+                                        "@keyframes headerMovement": {
+                                            '0%': {
+                                                textShadow: "0 0 1.00rem #EBC824"
+                                            },
+                                            '25%': {
+                                                textShadow: "0 0 0.75rem #C2A41D"
+                                            },
+                                            '50%': {
+                                                textShadow: "0 0 0.50rem #1a1a1a"
+                                            },
+                                            '75%': {
+                                                textShadow: "0 0 0.75rem #C2A41D"
+                                            },
+                                            '100%': {
+                                                textShadow: "0 0 1.00rem #EBC824"
+                                            }
+                                        },
+                                        animationIterationCount: "infinite",
+                                        animationDuration: "3s",
+                                        animationName: "headerMovement"
                                     }}
                                     fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "32px", xl: "32px" }}
                                 >
@@ -129,9 +174,11 @@ const HTMainPage = (props) => {
                                                 <Button variant="outlined"
                                                     textDecoration="none"
                                                     onClick={() => { navigate('/listofhikes') }}
-                                                    sx={{ borderRadius: "60px", borderColor: "white", 
-                                                    color: "white", textTransform: "none",
-                                                    "&:hover": {borderColor: "#EBC824", color: "#EBC824"} }}>
+                                                    sx={{
+                                                        borderRadius: "60px", borderColor: "white",
+                                                        color: "white", textTransform: "none",
+                                                        "&:hover": { borderColor: "#EBC824", color: "#EBC824" }
+                                                    }}>
                                                     See more...
                                                 </Button>
                                             </div>
@@ -139,9 +186,161 @@ const HTMainPage = (props) => {
                                     }
                                 </Grid>
                             </Grid>
-                        </>:<></>
+                        </>
+                        :
+                        <>
+                            <Grid item xs={2} sm={2} md={2} lg={2} xl={2} />
+                            <Grid item xs={8} sm={8} md={8} lg={8} xl={8}>
+                                <Typography
+                                    variant="h2"
+                                    className="unselectable"
+                                    sx={{
+                                        justifyContent: "left",
+                                        textAlign: "left",
+                                        color: '#ffffff',
+                                        textDecoration: 'none',
+                                        marginTop: "32px",
+                                        "@keyframes headerMovement": {
+                                            '0%': {
+                                                textShadow: "0 0 1.00rem #EBC824"
+                                            },
+                                            '25%': {
+                                                textShadow: "0 0 0.75rem #C2A41D"
+                                            },
+                                            '50%': {
+                                                textShadow: "0 0 0.50rem #1a1a1a"
+                                            },
+                                            '75%': {
+                                                textShadow: "0 0 0.75rem #C2A41D"
+                                            },
+                                            '100%': {
+                                                textShadow: "0 0 1.00rem #EBC824"
+                                            }
+                                        },
+                                        animationIterationCount: "infinite",
+                                        animationDuration: "3s",
+                                        animationName: "headerMovement"
+                                    }}
+                                    fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "48px", xl: "48px" }}
+                                >
+                                    Connect with us
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={2} sm={2} md={2} lg={2} xl={2} />
+
+
+                            <Grid item xs={2} sm={2} md={2} lg={2} xl={2} />
+                            <Grid item xs={8} sm={8} md={8} lg={8} xl={8}>
+                                <Typography
+                                    variant="h2"
+                                    className="unselectable"
+                                    sx={{
+                                        justifyContent: "left",
+                                        textAlign: "left",
+                                        color: '#ffffff',
+                                        textDecoration: 'none',
+                                        marginTop: "32px"
+                                    }}
+                                    fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "24px", xl: "24px" }}
+                                >
+                                    Sign up on our website to get access to hikes suggestions based on your preferences and to browse our map to find your next experience.
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={2} sm={2} md={2} lg={2} xl={2} />
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                <CardMedia component="img"
+                                    height={{ xs: "400px", sm: "400px", md: "400px", lg: "100px", xl: "100px" }}
+                                    style={{ objectFit: "cover", height: "300px", width: "100vw", marginTop: "25px" }}
+                                    image={mainPagePicture2}
+                                    alt="Paella dish">
+                                </CardMedia>
+                            </Grid>
+                            <Grid item xs={2} sm={2} md={2} lg={2} xl={2} />
+                            <Grid item xs={8} sm={8} md={8} lg={8} xl={8}>
+                                <Typography
+                                    variant="h2"
+                                    className="unselectable"
+                                    sx={{
+                                        justifyContent: "right",
+                                        textAlign: "right",
+                                        color: '#ffffff',
+                                        textDecoration: 'none',
+                                        marginTop: "32px",
+                                        "@keyframes headerMovement": {
+                                            '0%': {
+                                                textShadow: "0 0 1.00rem #EBC824"
+                                            },
+                                            '25%': {
+                                                textShadow: "0 0 0.75rem #C2A41D"
+                                            },
+                                            '50%': {
+                                                textShadow: "0 0 0.50rem #1a1a1a"
+                                            },
+                                            '75%': {
+                                                textShadow: "0 0 0.75rem #C2A41D"
+                                            },
+                                            '100%': {
+                                                textShadow: "0 0 1.00rem #EBC824"
+                                            }
+                                        },
+                                        animationIterationCount: "infinite",
+                                        animationDuration: "3s",
+                                        animationName: "headerMovement"
+                                    }}
+                                    fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "48px", xl: "48px" }}
+                                >
+                                    Share your experiences
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={2} sm={2} md={2} lg={2} xl={2} />
+
+
+                            <Grid item xs={2} sm={2} md={2} lg={2} xl={2} />
+                            <Grid item xs={8} sm={8} md={8} lg={8} xl={8}>
+                                <Typography
+                                    variant="h2"
+                                    className="unselectable"
+                                    sx={{
+                                        justifyContent: "right",
+                                        textAlign: "right",
+                                        color: '#ffffff',
+                                        textDecoration: 'none',
+                                        marginTop: "32px"
+                                    }}
+                                    fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "24px", xl: "24px" }}
+                                >
+                                    Once started, your adventure will be sharable with your friends with a single click: a link will give them a view on your track.
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={2} sm={2} md={2} lg={2} xl={2} />
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                <CardMedia component="img"
+                                    height={{ xs: "400px", sm: "400px", md: "400px", lg: "100px", xl: "100px" }}
+                                    style={{ objectFit: "cover", height: "300px", width: "100vw", marginTop: "25px" }}
+                                    image={mainPagePicture3}
+                                    alt="Paella dish">
+                                </CardMedia>
+                            </Grid>
+                        </>
                 }
             </Grid >
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ backgroundColor: "#EBC824", height: "120px" }}>
+                <Typography
+                    variant="h2"
+                    className="unselectable"
+                    sx={{
+                        color: '#1a1a1a',
+                        textDecoration: 'none',
+                        display: "flex",
+                        justifyContent: "left",
+                        marginTop: "24px",
+                        paddingTop: "15px",
+                        marginLeft: "250px"
+                    }}
+                    fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "24px", xl: "24px" }}>
+                        HackTheHike.com - TEAM20
+                </Typography>
+            </Grid>
         </div>
     );
 }
