@@ -12,6 +12,7 @@ import {
   numericOptionsConfig,
 } from '../constants';
 import { HikeDifficulty } from '../enums';
+import { HikeCondition } from '../enums/hike-condition.enum';
 
 import { User } from './user.entity';
 
@@ -70,6 +71,21 @@ export class Hike {
     default: HikeDifficulty.tourist,
   })
   difficulty!: HikeDifficulty;
+
+  @Column({
+    type: 'smallint',
+    nullable: false,
+    default: HikeCondition.open,
+  })
+  condition!: HikeCondition;
+
+  @Column({
+    type: 'varchar',
+    length: HikeLimits.cause,
+    nullable: true,
+    default: '',
+  })
+  cause?: string;
 
   @Column({
     type: 'varchar',

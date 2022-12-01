@@ -27,6 +27,7 @@ import {
 import { In } from 'typeorm';
 
 import { hikeBasic } from './constants';
+import { HikeCondition } from '@app/common/enums/hike-condition.enum';
 
 const withoutCompositeFields = omit([
   'referencePoints',
@@ -100,6 +101,7 @@ describe('Hikes (e2e)', () => {
             expectedTime: 100 * (i + 1),
             difficulty: HikeDifficulty.tourist,
             userId: localGuide.id,
+            condition: HikeCondition.open
           }),
         ),
     );
@@ -329,6 +331,7 @@ describe('Hikes (e2e)', () => {
       ascent: 5.71,
       expectedTime: 1020,
       difficulty: HikeDifficulty.professionalHiker,
+      condition: HikeCondition.open,
       referencePoints: [
         {
           name: 'Small fountain',
@@ -432,6 +435,7 @@ describe('Hikes (e2e)', () => {
       ascent: 5.71,
       expectedTime: 1020,
       difficulty: HikeDifficulty.professionalHiker,
+      condition: HikeCondition.open,
       city: "Torino",
       country: "Italy",
       referencePoints: [
@@ -461,6 +465,7 @@ describe('Hikes (e2e)', () => {
       ascent: 5.71,
       expectedTime: 1020,
       difficulty: HikeDifficulty.professionalHiker,
+      condition: HikeCondition.open,
       city: "Torino",
       country: "Italy",
       referencePoints: [

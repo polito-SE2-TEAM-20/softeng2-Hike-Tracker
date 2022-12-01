@@ -1,4 +1,5 @@
 import { HikeDifficulty } from '@app/common';
+import { HikeCondition } from '@app/common/enums/hike-condition.enum';
 
 export const hikeBasic = {
   title: 'eeee',
@@ -11,4 +12,5 @@ export const hikeBasic = {
   ascent: 5.71,
   expectedTime: 1020,
   difficulty: HikeDifficulty.professionalHiker,
+  condition: HikeCondition.open,
 };
