@@ -166,11 +166,11 @@ const HTMainPage = (props) => {
                                         marginTop: { xs: "-350px", sm: "-350px", md: "-250px", lg: "-250px", xl: "-250px" },
                                         "@keyframes mainTitleMovement": {
                                             '0%': {
-                                                textShadow: "0 0 1.00rem white",
+                                                textShadow: "0 0 0.50rem white",
                                                 color: "black"
                                             },
                                             '25%': {
-                                                textShadow: "0 0 0.75rem black",
+                                                textShadow: "0 0 0.50rem black",
                                                 color: "#EBC824"
                                             },
                                             '50%': {
@@ -178,16 +178,16 @@ const HTMainPage = (props) => {
                                                 color: "black"
                                             },
                                             '75%': {
-                                                textShadow: "0 0 0.75rem black",
+                                                textShadow: "0 0 0.50rem black",
                                                 color: "#EBC824"
                                             },
                                             '100%': {
-                                                textShadow: "0 0 1.00rem white",
+                                                textShadow: "0 0 0.50rem white",
                                                 color: "black"
                                             }
                                         },
                                         animationIterationCount: "infinite",
-                                        animationDuration: "7s",
+                                        animationDuration: "10s",
                                         animationName: "mainTitleMovement"
                                     }}
                                     fontSize={{ xs: "60px", sm: "70px", md: "75px", lg: "60px", xl: "60px" }}
