@@ -46,63 +46,10 @@ const HTMainPage = (props) => {
         <div style={{ backgroundColor: "#1a1a1a", height: "100%", minHeight: "100vh", paddingBottom: "5px" }}>
             <Grid columns={12} container spacing={0} style={{ height: "fit-content" }}>
                 <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} navigate={props.navigate} />
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                    <CardMedia component="img"
-                        height={{ xs: "400px", sm: "400px", md: "400px", lg: "500px", xl: "500px" }}
-                        style={{ objectFit: "cover", height: "500px", width: "100vw" }}
-                        image={mainPagePicture}
-                        alt="Paella dish">
-                    </CardMedia>
-                </Grid>
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                    <Typography
-                        variant="h2"
-                        className="unselectable"
-                        sx={{
-                            justifyContent: "center",
-                            fontFamily: "Crimson Text, serif",
-                            fontWeight: 700,
-                            textAlign: "center",
-                            color: '#ffffff',
-                            textDecoration: 'none',
-                            marginTop: { xs: "-350px", sm: "-350px", md: "-250px", lg: "-250px", xl: "-250px" },
-                            "@keyframes mainTitleMovement": {
-                                '0%': {
-                                    textShadow: "0 0 1.00rem white",
-                                    color: "black"
-                                },
-                                '25%': {
-                                    textShadow: "0 0 0.75rem black",
-                                    color: "#EBC824"
-                                },
-                                '50%': {
-                                    textShadow: "0 0 0.50rem white",
-                                    color: "black"
-                                },
-                                '75%': {
-                                    textShadow: "0 0 0.75rem black",
-                                    color: "#EBC824"
-                                },
-                                '100%': {
-                                    textShadow: "0 0 1.00rem white",
-                                    color: "black"
-                                }
-                            },
-                            animationIterationCount: "infinite",
-                            animationDuration: "7s",
-                            animationName: "mainTitleMovement"
-                        }}
-                        fontSize={{ xs: "60px", sm: "70px", md: "75px", lg: "60px", xl: "60px" }}
-                    >
-                        where will your next adventure be?
-                    </Typography>
-                </Grid>
-
                 {
                     props.isLoggedIn && props?.user?.role === 0 ?
                         <>
-                            <Grid item xs={2} sm={2} md={2} lg={2} xl={2} />
-                            <Grid item xs={8} sm={8} md={8} lg={8} xl={8}>
+                            <Grid item xs={8} sm={8} md={8} lg={8} xl={8} style={{marginTop: "50px", display: "flex", justifyContent: "center"}}>
                                 <Typography
                                     variant="h2"
                                     className="unselectable"
@@ -138,7 +85,6 @@ const HTMainPage = (props) => {
                                     Based on your preferences:
                                 </Typography>
                             </Grid>
-                            <Grid item xs={2} sm={2} md={2} lg={2} xl={2} />
 
                             <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} columns={3} style={{ display: "flex", justifyContent: "center", marginLeft: "300px", marginRight: "300px" }}>
                                 {
@@ -189,6 +135,57 @@ const HTMainPage = (props) => {
                         </>
                         :
                         <>
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                <CardMedia component="img"
+                                    height={{ xs: "400px", sm: "400px", md: "400px", lg: "500px", xl: "500px" }}
+                                    style={{ objectFit: "cover", height: "500px", width: "100vw" }}
+                                    image={mainPagePicture}
+                                    alt="Paella dish">
+                                </CardMedia>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                <Typography
+                                    variant="h2"
+                                    className="unselectable"
+                                    sx={{
+                                        justifyContent: "center",
+                                        fontFamily: "Crimson Text, serif",
+                                        fontWeight: 700,
+                                        textAlign: "center",
+                                        color: '#ffffff',
+                                        textDecoration: 'none',
+                                        marginTop: { xs: "-350px", sm: "-350px", md: "-250px", lg: "-250px", xl: "-250px" },
+                                        "@keyframes mainTitleMovement": {
+                                            '0%': {
+                                                textShadow: "0 0 1.00rem white",
+                                                color: "black"
+                                            },
+                                            '25%': {
+                                                textShadow: "0 0 0.75rem black",
+                                                color: "#EBC824"
+                                            },
+                                            '50%': {
+                                                textShadow: "0 0 0.50rem white",
+                                                color: "black"
+                                            },
+                                            '75%': {
+                                                textShadow: "0 0 0.75rem black",
+                                                color: "#EBC824"
+                                            },
+                                            '100%': {
+                                                textShadow: "0 0 1.00rem white",
+                                                color: "black"
+                                            }
+                                        },
+                                        animationIterationCount: "infinite",
+                                        animationDuration: "7s",
+                                        animationName: "mainTitleMovement"
+                                    }}
+                                    fontSize={{ xs: "60px", sm: "70px", md: "75px", lg: "60px", xl: "60px" }}
+                                >
+                                    where will your next adventure be?
+                                </Typography>
+                            </Grid>
                             <Grid item xs={2} sm={2} md={2} lg={2} xl={2} />
                             <Grid item xs={8} sm={8} md={8} lg={8} xl={8}>
                                 <Typography
