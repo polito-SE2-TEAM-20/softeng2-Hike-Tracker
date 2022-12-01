@@ -7,6 +7,7 @@ import { CardMedia } from "@mui/material";
 import mainPagePicture from '../../Assets/tmpmainpage.jpg'
 import mainPagePicture2 from '../../Assets/mainpage2.jpg'
 import mainPagePicture3 from '../../Assets/mainpage3.jpg'
+import asidePicture from '../../Assets/aside.jpg'
 import API from "../../API/API";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@mui/material";
@@ -54,7 +55,7 @@ const HTMainPage = (props) => {
                                     <Grid item>
                                         <CardMedia component="img"
                                             style={{ objectFit: "cover", height: "100vh", marginTop: "25px" }}
-                                            image={mainPagePicture2}
+                                            image={asidePicture}
                                             alt="Paella dish">
                                         </CardMedia>
                                     </Grid>
