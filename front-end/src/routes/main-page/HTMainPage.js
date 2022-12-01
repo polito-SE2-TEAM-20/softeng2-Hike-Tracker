@@ -4,7 +4,7 @@ import { Typography } from '@mui/material';
 import HTNavbar from '../../components/HTNavbar/HTNavbar'
 import './main-page-style.css'
 import { CardMedia } from "@mui/material";
-import mainPagePicture from '../../Assets/mainpage.jpg'
+import mainPagePicture from '../../Assets/tmpmainpage.jpg'
 import mainPagePicture2 from '../../Assets/mainpage2.jpg'
 import mainPagePicture3 from '../../Assets/mainpage3.jpg'
 import API from "../../API/API";
@@ -147,7 +147,7 @@ const HTMainPage = (props) => {
                             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                 <CardMedia component="img"
                                     height={{ xs: "400px", sm: "400px", md: "400px", lg: "500px", xl: "500px" }}
-                                    style={{ objectFit: "cover", height: "500px", width: "100vw" }}
+                                    style={{ objectFit: "cover", height: "100vh", width: "100vw" }}
                                     image={mainPagePicture}
                                     alt="Paella dish">
                                 </CardMedia>
@@ -163,7 +163,7 @@ const HTMainPage = (props) => {
                                         textAlign: "center",
                                         color: '#EBC824',
                                         textDecoration: 'none',
-                                        marginTop: { xs: "-350px", sm: "-350px", md: "-250px", lg: "-250px", xl: "-250px" },
+                                        marginTop: { xs: "-350px", sm: "-350px", md: "-300px", lg: "-300px", xl: "-300px" },
                                         textShadow: "0 0 0.75rem black"
                                     }}
                                     fontSize={{ xs: "60px", sm: "70px", md: "75px", lg: "60px", xl: "60px" }}
