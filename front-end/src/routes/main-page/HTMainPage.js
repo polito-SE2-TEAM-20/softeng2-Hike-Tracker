@@ -65,7 +65,7 @@ const HTMainPage = (props) => {
                             textAlign: "center",
                             color: '#ffffff',
                             textDecoration: 'none',
-                            marginTop: "-250px",
+                            marginTop: { xs: "-350px", sm: "-350px", md: "-250px", lg: "-250px", xl: "-250px" },
                             "@keyframes mainTitleMovement": {
                                 '0%': {
                                     textShadow: "0 0 1.00rem white",
@@ -92,7 +92,7 @@ const HTMainPage = (props) => {
                             animationDuration: "5s",
                             animationName: "mainTitleMovement"
                         }}
-                        fontSize={{ xs: "25px", sm: "25px", md: "45px", lg: "60px", xl: "60px" }}
+                        fontSize={{ xs: "60px", sm: "70px", md: "75px", lg: "60px", xl: "60px" }}
                     >
                         where will your next adventure be?
                     </Typography>
@@ -324,7 +324,7 @@ const HTMainPage = (props) => {
                         </>
                 }
             </Grid >
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ backgroundColor: "#EBC824", height: "120px" }}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ backgroundColor: "#EBC824", height: "80px" }}>
                 <Typography
                     variant="h2"
                     className="unselectable"
@@ -338,8 +338,22 @@ const HTMainPage = (props) => {
                         marginLeft: "250px"
                     }}
                     fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "24px", xl: "24px" }}>
-                        HackTheHike.com - TEAM20
+                    <b>HackTheHike.com</b>
                 </Typography>
+                <Typography
+                    variant="h2"
+                    className="unselectable"
+                    sx={{
+                        color: '#1a1a1a',
+                        textDecoration: 'none',
+                        display: "flex",
+                        justifyContent: "left",
+                        marginLeft: "250px"
+                    }}
+                    fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "14px", xl: "14px" }}>
+                    All rights reserved. 2022.
+                </Typography>
+
             </Grid>
         </div>
     );
