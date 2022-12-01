@@ -1,17 +1,14 @@
 import { useNavigate } from "react-router-dom";
-import { Button, Divider, Grid } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 import { Typography } from '@mui/material';
 import HTNavbar from '../../components/HTNavbar/HTNavbar'
 import './main-page-style.css'
-import { Box } from "@mui/material";
 import { CardMedia } from "@mui/material";
-import { displayTypeFlex } from '../../extra/DisplayType';
 import mainPagePicture from '../../Assets/mainpage.jpg'
 import API from "../../API/API";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@mui/material";
 import HikeCard from "../../components/hike-card/HikeCard";
-import HTButton from "../../components/buttons/Button";
 
 const HikeLoading = () => {
     return (
@@ -62,7 +59,7 @@ const HTMainPage = (props) => {
                         sx={{
                             justifyContent: "center",
                             fontFamily: "Crimson Text, serif",
-                            fontWeight: 700, justifyContent: "center",
+                            fontWeight: 700,
                             textAlign: "center",
                             color: '#ffffff',
                             textDecoration: 'none',
@@ -74,7 +71,7 @@ const HTMainPage = (props) => {
                 </Grid>
 
                 {
-                    props.isLoggedIn && props?.user?.role == 0 ?
+                    props.isLoggedIn && props?.user?.role === 0 ?
                         <>
                             <Grid item xs={2} sm={2} md={2} lg={2} xl={2} />
                             <Grid item xs={8} sm={8} md={8} lg={8} xl={8}>
@@ -82,7 +79,6 @@ const HTMainPage = (props) => {
                                     variant="h2"
                                     className="unselectable"
                                     sx={{
-                                        justifyContent: "center",
                                         justifyContent: "left",
                                         textAlign: "left",
                                         color: '#ffffff',
@@ -99,7 +95,7 @@ const HTMainPage = (props) => {
                             <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} columns={3} style={{ display: "flex", justifyContent: "center", marginLeft: "300px", marginRight: "300px" }}>
                                 {
                                     loading ?
-                                        listOfHikes.length == 0 ?
+                                        listOfHikes.length === 0 ?
                                             <Typography fontFamily={"Bakbak One, display"} fontWeight="600" fontSize="32px">
                                                 No matching hikes.
                                             </Typography>
