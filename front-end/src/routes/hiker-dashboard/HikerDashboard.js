@@ -1,4 +1,4 @@
-import { Grid, TextField, Typography } from "@mui/material";
+import { Button, Grid, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router";
 import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import { displayTypeFlex } from "../../extra/DisplayType";
@@ -138,7 +138,11 @@ const HikerDashboard = (props) => {
                                 <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}>Hiker</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <TextField variant="outlined" label="Difficulty" />
+                                <div style={{display: "flex", justifyContent: "space-between", marginLeft: "25%", marginRight: "25%"}}>
+                                    <Button variant="outlined" sx={{ borderRadius: "28px", color: "black", borderColor: "black", "&:hover": { backgroundColor: "#55B657", borderColor: "#000000", color: "white" } }}><b>Tourist</b></Button>
+                                    <Button variant="outlined" sx={{ borderRadius: "28px", color: "black", borderColor: "black", "&:hover": { backgroundColor: "#1a79aa", borderColor: "#000000", color: "white" } }}><b>Hiker</b></Button>
+                                    <Button variant="outlined" sx={{ borderRadius: "28px", color: "black", borderColor: "black", "&:hover": { backgroundColor: "#FA6952", borderColor: "#000000", color: "white" } }}><b>Pro</b></Button>
+                                </div>
                             </AccordionDetails>
                         </Accordion>
 
