@@ -12,6 +12,14 @@ interface DynamicFilter<E extends ObjectLiteral> {
 export const hikeFilters: Partial<
   Record<keyof FilteredHikesDto, DynamicFilter<Hike>>
 > = {
+  city: {
+    entityField: 'city',
+    operator: '=',
+  },
+  country: {
+    entityField: 'country',
+    operator: '=',
+  },
   region: {
     entityField: 'region',
     operator: '=',

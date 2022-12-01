@@ -1,5 +1,3 @@
-import { join } from 'path';
-
 import {
   Controller,
   Get,
@@ -14,13 +12,12 @@ import {
   ParseIntPipe,
   HttpCode,
   Delete,
-  HttpException,
   BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs-extra';
-import { isNil, omit, pick, propEq } from 'ramda';
-import { DataSource, DeepPartial, In } from 'typeorm';
+import { isNil, propEq } from 'ramda';
+import { DataSource, In } from 'typeorm';
 
 import {
   CurrentUser,
@@ -69,6 +66,7 @@ export class HikesController {
   }
 
   @Post('/filteredHikes')
+  @HttpCode(HttpStatus.OK)
   async getFilteredHikes(
     @Body()
     { inPointRadius, ...body }: FilteredHikesDto,
@@ -148,15 +146,21 @@ export class HikesController {
       }),
     )
     file: Express.Multer.File,
-    @Body() body: HikeDto,
+    @Body()
+    {
+      referencePoints: referencePointsArray,
+      startPoint: _startPoint,
+      endPoint: _endPoint,
+      ...body
+    }: HikeDto,
     @CurrentUser() user: UserContext,
-  ): Promise<Hike | null> {
+  ): Promise<HikeFull | null> {
     const gpx = await fs.readFile(file.path);
     const gpxText = gpx.toString('utf8');
     const [parsedHike] = await this.gpxService.parseHikes(gpxText);
 
     if (!parsedHike) {
-      return null;
+      throw new BadRequestException('Unable to find hikes in gpx file');
     }
 
     // insert hike into database
@@ -169,13 +173,12 @@ export class HikesController {
 
       const hike = await this.service.getRepository(entityManager).save({
         userId: user.id,
-        gpxPath: join(GPX_FILE_URI, file.filename),
+        gpxPath: [GPX_FILE_URI, file.filename].join('/'),
         ...parsedHike.hike,
         ...body,
       });
 
       //Antonio's code for refPoint insertion starts here
-      const referencePointsArray = body.referencePoints;
 
       const refPointsForDB = referencePointsArray.map((refPoint) => {
         return {
@@ -205,40 +208,14 @@ export class HikesController {
       //Antonio's code ends here
 
       // insert start/end points
-      let startPoint: Point | null = null;
-      let endPoint: Point | null = null;
-      const hikePointsToInsert: DeepPartial<HikePoint>[] = [];
-
-      if (body.startPoint) {
-        startPoint = await pointsRepo.save({
-          ...pick(['address', 'name'], body.startPoint),
-          position: latLonToGisPoint(body.startPoint),
-          type: PointType.point,
-        });
-
-        hikePointsToInsert.push({
-          index: 0,
-          hikeId: hike.id,
-          pointId: startPoint.id,
-          type: PointType.startPoint,
-        });
-      }
-      if (body.endPoint) {
-        endPoint = await pointsRepo.save({
-          ...pick(['address', 'name'], body.endPoint),
-          position: latLonToGisPoint(body.endPoint),
-          type: PointType.point,
-        });
-
-        hikePointsToInsert.push({
-          index: 10000,
-          hikeId: hike.id,
-          pointId: endPoint.id,
-          type: PointType.endPoint,
-        });
-      }
-
-      await hikePointsRepo.save(hikePointsToInsert);
+      await this.service.upsertStartEndPoints(
+        {
+          id: hike.id,
+          startPoint: _startPoint,
+          endPoint: _endPoint,
+        },
+        entityManager,
+      );
 
       return { hike, points: referencePoints };
     });
@@ -248,7 +225,7 @@ export class HikesController {
 
   @Post('linkPoints')
   @LocalGuideOnly()
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   async linkPoints(
     @Body(new GroupValidationPipe()) { hikeId, linkedPoints }: LinkHutToHikeDto,
   ): Promise<HikeFull> {
@@ -314,7 +291,13 @@ export class HikesController {
   @LocalGuideOnly()
   async updateHike(
     @Param('id') id: ID,
-    @Body() data: UpdateHikeDto,
+    @Body()
+    {
+      referencePoints: hikeReferencePoints,
+      startPoint,
+      endPoint,
+      ...data
+    }: UpdateHikeDto,
   ): Promise<Hike> {
     await this.service.ensureExistsOrThrow(id);
 
@@ -326,7 +309,7 @@ export class HikesController {
         - INSERT new Ref Points in Points; ✓
         - INSERT new Ref Points in HikePoints; ✓
       */
-    if (!isNil(data.referencePoints)) {
+    if (!isNil(hikeReferencePoints)) {
       const points = await this.dataSource.getRepository(HikePoint).findBy({
         hikeId: id,
       });
@@ -338,7 +321,7 @@ export class HikesController {
       });
 
       //Creation of proper ref points
-      const refPointsForDB = data.referencePoints.map((refPoint) => {
+      const refPointsForDB = hikeReferencePoints.map((refPoint) => {
         const pointObject: GPoint = {
           type: 'Point',
           coordinates: [refPoint.lon, refPoint.lat],
@@ -374,11 +357,12 @@ export class HikesController {
     }
     //Antonio's code ends here
 
-    await this.service
-      .getRepository()
-      .update({ id }, omit(['referencePoints'], data)); //Is it updating what?
+    // update start and end point
+    await this.service.upsertStartEndPoints({ id, startPoint, endPoint });
 
-      return await this.service.getFullHike(id);;
+    await this.service.getRepository().update({ id }, data);
+
+    return await this.service.getFullHike(id);
   }
 
   @Delete(':id')

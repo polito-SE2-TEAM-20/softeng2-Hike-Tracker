@@ -1,5 +1,6 @@
 FROM node:16.14.0-slim
 
+ARG PORT=3600
 ENV PORT 3600
 
 WORKDIR /srv

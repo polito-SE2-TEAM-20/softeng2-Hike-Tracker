@@ -3,9 +3,75 @@ version: 2.1
 orbs:
   node: circleci/node@5.0.0
   docker: circleci/docker@2.0.3
+  sonarcloud: sonarsource/sonarcloud@1.0.3
 
 jobs:
+# demo
+  demo-db:
+    executor: docker/docker
+    working_directory: ~/softeng2-Hike-Tracker/demo-db
+    steps:
+        - setup_remote_docker
+        - checkout:
+            path: ~/softeng2-Hike-Tracker
+        - docker/check:
+            registry: ghcr.io
+            docker-username: GITHUB_USERNAME
+            docker-password: GITHUB_TOKEN
+        - docker/build:
+            image: ghcr.io/polito-se2-team-20/demo-db
+            tag: ${CIRCLE_BUILD_NUM},latest
+        - docker/push:
+            registry: ghcr.io
+            image: polito-se2-team-20/demo-db
+            tag: ${CIRCLE_BUILD_NUM},latest
+  demo-backend:
+    executor: docker/docker
+    working_directory: ~/softeng2-Hike-Tracker/backend
+    steps:
+      - setup_remote_docker:
+          version: 19.03.13
+      - checkout:
+          path: ~/softeng2-Hike-Tracker
+      - docker/check:
+          registry: ghcr.io
+          docker-username: GITHUB_USERNAME
+          docker-password: GITHUB_TOKEN
+      - docker/build:
+          dockerfile: demo.Dockerfile
+          image: ghcr.io/polito-se2-team-20/backend
+          tag: demo
+      - docker/push:
+          registry: ghcr.io
+          image: polito-se2-team-20/backend
+          tag: demo
+  demo-frontend:
+    executor: docker/docker
+    working_directory: ~/softeng2-Hike-Tracker/front-end
+    steps:
+      - setup_remote_docker:
+          version: 19.03.13
+      - checkout:
+          path: ~/softeng2-Hike-Tracker
+      - docker/check:
+          registry: ghcr.io
+          docker-username: GITHUB_USERNAME
+          docker-password: GITHUB_TOKEN
+      - docker/build:
+          dockerfile: demo.Dockerfile
+          image: ghcr.io/polito-se2-team-20/frontend
+          tag: demo
+      - docker/push:
+          registry: ghcr.io
+          image: polito-se2-team-20/frontend
+          tag: demo
+
+# production
   build-frontend:
+    parameters:
+      image_tag:
+        type: string
+        default: ${CIRCLE_SHA1},latest
     executor: docker/docker
     working_directory: ~/softeng2-Hike-Tracker/front-end
     steps:
@@ -19,11 +85,11 @@ jobs:
           docker-password: GITHUB_TOKEN
       - docker/build:
           image: ghcr.io/polito-se2-team-20/frontend
-          tag: ${CIRCLE_SHA1},latest
+          tag: << parameters.image_tag >>
       - docker/push:
           registry: ghcr.io
           image: polito-se2-team-20/frontend
-          tag: ${CIRCLE_SHA1},latest
+          tag: << parameters.image_tag >>
   deploy-frontend:
     executor: docker/docker
     working_directory: ~/softeng2-Hike-Tracker/front-end
@@ -34,7 +100,12 @@ jobs:
           fingerprints:
             - "44:ee:6c:d8:1a:2b:a7:e3:20:b1:a2:84:89:74:0e:b0"
       - run: ssh -o "StrictHostKeyChecking=no" ${DEPLOY_USER}@${SERVER_IP} docker service update hiking_frontend --image ghcr.io/polito-se2-team-20/frontend:${CIRCLE_SHA1} --with-registry-auth
+
   build-backend:
+    parameters:
+      image_tag:
+        type: string
+        default: ${CIRCLE_SHA1},latest
     executor: docker/docker
     working_directory: ~/softeng2-Hike-Tracker/backend
     steps:
@@ -48,11 +119,11 @@ jobs:
           docker-password: GITHUB_TOKEN
       - docker/build:
           image: ghcr.io/polito-se2-team-20/backend
-          tag: ${CIRCLE_SHA1},latest
+          tag: << parameters.image_tag >>
       - docker/push:
           registry: ghcr.io
           image: polito-se2-team-20/backend
-          tag: ${CIRCLE_SHA1},latest
+          tag: << parameters.image_tag >>
   deploy-backend:
     executor: docker/docker
     working_directory: ~/softeng2-Hike-Tracker/backend
@@ -63,11 +134,78 @@ jobs:
           fingerprints:
             - "44:ee:6c:d8:1a:2b:a7:e3:20:b1:a2:84:89:74:0e:b0"
       - run: ssh -o "StrictHostKeyChecking=no" ${DEPLOY_USER}@${SERVER_IP} docker service update hiking_backend --image ghcr.io/polito-se2-team-20/backend:${CIRCLE_SHA1} --with-registry-auth
-
+# sonarcloud
+  sonar-backend:
+    resource_class: large
+    working_directory: ~/softeng2-Hike-Tracker/backend
+    docker:
+      - image: cimg/node:18.12.1
+      - image: postgis/postgis:14-3.3
+        environment:
+          POSTGRES_USER: circleci
+          POSTGRES_DB: circleci
+          POSTGRES_HOST_AUTH_METHOD: "trust"
+    environment:
+      NODE_ENV: test
+      TEST_DB_HOST: localhost
+      TEST_DB_NAME: circleci
+      TEST_DB_USERNAME: circleci
+      TEST_DB_PASSWORD: 
+      JWT_SECRET: test
+    steps:
+      - checkout:
+          path: ~/softeng2-Hike-Tracker
+      - run:
+          name: Waiting for Postgres to be ready
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - node/install-packages:
+          override-ci-command: npm install
+      - run:
+          name: e2e tests
+          command: |
+            mkdir -p test-results
+            mkdir -p uploads/gpx
+            mkdir -p uploads/images
+            npm run test:e2e:cov -- --silent --maxWorkers=2
+      - store_test_results:
+          path: test-results
+      - store_artifacts:
+          path: test-results
+      - sonarcloud/scan
+  sonar-frontend:
+    working_directory: ~/softeng2-Hike-Tracker/front-end
+    docker:
+      - image: cimg/node:18.12.1
+    steps:
+      - checkout:
+          path: ~/softeng2-Hike-Tracker
+      - run:
+          name: Install deps
+          command: npm install
+      - sonarcloud/scan
 workflows:
+  demo-db:
+    jobs:
+      - demo-db:
+          context:
+            - deploy
+          filters:
+            branches:
+              only: demo-db
+  build-demo:
+    jobs:
+      - demo-backend:
+          filters:
+            branches:
+              only: demo
+      - demo-frontend:
+          filters:
+            branches:
+              only: demo
   ci-backend:
     jobs:
       - build-backend:
+          image_tag: ${CIRCLE_SHA1},latest
           context:
             - deploy
           filters:
@@ -84,6 +222,7 @@ workflows:
   ci-frontend:
     jobs:
       - build-frontend:
+          image_tag: ${CIRCLE_SHA1},latest
           context:
             - deploy
           filters:
@@ -97,3 +236,15 @@ workflows:
           filters:
             branches:
               only: frontend
+  sonarcloud:
+    jobs:
+      - sonar-backend:
+          context: SonarCloud
+          filters:
+            branches:
+              only: main
+      - sonar-frontend:
+          context: SonarFront
+          filters:
+            branches:
+              only: main

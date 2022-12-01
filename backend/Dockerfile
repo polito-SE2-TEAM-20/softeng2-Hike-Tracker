@@ -1,6 +1,7 @@
 FROM node:16.14.0-alpine
 
-ENV PORT 3500
+ARG PORT=3500
+ENV PORT ${PORT}
 
 WORKDIR /srv
 
@@ -16,6 +17,7 @@ ADD . /srv
 RUN npm run build
 
 RUN mkdir -p /srv/uploads/gpx
+RUN mkdir -p /srv/uploads/images
 
 RUN chown -R node:node /srv/uploads
 

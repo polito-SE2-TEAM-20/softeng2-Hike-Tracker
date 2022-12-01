@@ -9,6 +9,7 @@ import {
 import {
   FOREIGN_OPTIONS_CASCADE,
   HutLimits,
+  makePgJsonbArray,
   numericOptionsConfig,
 } from '../constants';
 
@@ -55,6 +56,28 @@ export class Hut {
   })
   price!: number | null;
 
+  @Column({
+    type: 'varchar',
+    length: HutLimits.ownerName,
+    nullable: true,
+  })
+  ownerName!: string;
+
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  website!: string;
+
+  @Column({
+    ...numericOptionsConfig(null),
+    nullable: true,
+  })
+  elevation!: number | null;
+
+  @Column(makePgJsonbArray(false))
+  pictures!: string[];
+
   /**
    * TypeORM sql-gen only
    * @deprecated
@@ -76,4 +99,10 @@ export class Hut {
     referencedColumnName: 'id',
   })
   user?: User;
+
+  /**
+   * For TypeORM metadata only
+   * @deprecated
+   */
+  __joiner?: any;
 }

@@ -5,9 +5,16 @@ import {
   UseGuards,
   Body,
   HttpCode,
+  Param,
+  ForbiddenException,
 } from '@nestjs/common';
 
-import { AuthenticatedOnly, CurrentUser, UserContext } from '@app/common';
+import {
+  AuthenticatedOnly,
+  CurrentUser,
+  UserContext,
+  UserRole,
+} from '@app/common';
 
 import { RegisterDto } from './auth.dto';
 import { AuthService } from './auth.service';
@@ -29,7 +36,21 @@ export class AuthController {
   @Post('register')
   @HttpCode(201)
   async register(@Body() body: RegisterDto): Promise<UserContext> {
+    if (body.role === UserRole.friend) {
+      throw new ForbiddenException('Friend is not a valid role to register');
+    }
+
+    if (body.role !== UserRole.hiker && !body.phoneNumber) {
+      throw new ForbiddenException('Phone Number for this role is required');
+    }
+
     return await this.service.register(body);
+  }
+
+  @Get('verify/:hash')
+  @HttpCode(200)
+  async verifyMail(@Param('hash') hash: string) {
+    return await this.service.validateRegistration(hash);
   }
 
   @AuthenticatedOnly()
