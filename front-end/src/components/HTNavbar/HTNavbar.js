@@ -180,12 +180,14 @@ function HTNavbar(props) {
                                 <>
                                     <Tooltip>
                                         <IconButton onClick={() => { navigate("/login") }} sx={{ p: 0 }}>
-                                            <Button variant="outlined" sx={{ borderRadius: "24px", color: "white", textTransform: "none", borderColor: "white" }}><b>Sign in</b></Button>
+                                            <Button variant="outlined" sx={{ borderRadius: "24px", color: "white",
+                                                "&:hover": { borderColor: "#EBC824", color: "#EBC824" }, textTransform: "none", borderColor: "white" }}><b>Sign in</b></Button>
                                         </IconButton>
                                     </Tooltip>
                                     <Tooltip style={{ marginLeft: "20px" }}>
                                         <IconButton onClick={() => { navigate("/signup") }} sx={{ p: 0 }}>
                                             <Button variant="outlined" sx={{
+                                                "&:hover": { borderColor: "#EBC824", color: "#EBC824" },
                                                 borderRadius: "24px", color: "white", textTransform: "none", borderColor: "white"
                                             }}><b>Sign up</b></Button>
                                         </IconButton>
