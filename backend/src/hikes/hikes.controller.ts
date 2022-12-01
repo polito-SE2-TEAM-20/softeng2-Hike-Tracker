@@ -13,6 +13,9 @@ import {
   HttpStatus,
   ParseIntPipe,
   HttpCode,
+  Delete,
+  HttpException,
+  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs-extra';
@@ -364,7 +367,7 @@ export class HikesController {
         referencePoints.map<HikePoint>((point, index) => ({
           hikeId: id,
           pointId: point.id,
-          index,
+          index,  
           type: PointType.referencePoint,
         })),
       );
@@ -376,6 +379,34 @@ export class HikesController {
       .update({ id }, omit(['referencePoints'], data)); //Is it updating what?
 
       return await this.service.getFullHike(id);;
+  }
+
+  @Delete(':id')
+  @LocalGuideOnly()
+  @HttpCode(200)
+  async deleteHike(
+    @Param('id') id: ID,
+  ): Promise<{rowsAffected: number}> {
+    
+    const pointsToDelete = await this.dataSource.getRepository(HikePoint).findBy({
+      hikeId: id
+    });
+    
+    const deletion = await this.service.getRepository().delete({
+      id: id,
+    });
+
+    if(deletion.affected === 0 || isNil(deletion.affected)){
+      throw new BadRequestException('Hike not found.');
+    }
+
+    const pointsID = pointsToDelete.map((point) => point.pointId);
+    
+    await this.pointsService.getRepository().delete({
+      id: In(pointsID),
+    });
+
+    return {rowsAffected: deletion.affected};
   }
 
   @Get(':id')

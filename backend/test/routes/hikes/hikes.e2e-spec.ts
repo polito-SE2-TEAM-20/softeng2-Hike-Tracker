@@ -23,6 +23,7 @@ import {
   prepareVars,
   withoutLatLon,
 } from '@test/base';
+import { In } from 'typeorm';
 
 const withoutCompositeFields = omit([
   'referencePoints',
@@ -239,5 +240,109 @@ describe('Hikes (e2e)', () => {
           ),
         ]);
       });
+  });
+
+  it("should delete the specified hike and all its relative points", async () => {
+    const { localGuide } = await setup();
+
+    const hikeData = {
+      title: 'eeee',
+      description: 'test desc',
+      region: 'Torino',
+      province: 'TO',
+      length: 100.56,
+      ascent: 5.71,
+      expectedTime: 1020,
+      difficulty: HikeDifficulty.professionalHiker,
+      referencePoints: [
+        {
+          name: 'Small fountain',
+          address: 'Some test address 1/1',
+          lat: 45.18,
+          lon: 7.084,
+        },
+      ],
+      startPoint: {
+        name: 'That small building near garage entrance',
+      },
+      endPoint: {
+        address: 'Turin, Via Torino 130',
+        lat: 45.181,
+        lon: 7.083,
+      },
+    };
+
+    const hikeData2 = {
+      title: 'eeee',
+      description: 'test desc',
+      region: 'Torino',
+      province: 'TO',
+      length: 100.56,
+      ascent: 5.71,
+      expectedTime: 1020,
+      difficulty: HikeDifficulty.professionalHiker,
+      referencePoints: [
+        {
+          name: 'Small fountain',
+          address: 'Some test address 1/1',
+          lat: 45.12,
+          lon: 7.084,
+        },
+      ],
+      startPoint: {
+        name: 'That small building near garage entrance 2',
+      },
+      endPoint: {
+        address: 'Turin, Via Torino 130',
+        lat: 45.151,
+        lon: 7.083,
+      },
+    };
+
+    await restService
+      .build(app, localGuide)
+      .request()
+      .post('/hikes/import')
+      .attach('gpxFile', resolve(ROOT, './test-data/4.gpx'))
+      .field(withoutCompositeFields(hikeData))
+      .field('referencePoints', JSON.stringify(hikeData.referencePoints))
+      .field('startPoint', JSON.stringify(hikeData.startPoint))
+      .field('endPoint', JSON.stringify(hikeData.endPoint))
+      .expect(201);
+    
+    const {body: hike} = await restService
+      .build(app, localGuide)
+      .request()
+      .post('/hikes/import')
+      .attach('gpxFile', resolve(ROOT, './test-data/1.gpx'))
+      .field(withoutCompositeFields(hikeData2))
+      .field('referencePoints', JSON.stringify(hikeData2.referencePoints))
+      .field('startPoint', JSON.stringify(hikeData2.startPoint))
+      .field('endPoint', JSON.stringify(hikeData2.endPoint))
+      .expect(201);
+
+    const points = (await testService.repo(HikePoint).findBy({hikeId: hike.id})).map(point => point.pointId);
+
+    await restService
+      .build(app, localGuide)
+      .request()
+      .delete(`/hikes/${hike.id}`)
+      .expect(({ body }) => {
+        expect(body.rowsAffected).toBe(1);
+      })
+      .expect(200);
+  
+    expect(await testService.repo(HikePoint).findBy({hikeId: hike.id})).toBeEmpty();    
+    expect(await testService.repo(Point).findBy({id: In(points)})).toBeEmpty();
+
+    await restService
+      .build(app, localGuide)
+      .request()
+      .delete(`/hikes/10`)
+      .expect(({ body }) => {
+        expect(body.message).toBe("Hike not found.");
+      })
+      .expect(400);
+
   });
 });
