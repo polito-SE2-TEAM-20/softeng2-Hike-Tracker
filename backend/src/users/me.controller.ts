@@ -1,6 +1,6 @@
 import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
 
-import { AuthenticatedOnly, CurrentUser, Hike, UserContext } from '@app/common';
+import { AuthenticatedOnly, CurrentUser, Hike, HikerOnly, UserContext } from '@app/common';
 import { HikesService } from '@core/hikes/hikes.service';
 import { PreferencesDto } from './preferences.dto';
 import { UsersService } from './users.service';
@@ -20,14 +20,14 @@ export class MeControlelr {
       .getMany();
   }
 
-  @AuthenticatedOnly()
+  @HikerOnly()
   @HttpCode(200)
   @Get('preferences')
   async getPreferences(@CurrentUser() user: UserContext) {
     return await this.usersService.getPreferences(user.id);
   }
-
-  @AuthenticatedOnly()
+ 
+  @HikerOnly()
   @HttpCode(201)
   @Post('set_preferences')
   async setPreferences(@CurrentUser() user: UserContext, @Body() body: PreferencesDto) {
