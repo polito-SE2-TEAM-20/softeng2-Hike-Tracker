@@ -63,6 +63,8 @@ const HTMainPage = (props) => {
                             textAlign: "center",
                             color: '#ffffff',
                             textDecoration: 'none',
+                            marginTop: "-250px",
+                            color: "#EBC824"
                         }}
                         fontSize={{ xs: "25px", sm: "25px", md: "45px", lg: "60px", xl: "60px" }}
                     >
@@ -83,7 +85,8 @@ const HTMainPage = (props) => {
                                         textAlign: "left",
                                         color: '#ffffff',
                                         textDecoration: 'none',
-                                        marginTop: "32px"
+                                        marginTop: "32px",
+                                        dropShadow: "0 0 0.75rem crimson"
                                     }}
                                     fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "32px", xl: "32px" }}
                                 >
