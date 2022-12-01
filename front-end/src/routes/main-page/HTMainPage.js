@@ -49,7 +49,7 @@ const HTMainPage = (props) => {
                 {
                     props.isLoggedIn && props?.user?.role === 0 ?
                         <>
-                            <Grid item xs={8} sm={8} md={8} lg={8} xl={8} style={{marginTop: "50px", display: "flex", justifyContent: "center"}}>
+                            <Grid item xs={8} sm={8} md={8} lg={8} xl={8} style={{ marginTop: "50px", display: "flex", justifyContent: "center" }}>
                                 <Typography
                                     variant="h2"
                                     className="unselectable"
@@ -82,7 +82,7 @@ const HTMainPage = (props) => {
                                     }}
                                     fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "32px", xl: "32px" }}
                                 >
-                                    Based on your preferences:
+                                    Based on your preferences
                                 </Typography>
                             </Grid>
 
@@ -94,12 +94,21 @@ const HTMainPage = (props) => {
                                                 No matching hikes.
                                             </Typography>
                                             :
-                                            listOfHikes.slice(0, 6).map(hike => {
-                                                return (
-                                                    <Grid item xs={1} sm={1} md={1} lg={1} xl={1} style={{ marginTop: "25px", marginBottom: "5px", display: "flex", justifyContent: "center", width: "fit-content" }}>
-                                                        <HikeCard hike={hike} editable={false} />
-                                                    </Grid>
-                                                );
+                                            listOfHikes.slice(0, 6).map((hike, index) => {
+                                                if (index < 3) {
+                                                    return (
+                                                        <Grid item xs={1} sm={1} md={1} lg={1} xl={1} style={{ marginTop: "25px", marginBottom: "5px", display: "flex", justifyContent: "center", width: "fit-content" }}>
+                                                            <HikeCard hike={hike} editable={false} />
+                                                        </Grid>
+                                                    );
+                                                }
+                                                else {
+                                                    return (
+                                                        <Grid item xs={1} sm={1} md={1} lg={1} xl={1} style={{ marginTop: "25px", marginBottom: "5px", display: "flex", justifyContent: "center", width: "fit-content", opacity: "50%" }}>
+                                                            <HikeCard hike={hike} editable={false} />
+                                                        </Grid>
+                                                    );
+                                                }
                                             })
                                         :
                                         <>
