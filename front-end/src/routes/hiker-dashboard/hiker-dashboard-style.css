@@ -1,0 +1,27 @@
+.pencil:hover {
+    color: #555555;
+}
+
+a {
+    color: black;
+    background: none;
+}
+
+a::selection {
+    color: black;
+    background: none;
+}
+
+a::-moz-selection {
+    color: black;
+    background: none;
+}
+
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}

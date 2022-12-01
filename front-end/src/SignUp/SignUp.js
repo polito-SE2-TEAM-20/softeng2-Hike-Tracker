@@ -192,7 +192,7 @@ function SignUpForm(props) {
               <Grid>
               {
                 showInformation ?
-                  <Alert variant="outlined" severity="success" onClose={() => { setInformationMessage(''); setShowInformation(false) }}>{informationMessage} && {<Button onClick={() => { navigate("/login") }}>Login</Button>}</Alert> : <></>
+                  <Alert sx={{mt: 3}}variant="outlined" severity="success" onClose={() => { setInformationMessage(''); setShowInformation(false) }}>{informationMessage}   {<Button sx={{ml: 5}}variant= 'outlined' outlined  onClick={() => { navigate("/login") }}>Login</Button>}</Alert> : <></>
               }
               </Grid>
               <Button

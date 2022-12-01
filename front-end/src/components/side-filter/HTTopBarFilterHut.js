@@ -90,7 +90,7 @@ const HTTopBarFilterHut = (props) => {
             <Grid container item xs={12} sm={12} columns={12} spacing={0} sx={{ display: displayTypeFlex.mobile }} style={{
                 borderStyle: "solid", borderColor: "#f2f2f2", width: "100vw", justifyContent: "center",
                 paddingTop: "15px", paddingBottom: "15px",
-                zIndex: "1", height: "30vh", marginTop: "25px", marginLeft: "auto", marginRight: "auto",
+                zIndex: "1", height: "40vh", marginTop: "25px", marginLeft: "auto", marginRight: "auto",
                 borderRadius: "8px", backgroundColor: "#fbfbfb"
             }}>
                 <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>

@@ -8,6 +8,7 @@ import proIcon from '../../Assets/pro-icon.png'
 import { useEffect, useState } from "react";
 import API from '../../API/API.js';
 import { Skeleton } from "@mui/material";
+import {fromMinutesToHours} from '../../lib/common/FromMinutesToHours'
 
 const Difficulty = (props) => {
     if (!props.loading) {
@@ -105,13 +106,13 @@ const ShowHike = (props) => {
 
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
-                            !loading ? <Typography>Length: {hike.length == "" ? "N/A" : hike.length}km</Typography> :
+                            !loading ? <Typography>Length: {hike.length == "" ? "N/A" : (Math.round(hike.length * 10) / 10000).toFixed(2)}km</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
-                            !loading ? <Typography>Expected time: {hike.expectedTime == "" ? "N/A" : hike.expectedTime} hours</Typography> :
+                            !loading ? <Typography>Expected time: {hike.expectedTime == "" ? "N/A" : fromMinutesToHours(hike.expectedTime)}</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>

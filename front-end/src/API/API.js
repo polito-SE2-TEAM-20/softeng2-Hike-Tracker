@@ -205,8 +205,8 @@ async function logOut() {
     localStorage.removeItem('user');
 }
 
-async function signUp(credentials){
-    let response = await fetch(( APIURL + '/auth/register/'), {
+async function signUp(credentials) {
+    let response = await fetch((APIURL + '/auth/register/'), {
         method: 'POST',
         headers: {
             'Content-type': 'application/json'
@@ -215,134 +215,168 @@ async function signUp(credentials){
 
 
     });
-    if(response.ok){
+    if (response.ok) {
         const user = await response.json();
 
         // localStorage.setItem('token', user.token);
         return user;
 
-    }else{
+    } else {
         const errDetail = await response.json();
         throw errDetail.message;
     }
 }
 
 async function addNewHut(hut) {
-  console.log(hut)
-  console.log(localStorage)
+    console.log(hut)
+    console.log(localStorage)
     let response = await fetch((APIURL + '/huts/createHut/'), {
-      method: 'POST',
+        method: 'POST',
 
-    headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(hut)
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(hut)
 
-     
+
     });
-    if(response.ok) {
-      const newHut = await response.json();
-      console.log(newHut);
-      return newHut;
+    if (response.ok) {
+        const newHut = await response.json();
+        console.log(newHut);
+        return newHut;
     }
     else {
-      try {
-        const errDetail = await response.json();
-        throw errDetail.message;
-      }
-      catch(err) {
-        throw err;
-      }
+        try {
+            const errDetail = await response.json();
+            throw errDetail.message;
+        }
+        catch (err) {
+            throw err;
+        }
     }
-  }
+}
 
 async function addNewParkingLot(parking) {
-  console.log(parking)
-  console.log(localStorage)
+    console.log(parking)
+    console.log(localStorage)
     let response = await fetch((APIURL + '/parkingLot/insertLot/'), {
-      method: 'POST',
+        method: 'POST',
 
-    headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(parking)
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(parking)
     });
-    if(response.ok) {
-      const newParking = await response.json();
-      console.log(newParking);
-      return newParking;
+    if (response.ok) {
+        const newParking = await response.json();
+        console.log(newParking);
+        return newParking;
     }
     else {
-      try {
-        const errDetail = await response.json();
-        throw errDetail.message;
-      }
-      catch(err) {
-        throw err;
-      }
-    }
-  }
-
-  async function addNewGpx(formData) {
-    console.log({formData})
-    console.log(localStorage)
-      let response = await fetch((APIURL + '/hikes/import/'), {
-        method: 'POST',
-         body: formData,
-        headers: {
-          
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Accept': '*/*',
+        try {
+            const errDetail = await response.json();
+            throw errDetail.message;
         }
-       
-      });
-      if(response.ok) {
+        catch (err) {
+            throw err;
+        }
+    }
+}
+
+async function addNewGpx(formData) {
+    console.log({ formData })
+    console.log(localStorage)
+    let response = await fetch((APIURL + '/hikes/import/'), {
+        method: 'POST',
+        body: formData,
+        headers: {
+
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*',
+        }
+
+    });
+    if (response.ok) {
         const newTrack = await response.json();
         console.log(newTrack);
         return newTrack;
-      }
-      else {
+    }
+    else {
         try {
-          const errDetail = await response.json();
-          throw errDetail.message;
+            const errDetail = await response.json();
+            throw errDetail.message;
         }
-        catch(err) {
-          throw err;
+        catch (err) {
+            throw err;
         }
-      }
     }
-  
+}
 
-    
-  
-  
-  function addHike(hike){
-      return new Promise((resolve, reject)=>{
+function addHike(hike) {
+    return new Promise((resolve, reject) => {
         fetch((APIURL + '/hikes/' + hike.id), {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({length: hike.length,ascent: hike.ascent, title: hike.title, difficulty: hike.difficulty, expectedTime: hike.expectedTime,  description: hike.description}),
-  
-        }).then((response =>{
-          if(response.ok){
-            resolve(null);
-          }else{
-            response.json()
-              .then((message) =>{reject(message);})
-              .catch(()=> {reject({error: "Cannot communicate with the server"})});
-          }
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ length: hike.length, ascent: hike.ascent, title: hike.title, difficulty: hike.difficulty, expectedTime: hike.expectedTime, description: hike.description }),
+
+        }).then((response => {
+            if (response.ok) {
+                resolve(null);
+            } else {
+                response.json()
+                    .then((message) => { reject(message); })
+                    .catch(() => { reject({ error: "Cannot communicate with the server" }) });
+            }
         }))
-      })
-    }
+    })
+}
+
+const getNotApprovedLocalGuides = async () => {
+    const response = await fetch((APIURL + '/auth/not_approved/local_guides'), {
+        method: 'GET'
+    });
+    if(response.ok) {
+        const listOfNotApprovedLocalGuides = await response.json()
+        return listOfNotApprovedLocalGuides
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    } 
+}
+
+const getNotApprovedHutWorkers = async () => {
+    const response = await fetch((APIURL + '/auth/not_approved/hut_workers'), {
+        method: 'GET'
+    });
+    if(response.ok) {
+        const listOfNotApprovedHutWorkers = await response.json()
+        return listOfNotApprovedHutWorkers
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    } 
+}
+
+const approveUserByID = async (id) => {
+    const response = await fetch((APIURL + '/auth/approve_user/' + id), {
+        method: 'PUT'
+    });
+    if(!response.ok) {
+        return true
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    } 
+}
 
 const API = {
     getListOfHikes, getListOfGPXFiles, getPathByID,
     getHikeByListOfPaths, getFilteredListOfHikes, getHikePathByHike,
-    getSingleHikeByID, getHikesForLocalGuide, getListOfHuts, getSingleHutByID, getListOfHutsAndParkingLots, logIn, 
-    logOut, signUp, addNewHut, addNewParkingLot, addNewGpx, addHike
+    getSingleHikeByID, getHikesForLocalGuide, getListOfHuts, getSingleHutByID, getListOfHutsAndParkingLots, logIn,
+    logOut, signUp, addNewHut, addNewParkingLot, addNewGpx, addHike, getNotApprovedLocalGuides, getNotApprovedHutWorkers, approveUserByID
 }
 export default API
