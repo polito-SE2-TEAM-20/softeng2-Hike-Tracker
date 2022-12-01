@@ -164,26 +164,7 @@ const HTMainPage = (props) => {
                                         color: '#EBC824',
                                         textDecoration: 'none',
                                         marginTop: { xs: "-350px", sm: "-350px", md: "-250px", lg: "-250px", xl: "-250px" },
-                                        "@keyframes mainTitleMovement": {
-                                            '0%': {
-                                                textShadow: "0 0 0.50rem #1a1a1a"
-                                            },
-                                            '25%': {
-                                                textShadow: "0 0 0.00rem #1a1a1a"
-                                            },
-                                            '50%': {
-                                                textShadow: "0 0 0.50rem #1a1a1a"
-                                            },
-                                            '75%': {
-                                                textShadow: "0 0 0.00rem #1a1a1a"
-                                            },
-                                            '100%': {
-                                                textShadow: "0 0 0.50rem #1a1a1a"
-                                            }
-                                        },
-                                        animationIterationCount: "infinite",
-                                        animationDuration: "10s",
-                                        animationName: "mainTitleMovement"
+                                        textShadow: "0 0 0.75rem black"
                                     }}
                                     fontSize={{ xs: "60px", sm: "70px", md: "75px", lg: "60px", xl: "60px" }}
                                 >
