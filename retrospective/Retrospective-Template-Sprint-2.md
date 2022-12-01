@@ -35,19 +35,16 @@ sections:
 | Story  | # Tasks | Points | Hours est. | Hours actual |
 |--------|---------|--------|------------|--------------|
 | _#0_   |   8     |        |   12h30m   |   14h30m     |
-
-  - from issues
+| from issues                                           |
 |  #1    |   2     |   3    |    2h 15m  |   2h 15m     |
 |  #2    |   3     |   3    |     7h     |   8h         |
 |  #3    |   3     |   5    |     5h15m  |   5h 10m     |
-
-  - stories done
+| Stories Done                                          |
 |  #4    |   2     |   5    |     4h     |   4h 20m     |
 |  #5    |   2     |   3    |     5h     |   11h 30m    |
 |  #6    |   3     |   5    |  6h 30m    |   11h        |
 |  #7    |   2     |   8    |     4h     |   4h 15m     |
-
-  - stories committed but not done
+| stories committed but not done                        |
 |  #8    |   6     |   8    |     10h    |   9h 45m     |
 |  #9    |   3     |   8    |     4h     |   2h         |
 |  #33   |   4     |   8    |    7h30m   |   6h         |
@@ -105,6 +102,11 @@ sections:
   - More time for code reviewing.
   - Improve communication even more (more scrum meetings to sync better).
   - Better distribute our workload during sprint duration and avoid. inconsistency in working time between different days.
+  - TECHNICAL DEBT target:
+    - remove all the code smells under 15 min of effort (increase maintainability in the BE);
+    - increase the test coverage up to 80% for the BE (right now 73%).
+    - increase reliability of front end up to 80%.
+    - write the readme file
 
 > Propose one or two
 
