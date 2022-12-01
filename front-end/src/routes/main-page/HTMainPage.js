@@ -161,30 +161,20 @@ const HTMainPage = (props) => {
                                         fontFamily: "Crimson Text, serif",
                                         fontWeight: 700,
                                         textAlign: "center",
-                                        color: '#ffffff',
+                                        color: '#EBC824',
                                         textDecoration: 'none',
                                         marginTop: { xs: "-350px", sm: "-350px", md: "-250px", lg: "-250px", xl: "-250px" },
                                         "@keyframes mainTitleMovement": {
                                             '0%': {
-                                                textShadow: "0 0 0.50rem white",
-                                                color: "black"
-                                            },
+                                                textShadow: "0 0 0.50rem white"                                            },
                                             '25%': {
-                                                textShadow: "0 0 0.50rem black",
-                                                color: "#EBC824"
-                                            },
+                                                textShadow: "0 0 0.00rem white"                                            },
                                             '50%': {
-                                                textShadow: "0 0 0.50rem white",
-                                                color: "black"
-                                            },
+                                                textShadow: "0 0 0.50rem white"                                            },
                                             '75%': {
-                                                textShadow: "0 0 0.50rem black",
-                                                color: "#EBC824"
-                                            },
+                                                textShadow: "0 0 0.00rem white"                                            },
                                             '100%': {
-                                                textShadow: "0 0 0.50rem white",
-                                                color: "black"
-                                            }
+                                                textShadow: "0 0 0.50rem white"                                            }
                                         },
                                         animationIterationCount: "infinite",
                                         animationDuration: "10s",
