@@ -73,7 +73,7 @@ const HTMainPage = (props) => {
                                 },
                                 '25%': {
                                     textShadow: "0 0 0.75rem black",
-                                    color: "white"
+                                    color: "#EBC824"
                                 },
                                 '50%': {
                                     textShadow: "0 0 0.50rem white",
@@ -81,7 +81,7 @@ const HTMainPage = (props) => {
                                 },
                                 '75%': {
                                     textShadow: "0 0 0.75rem black",
-                                    color: "white"
+                                    color: "#EBC824"
                                 },
                                 '100%': {
                                     textShadow: "0 0 1.00rem white",
@@ -89,7 +89,7 @@ const HTMainPage = (props) => {
                                 }
                             },
                             animationIterationCount: "infinite",
-                            animationDuration: "5s",
+                            animationDuration: "7s",
                             animationName: "mainTitleMovement"
                         }}
                         fontSize={{ xs: "60px", sm: "70px", md: "75px", lg: "60px", xl: "60px" }}
