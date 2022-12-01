@@ -51,7 +51,7 @@ function HTNavbar(props) {
 
     return (
         <AppBar position="fixed" style={{
-            backgroundColor: "#202020c0", marginBottom: "auto", paddingLeft: 10,
+            backgroundColor: "#202020f0", marginBottom: "auto", paddingLeft: 10,
             paddingRight: 10, borderRadius: 0
         }}>
             <Container maxWidth="xl">

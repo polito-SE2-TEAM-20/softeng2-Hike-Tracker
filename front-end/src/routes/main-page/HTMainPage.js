@@ -166,15 +166,20 @@ const HTMainPage = (props) => {
                                         marginTop: { xs: "-350px", sm: "-350px", md: "-250px", lg: "-250px", xl: "-250px" },
                                         "@keyframes mainTitleMovement": {
                                             '0%': {
-                                                textShadow: "0 0 0.50rem white"                                            },
+                                                textShadow: "0 0 0.50rem #1a1a1a"
+                                            },
                                             '25%': {
-                                                textShadow: "0 0 0.00rem white"                                            },
+                                                textShadow: "0 0 0.00rem #1a1a1a"
+                                            },
                                             '50%': {
-                                                textShadow: "0 0 0.50rem white"                                            },
+                                                textShadow: "0 0 0.50rem #1a1a1a"
+                                            },
                                             '75%': {
-                                                textShadow: "0 0 0.00rem white"                                            },
+                                                textShadow: "0 0 0.00rem #1a1a1a"
+                                            },
                                             '100%': {
-                                                textShadow: "0 0 0.50rem white"                                            }
+                                                textShadow: "0 0 0.50rem #1a1a1a"
+                                            }
                                         },
                                         animationIterationCount: "infinite",
                                         animationDuration: "10s",
