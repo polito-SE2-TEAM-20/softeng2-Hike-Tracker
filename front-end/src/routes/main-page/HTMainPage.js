@@ -49,97 +49,108 @@ const HTMainPage = (props) => {
                 {
                     props.isLoggedIn && props?.user?.role === 0 ?
                         <>
-                            <Grid item xs={8} sm={8} md={8} lg={8} xl={8} style={{ marginTop: "50px", display: "flex", justifyContent: "center" }}>
-                                <Typography
-                                    variant="h2"
-                                    className="unselectable"
-                                    sx={{
-                                        justifyContent: "left",
-                                        textAlign: "left",
-                                        color: '#ffffff',
-                                        textDecoration: 'none',
-                                        marginTop: "32px",
-                                        "@keyframes headerMovement": {
-                                            '0%': {
-                                                textShadow: "0 0 1.00rem #EBC824"
-                                            },
-                                            '25%': {
-                                                textShadow: "0 0 0.75rem #C2A41D"
-                                            },
-                                            '50%': {
-                                                textShadow: "0 0 0.50rem #1a1a1a"
-                                            },
-                                            '75%': {
-                                                textShadow: "0 0 0.75rem #C2A41D"
-                                            },
-                                            '100%': {
-                                                textShadow: "0 0 1.00rem #EBC824"
-                                            }
-                                        },
-                                        animationIterationCount: "infinite",
-                                        animationDuration: "3s",
-                                        animationName: "headerMovement"
-                                    }}
-                                    fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "32px", xl: "32px" }}
-                                >
-                                    Based on your preferences
-                                </Typography>
-                            </Grid>
-
-                            <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} columns={3} style={{ display: "flex", justifyContent: "center", marginLeft: "300px", marginRight: "300px" }}>
-                                {
-                                    loading ?
-                                        listOfHikes.length === 0 ?
-                                            <Typography fontFamily={"Bakbak One, display"} fontWeight="600" fontSize="32px">
-                                                No matching hikes.
-                                            </Typography>
-                                            :
-                                            listOfHikes.slice(0, 6).map((hike, index) => {
-                                                if (index < 3) {
-                                                    return (
-                                                        <Grid item xs={1} sm={1} md={1} lg={1} xl={1} style={{ marginTop: "25px", marginBottom: "5px", display: "flex", justifyContent: "center", width: "fit-content" }}>
-                                                            <HikeCard hike={hike} editable={false} />
-                                                        </Grid>
-                                                    );
-                                                }
-                                                else {
-                                                    return (
-                                                        <Grid item xs={1} sm={1} md={1} lg={1} xl={1} style={{ marginTop: "25px", marginBottom: "5px", display: "flex", justifyContent: "center", width: "fit-content", opacity: "50%" }}>
-                                                            <HikeCard hike={hike} editable={false} />
-                                                        </Grid>
-                                                    );
-                                                }
-                                            })
-                                        :
-                                        <>
-                                            <HikeLoading />
-                                            <HikeLoading />
-                                            <HikeLoading />
-                                            <HikeLoading />
-                                            <HikeLoading />
-                                            <HikeLoading />
-                                            <HikeLoading />
-                                            <HikeLoading />
-                                        </>
-                                }
-                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                    {
-                                        listOfHikes.length > 6 ?
-                                            <div style={{ marginTop: "28px", display: "flex", justifyContent: "center" }}>
-                                                <Button variant="outlined"
-                                                    textDecoration="none"
-                                                    onClick={() => { navigate('/listofhikes') }}
-                                                    sx={{
-                                                        borderRadius: "60px", borderColor: "white",
-                                                        color: "white", textTransform: "none",
-                                                        "&:hover": { borderColor: "#EBC824", color: "#EBC824" }
-                                                    }}>
-                                                    See more...
-                                                </Button>
-                                            </div>
-                                            : <></>
-                                    }
+                            <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} columns={12} >
+                                <Grid container item xs={4} sm={4} md={4} lg={4} xl={4} width="fit-content">
+                                    <Grid item>
+                                        <CardMedia component="img"
+                                            style={{ objectFit: "cover", height: "100vh", marginTop: "25px" }}
+                                            image={mainPagePicture2}
+                                            alt="Paella dish">
+                                        </CardMedia>
+                                    </Grid>
                                 </Grid>
+                                <Grid container item xs={2} sm={2} md={2} lg={2} xl={2} columns={3} style={{ marginTop: "50px" }}>
+                                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginBottom: "25px", display: "flex", justifyContent: "left", marginLeft: "50px" }}>
+                                        <Typography
+                                            variant="h2"
+                                            className="unselectable"
+                                            sx={{
+                                                justifyContent: "left",
+                                                textAlign: "left",
+                                                color: '#ffffff',
+                                                textDecoration: 'none',
+                                                marginTop: "32px",
+                                                "@keyframes headerMovement": {
+                                                    '0%': {
+                                                        textShadow: "0 0 1.00rem #EBC824"
+                                                    },
+                                                    '25%': {
+                                                        textShadow: "0 0 0.75rem #C2A41D"
+                                                    },
+                                                    '50%': {
+                                                        textShadow: "0 0 0.50rem #1a1a1a"
+                                                    },
+                                                    '75%': {
+                                                        textShadow: "0 0 0.75rem #C2A41D"
+                                                    },
+                                                    '100%': {
+                                                        textShadow: "0 0 1.00rem #EBC824"
+                                                    }
+                                                },
+                                                animationIterationCount: "infinite",
+                                                animationDuration: "3s",
+                                                animationName: "headerMovement"
+                                            }}
+                                            fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "32px", xl: "32px" }}
+                                        >
+                                            Based on your preferences
+                                        </Typography>
+                                    </Grid>
+                                    {
+                                        loading ?
+                                            listOfHikes.length === 0 ?
+                                                <Typography fontFamily={"Bakbak One, display"} fontWeight="600" fontSize="32px">
+                                                    No hikes available for your preferences.
+                                                </Typography>
+                                                :
+                                                listOfHikes.slice(0, 6).map((hike, index) => {
+                                                    if (index < 3) {
+                                                        return (
+                                                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} style={{ marginBottom: "15px", display: "flex", justifyContent: "center", width: "fit-content" }}>
+                                                                <HikeCard hike={hike} editable={false} />
+                                                            </Grid>
+                                                        );
+                                                    }
+                                                    else {
+                                                        return (
+                                                            <Grid item xs={1} sm={1} md={1} lg={1} xl={1} style={{ display: "flex", justifyContent: "center", width: "fit-content", opacity: "50%" }}>
+                                                                <HikeCard hike={hike} editable={false} />
+                                                            </Grid>
+                                                        );
+                                                    }
+                                                })
+                                            :
+                                            <>
+                                                <HikeLoading />
+                                                <HikeLoading />
+                                                <HikeLoading />
+                                                <HikeLoading />
+                                                <HikeLoading />
+                                                <HikeLoading />
+                                                <HikeLoading />
+                                                <HikeLoading />
+                                            </>
+                                    }
+                                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                        {
+                                            listOfHikes.length > 6 ?
+                                                <div style={{ marginTop: "28px", display: "flex", justifyContent: "center" }}>
+                                                    <Button variant="outlined"
+                                                        textDecoration="none"
+                                                        onClick={() => { navigate('/listofhikes') }}
+                                                        sx={{
+                                                            borderRadius: "60px", borderColor: "white",
+                                                            color: "white", textTransform: "none",
+                                                            "&:hover": { borderColor: "#EBC824", color: "#EBC824" }
+                                                        }}>
+                                                        See more...
+                                                    </Button>
+                                                </div>
+                                                : <></>
+                                        }
+                                    </Grid>
+                                </Grid>
+
                             </Grid>
                         </>
                         :
