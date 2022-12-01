@@ -67,7 +67,8 @@ function HTNavbar(props) {
                             fontFamily: "Bakbak One, display",
                             fontWeight: 700,
                             color: 'inherit',
-                            textDecoration: 'none',
+                            textDecoration: 'none', transition: "0.2s",
+                            "&:hover": { borderColor: "#EBC824", color: "#EBC824" }
                         }}
                     >
                         HackTheHike
@@ -145,7 +146,10 @@ function HTNavbar(props) {
                                     <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "18px", marginRight: "12px" }}
                                         key={page.title}
                                         onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}
-                                        sx={{ my: 1, color: 'white', display: 'block' }}
+                                        sx={{
+                                            my: 1, color: 'white', display: 'block',
+                                            "&:hover": { borderColor: "#EBC824", color: "#EBC824" }
+                                        }}
                                     >
                                         {page.title}
                                     </Button>
@@ -156,7 +160,10 @@ function HTNavbar(props) {
                                     <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "18px", marginRight: "12px" }}
                                         key={page.title}
                                         onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}
-                                        sx={{ my: 1, color: 'white', display: 'block' }}
+                                        sx={{
+                                            my: 1, color: 'white', display: 'block',
+                                            "&:hover": { borderColor: "#EBC824", color: "#EBC824" }
+                                        }}
                                     >
                                         {page.title}
                                         <Divider orientation='vertical' flexItem />
@@ -209,7 +216,9 @@ function HTNavbar(props) {
                                     <Tooltip style={{ marginLeft: "20px" }}>
                                         <IconButton onClick={() => { navigate('/hikerdashboard') }} sx={{ p: 0 }}>
                                             <Button variant="outlined" sx={{
-                                                borderRadius: "24px", color: "white", textTransform: "none", borderColor: "white"
+                                                borderRadius: "24px", color: "white",
+                                                "&:hover": { borderColor: "#EBC824", color: "#EBC824" },
+                                                textTransform: "none", borderColor: "white"
                                             }}><b>Dashboard</b></Button>
                                         </IconButton>
                                     </Tooltip>
@@ -217,6 +226,7 @@ function HTNavbar(props) {
                                     <Tooltip style={{ marginLeft: "20px" }}>
                                         <IconButton onClick={() => { props.doLogOut() }} sx={{ p: 0 }}>
                                             <Button variant="outlined" sx={{
+                                                "&:hover": { borderColor: "#EBC824", color: "#EBC824" },
                                                 borderRadius: "24px", color: "white", textTransform: "none", borderColor: "white"
                                             }}><b>Sign out</b></Button>
                                         </IconButton>

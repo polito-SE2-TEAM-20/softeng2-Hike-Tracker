@@ -86,7 +86,7 @@ const HTMainPage = (props) => {
                                         color: '#ffffff',
                                         textDecoration: 'none',
                                         marginTop: "32px",
-                                        dropShadow: "0 0 0.75rem crimson"
+                                        textShadow: "0 0 0.75rem #EBC824"
                                     }}
                                     fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "32px", xl: "32px" }}
                                 >
@@ -129,7 +129,9 @@ const HTMainPage = (props) => {
                                                 <Button variant="outlined"
                                                     textDecoration="none"
                                                     onClick={() => { navigate('/listofhikes') }}
-                                                    sx={{ borderRadius: "60px", borderColor: "white", color: "white", textTransform: "none" }}>
+                                                    sx={{ borderRadius: "60px", borderColor: "white", 
+                                                    color: "white", textTransform: "none",
+                                                    "&:hover": {borderColor: "#EBC824", color: "#EBC824"} }}>
                                                     See more...
                                                 </Button>
                                             </div>
