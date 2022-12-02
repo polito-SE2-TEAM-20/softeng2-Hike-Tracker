@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ascend, prop, sort } from 'ramda';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, Repository, SelectQueryBuilder } from 'typeorm';
 
 import {
   BaseService,
@@ -42,15 +42,9 @@ export class UserHikesService extends BaseService<UserHike> {
     id: ID,
     entityManager?: EntityManager,
   ): Promise<UserHikeFull> {
-    const userHike = (await this.getRepository(entityManager)
-      .createQueryBuilder('uh')
-      .leftJoinAndMapMany(
-        'uh.trackPoints',
-        UserHikeTrackPoint,
-        'uhtp',
-        'uhtp.userHikeId = uh.id',
-      )
-      .getOne()) as UserHikeFull | null;
+    const userHike = (await this.buildFullUserHikesQuery(
+      this.getRepository(entityManager).createQueryBuilder('uh'),
+    ).getOne()) as UserHikeFull | null;
 
     if (!userHike) {
       throw new Error(this.errorMessage);
@@ -62,5 +56,18 @@ export class UserHikesService extends BaseService<UserHike> {
     );
 
     return userHike;
+  }
+
+  /**
+   * Left join with user hike track points
+   */
+  buildFullUserHikesQuery(query: SelectQueryBuilder<UserHike>): typeof query {
+    query.leftJoinAndMapMany(
+      'uh.trackPoints',
+      UserHikeTrackPoint,
+      'uhtp',
+      `uhtp.userHikeId = ${query.alias}.id`,
+    );
+    return query;
   }
 }
