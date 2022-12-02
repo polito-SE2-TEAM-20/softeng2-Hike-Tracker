@@ -13,7 +13,8 @@ import { UserHikesService } from './user-hikes.service';
     TypeOrmModule.forFeature([UserHike, UserHikeTrackPoint]),
     HikesModule,
   ],
-  providers: [UserHikesService, UserHikeTrackPointsService],
   controllers: [UserHikesController],
+  providers: [UserHikesService, UserHikeTrackPointsService],
+  exports: [UserHikesService, UserHikeTrackPointsService],
 })
 export class UserHikesModule {}

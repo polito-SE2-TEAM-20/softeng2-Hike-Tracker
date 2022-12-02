@@ -1,7 +1,11 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ascend, prop, sort } from 'ramda';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, Repository, SelectQueryBuilder } from 'typeorm';
 
 import {
   BaseService,
@@ -9,6 +13,7 @@ import {
   UserContext,
   UserHike,
   UserHikeTrackPoint,
+  UserRole,
 } from '@app/common';
 
 import { UserHikeFull } from './user-hikes.interface';
@@ -31,7 +36,12 @@ export class UserHikesService extends BaseService<UserHike> {
   ): Promise<UserHike> {
     const userHike = await this.findByIdOrThrow(id);
 
-    if (user.id !== userHike.id) {
+    if (
+      user.id !== userHike.userId &&
+      ![UserRole.emergencyOperator, UserRole.platformManager].includes(
+        user.role,
+      )
+    ) {
       throw new ForbiddenException('Cannot track to another user hike');
     }
 
@@ -42,25 +52,31 @@ export class UserHikesService extends BaseService<UserHike> {
     id: ID,
     entityManager?: EntityManager,
   ): Promise<UserHikeFull> {
-    const userHike = (await this.getRepository(entityManager)
-      .createQueryBuilder('uh')
-      .leftJoinAndMapMany(
-        'uh.trackPoints',
-        UserHikeTrackPoint,
-        'uhtp',
-        'uhtp.userHikeId = uh.id',
-      )
-      .getOne()) as UserHikeFull | null;
+    const userHike = (await this.buildFullUserHikesQuery(
+      this.getRepository(entityManager)
+        .createQueryBuilder('uh')
+        .andWhere('uh.id = :id', { id }),
+    ).getOne()) as UserHikeFull | null;
 
     if (!userHike) {
-      throw new Error(this.errorMessage);
+      throw new NotFoundException(this.errorMessage);
     }
 
-    userHike.trackPoints = sort(
-      ascend(prop('index')),
-      userHike.trackPoints || [],
-    );
+    userHike.trackPoints = sort(ascend(prop('index')), userHike.trackPoints);
 
     return userHike;
+  }
+
+  /**
+   * Left join with user hike track points
+   */
+  buildFullUserHikesQuery(query: SelectQueryBuilder<UserHike>): typeof query {
+    query.leftJoinAndMapMany(
+      'uh.trackPoints',
+      UserHikeTrackPoint,
+      'uhtp',
+      `uhtp.userHikeId = ${query.alias}.id`,
+    );
+    return query;
   }
 }

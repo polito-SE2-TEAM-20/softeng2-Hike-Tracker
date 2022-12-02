@@ -1,6 +1,12 @@
 import { omit, pick } from 'ramda';
 
-import { latLonToGisPoint, UserHikeTrackPoint, UserRole } from '@app/common';
+import {
+  latLonToGisPoint,
+  mapToId,
+  UserHikeState,
+  UserHikeTrackPoint,
+  UserRole,
+} from '@app/common';
 import { finishTest } from '@app/testing';
 import {
   anyId,
@@ -41,6 +47,9 @@ describe('User Hikes (e2e)', () => {
     const hiker = await testService.createUser({
       role: UserRole.hiker,
     });
+    const emergencyOperator = await testService.createUser({
+      role: UserRole.emergencyOperator,
+    });
     const userTwo = await testService.createUser({
       role: UserRole.hiker,
     });
@@ -48,6 +57,7 @@ describe('User Hikes (e2e)', () => {
       role: UserRole.localGuide,
     });
     const hike = await testService.createHike({ userId: localGuide.id });
+    const hikeTwo = await testService.createHike({ userId: localGuide.id });
 
     const userHike = await testService.createUserHike({
       userId: hiker.id,
@@ -56,8 +66,10 @@ describe('User Hikes (e2e)', () => {
 
     return {
       localGuide,
+      emergencyOperator,
       hiker,
       hike,
+      hikeTwo,
       userHike,
       userTwo,
     };
@@ -114,8 +126,23 @@ describe('User Hikes (e2e)', () => {
       });
   });
 
+  it('should throw an error if hike is not found', async () => {
+    const { hiker } = await setup();
+
+    await restService
+      .build(app, hiker)
+      .request()
+      .get('/user-hikes/100')
+      .expect(404)
+      .expect(({ body }) => {
+        expect(body).toMatchObject({
+          message: 'UserHike not found',
+        });
+      });
+  });
+
   it('should add point to hike', async () => {
-    const { hiker, userHike } = await setup();
+    const { hiker, userHike, hikeTwo } = await setup();
 
     const existingTrackPoints = await mapArray(2, (i) =>
       testService.createUserHikeTrackPoint({
@@ -160,6 +187,34 @@ describe('User Hikes (e2e)', () => {
           },
         ]);
       });
+
+    const userHikeTwo = await testService.createUserHike({
+      userId: hiker.id,
+      hikeId: hikeTwo.id,
+    });
+
+    await restService
+      .build(app, hiker)
+      .request()
+      .post(`/user-hikes/${userHikeTwo.id}/track-point`)
+      .send({
+        position,
+      })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.trackPoints).toHaveLength(1);
+        expect(body.trackPoints).toIncludeAllMembers([
+          {
+            index: 1,
+            userHikeId: userHikeTwo.id,
+            position: {
+              type: 'Point',
+              coordinates: [position.lon, position.lat],
+            },
+            createdAt: expect.any(String),
+          },
+        ]);
+      });
   });
 
   it('should finish hike', async () => {
@@ -188,5 +243,72 @@ describe('User Hikes (e2e)', () => {
       .request()
       .post(`/user-hikes/${userHike.id}/finish`)
       .expect(403);
+  });
+
+  it('should allow emergencyOperator to see any hike', async () => {
+    const { emergencyOperator, userHike } = await setup();
+
+    await restService
+      .build(app, emergencyOperator)
+      .request()
+      .get(`/user-hikes/${userHike.id}`)
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toMatchObject({ id: userHike.id });
+      });
+  });
+
+  it('should return list of my tracked hikes', async () => {
+    const { hikeTwo, hiker, userHike } = await setup();
+
+    // create some hike
+    const userHikeTwo = await testService.createUserHike({
+      userId: hiker.id,
+      hikeId: hikeTwo.id,
+      startedAt: new Date(Date.now() - 1000 * 3600 * 130),
+    });
+
+    await restService
+      .build(app, hiker)
+      .request()
+      .post('/me/tracked-hikes')
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toHaveLength(2);
+        expect(mapToId(body)).toIncludeAllMembers(
+          mapToId([userHikeTwo, userHike]),
+        );
+      });
+  });
+
+  it('should filter my tracked hikes', async () => {
+    const { hikeTwo, hiker } = await setup();
+
+    // create finished hikes
+    const userHikeTwo = await testService.createUserHike({
+      userId: hiker.id,
+      hikeId: hikeTwo.id,
+      startedAt: new Date(Date.now() - 1000 * 3600 * 138),
+      finishedAt: new Date(Date.now() - 1000 * 3600 * 130),
+    });
+    const userHikeThree = await testService.createUserHike({
+      userId: hiker.id,
+      hikeId: hikeTwo.id,
+      startedAt: new Date(Date.now() - 1000 * 3600 * 511),
+      finishedAt: new Date(Date.now() - 1000 * 3600 * 520),
+    });
+
+    await restService
+      .build(app, hiker)
+      .request()
+      .post('/me/tracked-hikes')
+      .send({ state: UserHikeState.finished })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toHaveLength(2);
+        expect(mapToId(body)).toIncludeAllMembers(
+          mapToId([userHikeTwo, userHikeThree]),
+        );
+      });
   });
 });
