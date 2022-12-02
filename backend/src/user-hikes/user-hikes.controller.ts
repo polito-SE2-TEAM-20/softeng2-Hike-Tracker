@@ -81,7 +81,7 @@ export class UserHikesController {
     await this.dataSource.transaction(async (entityManager) => {
       const lastPoint = await this.userHikeTrackPointsService
         .getRepository(entityManager)
-        .findOne({ where: {}, order: { index: 'desc' } });
+        .findOne({ where: { userHikeId: id }, order: { index: 'desc' } });
       const index = lastPoint ? lastPoint.index + 1 : 1;
 
       await this.userHikeTrackPointsService.create(
