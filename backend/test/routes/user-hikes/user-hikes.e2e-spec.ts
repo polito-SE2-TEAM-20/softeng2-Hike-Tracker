@@ -224,7 +224,7 @@ describe('User Hikes (e2e)', () => {
   it('should filter my tracked hikes', async () => {
     const { hikeTwo, hiker } = await setup();
 
-    // create some hike
+    // create finished hikes
     const userHikeTwo = await testService.createUserHike({
       userId: hiker.id,
       hikeId: hikeTwo.id,
