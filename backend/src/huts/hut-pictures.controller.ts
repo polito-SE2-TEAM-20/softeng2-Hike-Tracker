@@ -1,3 +1,5 @@
+import * as path from 'path';
+
 import {
   Body,
   Controller,
@@ -10,6 +12,8 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { remove } from 'fs-extra';
+import { difference } from 'ramda';
 
 import {
   LocalGuideAndHutWorkerOnly,
@@ -18,6 +22,7 @@ import {
   UserContext,
   Hut,
   IMAGES_URI,
+  IMAGES_UPLOAD_PATH,
 } from '@app/common';
 
 import { HutPicturesReorderDto } from './huts.dto';
@@ -48,14 +53,26 @@ export class HutPicturesController {
       .save({ id, pictures: [...hut.pictures, ...newPictures] });
   }
 
-  @Post(':id/reorder')
+  @Post(':id/modify')
   @HttpCode(HttpStatus.OK)
   @LocalGuideAndHutWorkerOnly()
   async reorder(
     @Param('id', ParseIntPipe) id: ID,
     @Body() { pictures }: HutPicturesReorderDto,
   ): Promise<Hut> {
-    await this.hutsService.ensureExistsOrThrow(id);
+    const { pictures: existingPictures } =
+      await this.hutsService.findByIdOrThrow(id);
+
+    // maybe delete some
+    const deletedPictures = difference(existingPictures, pictures);
+
+    // delete them
+    for (const picture of deletedPictures) {
+      const fileName = path.basename(picture);
+
+      // delete
+      await remove(path.join(IMAGES_UPLOAD_PATH, fileName));
+    }
 
     await this.hutsService.getRepository().update({ id }, { pictures });
 

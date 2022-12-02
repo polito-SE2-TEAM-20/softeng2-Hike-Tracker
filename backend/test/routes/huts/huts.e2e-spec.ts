@@ -1,8 +1,15 @@
-import { extname, join } from 'path';
+import { basename, extname, join, resolve } from 'path';
 
+import { access, constants } from 'fs-extra';
 import { omit } from 'ramda';
 
-import { mapToId, Point, ROOT, UserRole } from '@app/common';
+import {
+  IMAGES_UPLOAD_PATH,
+  mapToId,
+  Point,
+  ROOT,
+  UserRole,
+} from '@app/common';
 import { finishTest } from '@app/testing';
 import { anyId, prepareTestApp, prepareVars } from '@test/base';
 
@@ -341,7 +348,7 @@ describe('Huts (e2e)', () => {
     await restService
       .build(app, localGuide)
       .request()
-      .post(`/hut-pictures/${hut.id}/reorder`)
+      .post(`/hut-pictures/${hut.id}/modify`)
       .send({ pictures: reordered })
       .expect(200)
       .expect(({ body }) => {
@@ -350,5 +357,50 @@ describe('Huts (e2e)', () => {
           pictures: reordered,
         });
       });
+  });
+
+  it('should delete removed hut pictures', async () => {
+    const { localGuide } = await setup();
+
+    const hut = await testService.createHut({
+      userId: localGuide.id,
+      numberOfBeds: 1,
+      price: 100,
+      pictures: [],
+    });
+
+    const testPics = ['img2.jpeg', 'img1.png'];
+    const req = restService
+      .build(app, localGuide)
+      .request()
+      .post(`/hut-pictures/${hut.id}`);
+
+    testPics.forEach((file) =>
+      req.attach('pictures', join(ROOT, './test-data', file)),
+    );
+
+    const { body: updatedHut } = await req.expect(200);
+    const firstImage = basename(updatedHut.pictures[0]);
+
+    await restService
+      .build(app, localGuide)
+      .request()
+      .post(`/hut-pictures/${updatedHut.id}/modify`)
+      .send({ pictures: updatedHut.pictures.slice(1) })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.pictures).toHaveLength(1);
+        expect(body.pictures[0]).toEqual(updatedHut.pictures[1]);
+      });
+
+    expect(
+      access(resolve(IMAGES_UPLOAD_PATH, basename(firstImage)), constants.F_OK),
+    ).toReject();
+    expect(
+      access(
+        resolve(IMAGES_UPLOAD_PATH, basename(updatedHut.pictures[1])),
+        constants.F_OK,
+      ),
+    ).not.toReject();
   });
 });
