@@ -1,4 +1,11 @@
-import { Body, Controller, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+} from '@nestjs/common';
 
 import {
   AuthenticatedOnly,
@@ -31,7 +38,8 @@ export class MeControlelr {
       .getMany();
   }
 
-  @Get('tracked-hikes')
+  @Post('tracked-hikes')
+  @HttpCode(HttpStatus.OK)
   async myTrackedHikes(
     @CurrentUser() user: UserContext,
     @Body() { state }: MyTrackedHikesDto,

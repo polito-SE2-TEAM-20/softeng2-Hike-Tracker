@@ -3,6 +3,7 @@ import { omit, pick } from 'ramda';
 import {
   latLonToGisPoint,
   mapToId,
+  UserHikeState,
   UserHikeTrackPoint,
   UserRole,
 } from '@app/common';
@@ -197,7 +198,7 @@ describe('User Hikes (e2e)', () => {
       .expect(403);
   });
 
-  it('should return list of my tracked hikes filtered', async () => {
+  it('should return list of my tracked hikes', async () => {
     const { hikeTwo, hiker, userHike } = await setup();
 
     // create some hike
@@ -210,12 +211,43 @@ describe('User Hikes (e2e)', () => {
     await restService
       .build(app, hiker)
       .request()
-      .get('/me/tracked-hikes')
+      .post('/me/tracked-hikes')
       .expect(200)
       .expect(({ body }) => {
         expect(body).toHaveLength(2);
         expect(mapToId(body)).toIncludeAllMembers(
           mapToId([userHikeTwo, userHike]),
+        );
+      });
+  });
+
+  it('should filter my tracked hikes', async () => {
+    const { hikeTwo, hiker } = await setup();
+
+    // create some hike
+    const userHikeTwo = await testService.createUserHike({
+      userId: hiker.id,
+      hikeId: hikeTwo.id,
+      startedAt: new Date(Date.now() - 1000 * 3600 * 138),
+      finishedAt: new Date(Date.now() - 1000 * 3600 * 130),
+    });
+    const userHikeThree = await testService.createUserHike({
+      userId: hiker.id,
+      hikeId: hikeTwo.id,
+      startedAt: new Date(Date.now() - 1000 * 3600 * 511),
+      finishedAt: new Date(Date.now() - 1000 * 3600 * 520),
+    });
+
+    await restService
+      .build(app, hiker)
+      .request()
+      .post('/me/tracked-hikes')
+      .send({ state: UserHikeState.finished })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toHaveLength(2);
+        expect(mapToId(body)).toIncludeAllMembers(
+          mapToId([userHikeTwo, userHikeThree]),
         );
       });
   });
