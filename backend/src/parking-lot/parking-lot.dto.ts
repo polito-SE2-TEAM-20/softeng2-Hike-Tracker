@@ -35,5 +35,5 @@ export class ParkingLotDto {
 
   @ValidateNested()
   @Type(() => ReferencePointDto)
-  location?: ReferencePointDto;
+  location!: ReferencePointDto;
 }
