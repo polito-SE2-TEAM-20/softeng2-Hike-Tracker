@@ -545,7 +545,7 @@ describe('Hikes (e2e)', () => {
       .expect(400);
   });
 
-  it.only('should update "Hike Condition" and "Cause", if the Hut Worker works in a hut along the trail', async () => {
+  it('should update "Hike Condition" and "Cause", if the Hut Worker works in a hut along the trail', async () => {
     const { hutWorker, hike, huts, localGuide } = await setup();
 
     const updateCondition = {
