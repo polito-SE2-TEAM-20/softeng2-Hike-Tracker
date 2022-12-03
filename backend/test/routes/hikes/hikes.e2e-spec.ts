@@ -534,16 +534,15 @@ describe('Hikes (e2e)', () => {
       .request()
       .delete(`/hikes/10`)
       .expect(({ body }) => {
-        expect(body.message).toBe("Hike not found.");
+        expect(body.message).toBe("This local guide can not delete this hike.");
       })
       .expect(400);
 
   });
 
-  it('should update Hike Condition and cause if the Hut Worker works in a hut along the trail', async () => {
+  it.only('should update "Hike Condition" and "Cause", if the Hut Worker works in a hut along the trail', async () => {
     const { hutWorker, hike, huts, localGuide } = await setup();
 
-    ///NEED TO FIND A WAY TO ASSIGN THE HUT TO A HUT WORKER
     const updateCondition = {
       condition: HikeCondition.closed,
       cause: "Christmas Holidays!"
@@ -569,12 +568,20 @@ describe('Hikes (e2e)', () => {
         ],
       })
 
+      //to delete
+    console.log(await restService
+      .build(app, localGuide)
+      .request()
+      .get(`/hikes/${hike.id}`)
+      );
+
     await restService
       .build(app, hutWorker)
       .request()
       .put(`/hikes/condition/${hike.id}`)
       .send(updateCondition)
       .expect(({ body }) => {
+        console.log(body);
         expect(body.condition).toBe(HikeCondition.closed);
         expect(body.cause).toBe("Christmas Holidays!");
       });

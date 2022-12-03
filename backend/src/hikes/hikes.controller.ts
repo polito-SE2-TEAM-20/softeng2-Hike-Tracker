@@ -385,18 +385,28 @@ export class HikesController {
       throw new BadRequestException("If the condition is not open you MUST provide a cause or a description of the problem.");
     }
 
+    //Need all huts IDs to look up and see if a point in the trail is a hut
+    const allHutIDs = (await this.dataSource.getRepository(Hut).find()).map(hut => hut.pointId);
+
+    //to delete
+    console.log(allHutIDs);
+
     //Check to see if there are huts on the chosen hike
     const checkIfThereAreHuts = await this.dataSource.getRepository(HikePoint).findBy({
       hikeId: id,
-      type: PointType.hut
+      //pointId: In(allHutIDs),
+      //type: In([PointType.linkedPoint, PointType.startPoint, PointType.endPoint])
     });
+
+    //to delete
+    console.log(checkIfThereAreHuts);
 
     //If there are no huts the hut worker is not authorized to change hike condition
     if(checkIfThereAreHuts.length === 0){
       throw new BadRequestException('You are not authorized to change this condition since there are not Huts of your property.');
     }
     
-    //retrieve hut's pointIDs by the hikepoints
+    //retrieve hut's pointIDs by the hikepoints of the chosen hike
     const hutsId = checkIfThereAreHuts.map(hikePoint => hikePoint.pointId);
 
     //check if the hut worker works in one of the huts on the hike trail
