@@ -13,21 +13,27 @@ import { isNil } from 'ramda';
 import {
   CurrentUser,
   Hut,
+  HutWorkerOnly,
   ID,
   LocalGuideAndHutWorkerOnly,
+  LocalGuideOnly,
   Point,
   UserContext,
 } from '@app/common';
 
 import { CreateHutDto, FilterHutsDto } from './huts.dto';
 import { HutsService } from './huts.service';
+import { DataSource, In } from 'typeorm';
 
 @Controller('huts')
 export class HutsController {
-  constructor(private service: HutsService) {}
+  constructor(
+    private service: HutsService,
+    private dataSource: DataSource
+  ) {}
 
   @Get('mine')
-  @LocalGuideAndHutWorkerOnly()
+  @LocalGuideOnly()
   async mine(@CurrentUser() user: UserContext): Promise<Hut[]> {
     const userId = user.id;
     const huts = await this.service
@@ -107,5 +113,24 @@ export class HutsController {
     @CurrentUser() user: UserContext,
   ): Promise<Hut> {
     return await this.service.createNewHut(body, user.id);
+  }
+
+
+  //Used to gett all the huts where the hut worker user is working
+  @Get('iWorkAt')
+  @HutWorkerOnly()
+  async getHutWorkerHuts(
+    @CurrentUser() user: UserContext
+  ) : Promise<Hut[]>{
+
+    //Retrieve all the hutsIDs given the hut worker
+    const myHuts = (await this.dataSource.getRepository(HutWorker).findBy({
+      userId: user.id,
+    })).map(hutWorker => hutWorker.hutId);
+
+    //Retrieve all the Huts where an hut worker is the user
+    return await this.service.getRepository().findBy({
+      id: In(myHuts)
+    })
   }
 }

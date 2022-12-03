@@ -58,6 +58,11 @@ describe('Hikes (e2e)', () => {
     const localGuide = await testService.createUser({
       role: UserRole.localGuide,
     });
+
+    const hutWorker = await testService.createUser({
+      role: UserRole.hutWorker,
+    });
+
     const hike = await testService.createHike({ userId: localGuide.id });
     const huts = await mapArray(10, (i) =>
       testService.createHut({
@@ -75,6 +80,7 @@ describe('Hikes (e2e)', () => {
     );
 
     return {
+      hutWorker,
       localGuide,
       hike,
       huts,
@@ -532,4 +538,38 @@ describe('Hikes (e2e)', () => {
       .expect(400);
 
   });
+
+  it('should update Hike Condition and cause if the Hut Worker works in a hut along the trail', async () => {
+    const { hutWorker, hike, huts, localGuide } = await setup();
+
+    ///NEED TO FIND A WAY TO ASSIGN THE HUT TO A HUT WORKER
+    const updateCondition = {
+      condition: HikeCondition.closed,
+      cause: "Christmas Holidays!"
+    };
+
+    const linkedHuts = huts.slice(0, 3);
+    
+    //First create a hike with linked huts
+    await restService
+      .build(app, localGuide)
+      .request()
+      .post('/hikes/linkPoints')
+      .send({
+        hikeId: hike.id,
+        linkedPoints: [
+          ...linkedHuts.map(({ id: hutId }) => ({ hutId })),
+        ],
+      })
+
+    await restService
+      .build(app, hutWorker)
+      .request()
+      .put(`/hikes/condition/${hike.id}`)
+      .send(updateCondition)
+      .expect(({ body }) => {
+        expect(body).not.toEqual(null);
+      });
+  });
+
 });
