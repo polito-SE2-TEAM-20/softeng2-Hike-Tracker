@@ -43,9 +43,11 @@ const HikerDashboard = (props) => {
                         </Typography>
                     </Grid>
                     <Grid item lg={12} sx={{ marginTop: "12px" }}>
-                        <Typography className="unselectable" fontSize={18} sx={{ backgroundColor: "white", color: "purple", borderStyle: "solid", 
-                        borderWidth: "1px", borderRadius: "18px", width: "fit-content", padding: "4px 12px 4px 12px", 
-                        fontFamily: "Bakbak One, display", fontWeight: "50", borderColor: "purple" }}>
+                        <Typography className="unselectable" fontSize={18} sx={{
+                            backgroundColor: "white", color: "purple", borderStyle: "solid",
+                            borderWidth: "1px", borderRadius: "18px", width: "fit-content", padding: "4px 12px 4px 12px",
+                            fontFamily: "Bakbak One, display", fontWeight: "50", borderColor: "purple"
+                        }}>
                             <b>
                                 {props?.user?.role == 0 ? "Hiker" : ""}
                                 {props?.user?.role == 1 ? "Friend" : ""}
@@ -72,11 +74,14 @@ const HikerDashboard = (props) => {
                         <Accordion>
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                 <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
-                                    Starting point
+                                    <b>Starting point</b>
                                 </Typography>
                                 <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}>Latitude: 44.1 - Longitude: 42.1</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
+                                <Typography sx={{ fontSize: "18px" }}>
+                                    Choose a point on the map to fix your favorite starting point.
+                                </Typography>
                                 <MapContainer center={[44.1, 42.1]} zoom={9}
                                     scrollWheelZoom={{ xs: false, sm: false, md: false, lg: true, xl: true }} zoomControl={false}
                                     style={{ width: "auto", minHeight: "40vh", height: "40%" }}>
@@ -99,48 +104,60 @@ const HikerDashboard = (props) => {
                         <Accordion>
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                 <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
-                                    Radius
+                                    <b>Radius</b>
                                 </Typography>
                                 <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}>10km</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <TextField variant="outlined" label="Radius" />
+                                <Typography sx={{ fontSize: "18px" }}>
+                                    Insert here the radius to determine the area from which you'd prefer to start your hikes.
+                                </Typography>
+                                <TextField variant="outlined" label="Radius" sx={{width: "100%"}} />
                             </AccordionDetails>
                         </Accordion>
 
                         <Accordion>
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                 <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
-                                    Length
+                                    <b>Length</b>
                                 </Typography>
                                 <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}>1.5km</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <TextField variant="outlined" label="Length" />
+                                <Typography sx={{ fontSize: "18px" }}>
+                                    Insert here the length of your ideal hike.
+                                </Typography>
+                                <TextField variant="outlined" label="Length" sx={{width: "100%"}} />
                             </AccordionDetails>
                         </Accordion>
 
                         <Accordion>
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                 <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
-                                    Expected time
+                                    <b>Expected time</b>
                                 </Typography>
                                 <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}>2h 30m</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <TextField variant="outlined" label="Expected time" />
+                                <Typography sx={{ fontSize: "18px" }}>
+                                    Insert here the expected time for your ideal hike.
+                                </Typography>
+                                <TextField variant="outlined" label="Expected time" sx={{width: "100%"}} />
                             </AccordionDetails>
                         </Accordion>
 
                         <Accordion>
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                 <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
-                                    Difficulty
+                                    <b>Difficulty</b>
                                 </Typography>
                                 <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}>Hiker</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <div style={{display: "flex", justifyContent: "space-between", marginLeft: "25%", marginRight: "25%"}}>
+                                <Typography sx={{ fontSize: "18px" }}>
+                                    Choose the difficulty level that better fits your needings and your past experiences.
+                                </Typography>
+                                <div style={{ display: "flex", justifyContent: "space-between", marginLeft: "25%", marginRight: "25%" }}>
                                     <Button variant="outlined" sx={{ borderRadius: "28px", color: "black", borderColor: "black", "&:hover": { backgroundColor: "#55B657", borderColor: "#000000", color: "white" } }}><b>Tourist</b></Button>
                                     <Button variant="outlined" sx={{ borderRadius: "28px", color: "black", borderColor: "black", "&:hover": { backgroundColor: "#1a79aa", borderColor: "#000000", color: "white" } }}><b>Hiker</b></Button>
                                     <Button variant="outlined" sx={{ borderRadius: "28px", color: "black", borderColor: "black", "&:hover": { backgroundColor: "#FA6952", borderColor: "#000000", color: "white" } }}><b>Pro</b></Button>
@@ -151,12 +168,15 @@ const HikerDashboard = (props) => {
                         <Accordion>
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                 <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
-                                    Ascent
+                                    <b>Ascent</b>
                                 </Typography>
                                 <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}>200m</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <TextField variant="outlined" label="Ascent" />
+                                <Typography sx={{ fontSize: "18px" }}>
+                                    Insert here the ascent for your ideal hike.
+                                </Typography>
+                                <TextField variant="outlined" label="Ascent" sx={{width: "100%"}} />
                             </AccordionDetails>
                         </Accordion>
                     </Grid>
