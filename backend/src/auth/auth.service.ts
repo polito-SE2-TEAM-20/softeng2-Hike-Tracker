@@ -6,7 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { DataSource } from 'typeorm';
 
-import { User, UserContext, UserJwtPayload } from '@app/common';
+import { HutWorker, User, UserContext, UserJwtPayload } from '@app/common';
 import { safeUser } from '@core/users/users.utils';
 
 import { RegisterDto } from './auth.dto';
@@ -31,7 +31,7 @@ export class AuthService {
     return null;
   }
 
-  async register({ password, ...data }: RegisterDto): Promise<UserContext> {
+  async register({ password, hutId, ...data }: RegisterDto): Promise<UserContext> {
     const hashedPassword = await this.hashPassword(password);
     const randomHash = randomBytes(128).toString('hex');
 
@@ -40,6 +40,13 @@ export class AuthService {
       password: hashedPassword,
       verificationHash: randomHash,
     });
+
+    if(user.role === 4) {
+      const hutWorker = await this.dataSource.getRepository(HutWorker).save({
+        userId: user.id,
+        hutId: hutId
+      })
+    }
 
     await this.mailService.sendMail({
       to: data.email,

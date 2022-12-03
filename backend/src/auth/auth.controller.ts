@@ -41,6 +41,12 @@ export class AuthController {
       (body.phoneNumber === null || body.phoneNumber === undefined)
     )
       throw new HttpException('Phone Number for this role is required', 403);
+    if(body.role === 4 && (body.hutId === null || body.hutId === undefined)) {
+      throw new HttpException('As an hut worker you need to specify in which hut you will work', 403);
+    }
+    if(body.role !== 4 && body.hutId !== null && body.hutId !== undefined) 
+    throw new HttpException('Only a hut worker needs to choose a hut', 403);
+
     return await this.service.register(body);
   }
 

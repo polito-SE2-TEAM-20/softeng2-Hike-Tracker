@@ -74,6 +74,12 @@ export class Hut {
   })
   elevation!: number | null;
 
+    /**
+   * For TypeORM metadata only
+   * @deprecated
+   */
+     __joiner?: any;
+
   /**
    * TypeORM sql-gen only
    * @deprecated
