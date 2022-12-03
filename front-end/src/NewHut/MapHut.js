@@ -44,11 +44,14 @@ async function getInformation(lat, lon) {
       setLongitude(e.latlng.lng);
       setLatitude(e.latlng.lat);
       let punti = e.latlng;
-      {/*}
-  popup
-      .setLatLng(punti)
-      .setContent("You clicked the map at " + punti.toString())
-    .openOn(map);*/}
+
+    L.popup({
+      className: "popup-address",
+  }).setLatLng(punti)
+      .setContent(`<p>You clicked the map at <br/> ( ${punti.lat} , ${punti.lng} ) </p>`)
+      .openOn(map);
+
+
   });
 
           useEffect(()=>{

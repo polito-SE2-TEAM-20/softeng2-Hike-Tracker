@@ -399,7 +399,7 @@ function NewHikeStEnd(props) {
   return (
     <React.Fragment>
       <Grid >
-        {/*<HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin}/>*/}
+        <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin}/>
         {
           <PopupAddHike id={hikeId} err={err} open={open} setOpen={setOpen}/>
         }
@@ -601,7 +601,7 @@ function NewHikeStEnd(props) {
               </Stack>
             ) : (<h1></h1>)
           }
-  <Grid sx={{ p: 2, marginLeft: "250px", marginRight: "250px" }}>
+  <Grid sx={{ p: 2, ml: 5, mr: 5}}>
             <Paper elevation={5}>
                <Map startPointLat ={startPointLat} startPointLon={startPointLon} endPointLat={endPointLat} endPointLon={endPointLon} positionsState={positionsState} setPuntiDaTrack={setPuntiDaTrack} puntiDaTrack={puntiDaTrack} referencePoint={referencePoint} setReferencePoint={setReferencePoint} listReferencePoint={listReferencePoint} />
             </Paper>

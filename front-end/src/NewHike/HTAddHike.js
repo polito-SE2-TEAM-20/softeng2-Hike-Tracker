@@ -30,8 +30,6 @@ import Alert from '@mui/material/Alert';
 import HTNavbar from '../components/HTNavbar/HTNavbar'
 import { warning } from '@remix-run/router';
 
-import API_NewHike from './API_Newhike';
-
 function HTAddHike(props) {
 
   const navigate = useNavigate();
