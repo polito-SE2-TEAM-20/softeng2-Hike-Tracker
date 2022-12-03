@@ -51,7 +51,7 @@ function StartPointSelect(props) {
 function StartCoordinates(props) {
     console.log(props.startPointType)
 
-    if(props.startPointType===0){
+    if(props.startPointType===0 && props.positionsState.length!==0){
         props.setHutId(null);
         props.setParkingId(null);
        props.setStartPointLat(props.positionsState[0][0]);

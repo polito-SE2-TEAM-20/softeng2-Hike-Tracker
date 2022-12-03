@@ -86,17 +86,6 @@ const Inner = ({ positionsState, setPuntiDaTrack, setReferencePoint, puntiDaTrac
     }
   }, [puntiDaTrack])
 
-  {/*
-useEffect(()=>{
-    if(listReferencePoint.length!==0){
-        listReferencePoint.map((e) => {
-
-    var marker = L.marker(e).addTo(map)
-        })
-    }
-}, [listReferencePoint.length]);
-*/}
-
 
   useEffect(() => {
     if (!positionsState?.length) { return; }

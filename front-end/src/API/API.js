@@ -292,7 +292,6 @@ async function addNewGpx(formData) {
         method: 'POST',
         body: formData,
         headers: {
-
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
             'Accept': '*/*',
         }

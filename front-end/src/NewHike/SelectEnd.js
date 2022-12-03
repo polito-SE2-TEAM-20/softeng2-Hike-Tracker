@@ -50,7 +50,7 @@ function EndPointSelect(props) {
 function EndCoordinates(props) {
     console.log(props.endPointType)
 
-    if(props.endPointType===0){
+    if(props.endPointType===0 && props.positionsState.length!==0){
         props.setHutIdEnd(null);
         props.setParkingIdEnd(null);
         props.setEndPointLat(props.positionsState[props.positionsState.length - 1][0]);
