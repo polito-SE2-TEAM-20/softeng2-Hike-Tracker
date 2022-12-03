@@ -19,6 +19,8 @@ import {
   ParkingLot,
   Point,
   User,
+  UserHike,
+  UserHikeTrackPoint,
   UserRole,
   WithPoint,
 } from '@app/common';
@@ -69,16 +71,6 @@ export class TestingService {
     const repository = this.dataSource.getRepository(type);
     return repository.find.bind(repository);
   }
-
-  // async getToken(user: User): Promise<string> {
-  //   if (!this.authService) {
-  //     throw new Error('Cannot resolve AuthService');
-  //   }
-
-  //   const authData = await this.authService.authenticate(user);
-
-  //   return authData.token;
-  // }
 
   async createHut(
     data?: DeepPartial<Hut>,
@@ -142,10 +134,28 @@ export class TestingService {
     return await this.createBase<Hike>(Hike, data);
   }
 
+  async createUserHike(data: DeepPartial<UserHike> = {}): Promise<UserHike> {
+    return await this.createBase<UserHike>(UserHike, data);
+  }
+
+  async createUserHikeTrackPoint(
+    data: DeepPartial<UserHikeTrackPoint> = {},
+  ): Promise<UserHikeTrackPoint> {
+    const entry = await this.createBase<UserHikeTrackPoint>(
+      UserHikeTrackPoint,
+      data,
+    );
+
+    return await this.repo(UserHikeTrackPoint).findOneByOrFail({
+      index: entry.index,
+      userHikeId: entry.userHikeId,
+    });
+  }
+
   async createUser(
     data: DeepPartial<User> = {},
   ): Promise<User & { token?: string }> {
-    // todo: generate token for future auth
+   
     const password = Math.random().toString().slice(2);
     const email = `${Math.random().toString().slice(2)}@gmail.com`;
 

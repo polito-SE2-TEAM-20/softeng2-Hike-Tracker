@@ -6,17 +6,19 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   AppTypeormOptionsModule,
   AppTypeormOptionsService,
+  getEnvVariable,
   SERVE_FOLDER,
   STATIC_PREFIX,
+  typeormOptions,
 } from '@app/common';
-import { typeormOptions } from '@app/common';
 
 import { AuthModule } from './auth/auth.module';
 import { HealthcheckModule } from './healthcheck/healthcheck.module';
 import { HikesModule } from './hikes/hikes.module';
 import { HutsModule } from './huts/huts.module';
-import { ParkingLotModule } from './parking_lot/parking_lot.module';
+import { ParkingLotModule } from './parking-lot/parking-lot.module';
 import { PointsModule } from './points/points.module';
+import { UserHikesModule } from './user-hikes/user-hikes.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -37,8 +39,8 @@ import { UsersModule } from './users/users.module';
       transport: {
         host: 'in-v3.mailjet.com',
         auth: {
-          user: '47db18f553e8840696f204e9b37b6978',
-          pass: '45ad1cf87fb6d35d829c4a6a449cda0f',
+          user: getEnvVariable('MAILER_USER'),
+          pass: getEnvVariable('MAILER_PASSWORD'),
         },
       },
     }),
@@ -50,6 +52,7 @@ import { UsersModule } from './users/users.module';
     ParkingLotModule,
     UsersModule,
     HutsModule,
+    UserHikesModule,
   ],
   controllers: [],
   providers: [],
