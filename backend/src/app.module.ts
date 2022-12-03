@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   AppTypeormOptionsModule,
   AppTypeormOptionsService,
+  getEnvVariable,
   SERVE_FOLDER,
   STATIC_PREFIX,
 } from '@app/common';
@@ -38,8 +39,8 @@ import { UsersModule } from './users/users.module';
       transport: {
         host: 'in-v3.mailjet.com',
         auth: {
-          user: '47db18f553e8840696f204e9b37b6978',
-          pass: '45ad1cf87fb6d35d829c4a6a449cda0f',
+          user: getEnvVariable('MAILER_USER'),
+          pass: getEnvVariable('MAILER_PASSWORD'),
         },
       },
     }),

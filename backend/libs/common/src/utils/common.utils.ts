@@ -62,3 +62,13 @@ export function escapeLiteral(str: string): string {
 
   return escaped;
 }
+
+export const getEnvVariable = (name: string): string => {
+  const value = process.env[name];
+
+  if (!value) {
+    throw new Error(`process.env.${name} is not defined`);
+  }
+
+  return value;
+};
