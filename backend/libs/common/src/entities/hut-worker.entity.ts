@@ -14,7 +14,6 @@ import { User } from './user.entity';
 @Entity('hut-worker')
   export class HutWorker {
 
-  
     @PrimaryColumn({
       type: 'integer',
       nullable: false,

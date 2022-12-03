@@ -28,6 +28,7 @@ import {
   HikeFull,
   HikePoint,
   Hut,
+  HutWorker,
   HutWorkerOnly,
   ID,
   latLonToGisPoint,
@@ -399,21 +400,10 @@ export class HikesController {
     const hutsId = checkIfThereAreHuts.map(hikePoint => hikePoint.pointId);
 
     //check if the hut worker works in one of the huts on the hike trail
-    const checkHutsProperty = await this.dataSource.getRepository(Hut).findBy({
-      pointId: In(hutsId),
-      userId: user.id
-    });
-    
-    /*
-    THIS TABLE HUT WORKER MUST BE CREATED
-    When the table would be create remove 3 up lines and uncomment this
-      const checkHutsProperty = await this.dataSource.getRepository(HutWorker).findBy({
+    const checkHutsProperty = await this.dataSource.getRepository(HutWorker).findBy({
       hutId: In(hutsId),
       userId: user.id
     });
-
-
-    */
 
     //If the hut work does not work in one of the huts return error
     if(checkHutsProperty.length === 0){

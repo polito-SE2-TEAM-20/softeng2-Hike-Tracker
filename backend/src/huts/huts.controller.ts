@@ -13,6 +13,7 @@ import { isNil } from 'ramda';
 import {
   CurrentUser,
   Hut,
+  HutWorker,
   HutWorkerOnly,
   ID,
   LocalGuideAndHutWorkerOnly,
