@@ -338,44 +338,91 @@ const getNotApprovedLocalGuides = async () => {
     const response = await fetch((APIURL + '/auth/not_approved/local_guides'), {
         method: 'GET'
     });
-    if(response.ok) {
+    if (response.ok) {
         const listOfNotApprovedLocalGuides = await response.json()
         return listOfNotApprovedLocalGuides
     } else {
         const errDetail = await response.json();
         throw errDetail.message;
-    } 
+    }
 }
 
 const getNotApprovedHutWorkers = async () => {
     const response = await fetch((APIURL + '/auth/not_approved/hut_workers'), {
         method: 'GET'
     });
-    if(response.ok) {
+    if (response.ok) {
         const listOfNotApprovedHutWorkers = await response.json()
         return listOfNotApprovedHutWorkers
     } else {
         const errDetail = await response.json();
         throw errDetail.message;
-    } 
+    }
 }
 
 const approveUserByID = async (id) => {
     const response = await fetch((APIURL + '/auth/approve_user/' + id), {
         method: 'PUT'
     });
-    if(!response.ok) {
+    if (!response.ok) {
         return true
     } else {
         const errDetail = await response.json();
         throw errDetail.message;
-    } 
+    }
 }
+
+
+// Francesco Grande, [11/30/22 4:26 PM]
+// GET me/preferences ti ritorna un oggetto json con tutte le preferenze dell'utente
+const getPreferences = async (userid) => {
+    const response = await fetch((APIURL + '/' + userid + "/preferences"), {
+        method: 'GET'
+    })
+    if (response.ok) {
+        const preferences = await response.json()
+        return preferences
+    } else {
+        const errDetail = await response.json()
+        throw errDetail.message;
+    }
+}
+
+
+// Francesco Grande, [11/30/22 4:27 PM]
+// POST me/set_preferences ti permette di salvare o modificare le preferenze, il body è fatto tipo così: {
+//     "lat": 5.005,
+//     "lon": 5.004,
+//     "radiusKms": 10,
+//     "length": 5000,
+//     "expectedTime": 1000,
+//     "difficulty": 2,
+//     "ascent": 100
+// }
+const setPreferences = async (preferences) => {
+    const response = await fetch((API + '/me/set_preferences'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(preferences)
+    })
+    if (response.ok) {
+        return true
+    } else {
+        const errDetail = await response.json()
+        throw errDetail.message
+    }
+}
+
 
 const API = {
     getListOfHikes, getListOfGPXFiles, getPathByID,
     getHikeByListOfPaths, getFilteredListOfHikes, getHikePathByHike,
-    getSingleHikeByID, getHikesForLocalGuide, getListOfHuts, getSingleHutByID, getListOfHutsAndParkingLots, logIn,
-    logOut, signUp, addNewHut, addNewParkingLot, addNewGpx, addHike, getNotApprovedLocalGuides, getNotApprovedHutWorkers, approveUserByID
+    getSingleHikeByID, getHikesForLocalGuide, getListOfHuts,
+    getSingleHutByID, getListOfHutsAndParkingLots, logIn,
+    logOut, signUp, addNewHut, addNewParkingLot, addNewGpx,
+    addHike, getNotApprovedLocalGuides, getNotApprovedHutWorkers,
+    approveUserByID, getPreferences, setPreferences
 }
 export default API

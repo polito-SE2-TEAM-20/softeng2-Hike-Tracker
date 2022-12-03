@@ -27,6 +27,19 @@ const HTMainPage = (props) => {
     const navigate = useNavigate()
     const [listOfHikes, setListOfHikes] = useState([])
     const [loading, setLoading] = useState(false)
+    const [preferences, setPreferences] = useState({})
+
+    useEffect(() => {
+        var tmpPref = {}
+        const getPreferences = async () => {
+            console.log(props?.user)
+            tmpPref = await API.getPreferences(props?.user?.id)
+        }
+        getPreferences().then(() => {
+            setPreferences(tmpPref)
+            console.log(preferences)
+        })
+    }, [])
 
     useEffect(() => {
         var loh = []
