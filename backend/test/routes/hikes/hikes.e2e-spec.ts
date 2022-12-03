@@ -571,26 +571,12 @@ describe('Hikes (e2e)', () => {
         linkedPoints: [...linkedHuts.map(({ id: hutId }) => ({ hutId }))],
       });
 
-    console.log(
-      '123',
-      await testService.repo(HikePoint).findBy({ hikeId: hike.id }),
-    );
-
-    //to delete
-    console.log(
-      await restService
-        .build(app, localGuide)
-        .request()
-        .get(`/hikes/${hike.id}`),
-    );
-
     await restService
       .build(app, hutWorker)
       .request()
       .put(`/hikes/condition/${hike.id}`)
       .send(updateCondition)
       .expect(({ body }) => {
-        console.log(body);
         expect(body.condition).toBe(HikeCondition.closed);
         expect(body.cause).toBe('Christmas Holidays!');
       });

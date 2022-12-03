@@ -36,6 +36,7 @@ import {
   mapToId,
   orderEntities,
   ParkingLot,
+  ParseIdPipe,
   Point,
   PointType,
   UserContext,
@@ -378,7 +379,7 @@ export class HikesController {
   @Put('condition/:id')
   @HutWorkerOnly()
   async updateHikeCondition(
-    @Param('id') id: ID,
+    @Param('id', ParseIdPipe()) id: ID,
     @CurrentUser() user: UserContext,
     @Body()
     { condition, cause },
@@ -395,20 +396,14 @@ export class HikesController {
       (hut) => hut.pointId,
     );
 
-    //to delete
-    console.log(allHutIDs);
-
     //Check to see if there are huts on the chosen hike
     const checkIfThereAreHuts = await this.dataSource
       .getRepository(HikePoint)
       .findBy({
         hikeId: id,
-        //pointId: In(allHutIDs),
-        //type: In([PointType.linkedPoint, PointType.startPoint, PointType.endPoint])
+        pointId: In(allHutIDs),
+        type: In([PointType.linkedPoint, PointType.startPoint, PointType.endPoint])
       });
-
-    //to delete
-    console.log(checkIfThereAreHuts);
 
     //If there are no huts the hut worker is not authorized to change hike condition
     if (checkIfThereAreHuts.length === 0) {
@@ -418,7 +413,9 @@ export class HikesController {
     }
 
     //retrieve hut's pointIDs by the hikepoints of the chosen hike
-    const hutsId = checkIfThereAreHuts.map((hikePoint) => hikePoint.pointId);
+    const hutsId = (await this.dataSource.getRepository(Hut).findBy({
+      pointId: In(checkIfThereAreHuts.map(hp => hp.pointId))
+    })).map(hut => hut.id);
 
     //check if the hut worker works in one of the huts on the hike trail
     const checkHutsProperty = await this.dataSource
