@@ -9,8 +9,8 @@ import {
   getEnvVariable,
   SERVE_FOLDER,
   STATIC_PREFIX,
+  typeormOptions,
 } from '@app/common';
-import { typeormOptions } from '@app/common';
 
 import { AuthModule } from './auth/auth.module';
 import { HealthcheckModule } from './healthcheck/healthcheck.module';

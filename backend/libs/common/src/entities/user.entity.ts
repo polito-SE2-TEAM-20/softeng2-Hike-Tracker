@@ -1,5 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+import { PreferencesDto } from '@core/users/preferences.dto';
+
 import { UserLimits } from '../constants';
 import { UserRole } from '../enums';
 
@@ -65,6 +67,20 @@ export class User {
     default: null,
   })
   verificationHash!: string;
+
+  @Column({
+    type: 'boolean',
+    nullable: false,
+    default: false,
+  })
+  approved!: boolean;
+
+  @Column({
+    type: 'jsonb',
+    nullable: true,
+    default: null,
+  })
+  preferences!: PreferencesDto;
 
   /**
    * For TypeORM metadata only

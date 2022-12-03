@@ -72,16 +72,6 @@ export class TestingService {
     return repository.find.bind(repository);
   }
 
-  // async getToken(user: User): Promise<string> {
-  //   if (!this.authService) {
-  //     throw new Error('Cannot resolve AuthService');
-  //   }
-
-  //   const authData = await this.authService.authenticate(user);
-
-  //   return authData.token;
-  // }
-
   async createHut(
     data?: DeepPartial<Hut>,
     pointData: Partial<Point> = {
@@ -165,7 +155,7 @@ export class TestingService {
   async createUser(
     data: DeepPartial<User> = {},
   ): Promise<User & { token?: string }> {
-    // todo: generate token for future auth
+   
     const password = Math.random().toString().slice(2);
     const email = `${Math.random().toString().slice(2)}@gmail.com`;
 

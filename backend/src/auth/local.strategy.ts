@@ -33,6 +33,13 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       );
     }
 
+    if ((user.role === 2 || user.role ===4) && !user.approved) {
+      throw new HttpException(
+        'You must be approved from manager before to log-in',
+        403,
+      );
+    }
+
     return user;
   }
 }
