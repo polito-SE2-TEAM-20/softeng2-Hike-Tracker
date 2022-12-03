@@ -32,8 +32,7 @@ const HTMainPage = (props) => {
     useEffect(() => {
         var tmpPref = {}
         const getPreferences = async () => {
-            console.log(props?.user)
-            tmpPref = await API.getPreferences(props?.user?.id)
+            tmpPref = await API.getPreferences()
         }
         getPreferences().then(() => {
             setPreferences(tmpPref)

@@ -375,8 +375,8 @@ const approveUserByID = async (id) => {
 
 // Francesco Grande, [11/30/22 4:26 PM]
 // GET me/preferences ti ritorna un oggetto json con tutte le preferenze dell'utente
-const getPreferences = async (userid) => {
-    const response = await fetch((APIURL + '/' + userid + "/preferences"), {
+const getPreferences = async () => {
+    const response = await fetch((APIURL + "/me/preferences"), {
         method: 'GET'
     })
     if (response.ok) {
@@ -407,7 +407,7 @@ const setPreferences = async (preferences) => {
         },
         body: JSON.stringify(preferences)
     })
-    if (response.ok) {
+    if(response.ok) {
         return true
     } else {
         const errDetail = await response.json()
