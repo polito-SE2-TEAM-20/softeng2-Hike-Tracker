@@ -4,6 +4,7 @@ import path, { resolve } from 'node:path';
 
 import * as fs from 'fs-extra';
 import { omit } from 'ramda';
+import { In } from 'typeorm';
 
 import {
   HikeDifficulty,
@@ -17,6 +18,7 @@ import {
   UPLOAD_PATH,
   UserRole,
 } from '@app/common';
+import { HikeCondition } from '@app/common/enums/hike-condition.enum';
 import { finishTest } from '@app/testing';
 import {
   anyId,
@@ -25,10 +27,8 @@ import {
   prepareVars,
   withoutLatLon,
 } from '@test/base';
-import { In } from 'typeorm';
 
 import { hikeBasic } from './constants';
-import { HikeCondition } from '@app/common/enums/hike-condition.enum';
 
 const withoutCompositeFields = omit([
   'referencePoints',
@@ -108,7 +108,7 @@ describe('Hikes (e2e)', () => {
             expectedTime: 100 * (i + 1),
             difficulty: HikeDifficulty.tourist,
             userId: localGuide.id,
-            condition: HikeCondition.open
+            condition: HikeCondition.open,
           }),
         ),
     );
@@ -430,7 +430,7 @@ describe('Hikes (e2e)', () => {
       });
   });
 
-  it("should delete the specified hike and all its relative points", async () => {
+  it('should delete the specified hike and all its relative points', async () => {
     const { localGuide } = await setup();
 
     const hikeData = {
@@ -443,8 +443,8 @@ describe('Hikes (e2e)', () => {
       expectedTime: 1020,
       difficulty: HikeDifficulty.professionalHiker,
       condition: HikeCondition.open,
-      city: "Torino",
-      country: "Italy",
+      city: 'Torino',
+      country: 'Italy',
       referencePoints: [
         {
           name: 'Small fountain',
@@ -473,8 +473,8 @@ describe('Hikes (e2e)', () => {
       expectedTime: 1020,
       difficulty: HikeDifficulty.professionalHiker,
       condition: HikeCondition.open,
-      city: "Torino",
-      country: "Italy",
+      city: 'Torino',
+      country: 'Italy',
       referencePoints: [
         {
           name: 'Small fountain',
@@ -504,7 +504,7 @@ describe('Hikes (e2e)', () => {
       .field('endPoint', JSON.stringify(hikeData.endPoint))
       .expect(201);
 
-    const {body: hike} = await restService
+    const { body: hike } = await restService
       .build(app, localGuide)
       .request()
       .post('/hikes/import')
@@ -515,7 +515,9 @@ describe('Hikes (e2e)', () => {
       .field('endPoint', JSON.stringify(hikeData2.endPoint))
       .expect(201);
 
-    const points = (await testService.repo(HikePoint).findBy({hikeId: hike.id})).map(point => point.pointId);
+    const points = (
+      await testService.repo(HikePoint).findBy({ hikeId: hike.id })
+    ).map((point) => point.pointId);
 
     await restService
       .build(app, localGuide)
@@ -525,19 +527,22 @@ describe('Hikes (e2e)', () => {
         expect(body.rowsAffected).toBe(1);
       })
       .expect(200);
-  
-    expect(await testService.repo(HikePoint).findBy({hikeId: hike.id})).toBeEmpty();    
-    expect(await testService.repo(Point).findBy({id: In(points)})).toBeEmpty();
+
+    expect(
+      await testService.repo(HikePoint).findBy({ hikeId: hike.id }),
+    ).toBeEmpty();
+    expect(
+      await testService.repo(Point).findBy({ id: In(points) }),
+    ).toBeEmpty();
 
     await restService
       .build(app, localGuide)
       .request()
       .delete(`/hikes/10`)
       .expect(({ body }) => {
-        expect(body.message).toBe("This local guide can not delete this hike.");
+        expect(body.message).toBe('This local guide can not delete this hike.');
       })
       .expect(400);
-
   });
 
   it.only('should update "Hike Condition" and "Cause", if the Hut Worker works in a hut along the trail', async () => {
@@ -545,15 +550,15 @@ describe('Hikes (e2e)', () => {
 
     const updateCondition = {
       condition: HikeCondition.closed,
-      cause: "Christmas Holidays!"
+      cause: 'Christmas Holidays!',
     };
 
     const linkedHuts = huts.slice(0, 3);
-    
-    //I'm connecting a created hut Worker to a specific hut 
+
+    //I'm connecting a created hut Worker to a specific hut
     await testService.getRepository(HutWorker).save({
       hutId: linkedHuts[2].id,
-      userId: hutWorker.id
+      userId: hutWorker.id,
     });
 
     //First create a hike with linked huts
@@ -563,17 +568,21 @@ describe('Hikes (e2e)', () => {
       .post('/hikes/linkPoints')
       .send({
         hikeId: hike.id,
-        linkedPoints: [
-          ...linkedHuts.map(({ id: hutId }) => ({ hutId })),
-        ],
-      })
+        linkedPoints: [...linkedHuts.map(({ id: hutId }) => ({ hutId }))],
+      });
 
-      //to delete
-    console.log(await restService
-      .build(app, localGuide)
-      .request()
-      .get(`/hikes/${hike.id}`)
-      );
+    console.log(
+      '123',
+      await testService.repo(HikePoint).findBy({ hikeId: hike.id }),
+    );
+
+    //to delete
+    console.log(
+      await restService
+        .build(app, localGuide)
+        .request()
+        .get(`/hikes/${hike.id}`),
+    );
 
     await restService
       .build(app, hutWorker)
@@ -583,8 +592,7 @@ describe('Hikes (e2e)', () => {
       .expect(({ body }) => {
         console.log(body);
         expect(body.condition).toBe(HikeCondition.closed);
-        expect(body.cause).toBe("Christmas Holidays!");
+        expect(body.cause).toBe('Christmas Holidays!');
       });
   });
-
 });
