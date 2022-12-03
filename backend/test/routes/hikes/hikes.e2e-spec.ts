@@ -8,6 +8,7 @@ import { omit } from 'ramda';
 import {
   HikeDifficulty,
   HikePoint,
+  HutWorker,
   latLonToGisPoint,
   mapToId,
   Point,
@@ -550,6 +551,12 @@ describe('Hikes (e2e)', () => {
 
     const linkedHuts = huts.slice(0, 3);
     
+    //I'm connecting a created hut Worker to a specific hut 
+    await testService.getRepository(HutWorker).save({
+      hutId: linkedHuts[2].id,
+      userId: hutWorker.id
+    });
+
     //First create a hike with linked huts
     await restService
       .build(app, localGuide)
@@ -568,7 +575,8 @@ describe('Hikes (e2e)', () => {
       .put(`/hikes/condition/${hike.id}`)
       .send(updateCondition)
       .expect(({ body }) => {
-        expect(body).not.toEqual(null);
+        expect(body.condition).toBe(HikeCondition.closed);
+        expect(body.cause).toBe("Christmas Holidays!");
       });
   });
 

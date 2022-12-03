@@ -453,8 +453,17 @@ export class HikesController {
   @HttpCode(200)
   async deleteHike(
     @Param('id') id: ID,
+    @CurrentUser() user: UserContext,
   ): Promise<{rowsAffected: number}> {
     
+    const hikeOwner = (await this.service.getRepository().findOneBy({
+      id: id
+    }))?.userId;
+
+    if(hikeOwner !== user.id){
+      throw new BadRequestException('This local guide can not delete this hike.');
+    }
+
     const pointsToDelete = await this.dataSource.getRepository(HikePoint).findBy({
       hikeId: id
     });
