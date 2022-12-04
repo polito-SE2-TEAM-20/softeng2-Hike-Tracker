@@ -442,7 +442,7 @@ describe('Huts (e2e)', () => {
       })
     });
 
-  it.only('should retrieve huts where the hut worker works', async () => {
+  it('should retrieve huts where the hut worker works', async () => {
       const { hutWorker, localGuide } = await setup();
   
       const hut1 = await testService.createHut({
@@ -481,7 +481,6 @@ describe('Huts (e2e)', () => {
         .request()
         .get(`/huts/hutWorker/iWorkAt`)
         .expect(({ body }) =>{
-          console.log(body);
           expect(body).toEqual([hutW1,hutW3]);
         })
       });
