@@ -119,7 +119,7 @@ export class HutsController {
 
 
   //Used to get all the huts where the hut worker user is working
-  @Get('iWorkAt')
+  @Get('hutWorker/iWorkAt')
   @HutWorkerOnly()
   async getHutWorkerHuts(
     @CurrentUser() user: UserContext

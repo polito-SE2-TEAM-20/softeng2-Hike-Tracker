@@ -20,7 +20,7 @@ import { User } from './user.entity';
     })
     userId!: number;
   
-    @Column({
+    @PrimaryColumn({
       type: 'integer',
       nullable: false,
     })

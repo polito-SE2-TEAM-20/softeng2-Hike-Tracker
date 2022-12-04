@@ -4,6 +4,7 @@ import { access, constants } from 'fs-extra';
 import { omit } from 'ramda';
 
 import {
+  Hut,
   HutWorker,
   IMAGES_UPLOAD_PATH,
   mapToId,
@@ -440,4 +441,48 @@ describe('Huts (e2e)', () => {
         expect(body.workingTimeEnd).toBe("22:00");
       })
     });
+
+  it.only('should retrieve huts where the hut worker works', async () => {
+      const { hutWorker, localGuide } = await setup();
+  
+      const hut1 = await testService.createHut({
+        userId: localGuide.id,
+        numberOfBeds: 1,
+        price: 100,
+      });
+  
+      await testService.createHut({
+        userId: localGuide.id,
+        numberOfBeds: 1,
+        price: 100,
+      });
+
+      const hut3 = await testService.createHut({
+        userId: localGuide.id,
+        numberOfBeds: 1,
+        price: 100,
+      });
+
+      await testService.repo(HutWorker).save({
+        hutId: hut1.id,
+        userId: hutWorker.id
+      });
+      
+      await testService.repo(HutWorker).save({
+        hutId: hut3.id,
+        userId: hutWorker.id
+      });
+
+      const hutW1 = await testService.repo(Hut).findOneBy({id: hut1.id});
+      const hutW3 = await testService.repo(Hut).findOneBy({id: hut3.id});
+
+      await restService
+        .build(app, hutWorker)
+        .request()
+        .get(`/huts/hutWorker/iWorkAt`)
+        .expect(({ body }) =>{
+          console.log(body);
+          expect(body).toEqual([hutW1,hutW3]);
+        })
+      });
 });
