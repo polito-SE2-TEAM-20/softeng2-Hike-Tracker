@@ -152,6 +152,8 @@ jobs:
       TEST_DB_USERNAME: circleci
       TEST_DB_PASSWORD: 
       JWT_SECRET: test
+      MAILER_USER: test
+      MAILER_PASSWORD: test
     steps:
       - checkout:
           path: ~/softeng2-Hike-Tracker
