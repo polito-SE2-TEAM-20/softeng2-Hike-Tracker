@@ -52,13 +52,13 @@ export class AuthController {
       );
     }
 
-    if (body.role === UserRole.hutWorker && !body.hutId) {
+    if (body.role === UserRole.hutWorker && !body.hutIds) {
       throw new ForbiddenException(
         'As an hut worker you need to specify in which hut you will work',
       );
     }
 
-    if (body.role !== UserRole.hutWorker && !!body.hutId) {
+    if (body.role !== UserRole.hutWorker && !!body.hutIds) {
       throw new ForbiddenException('Only a hut worker needs to choose a hut');
     }
 
