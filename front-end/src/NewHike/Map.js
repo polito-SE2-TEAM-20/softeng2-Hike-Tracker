@@ -56,7 +56,6 @@ const Inner = ({ positionsState, setPuntiDaTrack, setReferencePoint, puntiDaTrac
   const map = useMap();
 
   var popup = L.popup();
-  setPuntiDaTrack(null);
   const [punti, setPunti] = useState(null);
   if (positionsState?.length !== 0) {
 
@@ -77,6 +76,7 @@ const Inner = ({ positionsState, setPuntiDaTrack, setReferencePoint, puntiDaTrac
         punti.lat = nearest[0];
         punti.lng = nearest[1];
         setReferencePoint(object);
+        setPuntiDaTrack(null);
 
          L.popup({
           className: "popup-address",
