@@ -30,8 +30,6 @@ import Alert from '@mui/material/Alert';
 import HTNavbar from '../components/HTNavbar/HTNavbar'
 import { warning } from '@remix-run/router';
 
-import API_NewHike from './API_Newhike';
-
 function HTAddHike(props) {
 
   const navigate = useNavigate();
@@ -175,6 +173,7 @@ function HTAddHike(props) {
 
       //set List reference point con i waypoints se presenti nel gpx file
       setReferencePoint([]);
+
       setStartPointLat(positions[0][0]);
       setStartPointLon(positions[0][1]);
       setEndPointLat(positions[positions.length - 1][0]);
@@ -364,7 +363,7 @@ function HTAddHike(props) {
       //controllare che questi ultimi due funzionino 
       formData.append('country', country);
       formData.append('city', city);
-      props.addNewGpx(formData).catch((err) => { setErrorMessage(err); setShow(true) })
+      props.addNewGpx(formData).then(newHike =>{console.log(newHike)}).catch((err) => { setErrorMessage(err); setShow(true) })
       setSelectedFile(null);
       setFileContents(null);
       setIsFilePicked(false);

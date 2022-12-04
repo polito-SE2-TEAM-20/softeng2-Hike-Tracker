@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-import { Button, Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import {  FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import API from '../API/API.js';
 
 function EndPointSelect(props) {
@@ -50,12 +50,22 @@ function EndPointSelect(props) {
 function EndCoordinates(props) {
     console.log(props.endPointType)
 
-    if(props.endPointType===0){
+    if(props.endPointType===0 && props.positionsState.length!==0){
         props.setHutIdEnd(null);
         props.setParkingIdEnd(null);
         props.setEndPointLat(props.positionsState[props.positionsState.length - 1][0]);
+        console.log("set end point lat")
+        console.log(props.positionsState[props.positionsState.length - 1][0])
+        
         props.setEndPointLon(props.positionsState[props.positionsState.length - 1][1]);
+
+        console.log("set end point lon")
+        console.log(props.positionsState[props.positionsState.length - 1][1])
+
         props.setEndPointAdd(props.informationEnd.display_name);
+
+        console.log("set end point lat")
+        console.log(props.informationEnd.display_name)
 
     }
     return <>
@@ -112,11 +122,11 @@ function EndHut(props) {
     const [listHuts, setListHuts] = useState([]);
 
     useEffect(() => {
-        if(props.startPointType===2){
+        if(props.endPointType===2){
             props.setEndPointLat(null);
             props.setEndPointLon(null);
             var loh = []
-        let radiusPoint= {lon: parseFloat(props.positionsState[props.positionsState.length - 1][1]), lat: (props.positionsState[props.positionsState.length - 1][0]), radiusKms:400}
+        let radiusPoint= {lon: parseFloat(props.positionsState[props.positionsState.length - 1][1]), lat: (props.positionsState[props.positionsState.length - 1][0]), radiusKms:10}
         const getHutsPlot = async () => {
             loh = await API.getListOfHutsAndParkingLots(radiusPoint);
         }
@@ -131,7 +141,7 @@ function EndHut(props) {
 
 
     useEffect(() => {
-        if(props.hutIdEnd !== null || props.hutIdEnd!== ''){
+        if(props.hutIdEnd !== null && props.hutIdEnd!== ''){
             let element = listHuts.filter((el)=> el.id === props.hutIdEnd);
             console.log(element);
             console.log(element[0]?.point.address);
@@ -207,12 +217,12 @@ function EndParking(props) {
     const [listParking, setListParking] = useState([]);
 
     useEffect(() => {
-        if(props.startPointType===1){
+        if(props.endPointType===1){
             props.setEndPointAdd('');
             props.setEndPointLat(null);
             props.setEndPointLon(null);
             var loh = []
-        let radiusPoint= {lon: parseFloat(props.positionsState[props.positionsState.length - 1][1]), lat: parseFloat(props.positionsState[props.positionsState.length - 1][0]), radiusKms:400}
+        let radiusPoint= {lon: parseFloat(props.positionsState[props.positionsState.length - 1][1]), lat: parseFloat(props.positionsState[props.positionsState.length - 1][0]), radiusKms:5}
         const getHutsPlot = async () => {
             loh = await API.getListOfHutsAndParkingLots(radiusPoint);
         }
@@ -227,7 +237,7 @@ function EndParking(props) {
 
 
     useEffect(() => {
-        if(props.parkingIdEnd !== null || props.parkingIdEnd!== ''){
+        if(props.parkingIdEnd !== null && props.parkingIdEnd!== ''){
             let element = listParking.filter((el)=> el.id === props.parkingIdEnd);
             console.log(element);
             console.log(element[0]?.point?.address);
@@ -248,7 +258,7 @@ function EndParking(props) {
           id="demo-seimple-select"
           value={props.parkingIdEnd}
           fullWidth
-          name="parkingId"
+          name="parkingIdEnd"
           variant="standard"
           label="Parking"
           onChange={ev => props.setParkingIdEnd(ev.target.value)}

@@ -2,9 +2,8 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-import { Button, Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import {FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import API from '../API/API.js';
-import { alignProperty } from '@mui/material/styles/cssUtils.js';
 
 function StartPointSelect(props) {
 
@@ -51,12 +50,19 @@ function StartPointSelect(props) {
 function StartCoordinates(props) {
     console.log(props.startPointType)
 
-    if(props.startPointType===0){
+    if(props.startPointType===0 && props.positionsState.length!==0){
         props.setHutId(null);
         props.setParkingId(null);
        props.setStartPointLat(props.positionsState[0][0]);
+       console.log("set start point lat")
+       console.log(props.positionsState[0][0])
        props.setStartPointLon(props.positionsState[0][1]);
+       console.log("set start point lon")
+       console.log(props.positionsState[0][1])
+
        props.setStartPointAdd(props.information.display_name);
+       console.log("set start point address")
+       console.log(props.information.display_name)
     }
     return <>
   <Grid item xs={12} sm={6}>
@@ -116,7 +122,7 @@ function StartHut(props) {
             props.setStartPointLat(null);
             props.setStartPointLon(null);
             var loh = []
-        let radiusPoint= {lon: parseFloat(props.positionsState[0][1]), lat: parseFloat(props.positionsState[0][0]), radiusKms:100}
+        let radiusPoint= {lon: parseFloat(props.positionsState[0][1]), lat: parseFloat(props.positionsState[0][0]), radiusKms:10}
         const getHutsPlot = async () => {
             loh = await API.getListOfHutsAndParkingLots(radiusPoint);
         }
@@ -132,7 +138,7 @@ function StartHut(props) {
     }, [])
 
     useEffect(() => {
-      if(props.hutId !== null || props.hutId !== ''){
+      if(props.hutId !== null && props.hutId !== ''){
           let element = listHuts.filter((el)=> el.id === props.hutId);
           console.log(element);
           console.log(element[0]?.point.address);
@@ -229,7 +235,7 @@ function StartParking(props) {
     }, [])
 
     useEffect(() => {
-      if(props.parkingId !== null || props.parkingId!== ''){
+      if(props.parkingId !== null && props.parkingId!== ''){
           let element = listParking.filter((el)=> el.id === props.parkingId);
           console.log(element);
           console.log(element[0]?.point?.address);

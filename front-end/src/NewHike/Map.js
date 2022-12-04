@@ -78,24 +78,14 @@ const Inner = ({ positionsState, setPuntiDaTrack, setReferencePoint, puntiDaTrac
         punti.lng = nearest[1];
         setReferencePoint(object);
 
-        popup
-          .setLatLng(punti)
-          .setContent("You clicked the map at " + punti.toString())
+         L.popup({
+          className: "popup-address",
+      }).setLatLng(punti)
+          .setContent(`<p>You clicked the map at <br/> ( ${punti.lat} , ${punti.lng}) </p>`)
           .openOn(map);
       }
     }
   }, [puntiDaTrack])
-
-  {/*
-useEffect(()=>{
-    if(listReferencePoint.length!==0){
-        listReferencePoint.map((e) => {
-
-    var marker = L.marker(e).addTo(map)
-        })
-    }
-}, [listReferencePoint.length]);
-*/}
 
 
   useEffect(() => {
@@ -105,9 +95,9 @@ useEffect(()=>{
 
   }, [positionsState]);
 
-
+{/*
   useEffect(() => {
-    if (!startPointLat === null && !startPointLon === null && !startPointLat === '' && !startPointLon === '') {
+    if (startPointLat !== null && startPointLon !== null && startPointLat !== '' && startPointLon !== '') {
       return (<>
         <Marker
           key={startPointLat}
@@ -118,7 +108,7 @@ useEffect(()=>{
         </Marker>
       </>)
     }
-  }, [startPointLat, startPointLon]);
+  }, [startPointLat, startPointLon]);*/}
 
 }
 

@@ -15,6 +15,7 @@ import HikingIcon from '@mui/icons-material/Hiking';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SignUp.css'
+import API from '../API/API.js';
 
 function Copyright(props) {
   return (
@@ -50,6 +51,8 @@ function SignUpForm(props) {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [informationMessage, setInformationMessage] = useState('');
   const [showInformation, setShowInformation ] = useState('');
+  const [hutId, setHutId] = useState();
+  const [listHuts, setListHuts] = useState([]);
 
   const navigate = useNavigate();
 
@@ -67,12 +70,30 @@ function SignUpForm(props) {
       setErrorMessage('Password do not match');
       setShow(true);
     } else if (valid) {
-
-      const credentials = { email, firstName, lastName, password, role, phoneNumber};
+      let id;
+      if(role!==4){
+        id= null
+      }else{
+        id = hutId
+      }
+      const credentials = { email, firstName, lastName, password, role, phoneNumber, id};
       // const credentials = {email, firstName, lastName, password, role, phoneNumber};
       props.doRegister(credentials, setShow, setErrorMessage, setInformationMessage, setShowInformation);
     }
   }
+
+  React.useEffect(()=>{
+    let loh = [];
+   if(role===4){
+            const getHuts = async ()=>{
+     loh = await API.getListOfHuts();
+  }
+  getHuts().then(()=>{
+    setListHuts(loh)
+  })
+    }
+  }, [role])
+
 
   return (
 
@@ -146,6 +167,12 @@ function SignUpForm(props) {
                 <Grid item xs={12} sm={6}>
                   <RoleSelect setRole={setRole} role={role}></RoleSelect>
                 </Grid>
+                {
+                  role===4 &&
+                  <Grid item xs={12}>
+                  <HutSelect setHutId={setHutId} hutId={hutId} listHuts={listHuts}/>
+                  </Grid>
+                }
                 <Grid item xs={12}>
                   <TextField
                     required
@@ -259,4 +286,42 @@ function RoleSelect(props) {
       </Select>
     </FormControl>
   </>
+}
+
+
+function HutSelect(props) {
+
+  
+
+  return <>
+    
+    <FormControl fullWidth>
+      <InputLabel id="demo-simple-select-label">Hut</InputLabel>
+      <Select
+        labelId="demo-simple-select-label"
+        id="demo-seimple-select"
+        value={props.hutId}
+        fullWidth
+        name="hutId"
+        label="Hut"
+
+        onChange={ev => props.setHutId(ev.target.value)}
+      >
+        {
+          props.listHuts.map((el)=>{
+
+            console.log(el);
+            console.log(el.id);
+            return(
+              <MenuItem value={el.id}>
+                {el.title}
+              </MenuItem>
+
+            )
+          })
+        }
+              </Select>
+    </FormControl>
+  </>
+
 }

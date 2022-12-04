@@ -180,8 +180,10 @@ function HTNavbar(props) {
                                 <>
                                     <Tooltip>
                                         <IconButton onClick={() => { navigate("/login") }} sx={{ p: 0 }}>
-                                            <Button variant="outlined" sx={{ borderRadius: "24px", color: "white",
-                                                "&:hover": { borderColor: "#EBC824", color: "#EBC824" }, textTransform: "none", borderColor: "white" }}><b>Sign in</b></Button>
+                                            <Button variant="outlined" sx={{
+                                                borderRadius: "24px", color: "white",
+                                                "&:hover": { borderColor: "#EBC824", color: "#EBC824" }, textTransform: "none", borderColor: "white"
+                                            }}><b>Sign in</b></Button>
                                         </IconButton>
                                     </Tooltip>
                                     <Tooltip style={{ marginLeft: "20px" }}>
@@ -197,24 +199,26 @@ function HTNavbar(props) {
                                 <></>
                         }
                         {
+                            props.isLoggedIn ? <Tooltip>
+                                <div style={{ marginRight: "15px" }}>
+                                    <Typography color="white" className='unselectable' fontFamily={"Bakbak One, display"} fontSize="24px">
+                                        {props.user?.firstName} {props.user?.lastName}
+                                    </Typography>
+                                    <Typography color="white" className='unselectable' fontFamily={"Bakbak One, display"} fontSize="14px">
+                                        {props.user?.role == 0 ? "Hiker" : ""}
+                                        {props.user?.role == 1 ? "Friend" : ""}
+                                        {props.user?.role == 2 ? "Local guide" : ""}
+                                        {props.user?.role == 3 ? "Platform manager" : ""}
+                                        {props.user?.role == 4 ? "Hut worker" : ""}
+                                        {props.user?.role == 5 ? "Emergency operator" : ""}
+                                    </Typography>
+                                </div>
+                            </Tooltip> : <></>
+
+                        }
+                        {
                             props.isLoggedIn && props?.user?.role == 0 ?
                                 <>
-                                    <Tooltip>
-                                        <div style={{ marginRight: "15px" }}>
-                                            <Typography color="white" className='unselectable' fontFamily={"Bakbak One, display"} fontSize="24px">
-                                                {props.user?.firstName} {props.user?.lastName}
-                                            </Typography>
-                                            <Typography color="white" className='unselectable' fontFamily={"Bakbak One, display"} fontSize="14px">
-                                                {props.user?.role == 0 ? "Hiker" : ""}
-                                                {props.user?.role == 1 ? "Friend" : ""}
-                                                {props.user?.role == 2 ? "Local guide" : ""}
-                                                {props.user?.role == 3 ? "Platform manager" : ""}
-                                                {props.user?.role == 4 ? "Hut worker" : ""}
-                                                {props.user?.role == 5 ? "Emergency operator" : ""}
-                                            </Typography>
-                                        </div>
-                                    </Tooltip>
-
                                     <Tooltip style={{ marginLeft: "20px" }}>
                                         <IconButton onClick={() => { navigate('/hikerdashboard') }} sx={{ p: 0 }}>
                                             <Button variant="outlined" sx={{
@@ -224,15 +228,6 @@ function HTNavbar(props) {
                                             }}><b>Dashboard</b></Button>
                                         </IconButton>
                                     </Tooltip>
-
-                                    <Tooltip style={{ marginLeft: "20px" }}>
-                                        <IconButton onClick={() => { props.doLogOut() }} sx={{ p: 0 }}>
-                                            <Button variant="outlined" sx={{
-                                                "&:hover": { borderColor: "#EBC824", color: "#EBC824" },
-                                                borderRadius: "24px", color: "white", textTransform: "none", borderColor: "white"
-                                            }}><b>Sign out</b></Button>
-                                        </IconButton>
-                                    </Tooltip>
                                 </>
                                 :
                                 <></>
@@ -240,22 +235,6 @@ function HTNavbar(props) {
                         {
                             props.isLoggedIn && props?.user?.role == 3 ?
                                 <>
-                                    <Tooltip>
-                                        <div style={{ marginRight: "15px" }}>
-                                            <Typography color="white" className='unselectable' fontFamily={"Bakbak One, display"} fontSize="24px">
-                                                {props.user?.firstName} {props.user?.lastName}
-                                            </Typography>
-                                            <Typography color="white" className='unselectable' fontFamily={"Bakbak One, display"} fontSize="14px">
-                                                {props.user?.role == 0 ? "Hiker" : ""}
-                                                {props.user?.role == 1 ? "Friend" : ""}
-                                                {props.user?.role == 2 ? "Local guide" : ""}
-                                                {props.user?.role == 3 ? "Platform manager" : ""}
-                                                {props.user?.role == 4 ? "Hut worker" : ""}
-                                                {props.user?.role == 5 ? "Emergency operator" : ""}
-                                            </Typography>
-                                        </div>
-                                    </Tooltip>
-
                                     <Tooltip style={{ marginLeft: "20px" }}>
                                         <IconButton onClick={() => { navigate('/admindashboard') }} sx={{ p: 0 }}>
                                             <Button variant="outlined" sx={{
@@ -263,17 +242,19 @@ function HTNavbar(props) {
                                             }}><b>Dashboard</b></Button>
                                         </IconButton>
                                     </Tooltip>
-
-                                    <Tooltip style={{ marginLeft: "20px" }}>
-                                        <IconButton onClick={() => { props.doLogOut() }} sx={{ p: 0 }}>
-                                            <Button variant="outlined" sx={{
-                                                borderRadius: "24px", color: "white", textTransform: "none", borderColor: "white"
-                                            }}><b>Sign out</b></Button>
-                                        </IconButton>
-                                    </Tooltip>
                                 </>
                                 :
                                 <></>
+                        }
+                        {
+                            props.isLoggedIn ? <Tooltip style={{ marginLeft: "20px" }}>
+                                <IconButton onClick={() => { props.doLogOut() }} sx={{ p: 0 }}>
+                                    <Button variant="outlined" sx={{
+                                        borderRadius: "24px", color: "white", textTransform: "none", borderColor: "white", 
+                                        "&:hover": { borderColor: "#EBC824", color: "#EBC824" }
+                                    }}><b>Sign out</b></Button>
+                                </IconButton>
+                            </Tooltip> : <></>
                         }
                     </Box>
 

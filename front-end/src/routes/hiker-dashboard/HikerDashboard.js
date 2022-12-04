@@ -3,7 +3,6 @@ import { useNavigate } from "react-router";
 import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import { displayTypeFlex } from "../../extra/DisplayType";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import EditIcon from '@mui/icons-material/Edit';
 import './hiker-dashboard-style.css'
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -12,12 +11,74 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, useMapEvents, ZoomControl, Polyline, useMap } from 'react-leaflet'
 import HikePopup from "../../components/hike-popup/HikePopup";
 import HTButton from "../../components/buttons/Button";
+import { useState, useEffect } from "react";
+import API from '../../API/API'
+import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours'
 
 const HikerDashboard = (props) => {
     const navigate = useNavigate()
     const gotoLogin = () => {
         navigate("/login", { replace: false })
     }
+    // {
+    //     "lat": 5.005,
+    //     "lon": 5.004,
+    //     "radiusKms": 10,
+    //     "length": 5000,
+    //     "expectedTime": 1000,
+    //     "difficulty": 2,
+    //     "ascent": 100
+    // }
+    const [preferences, setPreferences] = useState({
+        'lat': 0.0,
+        'lon': 0.0,
+        'radiusKms': 0,
+        'length': 0,
+        'expectedTime': 0,
+        'difficulty': 0,
+        'ascent': 0
+    })
+    var newPreferences = {}
+
+    const [updateFinished, setUpdateFinished] = useState(false)
+
+    useEffect(() => {
+        var tmpPref = {}
+        const getPreferences = async () => {
+            tmpPref = await API.getPreferences()
+        }
+        getPreferences().finally(() => {
+            // setPreferences(newPreferences)
+            setPreferences(
+                {
+                    'lat': 15.15,
+                    'lon': 51.51,
+                    'radiusKms': 100,
+                    'length': 200,
+                    'expectedTime': 300,
+                    'difficulty': 2,
+                    'ascent': 400
+                }
+            )
+            newPreferences = preferences
+        })
+    }, [])
+
+    const handlePreferencesUpdate = () => {
+        const setPreferences = async () => {
+            await API.setPreferences(preferences)
+        }
+        setPreferences().finally(() => {
+            setUpdateFinished(true)
+        })
+    }
+
+    useEffect(() => {
+        setTimeout(() => {
+            if (updateFinished)
+                setUpdateFinished(false)
+        }, 2500);
+    }, [updateFinished])
 
     return (
         <>
@@ -43,7 +104,11 @@ const HikerDashboard = (props) => {
                         </Typography>
                     </Grid>
                     <Grid item lg={12} sx={{ marginTop: "12px" }}>
-                        <Typography className="unselectable" fontSize={18} sx={{ backgroundColor: "white", color: "black", borderStyle: "solid", borderWidth: "1px", borderRadius: "18px", width: "fit-content", padding: "4px 12px 4px 12px", fontFamily: "Bakbak One, display", fontWeight: "50" }}>
+                        <Typography className="unselectable" fontSize={18} sx={{
+                            backgroundColor: "white", color: "purple", borderStyle: "solid",
+                            borderWidth: "1px", borderRadius: "18px", width: "fit-content", padding: "4px 12px 4px 12px",
+                            fontFamily: "Bakbak One, display", fontWeight: "50", borderColor: "purple"
+                        }}>
                             <b>
                                 {props?.user?.role == 0 ? "Hiker" : ""}
                                 {props?.user?.role == 1 ? "Friend" : ""}
@@ -69,13 +134,16 @@ const HikerDashboard = (props) => {
                     <Grid lg={12} sx={{ marginTop: "28px" }}>
                         <Accordion>
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
-                                    Starting point
+                                <Typography className="unselectable" sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
+                                    <b>Starting point</b>
                                 </Typography>
-                                <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}>Latitude: 44.1 - Longitude: 42.1</Typography>
+                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>Latitude: {preferences?.lat} - Longitude: {preferences?.lon}</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <MapContainer center={[44.1, 42.1]} zoom={9}
+                                <Typography className="unselectable" sx={{ fontSize: "18px" }}>
+                                    Choose a point on the map to fix your favorite starting point.
+                                </Typography>
+                                <MapContainer center={[preferences?.lat, preferences?.lon]} zoom={9}
                                     scrollWheelZoom={{ xs: false, sm: false, md: false, lg: true, xl: true }} zoomControl={false}
                                     style={{ width: "auto", minHeight: "40vh", height: "40%" }}>
                                     <TileLayer
@@ -85,9 +153,9 @@ const HikerDashboard = (props) => {
                                     <ZoomControl position='bottomright' />
                                     <Marker
                                         key={0}
-                                        position={[44.1, 42.1]}>
-                                        <Popup position={[44.1, 42.1]}>
-                                            <HikePopup hike={{ positions: [44.1, 42.1] }} />
+                                        position={[preferences?.lat, preferences?.lon]}>
+                                        <Popup position={[preferences?.lat, preferences?.lon]}>
+                                            <HikePopup hike={{ positions: [preferences?.lat, preferences?.lon] }} />
                                         </Popup>
                                     </Marker>
                                 </MapContainer>
@@ -96,49 +164,65 @@ const HikerDashboard = (props) => {
 
                         <Accordion>
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
-                                    Radius
+                                <Typography className="unselectable" sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
+                                    <b>Radius</b>
                                 </Typography>
-                                <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}>10km</Typography>
+                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{preferences?.radiusKms.toFixed(2)}km</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <TextField variant="outlined" label="Radius" />
+                                <Typography className="unselectable" sx={{ fontSize: "18px" }}>
+                                    Insert here the radius to determine the area from which you'd prefer to start your hikes.
+                                </Typography>
+                                <TextField variant="outlined" label="Radius" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
 
                         <Accordion>
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
-                                    Length
+                                <Typography className="unselectable" sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
+                                    <b>Length</b>
                                 </Typography>
-                                <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}>1.5km</Typography>
+                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{preferences?.length.toFixed(2)}m</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <TextField variant="outlined" label="Length" />
+                                <Typography className="unselectable" sx={{ fontSize: "18px" }}>
+                                    Insert here the length of your ideal hike.
+                                </Typography>
+                                <TextField variant="outlined" label="Length" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
 
                         <Accordion>
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
-                                    Expected time
+                                <Typography className="unselectable" sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
+                                    <b>Expected time</b>
                                 </Typography>
-                                <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}>2h 30m</Typography>
+                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{fromMinutesToHours(preferences?.expectedTime)}</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <TextField variant="outlined" label="Expected time" />
+                                <Typography className="unselectable" sx={{ fontSize: "18px" }}>
+                                    Insert here the expected time for your ideal hike.
+                                </Typography>
+                                <TextField variant="outlined" label="Expected time" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
 
                         <Accordion>
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
-                                    Difficulty
+                                <Typography className="unselectable" sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
+                                    <b>Difficulty</b>
                                 </Typography>
-                                <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}>Hiker</Typography>
+                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>
+                                    {preferences?.difficulty == 0 ? "Tourist" : <></>}
+                                    {preferences?.difficulty == 1 ? "Hiker" : <></>}
+                                    {preferences?.difficulty == 2 ? "Pro" : <></>}
+                                </Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <div style={{display: "flex", justifyContent: "space-between", marginLeft: "25%", marginRight: "25%"}}>
+                                <Typography className="unselectable" sx={{ fontSize: "18px" }}>
+                                    Choose the difficulty level that better fits your needings and your past experiences.
+                                </Typography>
+                                <div style={{ display: "flex", justifyContent: "space-between", marginLeft: "25%", marginRight: "25%" }}>
                                     <Button variant="outlined" sx={{ borderRadius: "28px", color: "black", borderColor: "black", "&:hover": { backgroundColor: "#55B657", borderColor: "#000000", color: "white" } }}><b>Tourist</b></Button>
                                     <Button variant="outlined" sx={{ borderRadius: "28px", color: "black", borderColor: "black", "&:hover": { backgroundColor: "#1a79aa", borderColor: "#000000", color: "white" } }}><b>Hiker</b></Button>
                                     <Button variant="outlined" sx={{ borderRadius: "28px", color: "black", borderColor: "black", "&:hover": { backgroundColor: "#FA6952", borderColor: "#000000", color: "white" } }}><b>Pro</b></Button>
@@ -148,25 +232,35 @@ const HikerDashboard = (props) => {
 
                         <Accordion>
                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
-                                    Ascent
+                                <Typography className="unselectable" sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
+                                    <b>Ascent</b>
                                 </Typography>
-                                <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}>200m</Typography>
+                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{preferences?.ascent}m</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <TextField variant="outlined" label="Ascent" />
+                                <Typography className="unselectable" sx={{ fontSize: "18px" }}>
+                                    Insert here the ascent for your ideal hike.
+                                </Typography>
+                                <TextField variant="outlined" label="Ascent" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
                     </Grid>
                     <Grid item lg={12} sx={{ marginTop: "28px", display: "flex", justifyContent: "right" }}>
-                        <div style={{ marginRight: "28px" }}>
-                            <HTButton text="Update preferences" textSize="18px" textColor="white" color="black" />
-                        </div>
-                        <HTButton text="Cancel your edits" textSize="18px" textColor="white" color="black" />
+                        {updateFinished ? <div style={{marginRight: "25px"}}>
+                            <Typography className="unselectable" sx={{ fontSize: "18px" }}>
+                                <b>Your preferences have been correctly updated.</b>
+                            </Typography>
+                        </div> : <></>}
+                        <Button variant="filled"
+                            onClick={handlePreferencesUpdate}
+                            sx={{
+                                backgroundColor: "green", color: "white",
+                                borderRadius: "50px",
+                                "&:hover": { backgroundColor: "darkgreen" }
+                            }}>
+                            Update preferences
+                        </Button>
                     </Grid>
-                </Grid>
-                <Grid lg={2}>
-
                 </Grid>
             </Grid>
         </>
