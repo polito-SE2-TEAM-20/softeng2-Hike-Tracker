@@ -107,6 +107,7 @@ function NewHikeStEnd(props) {
     setNewReferencePoint(false);
     setListReferencePoint([]); setReferencePoint([]); setReferencePointLat(''); setReferencePointLon('');
     setReferencePointName(''); setReferencePointAdd('');
+    setStartPointType(''); setEndPointType('');
   };
 
 
@@ -182,6 +183,8 @@ function NewHikeStEnd(props) {
 
       getInformation(positions[positions.length - 1][0], positions[positions.length - 1][1])
         .then(informations => {
+          console.log("information on end")
+          console.log(informations);
           setInformationEnd(informations);
         })
     }
@@ -422,13 +425,15 @@ function NewHikeStEnd(props) {
                   <Grid item xs={12} sm={12}><Typography variant="h8" gutterBottom>END POINT</Typography></Grid>
                   <Grid item xs={12} sm={12}>
                     <EndPointSelect 
+                                         endPointName={endPointName} setEndPointName={setEndPointName}
+                                         endPointAdd={endPointAdd}  setEndPointAdd={setEndPointAdd} 
+                                          setEndPointLat={setEndPointLat} endPointLat={endPointLat} 
+                                          endPointLon={endPointLon} setEndPointLon={setEndPointLon} 
                                          setEndPointType={setEndPointType} endPointType={endPointType}
-                                         setHutIdEnd={setHutIdEnd} hutId={hutIdEnd} setParkingIdEnd={setParkingIdEnd} parkingId={parkingIdEnd}
-                                         endPointAdd={endPointAdd} setEndPointAdd={setEndPointAdd}  endPointName={endPointName}
-                                         setEndPointName={setEndPointName} 
-                                         setEndPointLat={setEndPointLat} endPointLat={endPointLat} 
-                                         setEndPointLon={setEndPointLon}  informationEnd= {informationEnd}
-                                         endPointLon={endPointLon} positionsState={positionsState}
+                                         setHutIdEnd={setHutIdEnd} hutIdEnd={hutIdEnd} 
+                                         setParkingIdEnd={setParkingIdEnd} parkingIdEnd={parkingIdEnd}
+                                          informationEnd= {informationEnd}
+                                          positionsState={positionsState}
                      ></EndPointSelect>
                                         
                   </Grid>

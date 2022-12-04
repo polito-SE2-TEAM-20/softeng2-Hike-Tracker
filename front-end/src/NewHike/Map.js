@@ -56,6 +56,7 @@ const Inner = ({ positionsState, setPuntiDaTrack, setReferencePoint, puntiDaTrac
   const map = useMap();
 
   var popup = L.popup();
+  setPuntiDaTrack(null);
   const [punti, setPunti] = useState(null);
   if (positionsState?.length !== 0) {
 
@@ -76,12 +77,11 @@ const Inner = ({ positionsState, setPuntiDaTrack, setReferencePoint, puntiDaTrac
         punti.lat = nearest[0];
         punti.lng = nearest[1];
         setReferencePoint(object);
-        setPuntiDaTrack(null);
 
          L.popup({
           className: "popup-address",
       }).setLatLng(punti)
-          .setContent(`<p>You clicked the map at <br/> ( ${punti.lat} , ${punti.lng} ) </p>`)
+          .setContent(`<p>You clicked the map at <br/> ( ${punti.lat} , ${punti.lng}) </p>`)
           .openOn(map);
       }
     }
@@ -95,7 +95,7 @@ const Inner = ({ positionsState, setPuntiDaTrack, setReferencePoint, puntiDaTrac
 
   }, [positionsState]);
 
-
+{/*
   useEffect(() => {
     if (startPointLat !== null && startPointLon !== null && startPointLat !== '' && startPointLon !== '') {
       return (<>
@@ -108,7 +108,7 @@ const Inner = ({ positionsState, setPuntiDaTrack, setReferencePoint, puntiDaTrac
         </Marker>
       </>)
     }
-  }, [startPointLat, startPointLon]);
+  }, [startPointLat, startPointLon]);*/}
 
 }
 
