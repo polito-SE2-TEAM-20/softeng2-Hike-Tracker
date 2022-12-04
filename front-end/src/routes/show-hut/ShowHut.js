@@ -111,26 +111,30 @@ const ShowHut = (props) => {
                         }
                     </Grid>
 
-                    <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
-                        <Chip label="Add a new image" />
-                    </Divider>
-                    <UploadPictureDialog open={openPictureDialog} setOpen={setOpenPictureDialog} />
-                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                        {
-                            !loading ? <Button variant="outlined"
-                            onClick={() => {setOpenPictureDialog(true)}}
-                                sx={{
-                                    color: "#1a1a1a",
-                                    borderColor: "#1a1a1a",
-                                    borderRadius: "50px",
-                                    "&:hover": { backgroundColor: "#1a1a1a", color: "white", borderColor: "black" },
-                                    textTransform: "none"
-                                }}>
-                                Upload a new picture
-                            </Button> :
-                                <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
-                        }
-                    </Grid>
+                    {
+                        props?.user?.role == 4 ? <>
+                            <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
+                                <Chip label="Add a new image" />
+                            </Divider>
+                            <UploadPictureDialog open={openPictureDialog} setOpen={setOpenPictureDialog} />
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                {
+                                    !loading ? <Button variant="outlined"
+                                        onClick={() => { setOpenPictureDialog(true) }}
+                                        sx={{
+                                            color: "#1a1a1a",
+                                            borderColor: "#1a1a1a",
+                                            borderRadius: "50px",
+                                            "&:hover": { backgroundColor: "#1a1a1a", color: "white", borderColor: "black" },
+                                            textTransform: "none"
+                                        }}>
+                                        Upload a new picture
+                                    </Button> :
+                                        <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
+                                }
+                            </Grid>
+                        </> : <></>
+                    }
                 </Paper>
             </Grid>
             <Grid style={{ marginTop: "105px", marginLeft: "auto", marginRight: "auto", marginBottom: "25px", height: "80vh", paddingLeft: "25px", paddingRight: "25px" }} item lg={6}>
