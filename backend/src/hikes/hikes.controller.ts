@@ -11,6 +11,7 @@ import {
   HttpStatus,
   ParseIntPipe,
   HttpCode,
+  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs-extra';
@@ -158,7 +159,7 @@ export class HikesController {
     const [parsedHike] = await this.gpxService.parseHikes(gpxText);
 
     if (!parsedHike) {
-      return null;
+      throw new BadRequestException('Unable to find hikes in gpx file');
     }
 
     // insert hike into database

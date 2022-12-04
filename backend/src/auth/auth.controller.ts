@@ -2,15 +2,19 @@ import {
   Controller,
   Get,
   Post,
-  Put,
   UseGuards,
   Body,
   HttpCode,
   Param,
-  HttpException,
+  ForbiddenException,
 } from '@nestjs/common';
 
-import { AuthenticatedOnly, CurrentUser, UserContext } from '@app/common';
+import {
+  AuthenticatedOnly,
+  CurrentUser,
+  UserContext,
+  UserRole,
+} from '@app/common';
 
 import { RegisterDto } from './auth.dto';
 import { AuthService } from './auth.service';
@@ -32,13 +36,14 @@ export class AuthController {
   @Post('register')
   @HttpCode(201)
   async register(@Body() body: RegisterDto): Promise<UserContext> {
-    if (body.role === 1)
-      throw new HttpException('Friend is not a valid role to register', 403);
-    if (
-      body.role !== 0 &&
-      (body.phoneNumber === null || body.phoneNumber === undefined)
-    )
-      throw new HttpException('Phone Number for this role is required', 403);
+    if (body.role === UserRole.friend) {
+      throw new ForbiddenException('Friend is not a valid role to register');
+    }
+
+    if (body.role !== UserRole.hiker && !body.phoneNumber) {
+      throw new ForbiddenException('Phone Number for this role is required');
+    }
+
     return await this.service.register(body);
   }
 

@@ -1,6 +1,17 @@
-import { mapToId, Point, UserRole } from '@app/common';
+import { basename, extname, join, resolve } from 'path';
+
+import { access, constants } from 'fs-extra';
+import { omit } from 'ramda';
+
+import {
+  IMAGES_UPLOAD_PATH,
+  mapToId,
+  Point,
+  ROOT,
+  UserRole,
+} from '@app/common';
 import { finishTest } from '@app/testing';
-import { prepareTestApp, prepareVars } from '@test/base';
+import { anyId, prepareTestApp, prepareVars } from '@test/base';
 
 describe('Huts (e2e)', () => {
   let { dbName, app, restService, moduleRef, testService } = prepareVars();
@@ -155,7 +166,6 @@ describe('Huts (e2e)', () => {
         inPointRadius: {
           lat: 20,
           lon: 10,
-          radiusKms: null,
         },
       })
       .expect(200)
@@ -244,5 +254,153 @@ describe('Huts (e2e)', () => {
           },
         });
       });
+  });
+
+  it('should throw an error when hut is not found', async () => {
+    const { user } = await setup();
+
+    await restService
+      .build(app, user)
+      .request()
+      .get(`/huts/1000`)
+      .expect(400)
+      .expect(({ body }) => {
+        expect(body).toMatchObject({
+          message: 'Hut 1000 not found',
+        });
+      });
+  });
+
+  it('should create a new hut', async () => {
+    const { localGuide } = await setup();
+
+    const hutData = {
+      title: 'test',
+      description: 'test',
+      location: { lat: 10, lon: 7, address: 'via torino 100' },
+      numberOfBeds: 2,
+      price: 100,
+      elevation: 100,
+      ownerName: 'Ricardo',
+      website: 'https://own.go/co',
+    };
+
+    await restService
+      .build(app, localGuide)
+      .request()
+      .post('/huts/createHut')
+      .send(hutData)
+      .expect(201)
+      .expect(({ body }) => {
+        expect(body).toMatchObject({
+          id: anyId(),
+          ...omit(['location'], hutData),
+        });
+      });
+  });
+
+  it('should put hut pictures', async () => {
+    const { localGuide } = await setup();
+
+    const hut = await testService.createHut({
+      userId: localGuide.id,
+      numberOfBeds: 1,
+      price: 100,
+      pictures: ['test1.png'],
+    });
+
+    const testPics = ['img1.png', 'img2.jpeg', 'img3.jpeg'];
+    const req = restService
+      .build(app, localGuide)
+      .request()
+      .post(`/hut-pictures/${hut.id}`);
+
+    testPics.forEach((file) =>
+      req.attach('pictures', join(ROOT, './test-data', file)),
+    );
+
+    await req.expect(200).expect(({ body }) => {
+      expect(body).toMatchObject({
+        id: hut.id,
+      });
+
+      expect(body.pictures).toHaveLength(testPics.length + 1);
+      expect(body.pictures[0]).toEqual('test1.png');
+      body.pictures.slice(1).forEach((picture, i) => {
+        expect(picture).toMatch(
+          new RegExp(`^\\/static\\/images\\/.+\\${extname(testPics[i])}$`),
+        );
+      });
+    });
+  });
+
+  it('should reorder hut pictures', async () => {
+    const { localGuide } = await setup();
+
+    const hut = await testService.createHut({
+      userId: localGuide.id,
+      numberOfBeds: 1,
+      price: 100,
+      pictures: ['test1.png', 'test2.jpeg', 'test3.png'],
+    });
+
+    const reordered = ['test3.jpeg', 'test1.png', 'test2.png'];
+    await restService
+      .build(app, localGuide)
+      .request()
+      .post(`/hut-pictures/${hut.id}/modify`)
+      .send({ pictures: reordered })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toMatchObject({
+          id: hut.id,
+          pictures: reordered,
+        });
+      });
+  });
+
+  it('should delete removed hut pictures', async () => {
+    const { localGuide } = await setup();
+
+    const hut = await testService.createHut({
+      userId: localGuide.id,
+      numberOfBeds: 1,
+      price: 100,
+      pictures: [],
+    });
+
+    const testPics = ['img2.jpeg', 'img1.png'];
+    const req = restService
+      .build(app, localGuide)
+      .request()
+      .post(`/hut-pictures/${hut.id}`);
+
+    testPics.forEach((file) =>
+      req.attach('pictures', join(ROOT, './test-data', file)),
+    );
+
+    const { body: updatedHut } = await req.expect(200);
+    const firstImage = basename(updatedHut.pictures[0]);
+
+    await restService
+      .build(app, localGuide)
+      .request()
+      .post(`/hut-pictures/${updatedHut.id}/modify`)
+      .send({ pictures: updatedHut.pictures.slice(1) })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.pictures).toHaveLength(1);
+        expect(body.pictures[0]).toEqual(updatedHut.pictures[1]);
+      });
+
+    expect(
+      access(resolve(IMAGES_UPLOAD_PATH, basename(firstImage)), constants.F_OK),
+    ).toReject();
+    expect(
+      access(
+        resolve(IMAGES_UPLOAD_PATH, basename(updatedHut.pictures[1])),
+        constants.F_OK,
+      ),
+    ).not.toReject();
   });
 });

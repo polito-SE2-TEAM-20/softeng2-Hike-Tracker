@@ -64,7 +64,7 @@ export class HikesService extends BaseService<Hike> {
       throw new Error(this.errorMessage);
     }
 
-    console.log('hike with refs', hike);
+    // console.log('hike with refs', hike);
 
     // get linked points
     const linkedHuts = (await (entityManager || this.dataSource)

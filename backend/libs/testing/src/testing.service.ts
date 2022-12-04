@@ -19,6 +19,8 @@ import {
   ParkingLot,
   Point,
   User,
+  UserHike,
+  UserHikeTrackPoint,
   UserRole,
   WithPoint,
 } from '@app/common';
@@ -140,6 +142,24 @@ export class TestingService {
 
   async createHike(data: DeepPartial<Hike> = {}): Promise<Hike> {
     return await this.createBase<Hike>(Hike, data);
+  }
+
+  async createUserHike(data: DeepPartial<UserHike> = {}): Promise<UserHike> {
+    return await this.createBase<UserHike>(UserHike, data);
+  }
+
+  async createUserHikeTrackPoint(
+    data: DeepPartial<UserHikeTrackPoint> = {},
+  ): Promise<UserHikeTrackPoint> {
+    const entry = await this.createBase<UserHikeTrackPoint>(
+      UserHikeTrackPoint,
+      data,
+    );
+
+    return await this.repo(UserHikeTrackPoint).findOneByOrFail({
+      index: entry.index,
+      userHikeId: entry.userHikeId,
+    });
   }
 
   async createUser(

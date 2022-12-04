@@ -13,3 +13,5 @@ export const anyId = () => expect.any(TypeID);
 
 export const withoutLatLon = <T>(value: T): Omit<T, 'lat' | 'lon'> =>
   omit(['lat', 'lon'], value);
+
+export const strDate = (d: Date) => d.toISOString();

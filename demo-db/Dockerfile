@@ -1,6 +1,6 @@
 FROM postgis/postgis:14-3.3
 
-COPY init.sql /docker-entrypoint-initdb.d/
+COPY db.sql.gz /docker-entrypoint-initdb.d/
 
 ADD postgres.conf /etc
 
