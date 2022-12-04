@@ -545,7 +545,7 @@ describe('Hikes (e2e)', () => {
       .expect(400);
   });
 
-  it('should update "Hike Condition" and "Cause", if the Hut Worker works in a hut along the trail', async () => {
+  it.only('should update "Hike Condition" and "Cause", if the Hut Worker works in a hut along the trail', async () => {
     const { hutWorker, hike, huts, localGuide } = await setup();
 
     const updateCondition = {
@@ -554,12 +554,16 @@ describe('Hikes (e2e)', () => {
     };
 
     const linkedHuts = huts.slice(0, 3);
-
-    //I'm connecting a created hut Worker to a specific hut
-    await testService.getRepository(HutWorker).save({
-      hutId: linkedHuts[2].id,
-      userId: hutWorker.id,
-    });
+    
+    await restService
+      .build(app, hutWorker)
+      .request()
+      .put(`/hikes/condition/${hike.id}`)
+      .send(updateCondition)
+      .expect(({ body }) => {
+        expect(body.statusCode).toBe(400);
+        expect(body.message).toBe('You are not authorized to change this condition since there are not Huts of your property.');
+      });
 
     //First create a hike with linked huts
     await restService
@@ -570,6 +574,22 @@ describe('Hikes (e2e)', () => {
         hikeId: hike.id,
         linkedPoints: [...linkedHuts.map(({ id: hutId }) => ({ hutId }))],
       });
+    
+    await restService
+      .build(app, hutWorker)
+      .request()
+      .put(`/hikes/condition/${hike.id}`)
+      .send(updateCondition)
+      .expect(({ body }) => {
+        expect(body.statusCode).toBe(400);
+        expect(body.message).toBe('You are not authorized to change this condition since there are not Huts in which you work on this trail.');
+      });
+
+    //I'm connecting a created hut Worker to a specific hut
+    await testService.getRepository(HutWorker).save({
+      hutId: linkedHuts[2].id,
+      userId: hutWorker.id,
+    });
 
     await restService
       .build(app, hutWorker)
@@ -579,6 +599,6 @@ describe('Hikes (e2e)', () => {
       .expect(({ body }) => {
         expect(body.condition).toBe(HikeCondition.closed);
         expect(body.cause).toBe('Christmas Holidays!');
-      });
+      });   
   });
 });
