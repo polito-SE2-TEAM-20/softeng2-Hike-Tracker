@@ -36,6 +36,26 @@ export class Hut {
   title!: string;
 
   @Column({
+    type: 'varchar',
+    length: HutLimits.description,
+    nullable: true,
+    default: '',
+  })
+  description?: string;
+
+  @Column({
+    type: 'time without time zone',
+    nullable: true,
+  })
+  workingTimeStart?: string;
+
+  @Column({
+    type: 'time without time zone',
+    nullable: true,
+  })
+  workingTimeEnd?: string;
+
+  @Column({
     type: 'integer',
     nullable: false,
   })

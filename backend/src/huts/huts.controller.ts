@@ -7,6 +7,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
 } from '@nestjs/common';
 import { isNil } from 'ramda';
 
@@ -117,7 +118,7 @@ export class HutsController {
   }
 
 
-  //Used to gett all the huts where the hut worker user is working
+  //Used to get all the huts where the hut worker user is working
   @Get('iWorkAt')
   @HutWorkerOnly()
   async getHutWorkerHuts(
@@ -132,6 +133,40 @@ export class HutsController {
     //Retrieve all the Huts where an hut worker is the user
     return await this.service.getRepository().findBy({
       id: In(myHuts)
+    })
+  }
+
+  //Used to update the specified hut description and time table
+  @Put('updateDescription/:id')
+  @HutWorkerOnly()
+  async updateHutDescription(
+    @Param('id', new ParseIntPipe()) id: ID,
+    @CurrentUser() user: UserContext,
+    @Body() {
+      description,
+      workingTimeStart,
+      workingTimeEnd
+    }
+  ) : Promise<Hut>{
+
+    if((!isNil(workingTimeStart) && isNil(workingTimeEnd)) || (!isNil(workingTimeEnd) && isNil(workingTimeStart)))
+      throw new BadRequestException("You must specify both starting/ending working time or none of them");
+
+    //Retrieve all the hutsIDs given the hut worker
+    const myHuts = (await this.dataSource.getRepository(HutWorker).findBy({
+      userId: user.id,
+    })).map(hutWorker => hutWorker.hutId);
+
+    //If the user is not working to that hut will throw an exception
+    if(!myHuts.includes(id))
+      throw new BadRequestException("You are not authorized to modify this hut description.");
+    
+    //Update the chosen hut with various fields
+    return await this.dataSource.getRepository(Hut).save({
+      id,
+      description: description || "",
+      workingTimeStart: workingTimeStart || "",
+      workingTimeEnd: workingTimeEnd || ""
     })
   }
 }

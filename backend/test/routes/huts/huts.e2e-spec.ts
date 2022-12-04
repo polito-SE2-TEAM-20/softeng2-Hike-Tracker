@@ -4,6 +4,7 @@ import { access, constants } from 'fs-extra';
 import { omit } from 'ramda';
 
 import {
+  HutWorker,
   IMAGES_UPLOAD_PATH,
   mapToId,
   Point,
@@ -12,6 +13,7 @@ import {
 } from '@app/common';
 import { finishTest } from '@app/testing';
 import { anyId, prepareTestApp, prepareVars } from '@test/base';
+import { Body } from '@nestjs/common';
 
 describe('Huts (e2e)', () => {
   let { dbName, app, restService, moduleRef, testService } = prepareVars();
@@ -31,9 +33,14 @@ describe('Huts (e2e)', () => {
       role: UserRole.localGuide,
     });
 
+    const hutWorker = await testService.createUser({
+      role: UserRole.hutWorker,
+    });
+
     return {
       user,
       localGuide,
+      hutWorker
     };
   };
 
@@ -403,4 +410,34 @@ describe('Huts (e2e)', () => {
       ),
     ).not.toReject();
   });
+
+  it('should update hut description/time table', async () => {
+    const { hutWorker, localGuide } = await setup();
+
+    const hut = await testService.createHut({
+      userId: localGuide.id,
+      numberOfBeds: 1,
+      price: 100,
+    });
+
+    await testService.repo(HutWorker).save({
+      hutId: hut.id,
+      userId: hutWorker.id
+    });
+    
+    await restService
+      .build(app, hutWorker)
+      .request()
+      .put(`/huts/updateDescription/${hut.id}`)
+      .send({
+        description: "This is a very beautiful hut.",
+        workingTimeStart: "08:00",
+        workingTimeEnd: "22:00"
+      })
+      .expect(({ body }) =>{
+        expect(body.description).toBe("This is a very beautiful hut.");
+        expect(body.workingTimeStart).toBe("08:00");
+        expect(body.workingTimeEnd).toBe("22:00");
+      })
+    });
 });
