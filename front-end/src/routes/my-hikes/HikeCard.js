@@ -10,6 +10,7 @@ import proIcon from '../../Assets/pro-icon.png'
 import { useNavigate } from 'react-router';
 import { HikeDifficultyLevel } from '../../lib/common/Hike';
 import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours';
+import { Grid } from '@mui/material';
 
 const bull = (
     <Box
@@ -41,14 +42,25 @@ const HikeCard = (props) => {
                     Ascent: {props.hike.ascent}m<br />
                 </Typography>
             </CardContent>
-            <div style={{ marginRight: "12px", marginBottom: "12px", display: "flex", justifyContent: "right" }}>
-                <Button text="Read more about" fontSize="14px" color="#1a1a1a" textColor="white" navigate={() => { navigate(`/showhike/${props.hike.id}`) }} />
-            </div>
-            {
-                props.editable ? <div style={{ marginRight: "12px", marginBottom: "12px", display: "flex", justifyContent: "right" }}>
-                    <Button text="Edit" fontSize="14px" color="#1a1a1a" textColor="white" navigate={() => { navigate(`/edithike/${props.hike.id}`) }} />
-                </div> : <></>
-            }
+            <Grid
+                    container
+                    direction="row"
+                    justifyContent="space-evenly"
+                    alignItems="flex-end"
+                    style={{ marginRight: 12, marginLeft: 12}}
+                    >
+                    {
+                        props.editable && 
+                        <Grid style={{ marginRight: "12px", marginBottom: "12px", display: "flex", justifyContent: "right" }}>
+                            <Button text="Edit" fontSize="14px" color="#1a1a1a" textColor="white" navigate={() => { navigate(`/edithike/${props.hike.id}`) }} />
+                        </Grid>
+                    }
+
+                    <Grid style={{ marginRight: "12px", marginBottom: "12px", display: "flex", justifyContent: "right" }}>
+                        <Button text="Read more about" fontSize="14px" color="#1a1a1a" textColor="white" navigate={() => { navigate(`/showhike/${props.hike.id}`) }} />
+                    </Grid>
+
+                </Grid>
         </Card >
     );
 }

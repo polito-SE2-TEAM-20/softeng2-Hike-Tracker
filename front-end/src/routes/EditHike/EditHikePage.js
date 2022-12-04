@@ -33,7 +33,7 @@ function EditHikePage(props) {
     const [description, setDescription] = useState('');
     const [positionsState, setPositionsState] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
-    const [show, setShow] = useState('');
+    const [show, setShow] = useState(false);
 
     const [puntiDaTrack, setPuntiDaTrack] = useState([]);
     const [information, setInformation] = useState('');
@@ -68,7 +68,7 @@ function EditHikePage(props) {
     const [referencePointAdd, setReferencePointAdd] = useState('');
 
     const [loading, setLoading] = useState(false);
-    const [hike, setHike] = useState();
+    const [hike, setHike] = useState(null);
 
     const match = useMatch('/edithike/:hikeid')
     const hikeId = (match && match.params && match.params.hikeid) ? match.params.hikeid : -1
@@ -76,8 +76,9 @@ function EditHikePage(props) {
     useEffect(() => {
         setLoading(true);
         API.getSingleHikeByID(hikeId).then((newHike) => {
-            setHike(oldHike => newHike);
-            fillInputsWithHike(hike)
+            setHike(newHike);
+            fillInputsWithHike(hike)    
+            console.log("NewHikew is", newHike)
             setLoading(false)
         })
     }, [])

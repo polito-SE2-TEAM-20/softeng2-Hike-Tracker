@@ -58,7 +58,7 @@
       "URL": "/myhikes",
       "reqLogin": true,
       "role": [
-        -1
+        2
       ]
     }
   ]
