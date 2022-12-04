@@ -14,17 +14,21 @@ import {
   UserContext,
   UserHikeState,
 } from '@app/common';
+import { HikerOnly } from '@app/common';
 import { HikesService } from '@core/hikes/hikes.service';
 import { UserHikeFull } from '@core/user-hikes/user-hikes.interface';
 import { UserHikesService } from '@core/user-hikes/user-hikes.service';
 
 import { MyTrackedHikesDto } from './me.dto';
+import { PreferencesDto } from './preferences.dto';
+import { UsersService } from './users.service';
 
 @Controller('me')
 @AuthenticatedOnly()
 export class MeControlelr {
   constructor(
     private hikesService: HikesService,
+    private usersService: UsersService,
     private userHikesService: UserHikesService,
   ) {}
 
@@ -63,5 +67,21 @@ export class MeControlelr {
     const userHikesFull = (await query.getMany()) as UserHikeFull[];
 
     return userHikesFull;
+  }
+  @HikerOnly()
+  @HttpCode(200)
+  @Get('preferences')
+  async getPreferences(@CurrentUser() user: UserContext) {
+    return await this.usersService.getPreferences(user.id);
+  }
+
+  @HikerOnly()
+  @HttpCode(201)
+  @Post('set_preferences')
+  async setPreferences(
+    @CurrentUser() user: UserContext,
+    @Body() body: PreferencesDto,
+  ) {
+    return await this.usersService.setPreferences(user.id, body);
   }
 }

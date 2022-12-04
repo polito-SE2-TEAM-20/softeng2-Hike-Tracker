@@ -22,14 +22,14 @@ describe('Auth (e2e)', () => {
     await finishTest({ moduleRef, dbName });
   });
 
-  // todo: account confirm
   it('should register user and support this data to login', async () => {
     const userData = {
       email: 'test@email.com',
       password: 'somePasswordToTest',
-      role: UserRole.hiker,
+      role: UserRole.localGuide,
       firstName: 'Test',
       lastName: 'User',
+      phoneNumber: '3332204738'
     };
 
     const { body: user } = await restService
@@ -46,7 +46,7 @@ describe('Auth (e2e)', () => {
         expect(body).not.toHaveProperty('password');
       });
 
-    await testService.repo(User).update({ id: user.id }, { verified: true });
+    await testService.repo(User).update({ id: user.id }, { verified: true, approved: true });
 
     const {
       body: { token },

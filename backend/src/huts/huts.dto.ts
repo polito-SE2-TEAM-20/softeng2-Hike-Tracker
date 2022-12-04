@@ -57,8 +57,9 @@ export class CreateHutDto {
   @IsString()
   title!: string;
 
+  @IsOptional()
   @IsString()
-  description!: string;
+  description?: string;
 
   @IsOptional()
   @ValidateNested()
@@ -84,6 +85,14 @@ export class CreateHutDto {
   @IsString()
   @IsOptional()
   website!: string;
+
+  @IsString()
+  @IsOptional()
+  workingTimeStart?: string;
+
+  @IsString()
+  @IsOptional()
+  workingTimeEnd?: string;
 }
 
 export class HutPicturesReorderDto {

@@ -11,6 +11,7 @@ import {
   HttpStatus,
   ParseIntPipe,
   HttpCode,
+  Delete,
   BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -27,16 +28,20 @@ import {
   HikeFull,
   HikePoint,
   Hut,
+  HutWorker,
+  HutWorkerOnly,
   ID,
   latLonToGisPoint,
   LocalGuideOnly,
   mapToId,
   orderEntities,
   ParkingLot,
+  ParseIdPipe,
   Point,
   PointType,
   UserContext,
 } from '@app/common';
+import { HikeCondition } from '@app/common/enums/hike-condition.enum';
 import { GpxService } from '@app/gpx';
 
 import { PointsService } from '../points/points.service';
@@ -236,10 +241,12 @@ export class HikesController {
       .filter((v) => !!v.parkingLotId)
       .map((v) => v.parkingLotId);
 
-    const points = await this.dataSource
+    const pointsQuery = this.dataSource
       .getRepository(Point)
-      .createQueryBuilder('p')
-      .orWhere((qb) => {
+      .createQueryBuilder('p');
+
+    if (hutIds.length) {
+      pointsQuery.orWhere((qb) => {
         const subQuery = qb
           .subQuery()
           .select(['h.pointId'])
@@ -250,8 +257,11 @@ export class HikesController {
           .getQuery();
 
         return `p.id IN ${subQuery}`;
-      })
-      .orWhere((qb) => {
+      });
+    }
+
+    if (parkingLotIds.length) {
+      pointsQuery.orWhere((qb) => {
         const subQuery = qb
           .subQuery()
           .select(['pl.pointId'])
@@ -262,8 +272,10 @@ export class HikesController {
           .getQuery();
 
         return `p.id IN ${subQuery}`;
-      })
-      .getMany();
+      });
+    }
+
+    const points = await pointsQuery.getMany();
 
     await this.dataSource.transaction(async (entityManager) => {
       // remove all existing links
@@ -364,26 +376,146 @@ export class HikesController {
     return await this.service.getFullHike(id);
   }
 
+  @Put('condition/:id')
+  @HutWorkerOnly()
+  async updateHikeCondition(
+    @Param('id', ParseIdPipe()) id: ID,
+    @CurrentUser() user: UserContext,
+    @Body()
+    { condition, cause },
+  ): Promise<Hike> {
+    //If the condition to be updated is not 'Open' a cause/description MUST be provided
+    if (condition !== HikeCondition.open && isNil(cause)) {
+      throw new BadRequestException(
+        'If the condition is not open you MUST provide a cause or a description of the problem.',
+      );
+    }
+
+    //Need all huts IDs to look up and see if a point in the trail is a hut
+    const allHutIDs = (await this.dataSource.getRepository(Hut).find()).map(
+      (hut) => hut.pointId,
+    );
+
+    //Check to see if there are huts on the chosen hike
+    const checkIfThereAreHuts = await this.dataSource
+      .getRepository(HikePoint)
+      .findBy({
+        hikeId: id,
+        pointId: In(allHutIDs),
+        type: In([PointType.linkedPoint, PointType.startPoint, PointType.endPoint])
+      });
+
+    //If there are no huts the hut worker is not authorized to change hike condition
+    if (checkIfThereAreHuts.length === 0) {
+      throw new BadRequestException(
+        'You are not authorized to change this condition since there are not Huts of your property.',
+      );
+    }
+
+    //retrieve hut's pointIDs by the hikepoints of the chosen hike
+    const hutsId = (await this.dataSource.getRepository(Hut).findBy({
+      pointId: In(checkIfThereAreHuts.map(hp => hp.pointId))
+    })).map(hut => hut.id);
+
+    //check if the hut worker works in one of the huts on the hike trail
+    const checkHutsProperty = await this.dataSource
+      .getRepository(HutWorker)
+      .findBy({
+        hutId: In(hutsId),
+        userId: user.id,
+      });
+
+    //If the hut work does not work in one of the huts return error
+    if (checkHutsProperty.length === 0) {
+      throw new BadRequestException(
+        'You are not authorized to change this condition since there are not Huts in which you work on this trail.',
+      );
+    }
+
+    //If an exception has not been thrown before, update the condition and the cause
+    return await this.service.getRepository().save({
+      id,
+      condition,
+      cause: cause || '',
+    });
+  }
+
+  //Used to gett all the hikes that current hut worker (user)
+  //can update conditions
+  @Get('hutWorkerHikes')
+  @HutWorkerOnly()
+  async getHutWorkerHikes(@CurrentUser() user: UserContext): Promise<Hike[]> {
+    //Retrieve all the hutsIDs given the hut worker
+    const myHuts = (
+      await this.dataSource.getRepository(HutWorker).findBy({
+        userId: user.id,
+      })
+    ).map((hutWorker) => hutWorker.hutId);
+
+    //Retrieve all the pointIDs related to previous Huts
+    const myHutPoints = (
+      await this.dataSource.getRepository(Hut).findBy({
+        id: In(myHuts),
+      })
+    ).map((hut) => hut.pointId);
+
+    //Retrieve all the hikeIDs which are related to the huts got before
+    const validHikes = (
+      await this.dataSource.getRepository(HikePoint).findBy({
+        pointId: In(myHutPoints),
+      })
+    ).map((hikePoint) => hikePoint.hikeId);
+
+    //Return all the hikes which have a hut on their trail whose the hut worker is the user
+    return await this.service.getRepository().findBy({
+      id: In(validHikes),
+    });
+  }
+
+  @Delete(':id')
+  @LocalGuideOnly()
+  @HttpCode(200)
+  async deleteHike(
+    @Param('id') id: ID,
+    @CurrentUser() user: UserContext,
+  ): Promise<{ rowsAffected: number }> {
+    const hikeOwner = (
+      await this.service.getRepository().findOneBy({
+        id,
+      })
+    )?.userId;
+
+    if (hikeOwner !== user.id) {
+      throw new BadRequestException(
+        'This local guide can not delete this hike.',
+      );
+    }
+
+    const pointsToDelete = await this.dataSource
+      .getRepository(HikePoint)
+      .findBy({
+        hikeId: id,
+      });
+
+    const deletion = await this.service.getRepository().delete({
+      id,
+    });
+
+    if (deletion.affected === 0 || isNil(deletion.affected)) {
+      throw new BadRequestException('Hike not found.');
+    }
+
+    const pointsID = pointsToDelete.map((point) => point.pointId);
+
+    await this.pointsService.getRepository().delete({
+      id: In(pointsID),
+    });
+
+    return { rowsAffected: deletion.affected };
+  }
+
   @Get(':id')
   async getHike(@Param('id', new ParseIntPipe()) id: ID): Promise<HikeFull> {
     return await this.service.getFullHike(id);
   }
-
-  // @Get(':id')
-  // async getHike(@Param('id') id: ID): Promise<Hike | null> {
-  //   const hike = await this.service.findById(id);
-
-  //   if (!hike) {
-  //     return null;
-  //   }
-
-  //   return {
-  //     ...hike,
-  //     gpx: hike.gpxPath
-  //       ? (
-  //           await fs.readFile(join(GPX_FILE_PATH, path.basename(hike.gpxPath)))
-  //         ).toString()
-  //       : null,
-  //   };
-  // }
 }

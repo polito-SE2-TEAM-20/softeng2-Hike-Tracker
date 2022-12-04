@@ -4,17 +4,21 @@ import path, { resolve } from 'node:path';
 
 import * as fs from 'fs-extra';
 import { omit } from 'ramda';
+import { In } from 'typeorm';
 
 import {
   HikeDifficulty,
   HikePoint,
+  HutWorker,
   latLonToGisPoint,
   mapToId,
+  Point,
   PointType,
   ROOT,
   UPLOAD_PATH,
   UserRole,
 } from '@app/common';
+import { HikeCondition } from '@app/common/enums/hike-condition.enum';
 import { finishTest } from '@app/testing';
 import {
   anyId,
@@ -55,6 +59,11 @@ describe('Hikes (e2e)', () => {
     const localGuide = await testService.createUser({
       role: UserRole.localGuide,
     });
+
+    const hutWorker = await testService.createUser({
+      role: UserRole.hutWorker,
+    });
+
     const hike = await testService.createHike({ userId: localGuide.id });
     const huts = await mapArray(10, (i) =>
       testService.createHut({
@@ -72,6 +81,7 @@ describe('Hikes (e2e)', () => {
     );
 
     return {
+      hutWorker,
       localGuide,
       hike,
       huts,
@@ -98,6 +108,7 @@ describe('Hikes (e2e)', () => {
             expectedTime: 100 * (i + 1),
             difficulty: HikeDifficulty.tourist,
             userId: localGuide.id,
+            condition: HikeCondition.open,
           }),
         ),
     );
@@ -327,6 +338,7 @@ describe('Hikes (e2e)', () => {
       ascent: 5.71,
       expectedTime: 1020,
       difficulty: HikeDifficulty.professionalHiker,
+      condition: HikeCondition.open,
       referencePoints: [
         {
           name: 'Small fountain',
@@ -415,6 +427,158 @@ describe('Hikes (e2e)', () => {
             }),
           ),
         ]);
+      });
+  });
+
+  it('should delete the specified hike and all its relative points', async () => {
+    const { localGuide } = await setup();
+
+    const hikeData = {
+      title: 'eeee',
+      description: 'test desc',
+      region: 'Torino',
+      province: 'TO',
+      length: 100.56,
+      ascent: 5.71,
+      expectedTime: 1020,
+      difficulty: HikeDifficulty.professionalHiker,
+      condition: HikeCondition.open,
+      city: 'Torino',
+      country: 'Italy',
+      referencePoints: [
+        {
+          name: 'Small fountain',
+          address: 'Some test address 1/1',
+          lat: 45.18,
+          lon: 7.084,
+        },
+      ],
+      startPoint: {
+        name: 'That small building near garage entrance',
+      },
+      endPoint: {
+        address: 'Turin, Via Torino 130',
+        lat: 45.181,
+        lon: 7.083,
+      },
+    };
+
+    const hikeData2 = {
+      title: 'eeee',
+      description: 'test desc',
+      region: 'Torino',
+      province: 'TO',
+      length: 100.56,
+      ascent: 5.71,
+      expectedTime: 1020,
+      difficulty: HikeDifficulty.professionalHiker,
+      condition: HikeCondition.open,
+      city: 'Torino',
+      country: 'Italy',
+      referencePoints: [
+        {
+          name: 'Small fountain',
+          address: 'Some test address 1/1',
+          lat: 45.12,
+          lon: 7.084,
+        },
+      ],
+      startPoint: {
+        name: 'That small building near garage entrance 2',
+      },
+      endPoint: {
+        address: 'Turin, Via Torino 130',
+        lat: 45.151,
+        lon: 7.083,
+      },
+    };
+
+    await restService
+      .build(app, localGuide)
+      .request()
+      .post('/hikes/import')
+      .attach('gpxFile', resolve(ROOT, './test-data/4.gpx'))
+      .field(withoutCompositeFields(hikeData))
+      .field('referencePoints', JSON.stringify(hikeData.referencePoints))
+      .field('startPoint', JSON.stringify(hikeData.startPoint))
+      .field('endPoint', JSON.stringify(hikeData.endPoint))
+      .expect(201);
+
+    const { body: hike } = await restService
+      .build(app, localGuide)
+      .request()
+      .post('/hikes/import')
+      .attach('gpxFile', resolve(ROOT, './test-data/1.gpx'))
+      .field(withoutCompositeFields(hikeData2))
+      .field('referencePoints', JSON.stringify(hikeData2.referencePoints))
+      .field('startPoint', JSON.stringify(hikeData2.startPoint))
+      .field('endPoint', JSON.stringify(hikeData2.endPoint))
+      .expect(201);
+
+    const points = (
+      await testService.repo(HikePoint).findBy({ hikeId: hike.id })
+    ).map((point) => point.pointId);
+
+    await restService
+      .build(app, localGuide)
+      .request()
+      .delete(`/hikes/${hike.id}`)
+      .expect(({ body }) => {
+        expect(body.rowsAffected).toBe(1);
+      })
+      .expect(200);
+
+    expect(
+      await testService.repo(HikePoint).findBy({ hikeId: hike.id }),
+    ).toBeEmpty();
+    expect(
+      await testService.repo(Point).findBy({ id: In(points) }),
+    ).toBeEmpty();
+
+    await restService
+      .build(app, localGuide)
+      .request()
+      .delete(`/hikes/10`)
+      .expect(({ body }) => {
+        expect(body.message).toBe('This local guide can not delete this hike.');
+      })
+      .expect(400);
+  });
+
+  it('should update "Hike Condition" and "Cause", if the Hut Worker works in a hut along the trail', async () => {
+    const { hutWorker, hike, huts, localGuide } = await setup();
+
+    const updateCondition = {
+      condition: HikeCondition.closed,
+      cause: 'Christmas Holidays!',
+    };
+
+    const linkedHuts = huts.slice(0, 3);
+
+    //I'm connecting a created hut Worker to a specific hut
+    await testService.getRepository(HutWorker).save({
+      hutId: linkedHuts[2].id,
+      userId: hutWorker.id,
+    });
+
+    //First create a hike with linked huts
+    await restService
+      .build(app, localGuide)
+      .request()
+      .post('/hikes/linkPoints')
+      .send({
+        hikeId: hike.id,
+        linkedPoints: [...linkedHuts.map(({ id: hutId }) => ({ hutId }))],
+      });
+
+    await restService
+      .build(app, hutWorker)
+      .request()
+      .put(`/hikes/condition/${hike.id}`)
+      .send(updateCondition)
+      .expect(({ body }) => {
+        expect(body.condition).toBe(HikeCondition.closed);
+        expect(body.cause).toBe('Christmas Holidays!');
       });
   });
 });

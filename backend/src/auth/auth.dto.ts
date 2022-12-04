@@ -5,6 +5,7 @@ import {
   MinLength,
   IsEmail,
   IsOptional,
+  IsNumber,
 } from 'class-validator';
 
 import { UserLimits, UserRole } from '@app/common';
@@ -38,6 +39,10 @@ export class RegisterDto {
   @MaxLength(10)
   @IsOptional()
   phoneNumber!: string;
+
+  @IsNumber()
+  @IsOptional()
+  hutId!: number;
 }
 
 export class LoginDto {

@@ -28,6 +28,7 @@ import {
 } from '@app/common';
 
 import { StartEndPointTransformer } from './hikes.utils';
+import { HikeCondition } from '@app/common/enums/hike-condition.enum';
 
 export class PointWithRadius {
   @IsLatitude()
@@ -67,6 +68,8 @@ export class FilteredHikesDto {
   @IsNumber()
   @Min(0)
   minLength?: number;
+
+  //filter on hike condition to be added, maybe
 
   @IsOptional()
   @IsEnum(HikeDifficulty)
@@ -183,6 +186,15 @@ export class HikeDto {
   @IsEnum(HikeDifficulty)
   @Transform(({ value }) => parseInt(value))
   difficulty!: HikeDifficulty;
+
+  @IsEnum(HikeCondition)
+  @Transform(({ value }) => parseInt(value))
+  condition!: HikeCondition;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(HikeLimits.cause)
+  cause?: string;
 
   @IsString()
   @MaxLength(HikeLimits.title)

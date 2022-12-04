@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 
 import { ParkingLot, BaseService, Point, GPoint, PointType } from '@app/common';
 
-import { ParkingLotDto } from './parking_lot.dto';
+import { ParkingLotDto } from './parking-lot.dto';
 
 export class ParkingLotService extends BaseService<ParkingLot> {
   constructor(
@@ -21,7 +21,7 @@ export class ParkingLotService extends BaseService<ParkingLot> {
   async insertParkingLot(lot: ParkingLotDto, userId: number) {
     const position: GPoint = {
       type: 'Point',
-      coordinates: [lot.location!.lon, lot.location!.lat],
+      coordinates: [lot.location.lon, lot.location.lat],
     };
 
     const point = await this.pointRepository.save({

@@ -7,8 +7,8 @@ import {
   UserContext,
 } from '@app/common';
 
-import { ParkingLotDto } from './parking_lot.dto';
-import { ParkingLotService } from './parking_lot.service';
+import { ParkingLotDto } from './parking-lot.dto';
+import { ParkingLotService } from './parking-lot.service';
 
 @Controller('parkingLot')
 export class ParkingLotController {

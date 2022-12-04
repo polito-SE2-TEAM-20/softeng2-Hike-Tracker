@@ -6,7 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { DataSource } from 'typeorm';
 
-import { User, UserContext, UserJwtPayload } from '@app/common';
+import { HutWorker, User, UserContext, UserJwtPayload } from '@app/common';
 import { safeUser } from '@core/users/users.utils';
 
 import { RegisterDto } from './auth.dto';
@@ -31,7 +31,11 @@ export class AuthService {
     return null;
   }
 
-  async register({ password, ...data }: RegisterDto): Promise<UserContext> {
+  async register({
+    password,
+    hutId,
+    ...data
+  }: RegisterDto): Promise<UserContext> {
     const hashedPassword = await this.hashPassword(password);
     const randomHash = randomBytes(128).toString('hex');
 
@@ -40,6 +44,13 @@ export class AuthService {
       password: hashedPassword,
       verificationHash: randomHash,
     });
+
+    if (user.role === 4) {
+      const hutWorker = await this.dataSource.getRepository(HutWorker).save({
+        userId: user.id,
+        hutId,
+      });
+    }
 
     await this.mailService.sendMail({
       to: data.email,
@@ -51,8 +62,6 @@ export class AuthService {
         ', please confirm your e-mail clicking on this link: http://hiking-backend.germangorodnev.com/auth/verify/' +
         randomHash,
     });
-
-    // const token = await this.jwtService.signAsync({ id: user.id });
 
     return safeUser(user);
   }
@@ -78,19 +87,77 @@ export class AuthService {
     return await hash(password, this.HASH_ROUNDS);
   }
 
-  async validateRegistration(verificationHash: string) {
+  async validateRegistration(verificationHash: string): Promise<any> {
     const user = await this.dataSource
       .getRepository(User)
       .findOneBy({ verificationHash });
-    if (user === null) {
-      throw new HttpException("User doesn't exists", 422);
-    } else if (user.verified === true)
+
+    if (user === null) throw new HttpException("User doesn't exists", 422);
+
+    if (user.verified === true)
       throw new HttpException('User already verified', 409);
-    else
-      await this.dataSource.getRepository(User).save({
-        ...user,
-        verified: true,
-      });
+
+    await this.dataSource.getRepository(User).save({
+      ...user,
+      verified: true,
+    });
     return { 'Account Verification': 'Successful' };
+  }
+
+  async retrieveNotApprovedLocalGuides(): Promise<UserContext[]> {
+    const users = await this.dataSource
+      .getRepository(User)
+      .createQueryBuilder('user')
+      .where('user.verified = true')
+      .andWhere('user.approved = false')
+      .andWhere('user.role = 2')
+      .getMany();
+
+    const safeUsers: UserContext[] = users.map((u) => {
+      return safeUser(u);
+    });
+
+    return safeUsers;
+  }
+
+  async retrieveNotApprovedHutWorkers(): Promise<UserContext[]> {
+    const users = await this.dataSource
+      .getRepository(User)
+      .createQueryBuilder('user')
+      .where('user.verified = true')
+      .andWhere('user.approved = false')
+      .andWhere('user.role = 4')
+      .getMany();
+
+    const safeUsers: UserContext[] = users.map((u) => {
+      return safeUser(u);
+    });
+
+    return safeUsers;
+  }
+
+  async approveUser(id: number): Promise<any> {
+    const user = await this.dataSource.getRepository(User).findOneBy({ id });
+
+    if (user === null) throw new HttpException("User doesn't exists", 422);
+
+    if (user.role !== 2 && user.role !== 4)
+      throw new HttpException(
+        'User with this role does not need to be approved',
+        409,
+      );
+
+    if (user.verified !== true)
+      throw new HttpException(
+        'User needs to verify his email before to be approved',
+        409,
+      );
+
+    await this.dataSource.getRepository(User).save({
+      ...user,
+      approved: true,
+    });
+
+    return { 'Account Approvation': 'Successful' };
   }
 }

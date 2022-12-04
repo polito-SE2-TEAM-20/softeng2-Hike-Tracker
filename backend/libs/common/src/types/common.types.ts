@@ -7,7 +7,7 @@ export const TypeID = Number;
 export type UserJwtPayload = { id: ID };
 export type UserContext = Omit<
   User,
-  'password' | 'verified' | 'verificationHash'
+  'password' | 'verified' | 'verificationHash' | 'approved'
 >;
 
 export abstract class DtoWithGroups {
