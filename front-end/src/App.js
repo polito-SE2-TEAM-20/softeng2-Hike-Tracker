@@ -49,6 +49,7 @@ function App() {
 function App2() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState({});
+  const [rowsAffected, setRowsAffected] = useState(false);
   const navigate = useNavigate();
 
   useEffect(()=>{
@@ -117,6 +118,16 @@ function App2() {
    }
 
 
+   const deleteHike = (hikeID)=> {
+    API.deleteHikeId(hikeID)
+    .then((rowsAffected)=>{
+      console.log(rowsAffected)
+      setRowsAffected(true)
+    })
+    .catch((err)=>{console.log(err)})
+}
+
+
   return (
     <>
       <Routes>
@@ -132,7 +143,7 @@ function App2() {
         <Route path="/hutpage" element={<HTHutPage isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/newHut" element={<NewHutForm user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} addNewHut={addNewHut}/>}/>
         <Route path="/myHuts" element={<MyHutsPage isLoggedIn={loggedIn} doLogOut={doLogOut}/>}/>
-        <Route path="/myHikes" element={<MyHikesPage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />}/>
+        <Route path="/myHikes" element={<MyHikesPage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} deleteHike={deleteHike} rowsAffected={rowsAffected} setRowsAffected={setRowsAffected}/>}/>
         <Route path="/showhike/:hikeid" element={<ShowHike user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />}/>
         <Route path="/showhut/:hutid" element={<ShowHut user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />}/>
         <Route path="/newParking" element={<NewParking user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} addNewParkingLot={API.addNewParkingLot}/>}/>

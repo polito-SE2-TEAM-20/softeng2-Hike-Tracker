@@ -10,6 +10,8 @@ import proIcon from '../../Assets/pro-icon.png'
 import { Route, useNavigate } from 'react-router';
 import { HikeDifficultyLevel } from '../../lib/common/Hike';
 import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 import './hike-card-style.css'
 
 const bull = (
@@ -51,10 +53,19 @@ const HikeCard = (props) => {
                         <Button text="Edit" fontSize="14px" color="#1a1a1a" textColor="white" navigate={() => { navigate(`/edithike/${props.hike.id}`) }} />
                     </div> : <></>
                 }
+                {
+                    props.delete ? <div style={{ marginRight: "12px", marginBottom: "12px", display: "flex", justifyContent: "left" }}>
+                       <DeleteIcon color="#1a1a1a" onClick={() => {props.deleteHike(props.hike.id)}}></DeleteIcon>
+                   </div> : <></>
+                }
             </Card >
         </div>
     );
 }
+
+
+
+
 
 function HikeItemImage(difficulty) {
     let icon;
