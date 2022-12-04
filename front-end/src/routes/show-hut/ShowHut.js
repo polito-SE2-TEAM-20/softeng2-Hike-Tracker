@@ -1,4 +1,4 @@
-import { Chip, Divider, Grid, Paper, Typography } from "@mui/material";
+import { Button, Chip, Divider, Grid, Paper, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router";
 import { useMatch } from "react-router-dom";
 import HTNavbar from "../../components/HTNavbar/HTNavbar";
@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import API from '../../API/API.js';
 import { Skeleton } from "@mui/material";
 import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, useMapEvents, ZoomControl, Polyline, useMap } from 'react-leaflet'
+import { UploadPictureDialog } from '../../components/map-filters/Dialogs'
 
 
 const Difficulty = (props) => {
@@ -32,6 +33,7 @@ const ShowHut = (props) => {
     const hutid = (match && match.params && match.params.hutid) ? match.params.hutid : -1
     const [hut, setHut] = useState({ title: "", numberOfBeds: -1, price: -1, ownerName: "", website: "", point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } })
     const [loading, setLoading] = useState(true)
+    const [openPictureDialog, setOpenPictureDialog] = useState(false)
 
     useEffect(() => {
         let tmpHike = { title: "", numberOfBeds: -1, price: -1, ownerName: "", website: "", point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } }
@@ -105,6 +107,27 @@ const ShowHut = (props) => {
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
                             !loading ? <Typography><b>Website:</b> {hut.website === "" || hut.website === null || hut.website === undefined ? "not provided" : <a href={`https://${hut.website}`}>{hut.website}</a>}</Typography> :
+                                <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
+                        }
+                    </Grid>
+
+                    <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
+                        <Chip label="Add a new image" />
+                    </Divider>
+                    <UploadPictureDialog open={openPictureDialog} setOpen={setOpenPictureDialog} />
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        {
+                            !loading ? <Button variant="outlined"
+                            onClick={() => {setOpenPictureDialog(true)}}
+                                sx={{
+                                    color: "#1a1a1a",
+                                    borderColor: "#1a1a1a",
+                                    borderRadius: "50px",
+                                    "&:hover": { backgroundColor: "#1a1a1a", color: "white", borderColor: "black" },
+                                    textTransform: "none"
+                                }}>
+                                Upload a new picture
+                            </Button> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
