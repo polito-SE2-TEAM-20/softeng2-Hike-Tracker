@@ -6,6 +6,7 @@ import {
   IsEmail,
   IsOptional,
   IsNumber,
+  IsArray,
 } from 'class-validator';
 
 import { UserLimits, UserRole } from '@app/common';
@@ -40,9 +41,10 @@ export class RegisterDto {
   @IsOptional()
   phoneNumber!: string;
 
-  @IsNumber()
+  @IsArray()
+  @IsNumber({},{each: true})
   @IsOptional()
-  hutId!: number;
+  hutIds!: Array<number>;
 }
 
 export class LoginDto {

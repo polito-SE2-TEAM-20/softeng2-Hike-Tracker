@@ -1,3 +1,4 @@
+import { UserRole } from '@app/common';
 import { finishTest } from '@app/testing';
 import { prepareTestApp, prepareVars } from '@test/base';
 
@@ -14,7 +15,7 @@ describe('Users Preferences (e2e)', () => {
   });
 
   const setup = async () => {
-    const user = await testService.createUser();
+    const user = await testService.createUser({role: UserRole.hiker});
 
     return {
       user,
@@ -23,7 +24,7 @@ describe('Users Preferences (e2e)', () => {
 
   it('should set user preferences', async () => {
     const { user } = await setup();
-
+  
     const preferences = {
         "lat": 5.005,
         "lon": 5.004,
