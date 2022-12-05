@@ -11,11 +11,13 @@ function HutDescription(props) {
             <Typography variant="h6" gutterBottom>
                 Hut information
             </Typography>
+            {/* in owner name there is the email address*/ }
             <Grid container spacing={3}>
                 <Grid item xs={12} md={6}>
                     <TextField
+                        required
                         id="owner"
-                        label="Owner"
+                        label="Email Address"
                         fullWidth
                         autoComplete="owner"
                         variant="standard"
@@ -65,6 +67,7 @@ function HutDescription(props) {
                         onChange={(e) => { props.setBeds(e.target.value) }}
                     />
                 </Grid>
+                {/*
                 <Grid item xs={12} >
                     <TextField
                         id="emailAddress"
@@ -77,7 +80,7 @@ function HutDescription(props) {
                         onChange={(e) => { props.setEmailAddress(e.target.value) }}
                     />
                 </Grid>
-            {/*
+    */}
                 <Grid item xs={12} >
                     <TextField
                         required
@@ -95,7 +98,7 @@ function HutDescription(props) {
                         value={props.description}
                         onChange={(e) => { props.setDescription(e.target.value) }}
                     />
-                    </Grid>*/}
+                    </Grid>
             </Grid>
         </React.Fragment>
     );

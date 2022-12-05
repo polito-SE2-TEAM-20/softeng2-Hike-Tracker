@@ -432,6 +432,45 @@ const deleteHikeId = async (hikeID) => {
     }
 }
 
+const getHutsHutWorker = async () => {
+    const response = await fetch((APIURL + "/huts/hutWorker/iWorkAt"), {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        }
+    })
+    if (response.ok) {
+        const hutsHutWorker = await response.json()
+        return hutsHutWorker;
+    } else {
+        const errDetail = await response.json()
+        throw errDetail.message;
+    }
+}
+
+function modifyHutInformation(information, hutId) {
+    return new Promise((resolve, reject) => {
+        fetch((APIURL + '/huts/updateDescription/' + hutId), {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+            body: JSON.stringify(information),
+
+        }).then((async response => {
+            if (response.ok) {
+                const hutUpdated = await response.json()
+                return hutUpdated;
+            } else {
+                response.json()
+                    .then((message) => { reject(message); })
+                    .catch(() => { reject({ error: "Cannot communicate with the server" }) });
+            }
+        }))
+    })
+}
+
 
 const API = {
     getListOfHikes, getListOfGPXFiles, getPathByID,
@@ -440,6 +479,7 @@ const API = {
     getSingleHutByID, getListOfHutsAndParkingLots, logIn,
     logOut, signUp, addNewHut, addNewParkingLot, addNewGpx,
     addHike, getNotApprovedLocalGuides, getNotApprovedHutWorkers,
-    approveUserByID, getPreferences, setPreferences, deleteHikeId
+    approveUserByID, getPreferences, setPreferences, deleteHikeId, 
+    getHutsHutWorker, modifyHutInformation
 }
 export default API
