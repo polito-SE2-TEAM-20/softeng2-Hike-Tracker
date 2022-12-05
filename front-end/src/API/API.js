@@ -415,6 +415,23 @@ const setPreferences = async (preferences) => {
     }
 }
 
+const deleteHikeId = async (hikeID) => {
+    const response = await fetch((APIURL + '/hikes/' + hikeID), {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        }
+    })
+    if(response.ok) {
+        
+        const rowsAffected = await response.json();
+        return rowsAffected;
+    } else {
+        const errDetail = await response.json()
+        throw errDetail.message
+    }
+}
+
 
 const API = {
     getListOfHikes, getListOfGPXFiles, getPathByID,
@@ -423,6 +440,6 @@ const API = {
     getSingleHutByID, getListOfHutsAndParkingLots, logIn,
     logOut, signUp, addNewHut, addNewParkingLot, addNewGpx,
     addHike, getNotApprovedLocalGuides, getNotApprovedHutWorkers,
-    approveUserByID, getPreferences, setPreferences
+    approveUserByID, getPreferences, setPreferences, deleteHikeId
 }
 export default API

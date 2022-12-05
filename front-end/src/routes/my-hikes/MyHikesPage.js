@@ -22,6 +22,14 @@ function MyHikesPage(props) {
         });
     }, [])
 
+    useEffect(()=>{
+        if(props.rowsAffected){
+            console.log(props.rowsAffected);
+            props.setRowsAffected(false);
+        }
+      }, []);
+
+
     return (
         <>
             <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} />
@@ -38,16 +46,18 @@ function MyHikesPage(props) {
                     <NoItemView navigate={navigate}/>
                 }
 
-                {/* Shwoing hikes when it is not loading and you created at least one hike before */}
-                {(!loading && myHikes.length > 0) &&
-                    myHikes.map(hike => {
-                        return (
-                            <Grid item style={{ marginLeft: "8px", marginRight: "8px", marginBottom: "4px", marginTop: "4px" }}>
-                                <HikeCard hike={hike} editable={true} />
-                            </Grid>
-                        );
-                    })
-                }
+                        {/* Shwoing hikes when it is not loading and you created at least one hike before */}
+                        {(!loading && myHikes.length > 0) &&
+                            myHikes.map(hike => {
+                                return (
+                                    <Grid item style={{ marginLeft: "8px", marginRight: "8px", marginBottom: "4px", marginTop: "4px" }}>
+                                        <HikeCard hike={hike} editable="true" delete="true" deleteHike={props.deleteHike}/>
+                                    </Grid>
+                                );
+                            })
+                        }
+                    </Grid>
+                </Grid>
             </Grid>
         </>
     );
