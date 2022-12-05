@@ -136,4 +136,101 @@ describe('Parking Lots (e2e)', () => {
         ]);
       });
   });
+
+  it('should retrieve all parking lots in db', async () => {
+    const user1 = await testService.createUser()
+    const user2 = await testService.createUser()
+
+    const lot1 = {
+      maxCars: 2,
+      country: 'Italy',
+      region: 'Piemonte',
+      province: 'Torino',
+      city: 'Torino',
+      location: {
+        lon: 4.0587,
+        lat: 5.0556,
+        name: 'test',
+        address: 'test',
+      },
+    };
+
+    const lot2 = {
+      maxCars: 2,
+      country: 'Italy',
+      region: 'Piemonte',
+      province: 'Torino',
+      city: 'Torino',
+      location: {
+        lon: 4.0587,
+        lat: 5.0556,
+        name: 'test2',
+        address: 'test2',
+      },
+    };
+
+    await restService
+      .build(app, user1)
+      .request()
+      .post('/parkingLot/insertLot')
+      .send(lot1)
+      .expect(201);
+
+    await restService
+    .build(app, user2)
+    .request()
+    .post('/parkingLot/insertLot')
+    .send(lot2)
+    .expect(201);
+
+    await restService
+      .build(app, user1)
+      .request()
+      .get('/parkingLot/all_lots')
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toMatchObject([
+          {
+            pointId: expect.any(TypeID),
+            userId: user1.id,
+            maxCars: lot1.maxCars,
+            country: lot1.country,
+            region: lot1.region,
+            province: lot1.province,
+            city: lot1.city,
+            point: {
+              id: expect.any(TypeID),
+              type: 2,
+              position: {
+                type: 'Point',
+                coordinates: [lot1.location.lon, lot1.location.lat],
+              },
+              address: lot1.location.address,
+              name: lot1.location.name,
+            },
+            id: expect.any(TypeID),
+          },
+          {
+            pointId: expect.any(TypeID),
+            userId: user2.id,
+            maxCars: lot2.maxCars,
+            country: lot2.country,
+            region: lot2.region,
+            province: lot2.province,
+            city: lot2.city,
+            point: {
+              id: expect.any(TypeID),
+              type: 2,
+              position: {
+                type: 'Point',
+                coordinates: [lot2.location.lon, lot2.location.lat],
+              },
+              address: lot2.location.address,
+              name: lot2.location.name,
+            },
+            id: expect.any(TypeID),
+          }
+        ]);
+      });
+  });
 });

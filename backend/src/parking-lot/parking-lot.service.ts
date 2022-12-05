@@ -49,4 +49,13 @@ export class ParkingLotService extends BaseService<ParkingLot> {
 
     return lots;
   }
+
+  async retrieveAllParkingLots() {
+    const lots = await this.parkingLotRepository
+      .createQueryBuilder('l')
+      .leftJoinAndMapOne('l.point', Point, 'p', 'p.id = l."pointId"')
+      .getMany();
+
+    return lots;
+  }
 }

@@ -5,6 +5,7 @@ import {
   ParkingLot,
   CurrentUser,
   UserContext,
+  AuthenticatedOnly,
 } from '@app/common';
 
 import { ParkingLotDto } from './parking-lot.dto';
@@ -19,6 +20,13 @@ export class ParkingLotController {
   @HttpCode(200)
   async getLots(@CurrentUser() user: UserContext): Promise<ParkingLot[]> {
     return await this.parkingLot.retrieveParkingLots(user.id);
+  }
+
+  @Get('all_lots')
+  @AuthenticatedOnly()
+  @HttpCode(200)
+  async getAllLots(): Promise<ParkingLot[]> {
+    return await this.parkingLot.retrieveAllParkingLots();
   }
 
   @Post('insertLot')
