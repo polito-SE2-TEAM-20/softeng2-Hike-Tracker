@@ -36,20 +36,19 @@ const HTMainPage = (props) => {
         }
         getPreferences().then(() => {
             setPreferences(tmpPref)
-            console.log(preferences)
         })
     }, [])
 
     useEffect(() => {
         var loh = []
         const getHikes = async () => {
-            loh = await API.getListOfHikes()
+            loh = await API.getFilteredListOfHikes({ filter: preferences })
         }
         getHikes().then(() => {
             setListOfHikes(loh)
             setLoading(true)
         });
-    }, [])
+    }, [preferences])
 
     const gotoLogin = () => {
         navigate("/login", { replace: false })
@@ -110,10 +109,40 @@ const HTMainPage = (props) => {
                                         </Typography>
                                     </Grid>
                                     {
-                                        loading ?
+                                        !loading ? <>
+                                            <HikeLoading />
+                                            <HikeLoading />
+                                            <HikeLoading />
+                                            <HikeLoading />
+                                            <HikeLoading />
+                                            <HikeLoading />
+                                        </> : <></>
+                                    }
+                                    {
+                                        loading && Object.keys(preferences).length === 0 ?
+                                            <Typography
+                                                variant="h2"
+                                                className="unselectable"
+                                                sx={{
+                                                    justifyContent: "left",
+                                                    textAlign: "left",
+                                                    color: '#ffffff',
+                                                    textDecoration: 'none',
+                                                    marginTop: "32px"
+                                                }}
+                                                fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "24px", xl: "24px" }}
+                                            >
+                                                Add your preferences to the hiker dashboard to get the best suggestions.
+                                            </Typography>
+                                            :
+                                            <>
+                                            </>
+                                    }
+                                    {
+                                        loading && Object.keys(preferences).length !== 0 ?
                                             listOfHikes.length === 0 ?
                                                 <Typography fontFamily={"Bakbak One, display"} fontWeight="600" fontSize="32px">
-                                                    No hikes available for your preferences.
+                                                    No hikes available.
                                                 </Typography>
                                                 :
                                                 listOfHikes.slice(0, 6).map((hike, index) => {
@@ -134,12 +163,6 @@ const HTMainPage = (props) => {
                                                 })
                                             :
                                             <>
-                                                <HikeLoading />
-                                                <HikeLoading />
-                                                <HikeLoading />
-                                                <HikeLoading />
-                                                <HikeLoading />
-                                                <HikeLoading />
                                             </>
                                     }
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>

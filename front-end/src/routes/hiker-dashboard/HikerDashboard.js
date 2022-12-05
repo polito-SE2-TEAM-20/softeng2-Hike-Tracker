@@ -65,10 +65,11 @@ const HikerDashboard = (props) => {
     }, [])
 
     const handlePreferencesUpdate = () => {
+        console.log(newPreferences)
         const setPreferences = async () => {
-            await API.setPreferences(preferences)
+            await API.setPreferences(newPreferences)
         }
-        setPreferences().finally(() => {
+        setPreferences().then(() => {
             setUpdateFinished(true)
         })
     }
@@ -173,7 +174,9 @@ const HikerDashboard = (props) => {
                                 <Typography className="unselectable" sx={{ fontSize: "18px" }}>
                                     Insert here the radius to determine the area from which you'd prefer to start your hikes.
                                 </Typography>
-                                <TextField variant="outlined" label="Radius" sx={{ width: "100%" }} />
+                                <TextField onChange={(e) => {
+                                    newPreferences.radiusKms = e.target.value
+                                }} variant="outlined" label="Radius" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
 
@@ -188,7 +191,9 @@ const HikerDashboard = (props) => {
                                 <Typography className="unselectable" sx={{ fontSize: "18px" }}>
                                     Insert here the length of your ideal hike.
                                 </Typography>
-                                <TextField variant="outlined" label="Length" sx={{ width: "100%" }} />
+                                <TextField onChange={(e) => {
+                                    newPreferences.length = e.target.value
+                                }} variant="outlined" label="Length" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
 
@@ -203,7 +208,9 @@ const HikerDashboard = (props) => {
                                 <Typography className="unselectable" sx={{ fontSize: "18px" }}>
                                     Insert here the expected time for your ideal hike.
                                 </Typography>
-                                <TextField variant="outlined" label="Expected time" sx={{ width: "100%" }} />
+                                <TextField onChange={(e) => {
+                                    newPreferences.expectedTime = e.target.value
+                                }} variant="outlined" label="Expected time" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
 
@@ -223,9 +230,15 @@ const HikerDashboard = (props) => {
                                     Choose the difficulty level that better fits your needings and your past experiences.
                                 </Typography>
                                 <div style={{ display: "flex", justifyContent: "space-between", marginLeft: "25%", marginRight: "25%" }}>
-                                    <Button variant="outlined" sx={{ borderRadius: "28px", color: "black", borderColor: "black", "&:hover": { backgroundColor: "#55B657", borderColor: "#000000", color: "white" } }}><b>Tourist</b></Button>
-                                    <Button variant="outlined" sx={{ borderRadius: "28px", color: "black", borderColor: "black", "&:hover": { backgroundColor: "#1a79aa", borderColor: "#000000", color: "white" } }}><b>Hiker</b></Button>
-                                    <Button variant="outlined" sx={{ borderRadius: "28px", color: "black", borderColor: "black", "&:hover": { backgroundColor: "#FA6952", borderColor: "#000000", color: "white" } }}><b>Pro</b></Button>
+                                    <Button onClick={() => {
+                                        newPreferences.difficulty = 0
+                                    }} variant="outlined" sx={{ borderRadius: "28px", color: "black", borderColor: "black", "&:hover": { backgroundColor: "#55B657", borderColor: "#000000", color: "white" } }}><b>Tourist</b></Button>
+                                    <Button onClick={() => {
+                                        newPreferences.difficulty = 1
+                                    }} variant="outlined" sx={{ borderRadius: "28px", color: "black", borderColor: "black", "&:hover": { backgroundColor: "#1a79aa", borderColor: "#000000", color: "white" } }}><b>Hiker</b></Button>
+                                    <Button onClick={() => {
+                                        newPreferences.difficulty = 2
+                                    }} variant="outlined" sx={{ borderRadius: "28px", color: "black", borderColor: "black", "&:hover": { backgroundColor: "#FA6952", borderColor: "#000000", color: "white" } }}><b>Pro</b></Button>
                                 </div>
                             </AccordionDetails>
                         </Accordion>
@@ -241,12 +254,14 @@ const HikerDashboard = (props) => {
                                 <Typography className="unselectable" sx={{ fontSize: "18px" }}>
                                     Insert here the ascent for your ideal hike.
                                 </Typography>
-                                <TextField variant="outlined" label="Ascent" sx={{ width: "100%" }} />
+                                <TextField onChange={(e) => {
+                                    newPreferences.ascent = e.target.value
+                                }} variant="outlined" label="Ascent" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
                     </Grid>
                     <Grid item lg={12} sx={{ marginTop: "28px", display: "flex", justifyContent: "right" }}>
-                        {updateFinished ? <div style={{marginRight: "25px"}}>
+                        {updateFinished ? <div style={{ marginRight: "25px" }}>
                             <Typography className="unselectable" sx={{ fontSize: "18px" }}>
                                 <b>Your preferences have been correctly updated.</b>
                             </Typography>
