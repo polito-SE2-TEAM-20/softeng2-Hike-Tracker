@@ -16,12 +16,14 @@ import { NewHutForm } from './NewHut/NewHut';
 import { NewParking } from './NewParkingLot/NewParking';
 import HTListOfHuts from './routes/list-of-huts/HTListOfHuts'
 import ShowHut from './routes/show-hut/ShowHut'
+import {EditHut} from './routes/edit-hut/EditHut'
 
 import { NewHikeStEnd } from './NewHike/NewHikeStEnd';
 
 import LoginForm from './Login/Login';
 import {SignUpForm} from './SignUp/SignUp';
 import HTHutPage from './routes/hut-page/HTHutPage';
+import {HutWorkerHuts} from './routes/my-huts/HutWorkerHuts'
 
 import API from './API/API';
 
@@ -128,6 +130,18 @@ function App2() {
     .catch((err)=>{console.log(err)})
 }
 
+const modifyHutInformation =(information, hutId, setShow, setErrorMessage) =>{
+  API.modifyHutInformation(information, hutId)
+     .then(newHut => {
+      setShow(false);
+      console.log(newHut);
+     })
+     .catch(err=>{
+      setShow(true);
+      setErrorMessage(err);
+     })
+ }
+
 
   return (
     <>
@@ -153,6 +167,8 @@ function App2() {
         <Route path="/newHike" element={<NewHikeStEnd addNewGpx={API.addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user?.user}/>} />
         <Route path="/hikerdashboard" element={<HikerDashboard user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/admindashboard" element={<AdminDashboard user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
+        <Route path="/hutWorkerHuts" element={<HutWorkerHuts isLoggedIn={loggedIn} doLogOut={doLogOut}/>}/>
+        <Route path="/edithut/:hutid" element={<EditHut user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} modifyHutInformation={modifyHutInformation}/>}/>
       </Routes>
     </>
   );

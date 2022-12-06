@@ -21,7 +21,7 @@ const HutCard = (props) => {
                         {props.hut.title}
                     </Typography>
                     <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        {props.hut.point.address}
+                        {props.hut.point?.address}
                     </Typography>
                     <Typography variant="body2">
                         Price: {props.hut.price}€<br />
@@ -31,6 +31,13 @@ const HutCard = (props) => {
                 <div style={{ marginRight: "12px", marginBottom: "12px", display: "flex", justifyContent: "right" }}>
                     <Button text="Read more about" fontSize="14px" color="#1a1a1a" textColor="white" navigate={() => { navigate(`/showhut/${props.hut.id}`) }} />
                 </div>
+                {
+                props.editable ?
+                <div style={{ marginRight: "12px", marginBottom: "12px", display: "flex", justifyContent: "right" }}>
+                    <Button text="Edit" fontSize="14px" color="#1a1a1a" textColor="white" navigate={() => { navigate(`/edithut/${props.hut.id}`) }} />
+                </div> : <></>
+                }
+                
             </Card >
         </div>
     );

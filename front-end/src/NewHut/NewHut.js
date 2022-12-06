@@ -80,7 +80,7 @@ function NewHutForm(props) {
 
     // other informations
     const [description, setDescription] = useState('');
-  const [activeStep, setActiveStep] = React.useState(0);
+   const [activeStep, setActiveStep] = React.useState(0);
 
   const [errorMessage, setErrorMessage] = useState('');
   const [show, setShow] = useState(false);
@@ -119,7 +119,7 @@ function NewHutForm(props) {
         //cosa cambia tra title e name???
         let add = [address, city, province, region, country];
         console.log(add.join(','))
-        let object = {title: name, elevation: parseFloat(elevation), description: 'd',  website: website, ownerName: owner, numberOfBeds: parseInt(beds), location : {lat: parseFloat(latitude), lon: parseFloat(longitude), name: name, address: add.join(",")}, price: parseFloat(price)}
+        let object = {title: name, elevation: parseFloat(elevation), description: description,  website: website, ownerName: owner, numberOfBeds: parseInt(beds), location : {lat: parseFloat(latitude), lon: parseFloat(longitude), name: name, address: add.join(",")}, price: parseFloat(price)}
         setShow(false);
         setActiveStep(activeStep + 1);
         props.addNewHut(object).catch((err)=> {setErrorMessage(err); setShow(true)})
