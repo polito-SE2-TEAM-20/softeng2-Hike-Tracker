@@ -376,7 +376,7 @@ const approveUserByID = async (id) => {
             'Accept': '*/*'
         }
     });
-    if (!response.ok) {
+    if (response.ok) {
         return true
     } else {
         const errDetail = await response.json();
