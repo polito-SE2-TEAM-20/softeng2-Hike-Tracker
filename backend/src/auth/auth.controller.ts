@@ -46,11 +46,11 @@ export class AuthController {
       throw new ForbiddenException('Phone Number for this role is required');
     }
 
-    if (body.role === UserRole.platformManager) {
-      throw new ForbiddenException(
-        'Platform Manager is not a valid role to register',
-      );
-    }
+    // if (body.role === UserRole.platformManager) {
+    //   throw new ForbiddenException(
+    //     'Platform Manager is not a valid role to register',
+    //   );
+    // }
 
     if (body.role === UserRole.hutWorker && !body.hutIds) {
       throw new ForbiddenException(
