@@ -76,8 +76,8 @@ function SignUpForm(props) {
       }else{
         id = hutId
       }
-      const credentials = { email, firstName, lastName, password, role, phoneNumber, id};
-      // const credentials = {email, firstName, lastName, password, role, phoneNumber};
+      //const credentials = { email, firstName, lastName, password, role, phoneNumber, id};
+      const credentials = {email, firstName, lastName, password, role, phoneNumber};
       props.doRegister(credentials, setShow, setErrorMessage, setInformationMessage, setShowInformation);
     }
   }
