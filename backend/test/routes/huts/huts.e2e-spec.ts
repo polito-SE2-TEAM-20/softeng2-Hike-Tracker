@@ -433,12 +433,14 @@ describe('Huts (e2e)', () => {
       .send({
         description: "This is a very beautiful hut.",
         workingTimeStart: "08:00",
-        workingTimeEnd: "22:00"
+        workingTimeEnd: "22:00",
+        price: 110
       })
       .expect(({ body }) =>{
         expect(body.description).toBe("This is a very beautiful hut.");
         expect(body.workingTimeStart).toBe("08:00");
         expect(body.workingTimeEnd).toBe("22:00");
+        expect(body.price).toBe(110);
       })
     });
 
@@ -481,7 +483,8 @@ describe('Huts (e2e)', () => {
         .request()
         .get(`/huts/hutWorker/iWorkAt`)
         .expect(({ body }) =>{
-          expect(body).toEqual([hutW1,hutW3]);
+          console.log(body);
+          expect(body).toIncludeAllPartialMembers([hutW1,hutW3]);
         })
       });
 });
