@@ -126,7 +126,7 @@ function EndHut(props) {
             props.setEndPointLat(null);
             props.setEndPointLon(null);
             var loh = []
-        let radiusPoint= {lon: parseFloat(props.positionsState[props.positionsState.length - 1][1]), lat: (props.positionsState[props.positionsState.length - 1][0]), radiusKms:10}
+        let radiusPoint= {lon: parseFloat(props.positionsState[props.positionsState.length - 1][1]), lat: (props.positionsState[props.positionsState.length - 1][0]), radiusKms:100}
         const getHutsPlot = async () => {
             loh = await API.getListOfHutsAndParkingLots(radiusPoint);
         }
@@ -222,7 +222,7 @@ function EndParking(props) {
             props.setEndPointLat(null);
             props.setEndPointLon(null);
             var loh = []
-        let radiusPoint= {lon: parseFloat(props.positionsState[props.positionsState.length - 1][1]), lat: parseFloat(props.positionsState[props.positionsState.length - 1][0]), radiusKms:5}
+        let radiusPoint= {lon: parseFloat(props.positionsState[props.positionsState.length - 1][1]), lat: parseFloat(props.positionsState[props.positionsState.length - 1][0]), radiusKms:100}
         const getHutsPlot = async () => {
             loh = await API.getListOfHutsAndParkingLots(radiusPoint);
         }

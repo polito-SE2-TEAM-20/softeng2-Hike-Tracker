@@ -1,7 +1,7 @@
-.signup-side {
-
-    background-image: url('../Assets//signup.jpg');
+.login-side {
+    background-image: url('../../Assets//login.jpg');
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
+
 }

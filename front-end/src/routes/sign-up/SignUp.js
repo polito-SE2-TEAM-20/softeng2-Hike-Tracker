@@ -15,7 +15,7 @@ import HikingIcon from '@mui/icons-material/Hiking';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SignUp.css'
-import API from '../API/API.js';
+import API from '../../API/API.js';
 
 function Copyright(props) {
   return (
