@@ -13,6 +13,7 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import HTButton from "../../components/buttons/Button";
 import { FormControlLabel } from "@mui/material";
 import { useState, useEffect } from "react";
+import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 import API from "../../API/API";
 
 const AdminDashboard = (props) => {
@@ -93,12 +94,12 @@ const AdminDashboard = (props) => {
                 <Grid container item lg={6} justifyContent="center" height="fit-content" sx={{ marginLeft: "25px" }}>
                     <Grid item lg={6}>
                         <Grid lg={12}>
-                            <Typography fontSize={32}>
+                            <Typography className="unselectable" fontSize={32}>
                                 <b>Admin dashboard</b>
                             </Typography>
                         </Grid>
                         <Grid lg={12}>
-                            <Typography fontSize={14} color="#555555">
+                            <Typography className="unselectable" fontSize={14} color="#555555">
                                 Here, the admin is allowed to accept or reject any sign up request for either local guides and hut workers.
                             </Typography>
                         </Grid>
@@ -106,10 +107,10 @@ const AdminDashboard = (props) => {
 
                     <Grid item lg={6}>
                         <Grid lg={12} style={{ display: "flex", justifyContent: "right" }}>
-                            <FormControlLabel control={<Switch onChange={e => {setFilter({'hut': filter.hut, 'local': e.target.checked})}} defaultChecked />} label="Show local guides requests" />
+                            <FormControlLabel control={<Switch onChange={e => { setFilter({ 'hut': filter.hut, 'local': e.target.checked }) }} defaultChecked />} label="Show local guides requests" />
                         </Grid>
                         <Grid lg={12} style={{ display: "flex", justifyContent: "right" }}>
-                            <FormControlLabel control={<Switch onChange={e => {setFilter({'hut': e.target.checked, 'local': filter.local})}} defaultChecked />} label="Show hut workers requests" />
+                            <FormControlLabel control={<Switch onChange={e => { setFilter({ 'hut': e.target.checked, 'local': filter.local }) }} defaultChecked />} label="Show hut workers requests" />
                         </Grid>
                     </Grid>
 
@@ -125,10 +126,27 @@ const AdminDashboard = (props) => {
                                             <CircularProgress lg={12} size="72px" />
                                         </div>
                                     </Grid>
-                                </Grid> : <></>
+                                </Grid>
+                                : <></>
                         }
                         {
-                            loaded ? listOfRequests.map(request => { console.log("request: " + request) }) : <></>
+                            loaded && listOfRequests.length === 0 ?
+                                <Grid container style={{ marginTop: "0px", width: "auto", minHeight: "100vh", height: "100%", display: "flex", justifyContent: "center" }}>
+                                    <Grid item style={{ marginTop: "50px" }} >
+                                        <Typography variant="h5" className="unselectable">
+                                            There are no incoming requests.
+                                        </Typography>
+                                        <div style={{ display: "flex", justifyContent: "center" }}>
+                                            <SentimentSatisfiedAltIcon lg={12} sx={{ fontSize: "72px" }} />
+                                        </div>
+                                    </Grid>
+                                </Grid>
+                                : <></>
+                        }
+                        {
+                            loaded && listOfRequests.length !== 0 ?
+                                listOfRequests.map(request => { console.log("request: " + request) })
+                                : <></>
                         }
                         {/* <Typography variant="h5">
                             There are no incoming requests.
