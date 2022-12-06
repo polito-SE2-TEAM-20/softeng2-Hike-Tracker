@@ -1,4 +1,4 @@
-import { Grid, Switch, Typography } from "@mui/material";
+import { Grid, Switch, Typography, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router";
 import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import { displayTypeFlex } from "../../extra/DisplayType";
@@ -23,27 +23,29 @@ const AdminDashboard = (props) => {
     const [loaded, setLoaded] = useState(false)
     const [localGuides, setLocalGuides] = useState([])
     const [hutWorkers, setHutWorkers] = useState([])
+    const [listOfRequests, setListOfRequests] = useState([])
+    const [filter, setFilter] = useState({ 'hut': true, 'local': true })
 
     useEffect(() => {
         var listOfLocalGuides = []
         var listOfHutWorkers = []
+        var tmpLOR = []
+        setLoaded(false)
 
-        const getLocalGuides = async () => {
+        const getLists = async () => {
             listOfLocalGuides = await API.getNotApprovedLocalGuides()
-        }
-        const getHutWorkers = async () => {
             listOfHutWorkers = await API.getNotApprovedHutWorkers()
         }
 
-        getLocalGuides().then(() => {
+        getLists().then(() => {
             setLocalGuides(listOfLocalGuides)
-            console.log(localGuides)
-        })
-        getHutWorkers().then(() => {
             setHutWorkers(listOfHutWorkers)
-            console.log(hutWorkers)
+            tmpLOR.concat(localGuides)
+            tmpLOR.concat(hutWorkers)
+            setListOfRequests(tmpLOR)
+            setLoaded(true)
+            console.log("listofrequests: " + listOfRequests)
         })
-
     }, [])
 
     return (
@@ -70,7 +72,13 @@ const AdminDashboard = (props) => {
                         </Typography>
                     </Grid>
                     <Grid item lg={12} sx={{ marginTop: "12px" }}>
-                        <Typography className="unselectable" fontSize={18} sx={{ backgroundColor: "white", color: "black", borderStyle: "solid", borderWidth: "1px", borderRadius: "18px", width: "fit-content", padding: "4px 12px 4px 12px", fontFamily: "Bakbak One, display", fontWeight: "50" }}>
+                        <Typography className="unselectable" fontSize={18} sx={{
+                            backgroundColor: "white", color: "purple", borderColor: "purple",
+                            borderStyle: "solid", borderWidth: "1px",
+                            borderRadius: "18px", width: "fit-content",
+                            padding: "4px 12px 4px 12px", fontFamily: "Bakbak One, display",
+                            fontWeight: "50"
+                        }}>
                             <b>
                                 {props?.user?.role == 0 ? "Hiker" : ""}
                                 {props?.user?.role == 1 ? "Friend" : ""}
@@ -98,14 +106,30 @@ const AdminDashboard = (props) => {
 
                     <Grid item lg={6}>
                         <Grid lg={12} style={{ display: "flex", justifyContent: "right" }}>
-                            <FormControlLabel control={<Switch defaultChecked />} label="Show local guides requests" />
+                            <FormControlLabel control={<Switch onChange={e => {setFilter({'hut': filter.hut, 'local': e.target.checked})}} defaultChecked />} label="Show local guides requests" />
                         </Grid>
                         <Grid lg={12} style={{ display: "flex", justifyContent: "right" }}>
-                            <FormControlLabel control={<Switch defaultChecked />} label="Show hut workers requests" />
+                            <FormControlLabel control={<Switch onChange={e => {setFilter({'hut': e.target.checked, 'local': filter.local})}} defaultChecked />} label="Show hut workers requests" />
                         </Grid>
                     </Grid>
 
                     <Grid lg={12} sx={{ marginTop: "28px" }}>
+                        {
+                            !loaded ?
+                                <Grid container style={{ marginTop: "0px", width: "auto", minHeight: "100vh", height: "100%", display: "flex", justifyContent: "center" }}>
+                                    <Grid item style={{ marginTop: "50px" }} >
+                                        <Typography lg={12} style={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
+                                            Loading...
+                                        </Typography>
+                                        <div style={{ display: "flex", justifyContent: "center" }}>
+                                            <CircularProgress lg={12} size="72px" />
+                                        </div>
+                                    </Grid>
+                                </Grid> : <></>
+                        }
+                        {
+                            loaded ? listOfRequests.map(request => { console.log("request: " + request) }) : <></>
+                        }
                         {/* <Typography variant="h5">
                             There are no incoming requests.
                         </Typography> */}
@@ -114,7 +138,7 @@ const AdminDashboard = (props) => {
                                 <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
                                     Frank Freak
                                 </Typography>
-                                <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}><GroupsIcon sx={{marginRight: "20px"}} />Local guide</Typography>
+                                <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}><GroupsIcon sx={{ marginRight: "20px" }} />Local guide</Typography>
                                 {/* <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}><BadgeIcon sx={{marginRight: "20px"}} />Hut worker</Typography> */}
                             </AccordionSummary>
                             <AccordionDetails>
