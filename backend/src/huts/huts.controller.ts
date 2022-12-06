@@ -131,9 +131,12 @@ export class HutsController {
     })).map(hutWorker => hutWorker.hutId);
 
     //Retrieve all the Huts where an hut worker is the user
-    return await this.service.getRepository().findBy({
-      id: In(myHuts)
-    })
+    return await this.service
+      .getRepository()
+      .createQueryBuilder('h')
+      .leftJoinAndMapOne('h.point', Point, 'p', 'p.id = h."pointId"')
+      .where('h.id IN (:...myHuts)', { myHuts })
+      .getMany();
   }
 
   //Used to update the specified hut description and time table
@@ -145,7 +148,8 @@ export class HutsController {
     @Body() {
       description,
       workingTimeStart,
-      workingTimeEnd
+      workingTimeEnd,
+      price
     }
   ) : Promise<Hut>{
 
@@ -166,7 +170,8 @@ export class HutsController {
       id,
       description: description || "",
       workingTimeStart: workingTimeStart || "",
-      workingTimeEnd: workingTimeEnd || ""
+      workingTimeEnd: workingTimeEnd || "",
+      price: price || null
     })
   }
 }

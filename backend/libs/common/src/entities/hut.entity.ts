@@ -74,7 +74,7 @@ export class Hut {
     ...numericOptionsConfig(0, { precision: 12, scale: 2 }),
     nullable: true,
   })
-  price!: number | null;
+  price?: number | null;
 
   @Column({
     type: 'varchar',

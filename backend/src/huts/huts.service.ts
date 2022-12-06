@@ -31,13 +31,14 @@ export class HutsService extends BaseService<Hut> {
   /**
    * Get huts with points joined
    */
-  async getFullByIds(ids: ID[], entityManager?: EntityManager) {
+  async getFullByIds(ids: ID[], entityManager?: EntityManager) : Promise<Hut[]>{
     const huts = await this.getRepository(entityManager).find({
       where: { id: In(ids) },
       loadEagerRelations: true,
     });
 
     orderEntities(huts, ids, propEq('id'));
+    return huts;
   }
 
   async getFullHut(id: ID, entityManager?: EntityManager): Promise<Hut> {
