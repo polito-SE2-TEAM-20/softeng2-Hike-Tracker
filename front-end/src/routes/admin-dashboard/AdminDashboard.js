@@ -8,6 +8,7 @@ import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 import BadgeIcon from '@mui/icons-material/Badge';
 import GroupsIcon from '@mui/icons-material/Groups';
 import HTButton from "../../components/buttons/Button";
@@ -22,32 +23,45 @@ const AdminDashboard = (props) => {
         navigate("/login", { replace: false })
     }
     const [loaded, setLoaded] = useState(false)
-    const [localGuides, setLocalGuides] = useState([])
-    const [hutWorkers, setHutWorkers] = useState([])
     const [listOfRequests, setListOfRequests] = useState([])
     const [filter, setFilter] = useState({ 'hut': true, 'local': true })
+    const [tmpLOR, setTmpLOR] = useState([])
 
     useEffect(() => {
         var listOfLocalGuides = []
         var listOfHutWorkers = []
-        var tmpLOR = []
         setLoaded(false)
 
-        const getLists = async () => {
-            listOfLocalGuides = await API.getNotApprovedLocalGuides()
+        const getHWLists = async () => {
             listOfHutWorkers = await API.getNotApprovedHutWorkers()
         }
 
-        getLists().then(() => {
-            setLocalGuides(listOfLocalGuides)
-            setHutWorkers(listOfHutWorkers)
-            tmpLOR.concat(localGuides)
-            tmpLOR.concat(hutWorkers)
-            setListOfRequests(tmpLOR)
-            setLoaded(true)
-            console.log("listofrequests: " + listOfRequests)
+        const getLGList = async () => {
+            listOfLocalGuides = await API.getNotApprovedLocalGuides()
+        }
+
+        getLGList().then(() => {
+            getHWLists().then(() => {
+                setTmpLOR([].concat(listOfHutWorkers).concat(listOfLocalGuides))
+                setTimeout(() => {
+                    setLoaded(true)
+                }, 500);
+            })
         })
     }, [])
+
+    useEffect(() => {
+        setListOfRequests(tmpLOR)
+    }, [tmpLOR])
+
+    const acceptUser = (id) => {
+        const accUser = async () => {
+            await API.approveUserByID(id);
+        }
+        accUser().then(() => {
+            setTmpLOR(tmpLOR.filter(x => x.id !== id))
+        })
+    }
 
     return (
         <>
@@ -91,7 +105,7 @@ const AdminDashboard = (props) => {
                         </Typography>
                     </Grid>
                 </Grid>
-                <Grid container item lg={6} justifyContent="center" height="fit-content" sx={{ marginLeft: "25px" }}>
+                <Grid container item lg={6} justifyContent="center" height="fit-content" sx={{ marginLeft: "25px", marginBottom: "35px" }}>
                     <Grid item lg={6}>
                         <Grid lg={12}>
                             <Typography className="unselectable" fontSize={32}>
@@ -119,7 +133,7 @@ const AdminDashboard = (props) => {
                             !loaded ?
                                 <Grid container style={{ marginTop: "0px", width: "auto", minHeight: "100vh", height: "100%", display: "flex", justifyContent: "center" }}>
                                     <Grid item style={{ marginTop: "50px" }} >
-                                        <Typography lg={12} style={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
+                                        <Typography variant="h5" lg={12} style={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
                                             Loading...
                                         </Typography>
                                         <div style={{ display: "flex", justifyContent: "center" }}>
@@ -130,60 +144,101 @@ const AdminDashboard = (props) => {
                                 : <></>
                         }
                         {
-                            loaded && listOfRequests.length === 0 ?
+                            loaded && listOfRequests.filter(x => {
+                                if (x.role === 2 && filter.local) return x
+                                if (x.role === 4 && filter.hut) return x
+                            }).length === 0 ?
                                 <Grid container style={{ marginTop: "0px", width: "auto", minHeight: "100vh", height: "100%", display: "flex", justifyContent: "center" }}>
                                     <Grid item style={{ marginTop: "50px" }} >
                                         <Typography variant="h5" className="unselectable">
-                                            There are no incoming requests.
+                                            {filter.hut && filter.local ? "There are no incoming requests." : "No request matching this filters."}
                                         </Typography>
                                         <div style={{ display: "flex", justifyContent: "center" }}>
-                                            <SentimentSatisfiedAltIcon lg={12} sx={{ fontSize: "72px" }} />
+                                            {
+                                                filter.hut && filter.local ?
+                                                    <SentimentSatisfiedAltIcon lg={12} sx={{ fontSize: "72px" }} />
+                                                    :
+                                                    <FilterAltOffIcon lg={12} sx={{ fontSize: "72px" }} />
+                                            }
                                         </div>
                                     </Grid>
                                 </Grid>
                                 : <></>
                         }
                         {
-                            loaded && listOfRequests.length !== 0 ?
-                                listOfRequests.map(request => { console.log("request: " + request) })
+                            loaded && listOfRequests.filter(x => {
+                                if (x.role === 2 && filter.local) return x
+                                if (x.role === 4 && filter.hut) return x
+                            }).length !== 0 ?
+                                listOfRequests.filter(x => {
+                                    if (x.role === 2 && filter.local) return x
+                                    if (x.role === 4 && filter.hut) return x
+                                }).map(request => {
+                                    if (request.role === 2) // local guide
+                                        return (
+                                            <Accordion>
+                                                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                                    <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
+                                                        {request.firstName + " " + request.lastName}
+                                                    </Typography>
+                                                    <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}><GroupsIcon sx={{ marginRight: "20px" }} />Local guide</Typography>
+                                                </AccordionSummary>
+                                                <AccordionDetails>
+                                                    <Grid container>
+                                                        <Grid item lg={12}>
+                                                            <Typography><b>Full name</b>: {request.firstName + " " + request.lastName}</Typography>
+                                                        </Grid>
+                                                        <Grid item lg={12}>
+                                                            <Typography><b>Role</b>: Local Guide</Typography>
+                                                        </Grid>
+                                                        <Grid item lg={12}>
+                                                            <Typography><b>Email</b>: {request.email}</Typography>
+                                                        </Grid>
+                                                        <Grid item lg={12} sx={{ display: "flex", justifyContent: "right" }}>
+                                                            {/* <div style={{ marginRight: "24px" }}> */}
+                                                            <HTButton navigate={() => { acceptUser(request.id) }} text="Accept" textSize="18px" textColor="white" color="#33aa33" />
+                                                            {/* </div> */}
+                                                            {/* <HTButton text="Reject" textSize="18px" textColor="white" color="#aa3333" /> */}
+                                                        </Grid>
+                                                    </Grid>
+                                                </AccordionDetails>
+                                            </Accordion>
+                                        )
+                                    else if (request.role === 4) // hut worker
+                                        return (
+                                            <Accordion>
+                                                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                                    <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
+                                                        {request.firstName + " " + request.lastName}
+                                                    </Typography>
+                                                    <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}><BadgeIcon sx={{ marginRight: "20px" }} />Hut worker</Typography>
+                                                </AccordionSummary>
+                                                <AccordionDetails>
+                                                    <Grid container>
+                                                        <Grid item lg={12}>
+                                                            <Typography><b>Full name</b>: {request.firstName + " " + request.lastName}</Typography>
+                                                        </Grid>
+                                                        <Grid item lg={12}>
+                                                            <Typography><b>Role</b>: Hut Worker</Typography>
+                                                        </Grid>
+                                                        <Grid item lg={12}>
+                                                            <Typography><b>Email</b>: {request.email}</Typography>
+                                                        </Grid>
+                                                        <Grid item lg={12} sx={{ display: "flex", justifyContent: "right" }}>
+                                                            {/* <div style={{ marginRight: "24px" }}> */}
+                                                            <HTButton navigate={() => { acceptUser(request.id) }} text="Accept" textSize="18px" textColor="white" color="#33aa33" />
+                                                            {/* </div> */}
+                                                            {/* <HTButton text="Reject" textSize="18px" textColor="white" color="#aa3333" /> */}
+                                                        </Grid>
+                                                    </Grid>
+                                                </AccordionDetails>
+                                            </Accordion>
+                                        )
+                                }
+                                )
                                 : <></>
                         }
-                        {/* <Typography variant="h5">
-                            There are no incoming requests.
-                        </Typography> */}
-                        <Accordion>
-                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                                <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
-                                    Frank Freak
-                                </Typography>
-                                <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}><GroupsIcon sx={{ marginRight: "20px" }} />Local guide</Typography>
-                                {/* <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}><BadgeIcon sx={{marginRight: "20px"}} />Hut worker</Typography> */}
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                <Grid container>
-                                    <Grid item lg={12}>
-                                        <Typography><b>Full name</b>: Frank Freak</Typography>
-                                    </Grid>
-                                    <Grid item lg={12}>
-                                        <Typography><b>Role</b>: Local Guide</Typography>
-                                    </Grid>
-                                    <Grid item lg={12}>
-                                        <Typography><b>Email</b>: frankfreek@gmail.com</Typography>
-                                    </Grid>
-                                    <Grid item lg={12} sx={{ display: "flex", justifyContent: "right" }}>
-                                        <div style={{ marginRight: "24px" }}>
-                                            <HTButton text="Accept" textSize="18px" textColor="white" color="#33aa33" />
-                                        </div>
-                                        <HTButton text="Reject" textSize="18px" textColor="white" color="#aa3333" />
-                                    </Grid>
-
-                                </Grid>
-                            </AccordionDetails>
-                        </Accordion>
                     </Grid>
-                </Grid>
-                <Grid lg={2}>
-
                 </Grid>
             </Grid>
         </>
