@@ -9,7 +9,6 @@ import {
   Param,
   ParseFilePipeBuilder,
   HttpStatus,
-  ParseIntPipe,
   HttpCode,
   Delete,
   BadRequestException,
@@ -301,7 +300,7 @@ export class HikesController {
   @Put(':id')
   @LocalGuideOnly()
   async updateHike(
-    @Param('id') id: ID,
+    @Param('id', ParseIdPipe()) id: ID,
     @Body()
     {
       referencePoints: hikeReferencePoints,
@@ -402,7 +401,11 @@ export class HikesController {
       .findBy({
         hikeId: id,
         pointId: In(allHutIDs),
-        type: In([PointType.linkedPoint, PointType.startPoint, PointType.endPoint])
+        type: In([
+          PointType.linkedPoint,
+          PointType.startPoint,
+          PointType.endPoint,
+        ]),
       });
 
     //If there are no huts the hut worker is not authorized to change hike condition
@@ -413,9 +416,11 @@ export class HikesController {
     }
 
     //retrieve hut's pointIDs by the hikepoints of the chosen hike
-    const hutsId = (await this.dataSource.getRepository(Hut).findBy({
-      pointId: In(checkIfThereAreHuts.map(hp => hp.pointId))
-    })).map(hut => hut.id);
+    const hutsId = (
+      await this.dataSource.getRepository(Hut).findBy({
+        pointId: In(checkIfThereAreHuts.map((hp) => hp.pointId)),
+      })
+    ).map((hut) => hut.id);
 
     //check if the hut worker works in one of the huts on the hike trail
     const checkHutsProperty = await this.dataSource
@@ -476,7 +481,7 @@ export class HikesController {
   @LocalGuideOnly()
   @HttpCode(200)
   async deleteHike(
-    @Param('id') id: ID,
+    @Param('id', ParseIdPipe()) id: ID,
     @CurrentUser() user: UserContext,
   ): Promise<{ rowsAffected: number }> {
     const hikeOwner = (
@@ -515,7 +520,7 @@ export class HikesController {
   }
 
   @Get(':id')
-  async getHike(@Param('id', new ParseIntPipe()) id: ID): Promise<HikeFull> {
+  async getHike(@Param('id', ParseIdPipe()) id: ID): Promise<HikeFull> {
     return await this.service.getFullHike(id);
   }
 }
