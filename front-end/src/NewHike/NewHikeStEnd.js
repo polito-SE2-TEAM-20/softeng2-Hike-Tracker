@@ -331,6 +331,7 @@ function NewHikeStEnd(props) {
       //controllare che questi ultimi due funzionino 
       formData.append('country', country);
       formData.append('city', city);
+      formData.append('condition', 0);
       props.addNewGpx(formData)
       .then(newHike=>{
         console.log(newHike); 

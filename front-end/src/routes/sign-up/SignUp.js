@@ -274,9 +274,9 @@ function RoleSelect(props) {
         <MenuItem value={2}>
           Local Guide
         </MenuItem>
-        {/*<MenuItem value={3}>
+        <MenuItem value={3}>
           Platform Manager
-</MenuItem>*/}
+          </MenuItem>
         <MenuItem value={4}>
           Hut Worker
         </MenuItem>

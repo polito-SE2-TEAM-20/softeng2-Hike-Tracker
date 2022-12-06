@@ -226,7 +226,9 @@ const EditHut = (props) => {
         {console.log(hut.workingTimeStart)};
         <Grid style={{ marginTop: "0px", marginLeft: "30px", marginRight: "30px", marginBottom: "50px", height: "60vh" }} item lg={3}>
                 <Paper style={{ padding: "30px", height: "60vh" }}>
-                     <EditHutForm hut={hut} hutid={hutid} description={hut.description} workingTimeStart={hut.workingTimeStart} workingTimeEnd={hut.workingTimeEnd} modifyHutInformation={props.modifyHutInformation}/>
+                     <EditHutForm hut={hut} hutid={hutid} description={hut.description} 
+                                 workingTimeStart={hut.workingTimeStart} workingTimeEnd={hut.workingTimeEnd} 
+                                 modifyHutInformation={props.modifyHutInformation} price={hut.price}/>
                 </Paper> 
     </Grid>
     </>
@@ -246,10 +248,12 @@ const EditHutForm = (props) => {
     const [show, setShow] = useState(false);
     const [workingTimeStart, setWorkingTimeStart] = useState(props.workingTimeStart);
     const [workingTimeEnd, setWorkingTimeEnd] = useState(props.workingTimeEnd);
+    const [price, setPrice] = useState(props.price);
 
     const handleClear = () => {
 
-       setDescription(props.description); setWorkingTimeStart(props?.workingTimeStart); setWorkingTimeEnd(props?.workingTimeEnd);
+       setDescription(props.description); setWorkingTimeStart(props?.workingTimeStart); 
+       setWorkingTimeEnd(props?.workingTimeEnd); setPrice(props.price);
 
     }
     const handleSubmit = () => {
@@ -266,9 +270,12 @@ const EditHutForm = (props) => {
             console.log(workingTimeStart);
             setErrorMessage("insert valid time e.g 12:40, 18:20");
             setShow(true);
-
+        }else  if(price==='' || price===null || price===undefined || price===null || price===undefined || price===''){
+            console.log(price);
+            setErrorMessage("insert valid value for the price");
+            setShow(true);
         }else{
-        let object = {description: description, workingTimeStart: workingTimeStart, workingTimeEnd: workingTimeEnd}
+        let object = {description: description, workingTimeStart: workingTimeStart, workingTimeEnd: workingTimeEnd, price: parseFloat(price)}
         setShow(false);
         props.modifyHutInformation(object, props.hutid);
 
@@ -310,7 +317,7 @@ const EditHutForm = (props) => {
             <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
                 <Chip label="Working time" />
             </Divider>
-            <Grid item xs={12} sm={6} md={6} lg={12} xl={12}>
+            <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
                 <TextField
                     id="workingTimeStart"
                     label="Working time start"
@@ -320,6 +327,8 @@ const EditHutForm = (props) => {
                     value={workingTimeStart}
                     onChange={(e) => { setWorkingTimeStart(e.target.value) }}
                 />
+            </Grid>
+            <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
                  <TextField
                     id="workingTimeEnd"
                     label="Working Time End"
@@ -328,6 +337,20 @@ const EditHutForm = (props) => {
                     variant="standard"
                     value={workingTimeEnd}
                     onChange={(e) => { setWorkingTimeEnd(e.target.value) }}
+                />
+            </Grid>
+            <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
+                <Chip label="Price" />
+            </Divider>
+            <Grid item xs={12} sm={6} md={6} lg={12} xl={12}>
+                <TextField
+                    id="price"
+                    label="Price per night"
+                    fullWidth
+                    autoComplete="price"
+                    variant="standard"
+                    value={price}
+                    onChange={(e) => { setPrice(e.target.value) }}
                 />
             </Grid>
             {
