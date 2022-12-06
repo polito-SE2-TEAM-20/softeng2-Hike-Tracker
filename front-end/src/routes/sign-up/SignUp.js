@@ -72,13 +72,19 @@ function SignUpForm(props) {
     } else if (valid) {
       let id;
       if(role!==4){
-        id= null
+        id= null;
+        const credentials = {email, firstName, lastName, password, role, phoneNumber};
+        props.doRegister(credentials, setShow, setErrorMessage, setInformationMessage, setShowInformation);
+
       }else{
         id = hutId
+        const credentials = { email, firstName, lastName, password, role, phoneNumber, id};
+        props.doRegister(credentials, setShow, setErrorMessage, setInformationMessage, setShowInformation);
+
       }
       //const credentials = { email, firstName, lastName, password, role, phoneNumber, id};
-      const credentials = {email, firstName, lastName, password, role, phoneNumber};
-      props.doRegister(credentials, setShow, setErrorMessage, setInformationMessage, setShowInformation);
+     // const credentials = {email, firstName, lastName, password, role, phoneNumber};
+      // props.doRegister(credentials, setShow, setErrorMessage, setInformationMessage, setShowInformation);
     }
   }
 
