@@ -31,10 +31,14 @@ export class UsersService extends BaseService<User> {
         lat: body.lat,
         lon: body.lon,
         radiusKms: body.radiusKms,
-        length: body.length,
-        expectedTime: body.expectedTime,
-        difficulty: body.difficulty,
-        ascent: body.ascent,
+        minLength: body.minLength,
+        maxLength: body.maxLength,
+        expectedTimeMin: body.expectedTimeMin,
+        expectedTimeMax: body.expectedTimeMax,
+        difficultyMin: body.difficultyMin,
+        difficultyMax: body.difficultyMax,
+        ascentMax: body.ascentMax,
+        ascentMin: body.ascentMin,
       },
     });
     return user.preferences;

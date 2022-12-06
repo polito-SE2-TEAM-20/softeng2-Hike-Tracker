@@ -3,7 +3,8 @@ import {
     IsLongitude,
     IsNumber,
     Min,
-    IsEnum
+    IsEnum,
+    IsInt
   } from 'class-validator';
 
 import { HikeDifficulty } from '@app/common';
@@ -22,17 +23,30 @@ export class PreferencesDto {
 
     @IsNumber()
     @Min(0)
-    length!: number;
+    maxLength?: number;
   
     @IsNumber()
     @Min(0)
-    ascent!: number;
-  
-    @IsNumber()
-    @Min(0)
-    expectedTime!: number;
+    minLength?: number;
   
     @IsEnum(HikeDifficulty)
-    difficulty!: HikeDifficulty;
+    difficultyMax?: number;
+  
+    @IsEnum(HikeDifficulty)
+    difficultyMin?: number;
+  
+    @IsInt()
+    @Min(0)
+    expectedTimeMax?: number;
+  
+    @IsInt()
+    @Min(0)
+    expectedTimeMin?: number;
+
+    @IsNumber()
+    ascentMax?: number;
+  
+    @IsNumber()
+    ascentMin?: number;
   }
   
