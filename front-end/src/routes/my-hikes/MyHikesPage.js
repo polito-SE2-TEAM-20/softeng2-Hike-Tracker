@@ -6,7 +6,7 @@ import { Grid, Typography } from '@mui/material';
 import HikeItemLoadingEffect from './HikeItemLoadingEffect';
 import emptyStateImage from '../../Assets/empty-state.jpg'
 import { useNavigate } from 'react-router';
-import HikeCard from './HikeCard.js';
+import HikeCard from '../../components/hike-card/HikeCard.js';
 
 
 function MyHikesPage(props) {
@@ -56,8 +56,6 @@ function MyHikesPage(props) {
                                 );
                             })
                         }
-                    </Grid>
-                </Grid>
             </Grid>
         </>
     );
