@@ -26,13 +26,17 @@ describe('Users Preferences (e2e)', () => {
     const { user } = await setup();
   
     const preferences = {
-        "lat": 5.005,
-        "lon": 5.004,
-        "radiusKms": 10,
-        "length": 5000,
-        "expectedTime": 1000,
-        "difficulty": 2,
-        "ascent": 100
+      "lat": 5.005,
+      "lon": 5.004,
+      "radiusKms": 10,
+      "minLength": 4010,
+      "maxLength": 6000,
+      "expectedTimeMin": 500,
+      "expectedTimeMax": 1500,
+      "difficultyMin": 1,
+      "difficultyMax": 2,
+      "ascentMin": 50,
+      "ascentMax": 150
     }
 
     await restService
@@ -46,12 +50,16 @@ describe('Users Preferences (e2e)', () => {
             "lat": preferences.lat,
             "lon": preferences.lon,
             "radiusKms": preferences.radiusKms,
-            "length": preferences.length,
-            "expectedTime": preferences.expectedTime,
-            "difficulty": preferences.difficulty,
-            "ascent": preferences.ascent
+            "minLength": preferences.minLength,
+            "maxLength": preferences.maxLength,
+            "expectedTimeMin": preferences.expectedTimeMin,
+            "expectedTimeMax": preferences.expectedTimeMax,
+            "difficultyMin": preferences.difficultyMin,
+            "difficultyMax": preferences.difficultyMax,
+            "ascentMin": preferences.ascentMin,
+            "ascentMax": preferences.ascentMax
+          })
         });
-      });
   });
 
 
@@ -59,13 +67,17 @@ describe('Users Preferences (e2e)', () => {
     const { user } = await setup();
 
     const preferences = {
-        "lat": 5.005,
-        "lon": 5.004,
-        "radiusKms": 10,
-        "length": 5000,
-        "expectedTime": 1000,
-        "difficulty": 2,
-        "ascent": 100
+      "lat": 5.005,
+      "lon": 5.004,
+      "radiusKms": 10,
+      "minLength": 4010,
+      "maxLength": 6000,
+      "expectedTimeMin": 500,
+      "expectedTimeMax": 1500,
+      "difficultyMin": 1,
+      "difficultyMax": 2,
+      "ascentMin": 50,
+      "ascentMax": 150
     }
 
     await restService
@@ -82,13 +94,17 @@ describe('Users Preferences (e2e)', () => {
     .expect(200)
     .expect(({ body }) => {
       expect(body).toMatchObject({
-          "lat": preferences.lat,
-          "lon": preferences.lon,
-          "radiusKms": preferences.radiusKms,
-          "length": preferences.length,
-          "expectedTime": preferences.expectedTime,
-          "difficulty": preferences.difficulty,
-          "ascent": preferences.ascent
+        "lat": preferences.lat,
+        "lon": preferences.lon,
+        "radiusKms": preferences.radiusKms,
+        "minLength": preferences.minLength,
+        "maxLength": preferences.maxLength,
+        "expectedTimeMin": preferences.expectedTimeMin,
+        "expectedTimeMax": preferences.expectedTimeMax,
+        "difficultyMin": preferences.difficultyMin,
+        "difficultyMax": preferences.difficultyMax,
+        "ascentMin": preferences.ascentMin,
+        "ascentMax": preferences.ascentMax
       });
     });
 
