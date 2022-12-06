@@ -336,7 +336,11 @@ function addHike(hike) {
 
 const getNotApprovedLocalGuides = async () => {
     const response = await fetch((APIURL + '/auth/not_approved/local_guides'), {
-        method: 'GET'
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        }
     });
     if (response.ok) {
         const listOfNotApprovedLocalGuides = await response.json()
@@ -349,7 +353,11 @@ const getNotApprovedLocalGuides = async () => {
 
 const getNotApprovedHutWorkers = async () => {
     const response = await fetch((APIURL + '/auth/not_approved/hut_workers'), {
-        method: 'GET'
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        }
     });
     if (response.ok) {
         const listOfNotApprovedHutWorkers = await response.json()
@@ -362,7 +370,11 @@ const getNotApprovedHutWorkers = async () => {
 
 const approveUserByID = async (id) => {
     const response = await fetch((APIURL + '/auth/approve_user/' + id), {
-        method: 'PUT'
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        }
     });
     if (!response.ok) {
         return true
