@@ -124,29 +124,27 @@ function Hut(props) {
         });
     }, [])
 
-    useEffect(() => {
-        if (props.hutId !== null && props.hutId !== '') {
-            let element = listHuts.filter((hut) => hut.id === props.hutId);
-            //todo: set address field
-        }
-
-    }, [props.hutId])
-
     return <>
         <FormControl fullWidth required sx={{ mt: 3 }}>
             <InputLabel id="demo-simple-select-label">Choose an hut</InputLabel>
             <Select
                 labelId="demo-simple-select-label"
                 id="demo-seimple-select"
-                value={props.hutId}
+                value={props.hut.id}
                 fullWidth
                 name="hutId"
                 variant="standard"
                 label="Hut"
-                onChange={ev => props.setHutId(ev.target.value)}>
+                onChange={ev => props.setHut(listHuts.find((value) => {
+                    return value.id === ev.target.value
+                }))}>
                 {
                     listHuts.map((hutItem) => {
-                        return <HutItemView hut={hutItem}/>
+                        return (
+                            <MenuItem value={hutItem.id}>
+                                <HutItemView hut={hutItem}/>
+                            </MenuItem>
+                        )
                     })
                 }
             </Select>
@@ -172,28 +170,27 @@ function Parking(props) {
         });
     }, [])
 
-    useEffect(() => {
-        if (props.parkingId !== null && props.parkingId !== '') {
-            let element = listParking.filter((el) => el.id === props.parkingId);
-            //todo: set address field
-        }
-    }, [props.parkingId])
-
     return (
         <FormControl fullWidth required sx={{ mt: 3 }}>
             <InputLabel id="demo-simple-select-label">Choose a parking lot</InputLabel>
             <Select
                 labelId="demo-simple-select-label"
                 id="demo-seimple-select"
-                value={props.parkingId}
+                value={props.parking.id}
                 fullWidth
                 name="parkingId"
                 variant="standard"
                 label="Parking"
-                onChange={ev => props.setParkingId(ev.target.value)}>
+                onChange={ev => props.setParking(listParking.find((value) => {
+                    return value.id === ev.target.value;
+                }))}>
                 {
                     listParking.map((parking) => {
-                        return <ParkingItemView parking={parking}/>
+                        return (
+                            <MenuItem value={parking?.id}>
+                                <ParkingItemView parking={parking}/>
+                            </MenuItem>
+                        )
                     })
                 }
             </Select>
@@ -203,7 +200,7 @@ function Parking(props) {
 
 function HutItemView(props) {
     return (
-        <MenuItem value={props.hut.id} >
+        <>
             <Grid item xs={12} sm={6}>
                 <TextField
                     name="hutName"
@@ -234,13 +231,13 @@ function HutItemView(props) {
                     value={props.hut.point.address}
                 />
             </Grid>
-        </MenuItem>
+        </>
     )
 }
 
 function ParkingItemView(props) {
     return (
-        <MenuItem value={props.parking?.id} >
+        <>
             <Grid item xs={12} sm={3}>
                 <TextField
                     name="parkingName"
@@ -272,7 +269,7 @@ function ParkingItemView(props) {
                     value={props.parking.point.address}
                 />
             </Grid>
-        </MenuItem>
+        </>
     )
 }
 

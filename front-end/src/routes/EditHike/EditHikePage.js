@@ -52,8 +52,8 @@ function EditHikePage(props) {
     const [startPointLat, setStartPointLat] = useState('');
     const [startPointName, setStartPointName] = useState('Start Point');
     const [startPointAdd, setStartPointAdd] = useState('');
-    const [startPointHutId, setStartPointHutId] = useState('');
-    const [startPointParkingId, setStartPointParkingId] = useState('');
+    const [startPointHut, setStartPointHut] = useState('');
+    const [startPointParking, setStartPointParking] = useState('');
 
     //End point params
     const [endPointType, setEndPointType] = useState('');
@@ -61,8 +61,8 @@ function EditHikePage(props) {
     const [endPointLon, setEndPointLon] = useState('');
     const [endPointName, setEndPointName] = useState('End Point');
     const [endPointAdd, setEndPointAdd] = useState('');
-    const [endPointHutId, setEndPointHutId] = useState('');
-    const [endPointParkingId, setEndPointParkingId] = useState('');
+    const [endPointHut, setEndPointHut] = useState('');
+    const [endPointParking, setEndPointParking] = useState('');
 
     const [newReferencePoint, setNewReferencePoint] = useState(false);
     const [listReferencePoint, setListReferencePoint] = useState([]);
@@ -325,14 +325,14 @@ function EditHikePage(props) {
                     break;
                 }
                 case SelectStartEndPointType.PARKING: {
-                    if (startPointParkingId !== null) {
-                        start = { parkingLotId: startPointParkingId, address: startPointAdd };
+                    if (startPointParking !== null) {
+                        start = { parkingLotId: startPointParking.id, address: startPointParking.point.address };
                     }
                     break;
                 }
                 case SelectStartEndPointType.HUT: {
-                    if (startPointHutId !== null) {
-                        start = { hutId: startPointHutId, address: startPointAdd };
+                    if (startPointHut !== null) {
+                        start = { hutId: startPointHut.id, address: startPointHut.point.address };
                     }
                     break;
                 }
@@ -344,14 +344,14 @@ function EditHikePage(props) {
                     break;
                 }
                 case SelectStartEndPointType.PARKING: {
-                    if (endPointParkingId !== null) {
-                        end = { parkingLotId: endPointParkingId, address: endPointAdd };
+                    if (endPointParking !== null) {
+                        end = { parkingLotId: endPointParking.id, address: endPointParking.point.address };
                     } 
                     break;
                 }
                 case SelectStartEndPointType.HUT: {
-                    if (endPointHutId !== null) {
-                        end = { hutId: endPointHutId, address: endPointAdd };
+                    if (endPointHut !== null) {
+                        end = { hutId: endPointHut.id, address: endPointParking.point.address };
                     }
                     break;
                 }
@@ -446,8 +446,8 @@ function EditHikePage(props) {
                                     pointLat={startPointLat} setPointLat={setStartPointLat}
                                     pointLon={startPointLon} setPointLon={setStartPointLon}
                                     pointType={startPointType} setPointType={setStartPointType}
-                                    hutId={startPointHutId} setHutId={setStartPointHutId}
-                                    parkingId={startPointParkingId} setParkingId={setStartPointParkingId}
+                                    hut={startPointHut} setHut={setStartPointHut}
+                                    parking={startPointParking} setParking={setStartPointParking}
                                     information={information}
                                 />
 
@@ -465,8 +465,8 @@ function EditHikePage(props) {
                                     pointLat={endPointLat} setPointLat={setEndPointLat}
                                     pointLon={endPointLon} setPointLon={setEndPointLon}
                                     pointType={endPointType} setPointType={setEndPointType}
-                                    pointHutId={endPointHutId} setHutId={setEndPointHutId}
-                                    parkingId={endPointParkingId} setParkingId={setEndPointParkingId}
+                                    pointHut={endPointHut} setHut={setEndPointHut}
+                                    parking={endPointParking} setParking={setEndPointParking}
                                     information={informationEnd}
                                 />
                             </Grid>
