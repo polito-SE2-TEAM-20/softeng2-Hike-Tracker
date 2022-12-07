@@ -46,16 +46,16 @@ function MyHikesPage(props) {
                     <NoItemView navigate={navigate}/>
                 }
 
-                        {/* Shwoing hikes when it is not loading and you created at least one hike before */}
-                        {(!loading && myHikes.length > 0) &&
-                            myHikes.map(hike => {
-                                return (
-                                    <Grid item style={{ marginLeft: "8px", marginRight: "8px", marginBottom: "4px", marginTop: "4px" }}>
-                                        <HikeCard hike={hike} editable="true" delete="true" deleteHike={props.deleteHike}/>
-                                    </Grid>
-                                );
-                            })
-                        }
+                {/* Shwoing hikes when it is not loading and you created at least one hike before */}
+                {(!loading && myHikes.length > 0) &&
+                    myHikes.map(hike => {
+                        return (
+                            <Grid item style={{ marginLeft: "8px", marginRight: "8px", marginBottom: "4px", marginTop: "4px" }}>
+                                <HikeCard hike={hike} editable="true" delete="true" deleteHike={props.deleteHike}/>
+                            </Grid>
+                        );
+                    })
+                }
             </Grid>
         </>
     );

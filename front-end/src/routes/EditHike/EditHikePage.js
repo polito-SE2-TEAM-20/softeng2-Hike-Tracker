@@ -716,64 +716,72 @@ function ConnectedHuts(props) {
 
     return (
         <Card
-        
-            style={{marginRight:24, marginLeft: 24, marginTop: 32, marginBottom: 24}}>
+            style={{
+                marginRight:24, marginLeft: 24, marginTop: 32, marginBottom: 24,
+                width:"100%",
+                justifyContent: "center"}}>
             <CardContent>
                 <Grid
                     item>
-                    <Typography variant="h8" gutterBottom>
+                    <Typography variant="h6" gutterBottom>
                         Connected Huts
                     </Typography>
                 </Grid>
-                { 
-                    props.connectedHutList.length > 0 &&
-                    props.connectedHutList.map((hutItem) => {
-                        return (
-                            <Grid item>
-                                <HutItemView
-                                    type={LinkHutItemViewTye.ADDED}
-                                    hut={hutItem} 
-                                    deleteHutAction={props.deleteHutAction}
-                                    addHutAction={props.addHutAction}>
-                                </HutItemView>
-                            </Grid>
-                        )
-                    })
-                }
+                <Grid container>
+                    { 
+                        props.connectedHutList.length > 0 &&
+                        props.connectedHutList.map((hutItem) => {
+                            return (
+                                <Grid item >
+                                    <HutItemView
+                                        type={LinkHutItemViewTye.ADDED}
+                                        hut={hutItem} 
+                                        deleteHutAction={props.deleteHutAction}
+                                        addHutAction={props.addHutAction}>
+                                    </HutItemView>
+                                </Grid>
+                            )
+                        })
+                    }
+                </Grid>
+                
                 <Grid
                     item
                     style={{marginTop: 32}}>
-                    <Typography variant="h9" gutterBottom>
-                        Huts close to hike (can be connect to your hike)
+                    <Typography variant="h6" gutterBottom>
+                        Huts close to hike (can be connected to your hike)
                     </Typography>
                 </Grid>
-                { 
-                    props.hutList.length > 0 &&
-                    props.hutList.filter((item) => {
-                        if (props.connectedHutList.length > 0) {
-                            let index = -1
-                            for(let i = 0; i < props.connectedHutList.length; i++) {
-                                if (item.id === props.connectedHutList[i].id){
-                                    index = i
+                <Grid
+                    container>
+                    { 
+                        props.hutList.length > 0 &&
+                        props.hutList.filter((item) => {
+                            if (props.connectedHutList.length > 0) {
+                                let index = -1
+                                for(let i = 0; i < props.connectedHutList.length; i++) {
+                                    if (item.id === props.connectedHutList[i].id){
+                                        index = i
+                                    }
                                 }
+                                return index === -1
+                            } else {
+                                return true
                             }
-                            return index === -1
-                        } else {
-                            return true
-                        }
-                    }).map((hutItem) => {
-                        return (
-                            <Grid item>
-                                <HutItemView
-                                    type={LinkHutItemViewTye.AVAILABLE}
-                                    hut={hutItem} 
-                                    deleteHutAction={props.deleteHutAction}
-                                    addHutAction={props.addHutAction}>
-                                </HutItemView>
-                            </Grid>
-                        )
-                    })
-                }
+                        }).map((hutItem) => {
+                            return (
+                                <Grid item>
+                                    <HutItemView
+                                        type={LinkHutItemViewTye.AVAILABLE}
+                                        hut={hutItem} 
+                                        deleteHutAction={props.deleteHutAction}
+                                        addHutAction={props.addHutAction}>
+                                    </HutItemView>
+                                </Grid>
+                            )
+                        })
+                    }
+                </Grid>
             </CardContent>
         </Card>
     )
@@ -785,17 +793,21 @@ const LinkHutItemViewTye = {
 function HutItemView(props) {
     return (
         <Card 
-            style={{marginTop: 12, marginBotom: 12}}>
+            style={{
+                marginTop: 12, marginBotom: 12, marginRight: 8, marginLeft: 8,
+                width: 320}}>
             <CardContent>
-                <Typography >
-                    {/* TODO: show more details anout the connected hut */}
+                <Typography variant="h6">
                     {props.hut.title}
+                </Typography>
+                <Typography variant="subtitle1">
+                    {props.hut.point.address}
                 </Typography>
                 {
                     props.type === LinkHutItemViewTye.ADDED && 
                     <DeleteIcon 
-                    color="#1a1a1a" 
-                    onClick={() => {props.deleteHutAction(props.hut)}}>
+                        color="#1a1a1a" 
+                        onClick={() => {props.deleteHutAction(props.hut)}}>
 
                     </DeleteIcon>
                 }
