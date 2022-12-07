@@ -22,7 +22,8 @@ import { NewHikeStEnd } from './NewHike/NewHikeStEnd';
 import LoginForm from './routes/login/Login';
 import {SignUpForm} from './routes/sign-up/SignUp';
 import HTHutPage from './routes/hut-page/HTHutPage';
-import {HutWorkerHuts} from './routes/my-huts/HutWorkerHuts'
+import {HutWorkerHuts} from './routes/my-huts/HutWorkerHuts';
+import {HikesLinked} from './routes/my-huts/HikesLinked';
 
 import API from './API/API';
 
@@ -167,8 +168,10 @@ const modifyHutInformation =(information, hutId, setShow, setErrorMessage) =>{
         <Route path="/newHike" element={<NewHikeStEnd addNewGpx={API.addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user?.user}/>} />
         <Route path="/hikerdashboard" element={<HikerDashboard user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/admindashboard" element={<AdminDashboard user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
-        <Route path="/hutWorkerHuts" element={<HutWorkerHuts isLoggedIn={loggedIn} doLogOut={doLogOut}/>}/>
+        <Route path="/hutWorkerHuts" element={<HutWorkerHuts user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut}/>}/>
         <Route path="/edithut/:hutid" element={<EditHut user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} modifyHutInformation={API.modifyHutInformation}/>}/>
+        <Route path="/hutWorkerHuts/linkedHikes" element={<HikesLinked user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut}/>}/>
+
       </Routes>
     </>
   );

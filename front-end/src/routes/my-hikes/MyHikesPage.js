@@ -20,7 +20,7 @@ function MyHikesPage(props) {
             setMyHikes(oldHikes => hikes)
             setLoading(false)
         });
-    }, [])
+    }, [props.rowsAffected])
 
     useEffect(()=>{
         if(props.rowsAffected){

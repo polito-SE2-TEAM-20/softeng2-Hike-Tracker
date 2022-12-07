@@ -11,11 +11,7 @@ function HutWorkerHuts(props) {
     const [myHuts, setMyHuts] = useState([])
     const navigate = useNavigate()
     const [loading, setLoading] = useState(true);
-    const [loaded, setLoaded] = useState(true);
-    const [hikesUpdatable, setHikesUpdatable] = useState([]);
-    const [modifyHut, setModifyHut] = useState(false);
-    const [cause, setCause] = useState("");
-    const [hikeCondition, setHikeCondition] = useState(-1);
+
     {/*
     enum HikeCondition{
         open=0,
@@ -33,14 +29,7 @@ function HutWorkerHuts(props) {
             setLoading(false)
             console.log(huts)
         });    
-        setLoaded(true);
 
-        API.getHikesUpdatableHutWorker()
-           .then((hikes)=>{
-            setHikesUpdatable(oldHikes => hikes)
-            setLoaded(false);
-            console.log(hikes);
-           })
 
       
     }, [])
@@ -71,7 +60,7 @@ function HutWorkerHuts(props) {
                 <Grid item lg={9}>
                     <Grid container columns={5} style={{ marginTop: "25px", display: "flex", justifyContent: "center" }}>
                         
-                            {(!loading && myHuts.length==0) && 
+                            {(!loading && myHuts.length===0) && 
                                     <Typography fontFamily={"Bakbak One, display"} fontWeight="600" fontSize="32px">
                                         No matching huts.
                                     </Typography>
@@ -82,10 +71,10 @@ function HutWorkerHuts(props) {
                                             <>
                                             <Grid item md={2} style={{ marginLeft: "15px", marginRight: "15px", marginBottom: "15px" }}>
                                                 <HutCard hut={hut} editable="true"/>
-                                            </Grid>
-                                            <Grid item md={2} style={{ marginLeft: "15px", marginRight: "15px", marginBottom: "15px" }}>
-                                            {/*<HikesLinked {...props} loaded={loaded} hikesUpdatable={hikesUpdatable} cause={cause} setCause={setCause} hikeCondition={hikeCondition} setHikeCondition={setHikeCondition}/>*/}
-                                            </Grid>
+                                        </Grid>
+                                            {/*<Grid item md={2} style={{ marginLeft: "15px", marginRight: "15px", marginBottom: "15px" }}>
+                                            <HikesLinked {...props} loaded={loaded} hikesUpdatable={hikesUpdatable} cause={cause} setCause={setCause} hikeCondition={hikeCondition} setHikeCondition={setHikeCondition}/>
+                                        </Grid>*/}
                                             </>
                                         );
                                     })

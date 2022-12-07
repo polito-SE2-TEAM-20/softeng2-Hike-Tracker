@@ -583,6 +583,29 @@ async function getHikesUpdatableHutWorker() {
     }
 }
 
+function updateHikeCondition(information, hikeId) {
+    return new Promise((resolve, reject) => {
+        fetch((APIURL + '/hikes/condition/' + hikeId), {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(information),
+
+        }).then((async response => {
+            if (response.ok) {
+                const hikeConditionUpdate = await response.json()
+                return hikeConditionUpdate;
+            } else {
+                response.json()
+                    .then((message) => { reject(message); })
+                    .catch(() => { reject({ error: "Cannot communicate with the server" }) });
+            }
+        }))
+    })
+}
+
 
 const API = {
     getListOfHikes, getListOfGPXFiles, getPathByID,
@@ -593,6 +616,7 @@ const API = {
     addHike, getNotApprovedLocalGuides, getNotApprovedHutWorkers,
     approveUserByID, getPreferences, setPreferences, deleteHikeId,
     getHutsHutWorker, modifyHutInformation, editHikeStartEndPoint, getHikesUpdatableHutWorker,
-    linkPointsToHike
+    linkPointsToHike,
+    updateHikeCondition
 }
 export default API
