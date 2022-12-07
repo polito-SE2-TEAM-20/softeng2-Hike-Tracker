@@ -36,7 +36,8 @@ describe('Users Preferences (e2e)', () => {
       "difficultyMin": 1,
       "difficultyMax": 2,
       "ascentMin": 50,
-      "ascentMax": 150
+      "ascentMax": 150,
+      "suggestionType": false
     }
 
     await restService
@@ -57,7 +58,8 @@ describe('Users Preferences (e2e)', () => {
             "difficultyMin": preferences.difficultyMin,
             "difficultyMax": preferences.difficultyMax,
             "ascentMin": preferences.ascentMin,
-            "ascentMax": preferences.ascentMax
+            "ascentMax": preferences.ascentMax,
+            "suggestionType": preferences.suggestionType
           })
         });
   });
@@ -77,7 +79,8 @@ describe('Users Preferences (e2e)', () => {
       "difficultyMin": 1,
       "difficultyMax": 2,
       "ascentMin": 50,
-      "ascentMax": 150
+      "ascentMax": 150,
+      "suggestionType": false
     }
 
     await restService
@@ -104,7 +107,8 @@ describe('Users Preferences (e2e)', () => {
         "difficultyMin": preferences.difficultyMin,
         "difficultyMax": preferences.difficultyMax,
         "ascentMin": preferences.ascentMin,
-        "ascentMax": preferences.ascentMax
+        "ascentMax": preferences.ascentMax,
+        "suggestionType": preferences.suggestionType
       });
     });
 
