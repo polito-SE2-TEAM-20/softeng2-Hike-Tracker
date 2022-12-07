@@ -13,7 +13,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-
+import {PopupModifyHut} from './PopupModifyHut'
 import * as React from 'react';
 
 const Difficulty = (props) => {
@@ -37,31 +37,92 @@ const EditHut = (props) => {
     const navigate = useNavigate()
     const match = useMatch('/edithut/:hutid')
     const hutid = (match && match.params && match.params.hutid) ? match.params.hutid : -1
-    const [hut, setHut] = useState({ title: "", numberOfBeds: -1, price: -1, ownerName: "", website: "", point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } })
+    const [hut, setHut] = useState({ title: "", numberOfBeds: -1, description:"", workingTimeStart:-1, workingTimeEnd:-1, price: -1, ownerName: "", website: "", point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } })
     const [loading, setLoading] = useState(true)
     const [openPictureDialog, setOpenPictureDialog] = useState(false)
 
     useEffect(() => {
-        let tmpHike = { title: "", numberOfBeds: -1, price: -1, ownerName: "", website: "", point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } }
+        let tmpHike = { title: "", description:"", workingTimeStart:-1, workingTimeEnd:-1, numberOfBeds: -1, price: -1, ownerName: "", website: "", point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } }
         const getHut = async () => {
             tmpHike = await API.getSingleHutByID(hutid)
         }
         getHut().then(() => {
             setHut(tmpHike)
-            setLoading(false)
+            setLoading(false);
+            setDescription(tmpHike.description);
+            setWorkingTimeEnd(tmpHike.workingTimeEnd);
+            setWorkingTimeStart(tmpHike.workingTimeStart);
+            setPrice(tmpHike.price);
+
         })
     }, [])
+
+    const [description, setDescription] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [show, setShow] = useState(false);
+    const [workingTimeStart, setWorkingTimeStart] = useState(-1);
+    const [workingTimeEnd, setWorkingTimeEnd] = useState(-1);
+    const [price, setPrice] = useState(-1);
+
+    //states for the popup after modifying the hut 
+    const [op, setOp] = useState(false);
+    const [err, setErr] = useState(null);
 
 
     const gotoLogin = () => {
         navigate("/login", { replace: false })
     }
 
+    const handleClear = () => {
+
+        setDescription(hut.description); setWorkingTimeStart(hut.workingTimeStart);
+        setWorkingTimeEnd(hut.workingTimeEnd); setPrice(hut.price);
+
+    }
+    const handleSubmit = () => {
+        if (description === '' || description === null || description === undefined) {
+            setErrorMessage("insert a valid description");
+            setShow(true);
+        } else if (workingTimeStart === '' || workingTimeStart === null || workingTimeStart === undefined || workingTimeEnd === null || workingTimeEnd === undefined || workingTimeEnd === '') {
+            console.log(workingTimeStart);
+            console.log(workingTimeEnd)
+            setErrorMessage("insert valid time");
+            setShow(true);
+        } else if (!workingTimeStart.match(/^([01][0-9]|2[0-3]):([0-5][0-9])$/) || !workingTimeEnd.match(/^([01][0-9]|2[0-3]):([0-5][0-9])$/)) {
+            console.log(workingTimeEnd);
+            console.log(workingTimeStart);
+            setErrorMessage("insert valid time e.g 12:40, 18:20");
+            setShow(true);
+        } else if (price === '' || price === null || price === undefined || price === null || price === undefined || price === '') {
+            console.log(price);
+            setErrorMessage("insert valid value for the price");
+            setShow(true);
+        } else {
+            let object = { description: description, workingTimeStart: workingTimeStart, workingTimeEnd: workingTimeEnd, price: parseFloat(price) }
+            setShow(false);
+            props.modifyHutInformation(object, hutid)
+              .then(modifiedHut=>{
+                console.log(modifiedHut);
+                setOp(true);
+                setErr(null)})
+                .catch((err)=>{
+                    setOp(true);
+                    setErr(err)})
+
+        }
+
+    }
+
     return (
         <>
             <Grid container style={{ minHeight: "100vh", height: "100%" }}>
                 <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
-                <Grid style={{ marginTop: "105px", marginLeft: "auto", marginRight: "auto", marginBottom: "25px", height: "40vh" }} item lg={3}>
+                
+                <Grid style={{ marginTop: "105px", marginLeft: "auto", marginRight: "auto", marginBottom: "400px", height: "40vh" }} item lg={3}>
+                {
+            op &&
+          <PopupModifyHut id={hutid} err={err} open={op} setOpen={setOp}/>
+        }
                     <Paper style={{ padding: "30px", height: "fit-content" }}>
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                             <Typography variant="h4">General information</Typography>
@@ -71,12 +132,13 @@ const EditHut = (props) => {
                         </Divider>
 
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                            {
+                        {
                                 !loading ?
-                                    <><Typography><b>Location:</b></Typography><TextField required fullWidth variant="standard" value={hut.point.address === "" || hut.point.address === null || hut.point.address === undefined ? "N/A" : hut.point.address}></TextField></> :
+                                    <Typography><b>Location:</b> {hut.point.address === "" || hut.point.address === null || hut.point.address === undefined ? "N/A" : hut.point.address}</Typography> :
                                     <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                             }
                         </Grid>
+
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                             {
                                 !loading ?
@@ -94,29 +156,106 @@ const EditHut = (props) => {
                             // </Grid>
                         }
 
-
                         <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
                             <Chip label="Details" />
+                        </Divider>
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                            {
+                                !loading ? <><Typography><b>Description:</b></Typography>
+                                <TextField required fullWidth variant="standard" 
+                                value={description}
+                                multiline
+                                inputProps={
+                               { maxLength: 998 }
+                                 }
+                                    onChange={(e) => { setDescription(e.target.value) }}
+                                    ></TextField></> :
+                                    <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
+                            }
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                            {
+                                !loading ? <><Typography><b>Price:</b></Typography>
+                                <TextField required fullWidth variant="standard" 
+                                value={price}
+                                id="price"
+                    onChange={(e) => { setPrice(e.target.value) }}
+                                ></TextField></> :
+                                    <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
+                            }
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        {
+                                !loading ?
+                                    <Typography><b>Number of beds</b> {hut.numberOfBeds === "" || hut.numberOfBeds === null || hut.numberOfBeds === undefined ? "N/A" : hut.numberOfBeds}</Typography> :
+                                    <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
+                            }
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} mt={1}>
+                        {
+                                !loading ?
+                                    <Typography><b>Website:</b> {hut.website === "" || hut.website === null || hut.website === undefined ? "N/A" : hut.website}</Typography> :
+                                    <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
+                            }
+                        </Grid>
+                        <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
+                            <Chip label="Working Hours" />
                         </Divider>
 
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                             {
-                                !loading ? <><Typography><b>Price:</b></Typography><TextField required fullWidth variant="standard" value={hut.price === "" || hut.price === null || hut.price === undefined ? "N/A" : hut.price}></TextField></> :
+                                !loading ? <><Typography><b>Working time start:</b></Typography>
+                                <TextField required fullWidth variant="standard"
+                                 value={workingTimeStart}
+                                 id="workingTimeStart"
+                    onChange={(e) => { setWorkingTimeStart(e.target.value) }}
+                                 ></TextField></> :
                                     <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                             }
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                             {
-                                !loading ? <><Typography><b>Number of beds:</b></Typography><TextField required fullWidth variant="standard" value={hut.numberOfBeds === "" || hut.numberOfBeds === null || hut.numberOfBeds === undefined ? "N/A" : hut.numberOfBeds}></TextField></> :
+                                !loading ? <><Typography><b>Working time finish:</b></Typography>
+                                <TextField required fullWidth variant="standard"
+                                 value={workingTimeEnd}
+                                 id="workingTimeEnd"
+                                 onChange={(e) => { setWorkingTimeEnd(e.target.value) }}
+                                 ></TextField></> :
                                     <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                             }
                         </Grid>
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                            {
-                                !loading ? <><Typography><b>Website:</b></Typography><TextField required fullWidth variant="standard" value={hut.website === "" || hut.website === null || hut.website === undefined ? "N/A" : hut.website}></TextField></> :
-                                    <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
-                            }
-                        </Grid>
+                        {
+                show ?
+                    <Alert sx={{ mt: 3 }} variant="outlined" severity="error" onClose={() => { setErrorMessage(''); setShow(false) }}>{errorMessage}</Alert> : <></>
+            }
+                        <Grid >
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} mt={3} pl={5} pr={5}>
+                    <Button variant="outlined"
+                        startIcon={<DeleteIcon />}
+                        onClick={handleClear}
+                        sx={{
+                            color: "#1a1a1a",
+                            borderColor: "#1a1a1a",
+                            borderRadius: "50px",
+                            "&:hover": { backgroundColor: "#1a1a1a", color: "white", borderColor: "black" },
+                            textTransform: "none",
+                            align: "right"
+                        }}>
+                        Reset
+                    </Button>
+                    <Button variant="outlined"
+                        onClick={handleSubmit}
+                        sx={{
+                            color: "#1a1a1a",
+                            borderColor: "#1a1a1a",
+                            borderRadius: "50px",
+                            "&:hover": { backgroundColor: "#1a1a1a", color: "white", borderColor: "black" },
+                            textTransform: "none"
+                        }}>
+                        Submit
+                    </Button>
+                </Grid>
+            </Grid>
 
                         {
                             props?.user?.role == 4 ? <>
@@ -174,7 +313,7 @@ const EditHut = (props) => {
                             </>
                     }
                 </Grid> */}
-                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: "30px" }}>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: "60px" }}>
                         {
                             !loading ?
                                 <Typography variant="h4">Find us on the map</Typography>
@@ -221,6 +360,7 @@ const EditHut = (props) => {
                 </Grid>
 
             </Grid>
+            {/*
             {console.log(hut.description)};
             {console.log(hut.workingTimeEnd)};
             {console.log(hut.workingTimeStart)};
@@ -230,7 +370,7 @@ const EditHut = (props) => {
                         workingTimeStart={hut.workingTimeStart} workingTimeEnd={hut.workingTimeEnd}
                         modifyHutInformation={props.modifyHutInformation} price={hut.price} />
                 </Paper>
-            </Grid>
+                    </Grid>*/}
         </>
 
     );
@@ -239,7 +379,7 @@ const EditHut = (props) => {
 export { EditHut };
 
 
-
+{/*
 const EditHutForm = (props) => {
     const navigate = useNavigate()
     const match = useMatch('/edithut/:hutid')
@@ -392,4 +532,4 @@ const EditHutForm = (props) => {
     );
 }
 
-export { EditHutForm };
+export { EditHutForm };*/}

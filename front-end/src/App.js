@@ -128,6 +128,8 @@ function App2() {
     .catch((err)=>{console.log(err)})
 }
 
+
+{/*}
 const modifyHutInformation =(information, hutId, setShow, setErrorMessage) =>{
   API.modifyHutInformation(information, hutId)
      .then(newHut => {
@@ -139,7 +141,7 @@ const modifyHutInformation =(information, hutId, setShow, setErrorMessage) =>{
       setErrorMessage(err);
      })
  }
-
+*/}
 
   return (
     <>
@@ -163,7 +165,7 @@ const modifyHutInformation =(information, hutId, setShow, setErrorMessage) =>{
         <Route path="/hikerdashboard" element={<HikerDashboard user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/admindashboard" element={<AdminDashboard user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/hutWorkerHuts" element={<HutWorkerHuts isLoggedIn={loggedIn} doLogOut={doLogOut}/>}/>
-        <Route path="/edithut/:hutid" element={<EditHut user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} modifyHutInformation={modifyHutInformation}/>}/>
+        <Route path="/edithut/:hutid" element={<EditHut user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} modifyHutInformation={API.modifyHutInformation}/>}/>
       </Routes>
     </>
   );
