@@ -489,6 +489,35 @@ function modifyHutInformation(information, hutId) {
     })
 }
 
+function editHikeStartEndPoint(hikeId, startPoint, endPoint) {
+
+    const body = {
+        startPoint: startPoint,
+        endPoint: endPoint
+    }
+
+    return new Promise((resolve, reject) => {
+        fetch((APIURL + '/hikes/' + hikeId), {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(body),
+
+        }).then((async response => {
+            if (response.ok) {
+                const hikeUpdate = await response.json()
+                return hikeUpdate;
+            } else {
+                response.json()
+                    .then((message) => { reject(message); })
+                    .catch(() => { reject({ error: "Cannot communicate with the server" }) });
+            }
+        }))
+    })
+}
+
 
 const API = {
     getListOfHikes, getListOfGPXFiles, getPathByID,
@@ -498,6 +527,6 @@ const API = {
     logOut, signUp, addNewHut, addNewParkingLot, addNewGpx,
     addHike, getNotApprovedLocalGuides, getNotApprovedHutWorkers,
     approveUserByID, getPreferences, setPreferences, deleteHikeId,
-    getHutsHutWorker, modifyHutInformation
+    getHutsHutWorker, modifyHutInformation, editHikeStartEndPoint,
 }
 export default API
