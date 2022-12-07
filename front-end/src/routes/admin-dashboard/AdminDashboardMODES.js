@@ -242,11 +242,11 @@ export const AdminDashboardTABLET = (props) => {
                     </Grid>
                 </Grid>
 
-                <Grid container md={12} item sx={{marginTop: "14px", borderStyle: "solid", borderRadius: "15px", borderWidth: "1px", borderColor: "#bababa", width:"fit-content", display: "flex", justifyContent: "left"}}>
-                    <Grid item md={12} style={{ display: "flex", justifyContent: "center", width:"fit-content" }}>
+                <Grid container md={12} item sx={{ marginTop: "14px", borderStyle: "solid", borderRadius: "15px", borderWidth: "1px", borderColor: "#bababa", width: "fit-content", display: "flex", justifyContent: "left" }}>
+                    <Grid item md={12} style={{ display: "flex", justifyContent: "center", width: "fit-content" }}>
                         <FormControlLabel control={<Switch onChange={e => { props.setFilter({ 'hut': props.filter.hut, 'local': e.target.checked }) }} defaultChecked />} label="Show local guides requests" />
                     </Grid>
-                    <Grid item md={12} style={{ display: "flex", justifyContent: "center", width:"fit-content" }}>
+                    <Grid item md={12} style={{ display: "flex", justifyContent: "center", width: "fit-content" }}>
                         <FormControlLabel control={<Switch onChange={e => { props.setFilter({ 'hut': e.target.checked, 'local': props.filter.local }) }} defaultChecked />} label="Show hut workers requests" />
                     </Grid>
                 </Grid>
@@ -405,7 +405,7 @@ export const AdminDashboardMOBILE = (props) => {
                     </Typography>
                 </Grid>
             </Grid>
-            <Grid container item xs={6} justifyContent="center" height="fit-content" sx={{ marginBottom: "35px", marginTop: "18px" }}>
+            <Grid container item xs={10} justifyContent="center" height="fit-content" sx={{ marginBottom: "35px", marginTop: "18px" }}>
                 <Grid item xs={12}>
                     <Grid xs={12}>
                         <Typography className="unselectable" fontSize={24} textAlign={"center"}>
@@ -419,11 +419,11 @@ export const AdminDashboardMOBILE = (props) => {
                     </Grid>
                 </Grid>
 
-                <Grid container item xs={12} sx={{padding: "8px", marginTop: "14px", borderStyle: "solid", borderRadius: "15px", borderWidth: "1px", borderColor: "#bababa", display: "flex", justifyContent: "center"}}>
+                <Grid container item xs={12} sx={{ padding: "8px", marginTop: "14px", borderStyle: "solid", borderRadius: "15px", borderWidth: "1px", borderColor: "#bababa", display: "flex", justifyContent: "center" }}>
                     <Grid item xs={12} style={{ display: "flex", justifyContent: "center" }}>
                         <FormControlLabel control={<Switch onChange={e => { props.setFilter({ 'hut': props.filter.hut, 'local': e.target.checked }) }} defaultChecked />} label="Show local guides requests" />
                     </Grid>
-                    <Divider variant="middle" sx={{borderBottomWidth: 4}} />
+                    <Divider variant="middle" sx={{ borderBottomWidth: 4 }} />
                     <Grid item xs={12} style={{ display: "flex", justifyContent: "center" }}>
                         <FormControlLabel control={<Switch onChange={e => { props.setFilter({ 'hut': e.target.checked, 'local': props.filter.local }) }} defaultChecked />} label="Show hut workers requests" />
                     </Grid>
@@ -482,7 +482,7 @@ export const AdminDashboardMOBILE = (props) => {
                                                 <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
                                                     {request.firstName + " " + request.lastName}
                                                 </Typography>
-                                                <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}><GroupsIcon sx={{ marginRight: "20px" }} />Local guide</Typography>
+                                                {/* <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}><GroupsIcon sx={{ marginRight: "20px" }} />Local guide</Typography> */}
                                             </AccordionSummary>
                                             <AccordionDetails>
                                                 <Grid container>
@@ -495,7 +495,7 @@ export const AdminDashboardMOBILE = (props) => {
                                                     <Grid item xs={12}>
                                                         <Typography><b>Email</b>: {request.email}</Typography>
                                                     </Grid>
-                                                    <Grid item xs={12} sx={{ display: "flex", justifyContent: "right" }}>
+                                                    <Grid item xs={12} sx={{ display: "flex", justifyContent: "right", marginTop: "10px" }}>
                                                         {/* <div style={{ marginRight: "24px" }}> */}
                                                         <HTButton navigate={() => { props.acceptUser(request.id) }} text="Accept" textSize="18px" textColor="white" color="#33aa33" />
                                                         {/* </div> */}
@@ -512,7 +512,7 @@ export const AdminDashboardMOBILE = (props) => {
                                                 <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
                                                     {request.firstName + " " + request.lastName}
                                                 </Typography>
-                                                <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}><BadgeIcon sx={{ marginRight: "20px" }} />Hut worker</Typography>
+                                                {/* <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}><BadgeIcon sx={{ marginRight: "20px" }} />Hut worker</Typography> */}
                                             </AccordionSummary>
                                             <AccordionDetails>
                                                 <Grid container>
@@ -525,7 +525,7 @@ export const AdminDashboardMOBILE = (props) => {
                                                     <Grid item xs={12}>
                                                         <Typography><b>Email</b>: {request.email}</Typography>
                                                     </Grid>
-                                                    <Grid item xs={12} sx={{ display: "flex", justifyContent: "right" }}>
+                                                    <Grid item xs={12} sx={{ display: "flex", justifyContent: "right", marginTop: "10px" }}>
                                                         {/* <div style={{ marginRight: "24px" }}> */}
                                                         <HTButton navigate={() => { props.acceptUser(request.id) }} text="Accept" textSize="18px" textColor="white" color="#33aa33" />
                                                         {/* </div> */}
