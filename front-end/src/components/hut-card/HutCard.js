@@ -28,9 +28,20 @@ const HutCard = (props) => {
                         Number of beds: {props.hut.numberOfBeds} beds<br />
                     </Typography>
                 </CardContent>
+                {
+                    props.editable?
+                    
+                        <div style={{ marginRight: "12px", marginBottom: "12px", display: "flex", justifyContent: "right" }}>
+                    <Button text="Update condition linked hikes" fontSize="14px" color="#1a1a1a" textColor="white" navigate={() => { navigate('/hutWorkerHuts/linkedHikes') }} />
+                </div> 
+                : 
                 <div style={{ marginRight: "12px", marginBottom: "12px", display: "flex", justifyContent: "right" }}>
                     <Button text="Read more about" fontSize="14px" color="#1a1a1a" textColor="white" navigate={() => { navigate(`/showhut/${props.hut.id}`) }} />
                 </div>
+                    
+
+                }
+                
                 {
                 props.editable ?
                 <div style={{ marginRight: "12px", marginBottom: "12px", display: "flex", justifyContent: "right" }}>

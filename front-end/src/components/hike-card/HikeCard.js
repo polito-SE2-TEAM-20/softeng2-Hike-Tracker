@@ -87,6 +87,7 @@ function HikeItemImage(difficulty) {
             text = "Pro";
             bgColor = "#FA6952";
             break;
+        default: break;
     };
 
     return (<>
