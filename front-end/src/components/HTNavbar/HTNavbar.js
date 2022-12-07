@@ -238,6 +238,7 @@ function HTNavbar(props) {
                                     <Tooltip style={{ marginLeft: "20px" }}>
                                         <IconButton onClick={() => { navigate('/admindashboard') }} sx={{ p: 0 }}>
                                             <Button variant="outlined" sx={{
+                                                "&:hover": { borderColor: "#EBC824", color: "#EBC824" },
                                                 borderRadius: "24px", color: "white", textTransform: "none", borderColor: "white"
                                             }}><b>Dashboard</b></Button>
                                         </IconButton>
@@ -250,7 +251,7 @@ function HTNavbar(props) {
                             props.isLoggedIn ? <Tooltip style={{ marginLeft: "20px" }}>
                                 <IconButton onClick={() => { props.doLogOut() }} sx={{ p: 0 }}>
                                     <Button variant="outlined" sx={{
-                                        borderRadius: "24px", color: "white", textTransform: "none", borderColor: "white", 
+                                        borderRadius: "24px", color: "white", textTransform: "none", borderColor: "white",
                                         "&:hover": { borderColor: "#EBC824", color: "#EBC824" }
                                     }}><b>Sign out</b></Button>
                                 </IconButton>

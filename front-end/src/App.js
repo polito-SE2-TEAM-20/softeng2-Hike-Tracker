@@ -9,7 +9,6 @@ import SingleHike from './components/single-hike/SingleHike.js';
 import HTMainPage from './routes/main-page/HTMainPage';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { NavigationBar } from './Visuals/Navbar'
 import HTListOfHikes from './routes/list-of-hikes/HTListOfHikes';
 import { HTAddHike } from './NewHike/HTAddHike';
 import { NewHutForm } from './NewHut/NewHut';
@@ -20,8 +19,8 @@ import {EditHut} from './routes/edit-hut/EditHut'
 
 import { NewHikeStEnd } from './NewHike/NewHikeStEnd';
 
-import LoginForm from './Login/Login';
-import {SignUpForm} from './SignUp/SignUp';
+import LoginForm from './routes/login/Login';
+import {SignUpForm} from './routes/sign-up/SignUp';
 import HTHutPage from './routes/hut-page/HTHutPage';
 import {HutWorkerHuts} from './routes/my-huts/HutWorkerHuts'
 
@@ -130,6 +129,8 @@ function App2() {
     .catch((err)=>{console.log(err)})
 }
 
+
+{/*}
 const modifyHutInformation =(information, hutId, setShow, setErrorMessage) =>{
   API.modifyHutInformation(information, hutId)
      .then(newHut => {
@@ -141,7 +142,7 @@ const modifyHutInformation =(information, hutId, setShow, setErrorMessage) =>{
       setErrorMessage(err);
      })
  }
-
+*/}
 
   return (
     <>
@@ -151,7 +152,6 @@ const modifyHutInformation =(information, hutId, setShow, setErrorMessage) =>{
         <Route path="/listofhuts" element={<HTListOfHuts user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/browsehikes" element={<HTBrowseHikes user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/singlehike" element={<SingleHike user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
-        <Route path="/navbar" element={<NavigationBar user={user} />} />
         <Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut}/>} />
         {/*<Route path="/newHike" element={<HTAddHike user={user?.user} addNewGpx={API.addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />*/}
         <Route path="/signup" element={<SignUpForm doRegister={doRegister} />} />
@@ -168,7 +168,7 @@ const modifyHutInformation =(information, hutId, setShow, setErrorMessage) =>{
         <Route path="/hikerdashboard" element={<HikerDashboard user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/admindashboard" element={<AdminDashboard user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/hutWorkerHuts" element={<HutWorkerHuts isLoggedIn={loggedIn} doLogOut={doLogOut}/>}/>
-        <Route path="/edithut/:hutid" element={<EditHut user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} modifyHutInformation={modifyHutInformation}/>}/>
+        <Route path="/edithut/:hutid" element={<EditHut user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} modifyHutInformation={API.modifyHutInformation}/>}/>
       </Routes>
     </>
   );

@@ -9,7 +9,6 @@ import { Skeleton } from "@mui/material";
 import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, useMapEvents, ZoomControl, Polyline, useMap } from 'react-leaflet'
 import { UploadPictureDialog } from '../../components/map-filters/Dialogs'
 
-
 const Difficulty = (props) => {
     if (!props.loading) {
         return (
@@ -27,6 +26,16 @@ const Difficulty = (props) => {
 
 }
 
+const isEditable = (list, hutID) => {
+    for (let index in list) {
+        console.log(index)
+        if (list[index].id === hutID) {
+            return true
+        }
+    }
+    return false
+}
+
 const ShowHut = (props) => {
     const navigate = useNavigate()
     const match = useMatch('/showhut/:hutid')
@@ -34,17 +43,33 @@ const ShowHut = (props) => {
     const [hut, setHut] = useState({ title: "", numberOfBeds: -1, price: -1, ownerName: "", website: "", point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } })
     const [loading, setLoading] = useState(true)
     const [openPictureDialog, setOpenPictureDialog] = useState(false)
+    const [hutsHutWorker, setHutsHutWorker] = useState([])
 
     useEffect(() => {
         let tmpHike = { title: "", numberOfBeds: -1, price: -1, ownerName: "", website: "", point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } }
         const getHut = async () => {
             tmpHike = await API.getSingleHutByID(hutid)
         }
+
         getHut().then(() => {
             setHut(tmpHike)
             setLoading(false)
         })
     }, [])
+
+    useEffect(() => {
+        var tmpHutsHutWorker = []
+
+        const getHutsHutWorkerWrapper = async () => {
+            tmpHutsHutWorker = await API.getHutsHutWorker()
+        }
+
+        getHutsHutWorkerWrapper().then(() => {
+            setHutsHutWorker(tmpHutsHutWorker)
+            console.log(hutsHutWorker)
+            setLoading(false)
+        })
+    }, [hut])
 
 
     const gotoLogin = () => {
@@ -55,7 +80,7 @@ const ShowHut = (props) => {
         <Grid container style={{ minHeight: "100vh", height: "100%" }}>
             <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
             <Grid style={{ marginTop: "105px", marginLeft: "auto", marginRight: "auto", marginBottom: "25px", height: "40vh" }} item lg={3}>
-                <Paper style={{ padding: "30px", height: "50vh" }}>
+                <Paper style={{ padding: "30px", height: "fit-content" }}>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         <Typography variant="h4">General information</Typography>
                     </Grid>
@@ -106,31 +131,39 @@ const ShowHut = (props) => {
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
+                            !loading ? <Typography><b>Working time: </b>
+                                {hut.workingTimeStart === "" || hut.workingTimeStart === null || hut.workingTimeStart === undefined ?
+                                    "not provided"
+                                    : hut.workingTimeStart} - {hut.workingTimeEnd === "" || hut.workingTimeEnd === null || hut.workingTimeEnd === undefined ?
+                                        "not provided"
+                                        : hut.workingTimeEnd}
+                            </Typography> :
+                                <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
+                        }
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        {
                             !loading ? <Typography><b>Website:</b> {hut.website === "" || hut.website === null || hut.website === undefined ? "not provided" : <a href={`https://${hut.website}`}>{hut.website}</a>}</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
 
                     {
-                        props?.user?.role == 4 ? <>
-                            <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
-                                <Chip label="Add a new image" />
-                            </Divider>
-                            <UploadPictureDialog open={openPictureDialog} setOpen={setOpenPictureDialog} />
-                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        props?.user?.role === 4 ? <>
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ marginTop: "15px" }}>
                                 {
-                                    !loading ? <Button variant="outlined"
-                                        onClick={() => { setOpenPictureDialog(true) }}
-                                        sx={{
-                                            color: "#1a1a1a",
-                                            borderColor: "#1a1a1a",
-                                            borderRadius: "50px",
-                                            "&:hover": { backgroundColor: "#1a1a1a", color: "white", borderColor: "black" },
-                                            textTransform: "none"
-                                        }}>
-                                        Upload a new picture
-                                    </Button> :
-                                        <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
+                                    !loading && isEditable(hutsHutWorker, hut?.id) ?
+                                        <Button variant="outlined"
+                                            onClick={() => { navigate("/edithut/" + hut.id) }}
+                                            sx={{
+                                                color: "#1a1a1a",
+                                                borderColor: "#1a1a1a",
+                                                borderRadius: "50px",
+                                                "&:hover": { backgroundColor: "#1a1a1a", color: "white", borderColor: "black" },
+                                                textTransform: "none"
+                                            }}>
+                                            Edit
+                                        </Button> : <></>
                                 }
                             </Grid>
                         </> : <></>
@@ -149,10 +182,10 @@ const ShowHut = (props) => {
                         <Difficulty loading={loading} diff={hut.difficulty} />
                     </Divider>
                 </Grid>
-                {/* <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: "30px" }}>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: "30px" }}>
                     {
                         !loading ?
-                            <Typography variant="h4">Some information on this hike</Typography>
+                            <Typography variant="h4">Some information on this hut</Typography>
                             : <Typography variant="h4">Loading...</Typography>
                     }
                 </Grid>
@@ -165,7 +198,7 @@ const ShowHut = (props) => {
                                 <Skeleton variant='rectangular' height={20} width={150} style={{ marginBottom: "10px" }} />
                             </>
                     }
-                </Grid> */}
+                </Grid>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: "30px" }}>
                     {
                         !loading ?

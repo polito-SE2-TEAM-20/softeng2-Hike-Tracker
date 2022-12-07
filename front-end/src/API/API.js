@@ -336,7 +336,11 @@ function addHike(hike) {
 
 const getNotApprovedLocalGuides = async () => {
     const response = await fetch((APIURL + '/auth/not_approved/local_guides'), {
-        method: 'GET'
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        }
     });
     if (response.ok) {
         const listOfNotApprovedLocalGuides = await response.json()
@@ -349,7 +353,11 @@ const getNotApprovedLocalGuides = async () => {
 
 const getNotApprovedHutWorkers = async () => {
     const response = await fetch((APIURL + '/auth/not_approved/hut_workers'), {
-        method: 'GET'
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        }
     });
     if (response.ok) {
         const listOfNotApprovedHutWorkers = await response.json()
@@ -362,9 +370,13 @@ const getNotApprovedHutWorkers = async () => {
 
 const approveUserByID = async (id) => {
     const response = await fetch((APIURL + '/auth/approve_user/' + id), {
-        method: 'PUT'
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        }
     });
-    if (!response.ok) {
+    if (response.ok) {
         return true
     } else {
         const errDetail = await response.json();
@@ -377,14 +389,17 @@ const approveUserByID = async (id) => {
 // GET me/preferences ti ritorna un oggetto json con tutte le preferenze dell'utente
 const getPreferences = async () => {
     const response = await fetch((APIURL + "/me/preferences"), {
-        method: 'GET'
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        }
     })
     if (response.ok) {
         const preferences = await response.json()
         return preferences
-    } else {
-        const errDetail = await response.json()
-        throw errDetail.message;
+    } else if (response.status == 404) {
+        return {}
     }
 }
 
@@ -400,14 +415,17 @@ const getPreferences = async () => {
 //     "ascent": 100
 // }
 const setPreferences = async (preferences) => {
+    console.log(preferences)
     const response = await fetch((API + '/me/set_preferences'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
         },
         body: JSON.stringify(preferences)
     })
-    if(response.ok) {
+    if (response.ok) {
         return true
     } else {
         const errDetail = await response.json()
@@ -422,8 +440,8 @@ const deleteHikeId = async (hikeID) => {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
         }
     })
-    if(response.ok) {
-        
+    if (response.ok) {
+
         const rowsAffected = await response.json();
         return rowsAffected;
     } else {
@@ -454,7 +472,7 @@ function modifyHutInformation(information, hutId) {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             body: JSON.stringify(information),
 
@@ -479,7 +497,7 @@ const API = {
     getSingleHutByID, getListOfHutsAndParkingLots, logIn,
     logOut, signUp, addNewHut, addNewParkingLot, addNewGpx,
     addHike, getNotApprovedLocalGuides, getNotApprovedHutWorkers,
-    approveUserByID, getPreferences, setPreferences, deleteHikeId, 
+    approveUserByID, getPreferences, setPreferences, deleteHikeId,
     getHutsHutWorker, modifyHutInformation
 }
 export default API

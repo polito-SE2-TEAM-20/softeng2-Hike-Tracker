@@ -15,7 +15,7 @@ import HikingIcon from '@mui/icons-material/Hiking';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SignUp.css'
-import API from '../API/API.js';
+import API from '../../API/API.js';
 
 function Copyright(props) {
   return (
@@ -50,7 +50,7 @@ function SignUpForm(props) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [informationMessage, setInformationMessage] = useState('');
-  const [showInformation, setShowInformation ] = useState('');
+  const [showInformation, setShowInformation ] = useState(false);
   const [hutId, setHutId] = useState();
   const [listHuts, setListHuts] = useState([]);
 
@@ -59,7 +59,7 @@ function SignUpForm(props) {
   const handleSubmit = (event) => {
     event.preventDefault();
     setErrorMessage('');
-    setInformationMessage('');
+    setInformationMessage(false);
     let valid = true;
     if(firstName.trim().length=== 0 || lastName.trim().length===0 || email.trim().length===0 || password.trim().length===0){
       setErrorMessage('Please fill all the requested fields');
@@ -70,15 +70,21 @@ function SignUpForm(props) {
       setErrorMessage('Password do not match');
       setShow(true);
     } else if (valid) {
-      let id;
+      let hutIds;
       if(role!==4){
-        id= null
+        hutIds= null;
+        const credentials = {email, firstName, lastName, password, role, phoneNumber};
+        props.doRegister(credentials, setShow, setErrorMessage, setInformationMessage, setShowInformation);
+
       }else{
-        id = hutId
+        hutIds = [hutId];
+        const credentials = { email, firstName, lastName, password, role, phoneNumber, hutIds};
+        props.doRegister(credentials, setShow, setErrorMessage, setInformationMessage, setShowInformation);
+
       }
-      const credentials = { email, firstName, lastName, password, role, phoneNumber, id};
-      // const credentials = {email, firstName, lastName, password, role, phoneNumber};
-      props.doRegister(credentials, setShow, setErrorMessage, setInformationMessage, setShowInformation);
+      //const credentials = { email, firstName, lastName, password, role, phoneNumber, id};
+     // const credentials = {email, firstName, lastName, password, role, phoneNumber};
+      // props.doRegister(credentials, setShow, setErrorMessage, setInformationMessage, setShowInformation);
     }
   }
 
@@ -274,9 +280,9 @@ function RoleSelect(props) {
         <MenuItem value={2}>
           Local Guide
         </MenuItem>
-        {/*<MenuItem value={3}>
+        <MenuItem value={3}>
           Platform Manager
-</MenuItem>*/}
+          </MenuItem>
         <MenuItem value={4}>
           Hut Worker
         </MenuItem>
