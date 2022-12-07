@@ -39,6 +39,7 @@ export class UsersService extends BaseService<User> {
         difficultyMax: body.difficultyMax,
         ascentMax: body.ascentMax,
         ascentMin: body.ascentMin,
+        suggestionType: body.suggestionType,
       },
     });
     return user.preferences;

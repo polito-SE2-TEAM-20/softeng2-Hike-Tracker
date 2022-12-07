@@ -4,7 +4,8 @@ import {
     IsNumber,
     Min,
     IsEnum,
-    IsInt
+    IsInt,
+    IsBoolean
   } from 'class-validator';
 
 import { HikeDifficulty } from '@app/common';
@@ -48,5 +49,8 @@ export class PreferencesDto {
   
     @IsNumber()
     ascentMin?: number;
+
+    @IsBoolean()
+    suggestionType?: boolean;
   }
   
