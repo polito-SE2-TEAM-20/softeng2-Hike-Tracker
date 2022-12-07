@@ -2,6 +2,8 @@ import { Pool, PoolConfig } from 'pg';
 import type { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import { v4 as uuidv4 } from 'uuid';
 
+import { escapeIdentifier } from '@app/common';
+
 /**
  * Get raw pg config (not typeorm)
  */
@@ -18,7 +20,7 @@ const createDatabase = async (dbName: string) => {
     ...getPgConfig('postgres'),
   });
 
-  await pool.query(`CREATE DATABASE "${dbName}";`);
+  await pool.query(`CREATE DATABASE ${escapeIdentifier(dbName)}`);
   await pool.end();
 
   const poolInDb = new Pool({
@@ -58,7 +60,7 @@ export async function dropDatabase(dbName: string) {
     ...getPgConfig('postgres'),
   });
 
-  await pool.query(`DROP DATABASE IF EXISTS "${dbName}";`);
+  await pool.query(`DROP DATABASE IF EXISTS ${escapeIdentifier(dbName)}`);
   await pool.end();
 }
 

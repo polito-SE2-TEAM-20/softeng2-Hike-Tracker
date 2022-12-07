@@ -15,6 +15,8 @@ const DEST_DIR = './result/';
 
 const LOCAL_GUIDE_ID = 2;
 const HASH_ROUNDS = 10;
+const DB_USERNAME = 'germangorodnev'
+
 const XML_TAG = '<?xml version="1.0" encoding="UTF-8" standalone="no" ?>';
 const GPX_XMLNS = `xmlns="http://www.topografix.com/GPX/1/1"`;
 const GPX_VERSION = `version="1.1"`;
@@ -86,15 +88,22 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
   }
 
   // now prepare sql for inserting them
-  const schemaSql = await prepareSchemaSql()
   const usersSql = await prepareUsersSql();
   const hikesSql = prepareHikesSql(allHikesSaved);
-  writeFileSync(join('./result/init.sql'), [schemaSql, usersSql, hikesSql].join('\n'));
+
+  // fill local db and export it
+
+  const schemaSql = await prepareSchemaSql()
+  writeFileSync(join('./result/init.sql'), [
+    schemaSql,
+    usersSql,
+    hikesSql
+  ].join('\n'));
 })()
 
 async function prepareSchemaSql() {
   return new Promise((res, rej) => {
-    exec(`source .env && echo "$DB_PASSWORD" | pg_dump --no-owner --no-acl  -s --username germangorodnev hiking`, (error, stdout, stderr) => {
+    exec(`source .env && echo "$DB_PASSWORD" | pg_dump -s --no-owner --no-acl --username ${DB_USERNAME} hiking`, (error, stdout, stderr) => {
       if (error) {
         return rej(error);
       }
@@ -109,9 +118,11 @@ async function prepareSchemaSql() {
 
 function prepareTableSql() {
   return `
-    CREATE USER softeng;
-    CREATE DATABASE hiking;
-    GRANT ALL PRIVILEGES ON DATABASE hiking TO softeng;
+    -- CREATE USER softeng;
+    -- CREATE USER softeng WITH PASSWORD 'demo-pass';
+    -- DROP DATABASE IF EXISTS hiking_demo;
+    -- CREATE DATABASE hiking_demo;
+    -- GRANT ALL PRIVILEGES ON DATABASE hiking_demo TO ${DB_USERNAME};
   `
 }
 

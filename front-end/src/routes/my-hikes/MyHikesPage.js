@@ -3,14 +3,16 @@ import API from '../../API/API.js';
 import { useEffect, useState } from 'react';
 import HTNavbar from '../../components/HTNavbar/HTNavbar';
 import { Grid, Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import HikeCard from '../../components/hike-card/HikeCard';
 import HikeItemLoadingEffect from './HikeItemLoadingEffect';
+import emptyStateImage from '../../Assets/empty-state.jpg'
+import { useNavigate } from 'react-router';
+import HikeCard from '../../components/hike-card/HikeCard.js';
+
 
 function MyHikesPage(props) {
     const [myHikes, setMyHikes] = useState([])
-    const navigate = useNavigate()
     const [loading, setLoading] = useState(true)
+    const navigate = useNavigate()
 
     useEffect(() => {
         setLoading(true);
@@ -31,22 +33,18 @@ function MyHikesPage(props) {
     return (
         <>
             <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} />
-            <Grid container style={{ marginTop: 80 }}>
-                <Grid item >
-                    <Grid container style={{justifyContent: "center"}}>
-                        {/* Loading effects */}
-                        {loading && 
-                            [1,1,1,1,1,1,1,1,1].map(item => {
-                                return <HikeItemLoadingEffect/>
-                            })
-                        }
-                        
-                        {/* Showing that you haven't created any hike */}
-                        {(!loading && myHikes.length == 0) && 
-                            <Typography fontFamily={"Bakbak One, display"} fontWeight="600">
-                                You haven't created any hikes.
-                            </Typography>
-                        }
+            <Grid container style={{justifyContent: "center", marginTop: 80}}>
+                {/* Loading effects */}
+                {loading && 
+                    [1,1,1,1,1,1,1,1,1].map(item => {
+                        return <HikeItemLoadingEffect/>
+                    })
+                }
+                
+                {/* Showing that you haven't created any hike */}
+                {(!loading && myHikes.length == 0) && 
+                    <NoItemView navigate={navigate}/>
+                }
 
                         {/* Shwoing hikes when it is not loading and you created at least one hike before */}
                         {(!loading && myHikes.length > 0) &&
@@ -58,11 +56,30 @@ function MyHikesPage(props) {
                                 );
                             })
                         }
-                    </Grid>
-                </Grid>
             </Grid>
         </>
     );
+}
+
+function NoItemView(props) {
+    return (
+        <Grid 
+            container
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justifyContent="center">
+            <Grid item>
+                <img
+                    src={emptyStateImage}
+                    loading="lazy"
+                />
+            </Grid>
+            <Typography item fontFamily={"Bakbak One, display"} fontWeight="600">
+                You haven't created any hikes.
+            </Typography>
+        </Grid>
+    )
 }
 
 export {MyHikesPage}

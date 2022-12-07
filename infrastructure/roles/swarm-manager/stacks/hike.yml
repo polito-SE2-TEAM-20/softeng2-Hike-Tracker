@@ -35,6 +35,7 @@
     mode: '0777'
   loop:
     - uploads/gpx
+    - uploads/images
 
 - name: Create rabbit data dir
   file:

@@ -489,6 +489,37 @@ function modifyHutInformation(information, hutId) {
     })
 }
 
+async function editHikeStartEndPoint(hikeId, startPoint, endPoint) {
+
+    const body = {
+        startPoint: startPoint,
+        endPoint: endPoint
+    }
+
+    const response = await fetch((APIURL + '/hikes/' + hikeId), {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(body),
+
+    });
+
+    if (response.ok) {
+        const hikeUpdate = response.json()
+        return hikeUpdate;
+    } else {
+        try {
+            const errDetail = response.json();
+            throw errDetail.message;
+        }
+        catch (err) {
+            throw err;
+        }
+    }
+}
+
 
 async function getHikesUpdatableHutWorker() {
     let response = await fetch((APIURL + '/hikes/hutWorkerHikes'), {
@@ -516,6 +547,6 @@ const API = {
     logOut, signUp, addNewHut, addNewParkingLot, addNewGpx,
     addHike, getNotApprovedLocalGuides, getNotApprovedHutWorkers,
     approveUserByID, getPreferences, setPreferences, deleteHikeId,
-    getHutsHutWorker, modifyHutInformation, getHikesUpdatableHutWorker
+    getHutsHutWorker, modifyHutInformation, editHikeStartEndPoint, getHikesUpdatableHutWorker
 }
 export default API

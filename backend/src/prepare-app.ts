@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 

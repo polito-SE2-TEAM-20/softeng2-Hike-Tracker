@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -93,7 +94,7 @@ export class HutsController {
       .getOne();
 
     if (!hut) {
-      throw new Error(`Hut ${id} not found`);
+      throw new BadRequestException(`Hut ${id} not found`);
     }
 
     return hut;
