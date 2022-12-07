@@ -228,7 +228,7 @@ function EditHikePage(props) {
                 setEndPointLon(endPoint.entity.point.position.coordinates[0])
                 setEndPointLat(endPoint.entity.point.position.coordinates[1])
                 setEndPointType(SelectStartEndPointType.PARKING)
-                setEndPointParking(endPoint)
+                setEndPointParking(endPoint.entity)
                 setEndPointHut(null)
                 break;
             }
