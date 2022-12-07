@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs-extra';
-import { isNil, propEq } from 'ramda';
+import { isEmpty, isNil, keys, propEq } from 'ramda';
 import { DataSource, In } from 'typeorm';
 
 import {
@@ -370,7 +370,9 @@ export class HikesController {
     // update start and end point
     await this.service.upsertStartEndPoints({ id, startPoint, endPoint });
 
-    await this.service.getRepository().update({ id }, data);
+    if (!isEmpty(keys(data))) {
+      await this.service.getRepository().update({ id }, data);
+    }
 
     return await this.service.getFullHike(id);
   }
