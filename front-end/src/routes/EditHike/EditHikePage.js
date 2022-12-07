@@ -9,11 +9,13 @@ import Stack from "@mui/material/Stack";
 import { Paper } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import EditIcon from '@mui/icons-material/Edit';
-import { Map } from '../../NewHike/Map';
 import API from "../../API/API";
 import { HikeGeneralInformationView } from "./HikeGeneralInformationView";
 import { SelectStartEndPoint, SelectStartEndPointMode, SelectStartEndPointType } from "./SelectStartEndPoint";
 import { getInformation } from "../../lib/common/Address";
+import { Map } from "./Map";
+import HTNavbar from "../../components/HTNavbar/HTNavbar";
+import { PopupEditHike } from "./PopupEditHike";
 
 
 
@@ -52,8 +54,8 @@ function EditHikePage(props) {
     const [startPointLat, setStartPointLat] = useState('');
     const [startPointName, setStartPointName] = useState('Start Point');
     const [startPointAdd, setStartPointAdd] = useState('');
-    const [startPointHut, setStartPointHut] = useState('');
-    const [startPointParking, setStartPointParking] = useState('');
+    const [startPointHut, setStartPointHut] = useState(null);
+    const [startPointParking, setStartPointParking] = useState(null);
 
     //End point params
     const [endPointType, setEndPointType] = useState('');
@@ -61,8 +63,8 @@ function EditHikePage(props) {
     const [endPointLon, setEndPointLon] = useState('');
     const [endPointName, setEndPointName] = useState('End Point');
     const [endPointAdd, setEndPointAdd] = useState('');
-    const [endPointHut, setEndPointHut] = useState('');
-    const [endPointParking, setEndPointParking] = useState('');
+    const [endPointHut, setEndPointHut] = useState(null);
+    const [endPointParking, setEndPointParking] = useState(null);
 
     const [newReferencePoint, setNewReferencePoint] = useState(false);
     const [listReferencePoint, setListReferencePoint] = useState([]);
@@ -191,16 +193,24 @@ function EditHikePage(props) {
                 setStartPointLat(startPoint.point.position.coordinates[1])
                 setStartPointName(startPoint.point.name)
                 setStartPointAdd(startPoint.point.address)
+                setStartPointHut(null)
+                setStartPointParking(null)
                 break;
             }
-            case "parking": {
-                //TODO get lat long by gpx file
-                //TODO get parking details by id
+            case "parkingLot": {
+                setStartPointLon(startPoint.entity.point.position.coordinates[0])
+                setStartPointLat(startPoint.entity.point.position.coordinates[1])
+                setStartPointType(SelectStartEndPointType.PARKING)
+                setStartPointParking(startPoint.entity)
+                setStartPointHut(null)
                 break;
             }
             case "hut": {
-                //TODO get lat long by gpx file
-                //TODO get hut details
+                setStartPointLon(startPoint.entity.point.position.coordinates[0])
+                setStartPointLat(startPoint.entity.point.position.coordinates[1])
+                setStartPointType(SelectStartEndPointType.HUT)
+                setStartPointHut(startPoint.entity)
+                setStartPointParking(null)
                 break;
             }
         }
@@ -214,14 +224,20 @@ function EditHikePage(props) {
                 setEndPointAdd(endPoint.point.address)
                 break;
             }
-            case "parking": {
-                //TODO get lat long by gpx file
-                //TODO get parking details by id
+            case "parkingLot": {
+                setEndPointLon(endPoint.entity.point.position.coordinates[0])
+                setEndPointLat(endPoint.entity.point.position.coordinates[1])
+                setEndPointType(SelectStartEndPointType.PARKING)
+                setEndPointParking(endPoint)
+                setEndPointHut(null)
                 break;
             }
             case "hut": {
-                //TODO get lat long by gpx file
-                //TODO get hut details
+                setEndPointLon(endPoint.entity.point.position.coordinates[0])
+                setEndPointLat(endPoint.entity.point.position.coordinates[1])
+                setEndPointType(SelectStartEndPointType.HUT)
+                setEndPointHut(endPoint.entity)
+                setEndPointParking(null)
                 break;
             }
         }
@@ -321,18 +337,27 @@ function EditHikePage(props) {
             let end = {};
             switch(startPointType) {
                 case SelectStartEndPointType.COORDINATES: {
-                    start = { name: startPointName, address: information.display_name, lat: startPointLat, lon: startPointLon };
+                    start = { 
+                        name: startPointName,
+                        address: information.display_name, 
+                        lat: startPointLat, 
+                        lon: startPointLon 
+                    };
                     break;
                 }
                 case SelectStartEndPointType.PARKING: {
                     if (startPointParking !== null) {
-                        start = { parkingLotId: startPointParking.id, address: startPointParking.point.address };
+                        start = { 
+                            parkingLotId: startPointParking.id                      
+                        };
                     }
                     break;
                 }
                 case SelectStartEndPointType.HUT: {
                     if (startPointHut !== null) {
-                        start = { hutId: startPointHut.id, address: startPointHut.point.address };
+                        start = { 
+                            hutId: startPointHut.id
+                        };
                     }
                     break;
                 }
@@ -340,64 +365,70 @@ function EditHikePage(props) {
 
             switch(endPointType) {
                 case SelectStartEndPointType.COORDINATES: {
-                    end = { name: endPointName, address: endPointAdd, lat: endPointLat, lon: endPointLon }
+                    end = { 
+                        name: startPointName,
+                        address: information.display_name, 
+                        lat: startPointLat, 
+                        lon: startPointLon 
+                    };
                     break;
                 }
                 case SelectStartEndPointType.PARKING: {
                     if (endPointParking !== null) {
-                        end = { parkingLotId: endPointParking.id, address: endPointParking.point.address };
+                        end = { 
+                            parkingLotId: endPointParking.id
+                        };
                     } 
                     break;
                 }
                 case SelectStartEndPointType.HUT: {
                     if (endPointHut !== null) {
-                        end = { hutId: endPointHut.id, address: endPointParking.point.address };
+                        end = { 
+                            hutId: endPointHut.id
+                        };
                     }
                     break;
                 }
             }
 
-            const length = parseFloat(lengthStr);
-            const expectedTime = parseInt(expectedTimeStr);
-            const ascent = parseFloat(ascentStr);
-            const difficulty = parseFloat(difficultyStr);
-            const formData = new FormData();
-            formData.append('title', title);
-            formData.append('length', length);
-            formData.append('expectedTime', expectedTime);
-            formData.append('ascent', ascent);
-            formData.append('difficulty', difficulty);
-            formData.append('description', description);
-            formData.append('region', region);
-            formData.append('province', province);
-            formData.append('referencePoints', JSON.stringify(listReferencePoint));
-            formData.append('startPoint', JSON.stringify(start));
-            formData.append('endPoint', JSON.stringify(end));
-            //controllare che questi ultimi due funzionino 
-            formData.append('country', country);
-            formData.append('city', city);
-            
-            //TODO: Handle updating hike
+            API.editHikeStartEndPoint(hikeId, start, end)
+                .then((result) => {
+                    setOpen(true);
+                    setErr(null)
+                })
+                .catch((err) => {
+                    setOpen(true);
+                    setErr(err)
+                });
 
-            setFileContents(null);
-            setTitle(''); setLengthStr(''); setAscentStr(''); setExpectedTimeStr('');
-            setDifficultyStr(0); setCountry(''); setRegion('');
-            setProvince(''); setCity(''); setDescription(''); setPositionsState([]); setErrorMessage(''); setShow('');
-            setPuntiDaTrack([]); setInformation(''); setStartPointLon('');
-            setStartPointLat(''); setStartPointName('Start Point'); setStartPointAdd('');
-            setEndPointLat('');
-            setEndPointLon('');
-            setEndPointName('End Point');
-            setEndPointAdd('');
-            setNewReferencePoint(false);
-            setListReferencePoint([]); setReferencePoint([]); setReferencePointLat(' '); setReferencePointLon(' ');
-            setReferencePointName(''); setReferencePointAdd('');
+            // if (result) {
+            //     setErr(null)
+            //     setOpen(true)
+            // }
+
+            // setFileContents(null);
+            // setTitle(''); setLengthStr(''); setAscentStr(''); setExpectedTimeStr('');
+            // setDifficultyStr(0); setCountry(''); setRegion('');
+            // setProvince(''); setCity(''); setDescription(''); setPositionsState([]); setErrorMessage(''); setShow('');
+            // setPuntiDaTrack([]); setInformation(''); setStartPointLon('');
+            // setStartPointLat(''); setStartPointName('Start Point'); setStartPointAdd('');
+            // setEndPointLat('');
+            // setEndPointLon('');
+            // setEndPointName('End Point');
+            // setEndPointAdd('');
+            // setNewReferencePoint(false);
+            // setListReferencePoint([]); setReferencePoint([]); setReferencePointLat(' '); setReferencePointLon(' ');
+            // setReferencePointName(''); setReferencePointAdd('');
 
         }
     }
     
     return (
         <React.Fragment>
+            <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} />
+            {
+                <PopupEditHike id={hikeId} err={err} open={open} setOpen={setOpen}/>
+            }
             {
                 loading && 
                 <Grid
@@ -465,7 +496,7 @@ function EditHikePage(props) {
                                     pointLat={endPointLat} setPointLat={setEndPointLat}
                                     pointLon={endPointLon} setPointLon={setEndPointLon}
                                     pointType={endPointType} setPointType={setEndPointType}
-                                    pointHut={endPointHut} setHut={setEndPointHut}
+                                    hut={endPointHut} setHut={setEndPointHut}
                                     parking={endPointParking} setParking={setEndPointParking}
                                     information={informationEnd}
                                 />
@@ -552,7 +583,7 @@ function EditHikePage(props) {
                                 </Button>
                             </Stack>
                         }
-                        <Grid sx={{ p: 2, ml: 5, mr: 5 }}>
+                        {/* <Grid sx={{ p: 2, ml: 5, mr: 5 }}>
                             <Paper elevation={5}>
                                 <Map 
                                     startPointLat={startPointLat} startPointLon={startPointLon} 
@@ -561,7 +592,7 @@ function EditHikePage(props) {
                                     puntiDaTrack={puntiDaTrack} referencePoint={referencePoint} 
                                     setReferencePoint={setReferencePoint} listReferencePoint={listReferencePoint} />
                             </Paper>
-                        </Grid>
+                        </Grid> */}
                     </Grid>
                 </Grid>
             }

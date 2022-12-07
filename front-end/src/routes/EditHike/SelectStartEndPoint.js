@@ -111,9 +111,19 @@ function Hut(props) {
     const [listHuts, setListHuts] = useState([]);
 
     useEffect(() => {
+
+        let lon, lat;
+        if (props.hut !== null) {
+            lon = props.hut.point.position.coordinates[0]
+            lat = props.hut.point.position.coordinates[1]
+        } else {
+            lon = props.pointLon
+            lat = props.pointLat
+        }
+
         let radiusPoint= {
-            lon: parseFloat(props.pointLon), 
-            lat: parseFloat(props.pointLat), 
+            lon: parseFloat(lon), 
+            lat: parseFloat(lat), 
             radiusKms: parkingAndHutDiscoveryRadius
         }
         const getHutsPlot = async () => {
@@ -130,7 +140,7 @@ function Hut(props) {
             <Select
                 labelId="demo-simple-select-label"
                 id="demo-seimple-select"
-                value={props.hut.id}
+                value={props.hut?.id}
                 fullWidth
                 name="hutId"
                 variant="standard"
@@ -157,9 +167,19 @@ function Parking(props) {
     const [listParking, setListParking] = useState([]);
 
     useEffect(() => {
+
+        let lon, lat;
+        if (props.parking !== null) {
+            lon = props.parking.point.position.coordinates[0]
+            lat = props.parking.point.position.coordinates[1]
+        } else {
+            lon = props.pointLon
+            lat = props.pointLat
+        }
+
         let radiusPoint= {
-            lon: parseFloat(props.pointLon), 
-            lat: parseFloat(props.pointLat), 
+            lon: parseFloat(lon), 
+            lat: parseFloat(lat), 
             radiusKms:parkingAndHutDiscoveryRadius
         }
         const getHutsPlot = async () => {
@@ -176,7 +196,7 @@ function Parking(props) {
             <Select
                 labelId="demo-simple-select-label"
                 id="demo-seimple-select"
-                value={props.parking.id}
+                value={props.parking?.id}
                 fullWidth
                 name="parkingId"
                 variant="standard"

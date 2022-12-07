@@ -163,7 +163,7 @@ const modifyHutInformation =(information, hutId, setShow, setErrorMessage) =>{
         <Route path="/showhut/:hutid" element={<ShowHut user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />}/>
         <Route path="/newParking" element={<NewParking user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} addNewParkingLot={API.addNewParkingLot}/>}/>
         <Route path="/newHikeStEnd" element={<NewHikeStEnd addNewGpx={API.addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
-        <Route path="/edithike/:hikeid" element={<EditHikePage isLoggedIn={loggedIn} doLogOut={doLogOut}/>} />
+        <Route path="/edithike/:hikeid" element={<EditHikePage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut}/>} />
         <Route path="/newHike" element={<NewHikeStEnd addNewGpx={API.addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user?.user}/>} />
         <Route path="/hikerdashboard" element={<HikerDashboard user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/admindashboard" element={<AdminDashboard user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />

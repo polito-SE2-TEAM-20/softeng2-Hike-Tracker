@@ -489,33 +489,35 @@ function modifyHutInformation(information, hutId) {
     })
 }
 
-function editHikeStartEndPoint(hikeId, startPoint, endPoint) {
+async function editHikeStartEndPoint(hikeId, startPoint, endPoint) {
 
     const body = {
         startPoint: startPoint,
         endPoint: endPoint
     }
 
-    return new Promise((resolve, reject) => {
-        fetch((APIURL + '/hikes/' + hikeId), {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
-            body: JSON.stringify(body),
+    const response = await fetch((APIURL + '/hikes/' + hikeId), {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(body),
 
-        }).then((async response => {
-            if (response.ok) {
-                const hikeUpdate = await response.json()
-                return hikeUpdate;
-            } else {
-                response.json()
-                    .then((message) => { reject(message); })
-                    .catch(() => { reject({ error: "Cannot communicate with the server" }) });
-            }
-        }))
-    })
+    });
+
+    if (response.ok) {
+        const hikeUpdate = response.json()
+        return hikeUpdate;
+    } else {
+        try {
+            const errDetail = response.json();
+            throw errDetail.message;
+        }
+        catch (err) {
+            throw err;
+        }
+    }
 }
 
 
