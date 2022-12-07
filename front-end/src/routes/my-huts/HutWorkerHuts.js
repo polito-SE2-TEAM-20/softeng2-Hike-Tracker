@@ -5,11 +5,26 @@ import HTNavbar from '../../components/HTNavbar/HTNavbar';
 import { Grid, Typography, Skeleton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import HutCard from '../../components/hut-card/HutCard';
+import {HikesLinked} from './HikesLinked';
 
 function HutWorkerHuts(props) {
     const [myHuts, setMyHuts] = useState([])
     const navigate = useNavigate()
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(true);
+    const [loaded, setLoaded] = useState(true);
+    const [hikesUpdatable, setHikesUpdatable] = useState([]);
+    const [modifyHut, setModifyHut] = useState(false);
+    const [cause, setCause] = useState("");
+    const [hikeCondition, setHikeCondition] = useState(-1);
+    {/*
+    enum HikeCondition{
+        open=0,
+        closed=1, 
+        partiallyBlocked=2,
+        specialGearRequired=3}
+    }
+
+*/ }
 
     useEffect(() => {  
         setLoading(true);
@@ -17,7 +32,15 @@ function HutWorkerHuts(props) {
             setMyHuts(oldHuts => huts)
             setLoading(false)
             console.log(huts)
-        });             
+        });    
+        setLoaded(true);
+
+        API.getHikesUpdatableHutWorker()
+           .then((hikes)=>{
+            setHikesUpdatable(oldHikes => hikes)
+            setLoaded(false);
+            console.log(hikes);
+           })
 
       
     }, [])
@@ -56,12 +79,19 @@ function HutWorkerHuts(props) {
                             {(!loading && myHuts.length > 0) && 
                             myHuts.map(hut => {
                                         return (
-                                            <Grid item md={2} xl={1} style={{ marginLeft: "15px", marginRight: "15px", marginBottom: "15px" }}>
+                                            <>
+                                            <Grid item md={2} style={{ marginLeft: "15px", marginRight: "15px", marginBottom: "15px" }}>
                                                 <HutCard hut={hut} editable="true"/>
                                             </Grid>
+                                            <Grid item md={2} style={{ marginLeft: "15px", marginRight: "15px", marginBottom: "15px" }}>
+                                            {/*<HikesLinked {...props} loaded={loaded} hikesUpdatable={hikesUpdatable} cause={cause} setCause={setCause} hikeCondition={hikeCondition} setHikeCondition={setHikeCondition}/>*/}
+                                            </Grid>
+                                            </>
                                         );
                                     })
+                                
                             }
+                            
                             {
                                 loading &&
                                 <>

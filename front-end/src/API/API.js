@@ -490,6 +490,24 @@ function modifyHutInformation(information, hutId) {
 }
 
 
+async function getHikesUpdatableHutWorker() {
+    let response = await fetch((APIURL + '/hikes/hutWorkerHikes'), {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*',
+        }
+    });
+    if (response.ok) {
+        const listHikesUpdatable = await response.json();
+        return listHikesUpdatable;
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+
 const API = {
     getListOfHikes, getListOfGPXFiles, getPathByID,
     getHikeByListOfPaths, getFilteredListOfHikes, getHikePathByHike,
@@ -498,6 +516,6 @@ const API = {
     logOut, signUp, addNewHut, addNewParkingLot, addNewGpx,
     addHike, getNotApprovedLocalGuides, getNotApprovedHutWorkers,
     approveUserByID, getPreferences, setPreferences, deleteHikeId,
-    getHutsHutWorker, modifyHutInformation
+    getHutsHutWorker, modifyHutInformation, getHikesUpdatableHutWorker
 }
 export default API
