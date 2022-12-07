@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import { Button, CircularProgress } from "@mui/material";
+import { Button, Card, CardContent, CircularProgress } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import Stack from "@mui/material/Stack";
 import { Paper } from '@mui/material';
@@ -65,6 +65,10 @@ function EditHikePage(props) {
     const [endPointAdd, setEndPointAdd] = useState('');
     const [endPointHut, setEndPointHut] = useState(null);
     const [endPointParking, setEndPointParking] = useState(null);
+
+    //Hut connection vars
+    const [nearHuts, setNearHuts] = useState([])
+    const [connectedHuts, setConnectedHuts] = useState([])
 
     const [newReferencePoint, setNewReferencePoint] = useState(false);
     const [listReferencePoint, setListReferencePoint] = useState([]);
@@ -183,64 +187,137 @@ function EditHikePage(props) {
         setCity(hikeDetails.city)
         setDescription(hikeDetails.description)
 
-        const startPoint = hikeDetails.startPoint;
-        const endPoint = hikeDetails.endPoint;
-
-        switch(startPoint.type) {
-            case "point": {
-                setStartPointType(SelectStartEndPointType.COORDINATES);
-                setStartPointLon(startPoint.point.position.coordinates[0])
-                setStartPointLat(startPoint.point.position.coordinates[1])
-                setStartPointName(startPoint.point.name)
-                setStartPointAdd(startPoint.point.address)
-                setStartPointHut(null)
-                setStartPointParking(null)
-                break;
-            }
-            case "parkingLot": {
-                setStartPointLon(startPoint.entity.point.position.coordinates[0])
-                setStartPointLat(startPoint.entity.point.position.coordinates[1])
-                setStartPointType(SelectStartEndPointType.PARKING)
-                setStartPointParking(startPoint.entity)
-                setStartPointHut(null)
-                break;
-            }
-            case "hut": {
-                setStartPointLon(startPoint.entity.point.position.coordinates[0])
-                setStartPointLat(startPoint.entity.point.position.coordinates[1])
-                setStartPointType(SelectStartEndPointType.HUT)
-                setStartPointHut(startPoint.entity)
-                setStartPointParking(null)
-                break;
-            }
+        if (hikeDetails.linkedPoints !== null && 
+            hikeDetails.linkedPoints !== undefined) {
+                setConnectedHuts(
+                    hikeDetails.linkedPoints.filter((item) => {
+                        return item.type === "hut"
+                    }).map((item) => {
+                        return item.entity
+                    })
+                )
+        } else {
+            setConnectedHuts([])
         }
 
-        switch(endPoint.type) {
-            case "point": {
-                setEndPointType(SelectStartEndPointType.COORDINATES);
-                setEndPointLon(endPoint.point.position.coordinates[0])
-                setEndPointLat(endPoint.point.position.coordinates[1])
-                setEndPointName(endPoint.point.name)
-                setEndPointAdd(endPoint.point.address)
-                break;
+        if (hikeDetails.startPoint) {
+            const startPoint = hikeDetails.startPoint;
+            switch(startPoint.type) {
+                case "point": {
+                    setStartPointType(SelectStartEndPointType.COORDINATES);
+                    setStartPointLon(startPoint.point.position.coordinates[0])
+                    setStartPointLat(startPoint.point.position.coordinates[1])
+                    setStartPointName(startPoint.point.name)
+                    setStartPointAdd(startPoint.point.address)
+                    setStartPointHut(null)
+                    setStartPointParking(null)
+                    getNearHuts(
+                        startPoint.point.position.coordinates[0],
+                        startPoint.point.position.coordinates[1]
+                    )
+                    break;
+                }
+                case "parkingLot": {
+                    setStartPointLon(startPoint.entity.point.position.coordinates[0])
+                    setStartPointLat(startPoint.entity.point.position.coordinates[1])
+                    setStartPointType(SelectStartEndPointType.PARKING)
+                    setStartPointParking(startPoint.entity)
+                    setStartPointHut(null)
+                    getNearHuts(
+                        startPoint.entity.point.position.coordinates[0],
+                        startPoint.entity.point.position.coordinates[1]
+                    )
+                    break;
+                }
+                case "hut": {
+                    setStartPointLon(startPoint.entity.point.position.coordinates[0])
+                    setStartPointLat(startPoint.entity.point.position.coordinates[1])
+                    setStartPointType(SelectStartEndPointType.HUT)
+                    setStartPointHut(startPoint.entity)
+                    setStartPointParking(null)
+                    getNearHuts(
+                        startPoint.entity.point.position.coordinates[0],
+                        startPoint.entity.point.position.coordinates[1]
+                    )
+                    break;
+                }
             }
-            case "parkingLot": {
-                setEndPointLon(endPoint.entity.point.position.coordinates[0])
-                setEndPointLat(endPoint.entity.point.position.coordinates[1])
-                setEndPointType(SelectStartEndPointType.PARKING)
-                setEndPointParking(endPoint.entity)
-                setEndPointHut(null)
-                break;
-            }
-            case "hut": {
-                setEndPointLon(endPoint.entity.point.position.coordinates[0])
-                setEndPointLat(endPoint.entity.point.position.coordinates[1])
-                setEndPointType(SelectStartEndPointType.HUT)
-                setEndPointHut(endPoint.entity)
-                setEndPointParking(null)
-                break;
-            }
+        } else {
+
         }
+
+        if (hikeDetails.endPoint) {
+            const endPoint = hikeDetails.endPoint;
+            switch(endPoint.type) {
+                case "point": {
+                    setEndPointType(SelectStartEndPointType.COORDINATES);
+                    setEndPointLon(endPoint.point.position.coordinates[0])
+                    setEndPointLat(endPoint.point.position.coordinates[1])
+                    setEndPointName(endPoint.point.name)
+                    setEndPointAdd(endPoint.point.address)
+                    getNearHuts(
+                        endPoint.point.position.coordinates[0],
+                        endPoint.point.position.coordinates[1]
+                    )
+                    break;
+                }
+                case "parkingLot": {
+                    setEndPointLon(endPoint.entity.point.position.coordinates[0])
+                    setEndPointLat(endPoint.entity.point.position.coordinates[1])
+                    setEndPointType(SelectStartEndPointType.PARKING)
+                    setEndPointParking(endPoint.entity)
+                    setEndPointHut(null)
+                    getNearHuts(
+                        endPoint.entity.point.position.coordinates[0],
+                        endPoint.entity.point.position.coordinates[1]
+                    )
+                    break;
+                }
+                case "hut": {
+                    setEndPointLon(endPoint.entity.point.position.coordinates[0])
+                    setEndPointLat(endPoint.entity.point.position.coordinates[1])
+                    setEndPointType(SelectStartEndPointType.HUT)
+                    setEndPointHut(endPoint.entity)
+                    setEndPointParking(null)
+                    getNearHuts(
+                        endPoint.entity.point.position.coordinates[0],
+                        endPoint.entity.point.position.coordinates[1]
+                    )
+                    break;
+                }
+            }
+        } else {
+
+        }
+    }
+
+    const nearHutDiscoveryRadius = 400;
+    const getNearHuts = (lon, lat) => {
+        let radiusPoint= {
+            lon: parseFloat(lon), 
+            lat: parseFloat(lat), 
+            radiusKms: nearHutDiscoveryRadius
+        }
+        API.getListOfHutsAndParkingLots(radiusPoint)
+            .then((parkigsAndHuts) => {
+                setNearHuts((oldHuts) => {
+                    if (oldHuts === null || oldHuts === undefined) {
+                        return parkigsAndHuts.huts
+                    } else {
+                        return oldHuts.concat(parkigsAndHuts.huts.filter((item) => {
+                            let index = -1;
+                            for(let i = 0; i < oldHuts.length; i++) {
+                                if (oldHuts[i].id === item.id) {
+                                    index = i;
+                                }
+                            }
+                            return index === -1
+                        }))
+                    }
+                }) 
+            });
+
+        //todo
     }
 
     //TODO
@@ -392,19 +469,21 @@ function EditHikePage(props) {
             }
 
             API.editHikeStartEndPoint(hikeId, start, end)
-                .then((result) => {
-                    setOpen(true);
-                    setErr(null)
+                .then((startEndPointEditResult) => {
+                    API.linkPointsToHike(hikeId, connectedHuts, [])
+                        .then((linkHutResult) => {
+                            setOpen(true);
+                            setErr(null)
+                        })
+                        .catch((err) => {
+                            setOpen(true);
+                            setErr(err)
+                        });
                 })
                 .catch((err) => {
                     setOpen(true);
                     setErr(err)
                 });
-
-            // if (result) {
-            //     setErr(null)
-            //     setOpen(true)
-            // }
 
             // setFileContents(null);
             // setTitle(''); setLengthStr(''); setAscentStr(''); setExpectedTimeStr('');
@@ -421,6 +500,20 @@ function EditHikePage(props) {
             // setReferencePointName(''); setReferencePointAdd('');
 
         }
+    }
+
+    const handleDeleteHutFromConnectedList = (hut) => {
+        setConnectedHuts(oldList => {
+            return oldList.filter((item) => item.id !== hut.id)
+        })
+    }
+
+    const handleAddHutToConnectedList = (hut) => {
+        setConnectedHuts(oldList => {
+            if (!oldList.includes(hut)) {
+                return oldList.concat(hut)
+            }
+        })
     }
     
     return (
@@ -503,6 +596,17 @@ function EditHikePage(props) {
                             </Grid>
 
                             {
+                                nearHuts.length > 0 &&
+                                <ConnectedHuts
+                                    hutList={nearHuts}
+                                    connectedHutList={connectedHuts}
+                                    deleteHutAction={handleDeleteHutFromConnectedList}
+                                    addHutAction={handleAddHutToConnectedList}>
+
+                                </ConnectedHuts>
+                            }
+
+                            {
                                 listReferencePoint.length &&
                                 <>
                                     <Grid item xs={12} sm={12}>
@@ -583,16 +687,16 @@ function EditHikePage(props) {
                                 </Button>
                             </Stack>
                         }
-                        {/* <Grid sx={{ p: 2, ml: 5, mr: 5 }}>
+                        {/* { <Grid sx={{ p: 2, ml: 5, mr: 5 }}>
                             <Paper elevation={5}>
                                 <Map 
                                     startPointLat={startPointLat} startPointLon={startPointLon} 
                                     endPointLat={endPointLat} endPointLon={endPointLon} 
                                     positionsState={positionsState} setPuntiDaTrack={setPuntiDaTrack} 
                                     puntiDaTrack={puntiDaTrack} referencePoint={referencePoint} 
-                                    setReferencePoint={setReferencePoint} listReferencePoint={listReferencePoint} />
+                                    setReferencePoint={setReferencePoint} listReferencePoint={listReferencePoint}/>
                             </Paper>
-                        </Grid> */}
+                        </Grid>} */}
                     </Grid>
                 </Grid>
             }
@@ -606,6 +710,108 @@ function EditHikePage(props) {
             }
         </React.Fragment>
     );
+}
+
+function ConnectedHuts(props) {
+
+    return (
+        <Card
+        
+            style={{marginRight:24, marginLeft: 24, marginTop: 32, marginBottom: 24}}>
+            <CardContent>
+                <Grid
+                    item>
+                    <Typography variant="h8" gutterBottom>
+                        Connected Huts
+                    </Typography>
+                </Grid>
+                { 
+                    props.connectedHutList.length > 0 &&
+                    props.connectedHutList.map((hutItem) => {
+                        return (
+                            <Grid item>
+                                <HutItemView
+                                    type={LinkHutItemViewTye.ADDED}
+                                    hut={hutItem} 
+                                    deleteHutAction={props.deleteHutAction}
+                                    addHutAction={props.addHutAction}>
+                                </HutItemView>
+                            </Grid>
+                        )
+                    })
+                }
+                <Grid
+                    item
+                    style={{marginTop: 32}}>
+                    <Typography variant="h9" gutterBottom>
+                        Huts close to hike (can be connect to your hike)
+                    </Typography>
+                </Grid>
+                { 
+                    props.hutList.length > 0 &&
+                    props.hutList.filter((item) => {
+                        if (props.connectedHutList.length > 0) {
+                            let index = -1
+                            for(let i = 0; i < props.connectedHutList.length; i++) {
+                                if (item.id === props.connectedHutList[i].id){
+                                    index = i
+                                }
+                            }
+                            return index === -1
+                        } else {
+                            return true
+                        }
+                    }).map((hutItem) => {
+                        return (
+                            <Grid item>
+                                <HutItemView
+                                    type={LinkHutItemViewTye.AVAILABLE}
+                                    hut={hutItem} 
+                                    deleteHutAction={props.deleteHutAction}
+                                    addHutAction={props.addHutAction}>
+                                </HutItemView>
+                            </Grid>
+                        )
+                    })
+                }
+            </CardContent>
+        </Card>
+    )
+}
+const LinkHutItemViewTye = {
+    ADDED: 0,
+    AVAILABLE: 1,
+}
+function HutItemView(props) {
+    return (
+        <Card 
+            style={{marginTop: 12, marginBotom: 12}}>
+            <CardContent>
+                <Typography >
+                    {/* TODO: show more details anout the connected hut */}
+                    {props.hut.title}
+                </Typography>
+                {
+                    props.type === LinkHutItemViewTye.ADDED && 
+                    <DeleteIcon 
+                    color="#1a1a1a" 
+                    onClick={() => {props.deleteHutAction(props.hut)}}>
+
+                    </DeleteIcon>
+                }
+                {
+                    props.type === LinkHutItemViewTye.AVAILABLE && 
+                    <Button 
+                        variant="contained" 
+                        color="success"
+                        onClick={() => {props.addHutAction(props.hut)}}>
+                        ADD
+                    </Button>
+                }
+                
+            </CardContent>
+        </Card>
+    )
 }
 
 function RefrenceView(props) {
@@ -662,7 +868,6 @@ function RefrenceView(props) {
         </>
     )
 }
-
 
 export { EditHikePage }
 

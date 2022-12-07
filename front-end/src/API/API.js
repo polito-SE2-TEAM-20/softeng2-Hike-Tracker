@@ -520,6 +520,51 @@ async function editHikeStartEndPoint(hikeId, startPoint, endPoint) {
     }
 }
 
+async function linkPointsToHike(hikeId, huts, parkingLots) {
+
+    const hutIds = huts.map((item) => item.id)
+    const parkingLotIds = parkingLots.map((item) => item.id)
+
+    const body = {
+        hikeId: parseInt(hikeId),
+        linkedPoints: []
+    }
+
+    for(let i = 0; i < hutIds.length; i++) {
+        body.linkedPoints.push({
+            hutId: hutIds[i]
+        })
+    }
+    for(let i = 0; i < parkingLotIds.length; i++) {
+        body.linkedPoints.push({
+            parkingLotId: parkingLotIds[i]
+        })
+    }
+
+    const response = await fetch((APIURL + '/hikes/linkPoints'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(body),
+
+    });
+
+    if (response.ok) {
+        const hikeDetails = response.json()
+        return hikeDetails;
+    } else {
+        try {
+            const errDetail = response.json();
+            throw errDetail.message;
+        }
+        catch (err) {
+            throw err;
+        }
+    }
+}
+
 
 async function getHikesUpdatableHutWorker() {
     let response = await fetch((APIURL + '/hikes/hutWorkerHikes'), {
@@ -547,6 +592,7 @@ const API = {
     logOut, signUp, addNewHut, addNewParkingLot, addNewGpx,
     addHike, getNotApprovedLocalGuides, getNotApprovedHutWorkers,
     approveUserByID, getPreferences, setPreferences, deleteHikeId,
-    getHutsHutWorker, modifyHutInformation, editHikeStartEndPoint, getHikesUpdatableHutWorker
+    getHutsHutWorker, modifyHutInformation, editHikeStartEndPoint, getHikesUpdatableHutWorker,
+    linkPointsToHike
 }
 export default API
