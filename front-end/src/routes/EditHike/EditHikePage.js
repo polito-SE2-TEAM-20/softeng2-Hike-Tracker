@@ -174,120 +174,122 @@ function EditHikePage(props) {
         }
     }, [fileContents]);
  
-    const fillPreDefinedHikeDetails = async() => {
-        setTitle(hikeDetails.title)
-        setLengthStr(hikeDetails.length)
-        setAscentStr(hikeDetails.ascent)
-        setExpectedTimeStr(hikeDetails.expectedTime)
+    const fillPreDefinedHikeDetails = () => {
+        if (hikeDetails !== null && hikeDetails !== undefined) {
+            setTitle(hikeDetails.title)
+            setLengthStr(hikeDetails.length)
+            setAscentStr(hikeDetails.ascent)
+            setExpectedTimeStr(hikeDetails.expectedTime)
 
-        setDifficultyStr(hikeDetails.difficulty);
-        setCountry(hikeDetails.country)
-        setRegion(hikeDetails.region)
-        setProvince(hikeDetails.province)
-        setCity(hikeDetails.city)
-        setDescription(hikeDetails.description)
+            setDifficultyStr(hikeDetails.difficulty);
+            setCountry(hikeDetails.country)
+            setRegion(hikeDetails.region)
+            setProvince(hikeDetails.province)
+            setCity(hikeDetails.city)
+            setDescription(hikeDetails.description)
 
-        if (hikeDetails.linkedPoints !== null && 
-            hikeDetails.linkedPoints !== undefined) {
-                setConnectedHuts(
-                    hikeDetails.linkedPoints.filter((item) => {
-                        return item.type === "hut"
-                    }).map((item) => {
-                        return item.entity
-                    })
-                )
-        } else {
-            setConnectedHuts([])
-        }
-
-        if (hikeDetails.startPoint) {
-            const startPoint = hikeDetails.startPoint;
-            switch(startPoint.type) {
-                case "point": {
-                    setStartPointType(SelectStartEndPointType.COORDINATES);
-                    setStartPointLon(startPoint.point.position.coordinates[0])
-                    setStartPointLat(startPoint.point.position.coordinates[1])
-                    setStartPointName(startPoint.point.name)
-                    setStartPointAdd(startPoint.point.address)
-                    setStartPointHut(null)
-                    setStartPointParking(null)
-                    getNearHuts(
-                        startPoint.point.position.coordinates[0],
-                        startPoint.point.position.coordinates[1]
+            if (hikeDetails.linkedPoints !== null && 
+                hikeDetails.linkedPoints !== undefined) {
+                    setConnectedHuts(
+                        hikeDetails.linkedPoints.filter((item) => {
+                            return item.type === "hut"
+                        }).map((item) => {
+                            return item.entity
+                        })
                     )
-                    break;
-                }
-                case "parkingLot": {
-                    setStartPointLon(startPoint.entity.point.position.coordinates[0])
-                    setStartPointLat(startPoint.entity.point.position.coordinates[1])
-                    setStartPointType(SelectStartEndPointType.PARKING)
-                    setStartPointParking(startPoint.entity)
-                    setStartPointHut(null)
-                    getNearHuts(
-                        startPoint.entity.point.position.coordinates[0],
-                        startPoint.entity.point.position.coordinates[1]
-                    )
-                    break;
-                }
-                case "hut": {
-                    setStartPointLon(startPoint.entity.point.position.coordinates[0])
-                    setStartPointLat(startPoint.entity.point.position.coordinates[1])
-                    setStartPointType(SelectStartEndPointType.HUT)
-                    setStartPointHut(startPoint.entity)
-                    setStartPointParking(null)
-                    getNearHuts(
-                        startPoint.entity.point.position.coordinates[0],
-                        startPoint.entity.point.position.coordinates[1]
-                    )
-                    break;
-                }
+            } else {
+                setConnectedHuts([])
             }
-        } else {
 
-        }
-
-        if (hikeDetails.endPoint) {
-            const endPoint = hikeDetails.endPoint;
-            switch(endPoint.type) {
-                case "point": {
-                    setEndPointType(SelectStartEndPointType.COORDINATES);
-                    setEndPointLon(endPoint.point.position.coordinates[0])
-                    setEndPointLat(endPoint.point.position.coordinates[1])
-                    setEndPointName(endPoint.point.name)
-                    setEndPointAdd(endPoint.point.address)
-                    getNearHuts(
-                        endPoint.point.position.coordinates[0],
-                        endPoint.point.position.coordinates[1]
-                    )
-                    break;
+            if (hikeDetails.startPoint) {
+                const startPoint = hikeDetails.startPoint;
+                switch(startPoint.type) {
+                    case "point": {
+                        setStartPointType(SelectStartEndPointType.COORDINATES);
+                        setStartPointLon(startPoint.point.position.coordinates[0])
+                        setStartPointLat(startPoint.point.position.coordinates[1])
+                        setStartPointName(startPoint.point.name)
+                        setStartPointAdd(startPoint.point.address)
+                        setStartPointHut(null)
+                        setStartPointParking(null)
+                        getNearHuts(
+                            startPoint.point.position.coordinates[0],
+                            startPoint.point.position.coordinates[1]
+                        )
+                        break;
+                    }
+                    case "parkingLot": {
+                        setStartPointLon(startPoint.entity.point.position.coordinates[0])
+                        setStartPointLat(startPoint.entity.point.position.coordinates[1])
+                        setStartPointType(SelectStartEndPointType.PARKING)
+                        setStartPointParking(startPoint.entity)
+                        setStartPointHut(null)
+                        getNearHuts(
+                            startPoint.entity.point.position.coordinates[0],
+                            startPoint.entity.point.position.coordinates[1]
+                        )
+                        break;
+                    }
+                    case "hut": {
+                        setStartPointLon(startPoint.entity.point.position.coordinates[0])
+                        setStartPointLat(startPoint.entity.point.position.coordinates[1])
+                        setStartPointType(SelectStartEndPointType.HUT)
+                        setStartPointHut(startPoint.entity)
+                        setStartPointParking(null)
+                        getNearHuts(
+                            startPoint.entity.point.position.coordinates[0],
+                            startPoint.entity.point.position.coordinates[1]
+                        )
+                        break;
+                    }
                 }
-                case "parkingLot": {
-                    setEndPointLon(endPoint.entity.point.position.coordinates[0])
-                    setEndPointLat(endPoint.entity.point.position.coordinates[1])
-                    setEndPointType(SelectStartEndPointType.PARKING)
-                    setEndPointParking(endPoint.entity)
-                    setEndPointHut(null)
-                    getNearHuts(
-                        endPoint.entity.point.position.coordinates[0],
-                        endPoint.entity.point.position.coordinates[1]
-                    )
-                    break;
-                }
-                case "hut": {
-                    setEndPointLon(endPoint.entity.point.position.coordinates[0])
-                    setEndPointLat(endPoint.entity.point.position.coordinates[1])
-                    setEndPointType(SelectStartEndPointType.HUT)
-                    setEndPointHut(endPoint.entity)
-                    setEndPointParking(null)
-                    getNearHuts(
-                        endPoint.entity.point.position.coordinates[0],
-                        endPoint.entity.point.position.coordinates[1]
-                    )
-                    break;
-                }
+            } else {
+                //TODO: set gpx start point as starting point
             }
-        } else {
 
+            if (hikeDetails.endPoint) {
+                const endPoint = hikeDetails.endPoint;
+                switch(endPoint.type) {
+                    case "point": {
+                        setEndPointType(SelectStartEndPointType.COORDINATES);
+                        setEndPointLon(endPoint.point.position.coordinates[0])
+                        setEndPointLat(endPoint.point.position.coordinates[1])
+                        setEndPointName(endPoint.point.name)
+                        setEndPointAdd(endPoint.point.address)
+                        getNearHuts(
+                            endPoint.point.position.coordinates[0],
+                            endPoint.point.position.coordinates[1]
+                        )
+                        break;
+                    }
+                    case "parkingLot": {
+                        setEndPointLon(endPoint.entity.point.position.coordinates[0])
+                        setEndPointLat(endPoint.entity.point.position.coordinates[1])
+                        setEndPointType(SelectStartEndPointType.PARKING)
+                        setEndPointParking(endPoint.entity)
+                        setEndPointHut(null)
+                        getNearHuts(
+                            endPoint.entity.point.position.coordinates[0],
+                            endPoint.entity.point.position.coordinates[1]
+                        )
+                        break;
+                    }
+                    case "hut": {
+                        setEndPointLon(endPoint.entity.point.position.coordinates[0])
+                        setEndPointLat(endPoint.entity.point.position.coordinates[1])
+                        setEndPointType(SelectStartEndPointType.HUT)
+                        setEndPointHut(endPoint.entity)
+                        setEndPointParking(null)
+                        getNearHuts(
+                            endPoint.entity.point.position.coordinates[0],
+                            endPoint.entity.point.position.coordinates[1]
+                        )
+                        break;
+                    }
+                }
+            } else {
+                //TODO: set gpx end point as ending point
+            }
         }
     }
 
@@ -316,8 +318,6 @@ function EditHikePage(props) {
                     }
                 }) 
             });
-
-        //todo
     }
 
     //TODO
