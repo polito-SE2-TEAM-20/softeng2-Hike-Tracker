@@ -36,14 +36,13 @@ const HTMainPage = (props) => {
         }
         getPreferences().then(() => {
             setPreferences(tmpPref)
-            console.log(preferences)
         })
     }, [])
 
     useEffect(() => {
         var loh = []
         const getHikes = async () => {
-            loh = await API.getFilteredListOfHikes({ filter: preferences })
+            loh = await API.getFilteredListOfHikes({ 'filter': preferences })
         }
         getHikes().then(() => {
             setListOfHikes(loh)
