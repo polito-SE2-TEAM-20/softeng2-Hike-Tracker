@@ -4,6 +4,12 @@ export const HikeDifficultyLevel = {
     Pro : 2,
 }
 
+export const UserHikeState = {
+    ACTIVE: 1,
+    FINISHED: 2,
+    ALL: 3
+}
+
 export function getHikeDifficultyString(level) {
     switch(level) {
         case HikeDifficultyLevel.Tourist: {

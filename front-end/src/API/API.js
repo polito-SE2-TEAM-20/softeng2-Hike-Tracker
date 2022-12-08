@@ -1,3 +1,5 @@
+import { UserHikeState } from "../lib/common/Hike";
+
 export const APIURL = process.env.REACT_APP_API_BASE || 'https://hiking-backend.germangorodnev.com';
 
 async function getListOfHikes() {
@@ -606,6 +608,159 @@ function updateHikeCondition(information, hikeId) {
     })
 }
 
+//#region Tracking Hike
+async function startTracingkHike(hikeId) {
+
+    const body = {
+        hikeId: parseInt(hikeId)
+    }
+
+    const response = await fetch((APIURL + '/user-hikes/start'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(body),
+
+    });
+
+    if (response.ok) {
+        const hikeTrackingDetails = response.json()
+        return hikeTrackingDetails;
+    } else {
+        try {
+            const errDetail = response.json();
+            throw errDetail.message;
+        }
+        catch (err) {
+            throw err;
+        }
+    }
+}
+
+async function addPointToTracingkHike(hikeTrackId, lat, lon) {
+
+    const body = {
+        position: {
+            lat: lat,
+            lon: lon
+        }
+    }
+
+    const response = await fetch((APIURL + '/user-hikes/'+ {hikeTrackId} + '/track-point'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(body),
+
+    });
+
+    if (response.ok) {
+        const hikeTrackingDetails = response.json()
+        return hikeTrackingDetails;
+    } else {
+        try {
+            const errDetail = response.json();
+            throw errDetail.message;
+        }
+        catch (err) {
+            throw err;
+        }
+    }
+}
+
+async function stopTrackingHike(hikeTrackId) {
+
+    const response = await fetch((APIURL + '/user-hikes/' + {hikeTrackId} + '/finish'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+    });
+
+    if (response.ok) {
+        const hikeTrackingDetails = response.json()
+        return hikeTrackingDetails;
+    } else {
+        try {
+            const errDetail = response.json();
+            throw errDetail.message;
+        }
+        catch (err) {
+            throw err;
+        }
+    }
+}
+
+async function getUserHikeTrackingDetails(hikeTrackId) {
+
+    const response = await fetch((APIURL + '/user-hikes/'+ {hikeTrackId}), {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+    });
+
+    if (response.ok) {
+        const hikeTrackingDetails = response.json()
+        return hikeTrackingDetails;
+    } else {
+        try {
+            const errDetail = response.json();
+            throw errDetail.message;
+        }
+        catch (err) {
+            throw err;
+        }
+    }
+}
+
+async function getAllUserTrackingHikes(userHikeState) {
+
+    const body = {}
+
+    switch(userHikeState){
+        case UserHikeState.ACTIVE: 
+        case UserHikeState.FINISHED: {
+            body.state = userHikeState
+            break;
+        }
+        case UserHikeState.ALL:
+        default: {
+            //don't add anything to the body
+        }
+    }
+
+    const response = await fetch((APIURL + '/me/tracked-hikes'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(body),
+    });
+
+    if (response.ok) {
+        const hikeTrackingDetails = response.json()
+        return hikeTrackingDetails;
+    } else {
+        try {
+            const errDetail = response.json();
+            throw errDetail.message;
+        }
+        catch (err) {
+            throw err;
+        }
+    }
+}
+
+//#endregion
+
 
 const API = {
     getListOfHikes, getListOfGPXFiles, getPathByID,
@@ -617,6 +772,10 @@ const API = {
     approveUserByID, getPreferences, setPreferences, deleteHikeId,
     getHutsHutWorker, modifyHutInformation, editHikeStartEndPoint, getHikesUpdatableHutWorker,
     linkPointsToHike,
-    updateHikeCondition
+    updateHikeCondition,
+    //#region Export HikeTraking APIs
+    startTracingkHike, addPointToTracingkHike, stopTrackingHike,
+    getUserHikeTrackingDetails, getAllUserTrackingHikes,
+    //#endregion
 }
 export default API
