@@ -40,6 +40,7 @@ import { MyHikesPage } from './routes/my-hikes/MyHikesPage';
 import { EditHikePage } from './routes/EditHike/EditHikePage';
 import HikerDashboard from './routes/hiker-dashboard/HikerDashboard';
 import AdminDashboard from './routes/admin-dashboard/AdminDashboard';
+import { TrackingHikePage } from './routes/TrackHike/TrackHikePage';
 
 function App() {
   return (
@@ -171,6 +172,7 @@ const modifyHutInformation =(information, hutId, setShow, setErrorMessage) =>{
         <Route path="/hutWorkerHuts" element={<HutWorkerHuts user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut}/>}/>
         <Route path="/edithut/:hutid" element={<EditHut user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} modifyHutInformation={API.modifyHutInformation}/>}/>
         <Route path="/hutWorkerHuts/linkedHikes" element={<HikesLinked user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut}/>}/>
+        <Route path="/trackhike/:hikeid" element={<TrackingHikePage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />}/>
 
       </Routes>
     </>
