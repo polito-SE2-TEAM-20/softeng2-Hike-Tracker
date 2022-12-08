@@ -206,39 +206,39 @@ function EditHikePage(props) {
                 switch(startPoint.type) {
                     case "point": {
                         setStartPointType(SelectStartEndPointType.COORDINATES);
-                        setStartPointLon(startPoint.point.position.coordinates[0])
-                        setStartPointLat(startPoint.point.position.coordinates[1])
-                        setStartPointName(startPoint.point.name)
-                        setStartPointAdd(startPoint.point.address)
+                        setStartPointLon(startPoint.point?.position?.coordinates[0])
+                        setStartPointLat(startPoint.point?.position?.coordinates[1])
+                        setStartPointName(startPoint.point?.name)
+                        setStartPointAdd(startPoint.point?.address)
                         setStartPointHut(null)
                         setStartPointParking(null)
                         getNearHuts(
-                            startPoint.point.position.coordinates[0],
-                            startPoint.point.position.coordinates[1]
+                            startPoint.point?.position?.coordinates[0],
+                            startPoint.point?.position?.coordinates[1]
                         )
                         break;
                     }
                     case "parkingLot": {
-                        setStartPointLon(startPoint.entity.point.position.coordinates[0])
-                        setStartPointLat(startPoint.entity.point.position.coordinates[1])
+                        setStartPointLon(startPoint.entity?.point?.position?.coordinates[0])
+                        setStartPointLat(startPoint.entity?.point?.position?.coordinates[1])
                         setStartPointType(SelectStartEndPointType.PARKING)
                         setStartPointParking(startPoint.entity)
                         setStartPointHut(null)
                         getNearHuts(
-                            startPoint.entity.point.position.coordinates[0],
-                            startPoint.entity.point.position.coordinates[1]
+                            startPoint.entity?.point?.position?.coordinates[0],
+                            startPoint.entity?.point.position?.coordinates[1]
                         )
                         break;
                     }
                     case "hut": {
-                        setStartPointLon(startPoint.entity.point.position.coordinates[0])
-                        setStartPointLat(startPoint.entity.point.position.coordinates[1])
+                        setStartPointLon(startPoint.entity?.point?.position?.coordinates[0])
+                        setStartPointLat(startPoint.entity?.point?.position?.coordinates[1])
                         setStartPointType(SelectStartEndPointType.HUT)
                         setStartPointHut(startPoint.entity)
                         setStartPointParking(null)
                         getNearHuts(
-                            startPoint.entity.point.position.coordinates[0],
-                            startPoint.entity.point.position.coordinates[1]
+                            startPoint.entity?.point?.position?.coordinates[0],
+                            startPoint.entity?.point?.position?.coordinates[1]
                         )
                         break;
                     }
@@ -252,37 +252,37 @@ function EditHikePage(props) {
                 switch(endPoint.type) {
                     case "point": {
                         setEndPointType(SelectStartEndPointType.COORDINATES);
-                        setEndPointLon(endPoint.point.position.coordinates[0])
-                        setEndPointLat(endPoint.point.position.coordinates[1])
-                        setEndPointName(endPoint.point.name)
-                        setEndPointAdd(endPoint.point.address)
+                        setEndPointLon(endPoint.point?.position?.coordinates[0])
+                        setEndPointLat(endPoint.point?.position?.coordinates[1])
+                        setEndPointName(endPoint.point?.name)
+                        setEndPointAdd(endPoint.point?.address)
                         getNearHuts(
-                            endPoint.point.position.coordinates[0],
-                            endPoint.point.position.coordinates[1]
+                            endPoint.point?.position?.coordinates[0],
+                            endPoint.point?.position?.coordinates[1]
                         )
                         break;
                     }
                     case "parkingLot": {
-                        setEndPointLon(endPoint.entity.point.position.coordinates[0])
-                        setEndPointLat(endPoint.entity.point.position.coordinates[1])
+                        setEndPointLon(endPoint.entity?.point?.position?.coordinates[0])
+                        setEndPointLat(endPoint.entity?.point?.position?.coordinates[1])
                         setEndPointType(SelectStartEndPointType.PARKING)
                         setEndPointParking(endPoint.entity)
                         setEndPointHut(null)
                         getNearHuts(
-                            endPoint.entity.point.position.coordinates[0],
-                            endPoint.entity.point.position.coordinates[1]
+                            endPoint.entity?.point?.position?.coordinates[0],
+                            endPoint.entity?.point?.position?.coordinates[1]
                         )
                         break;
                     }
                     case "hut": {
-                        setEndPointLon(endPoint.entity.point.position.coordinates[0])
-                        setEndPointLat(endPoint.entity.point.position.coordinates[1])
+                        setEndPointLon(endPoint.entity?.point?.position?.coordinates[0])
+                        setEndPointLat(endPoint.entity?.point?.position?.coordinates[1])
                         setEndPointType(SelectStartEndPointType.HUT)
                         setEndPointHut(endPoint.entity)
                         setEndPointParking(null)
                         getNearHuts(
-                            endPoint.entity.point.position.coordinates[0],
-                            endPoint.entity.point.position.coordinates[1]
+                            endPoint.entity?.point?.position?.coordinates[0],
+                            endPoint.entity?.point?.position?.coordinates[1]
                         )
                         break;
                     }
@@ -380,6 +380,16 @@ function EditHikePage(props) {
         }
     }
 
+    const isStartingPointIsNull = () => {
+        return (startPointParking === null && startPointHut === null &&
+            (startPointLat === null || startPointLon === null || startPointName === null || startPointName.trim === '' ))
+    }
+
+    const isEndingPointIsNull = () => {
+        return (endPointParking === null && endPointHut === null &&
+            (endPointLat === null || endPointLon === null || endPointName === null || endPointName.trim === '' ))
+    }
+
     const handleEdit = (event) => {
         event.preventDefault();
         if (title.trim() === '' || title === null || title === undefined) {
@@ -408,6 +418,12 @@ function EditHikePage(props) {
             setShow(true);
         } else if (province.trim() === '' || province === null || province === undefined) {
             setErrorMessage('The province for the hike cannot be empty');
+            setShow(true);
+        } else if (isStartingPointIsNull()){
+            setErrorMessage('Starting point should be provided.');
+            setShow(true);
+        } else if (isEndingPointIsNull()){
+            setErrorMessage('Ending point should be provided.');
             setShow(true);
         } else {
             let start = {};
