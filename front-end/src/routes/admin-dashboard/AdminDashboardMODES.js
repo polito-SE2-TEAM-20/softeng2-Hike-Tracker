@@ -1,4 +1,4 @@
-import { Grid, Switch, Typography, CircularProgress, Divider } from "@mui/material";
+import { Grid, Switch, Typography, CircularProgress, Divider, FormControlLabel } from "@mui/material";
 import { displayTypeFlex } from "../../extra/DisplayType";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import './admin-dashboard-style.css'
@@ -10,7 +10,6 @@ import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 import BadgeIcon from '@mui/icons-material/Badge';
 import GroupsIcon from '@mui/icons-material/Groups';
 import HTButton from "../../components/buttons/Button";
-import { FormControlLabel } from "@mui/material";
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 
 export const AdminDashboardPC = (props) => {

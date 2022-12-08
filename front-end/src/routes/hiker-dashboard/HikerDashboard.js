@@ -1,4 +1,4 @@
-import { Button, Grid, TextField, Typography } from "@mui/material";
+import { Button, Grid, TextField, Typography, Switch, FormControlLabel } from "@mui/material";
 import { useNavigate } from "react-router";
 import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import { displayTypeFlex } from "../../extra/DisplayType";
@@ -8,39 +8,35 @@ import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, useMapEvents, ZoomControl, Polyline, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, ZoomControl, useMap } from 'react-leaflet'
 import HikePopup from "../../components/hike-popup/HikePopup";
-import HTButton from "../../components/buttons/Button";
 import { useState, useEffect } from "react";
 import API from '../../API/API'
 import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours'
+import { styled } from '@mui/material/styles';
+import { BEGINNER, ADVANCED } from '../../lib/common/PreferencesConstants'
 
 const HikerDashboard = (props) => {
     const navigate = useNavigate()
     const gotoLogin = () => {
         navigate("/login", { replace: false })
     }
-    // {
-    //     "lat": 5.005,
-    //     "lon": 5.004,
-    //     "radiusKms": 10,
-    //     "length": 5000,
-    //     "expectedTime": 1000,
-    //     "difficulty": 2,
-    //     "ascent": 100
-    // }
-    const [preferences, setPreferences] = useState({
-        'lat': 0.0,
-        'lon': 0.0,
-        'radiusKms': 0,
-        'length': 0,
-        'expectedTime': 0,
-        'difficulty': 0,
-        'ascent': 0
-    })
-    var newPreferences = {}
 
     const [updateFinished, setUpdateFinished] = useState(false)
+    const [updateError, setUpdateError] = useState(false)
+    const [position, setPosition] = useState({ 'lat': 12.34, 'lon': 56.78 })
+    const [radius, setRadius] = useState(0.0)
+    const [length, setLength] = useState(0.0)
+    const [expectedTime, setExpectedTime] = useState(0.0)
+    const [difficulty, setDifficulty] = useState(0)
+    const [ascent, setAscent] = useState(0.0)
+    const [suggestionType, setSuggestionType] = useState(false)
+
+    const positionStatic = position
+    const radiusStatic = radius
+    const lengthStatic = length
+    const expectedTimeStatic = expectedTime
+    const ascentStatic = ascent
 
     useEffect(() => {
         var tmpPref = {}
@@ -48,29 +44,51 @@ const HikerDashboard = (props) => {
             tmpPref = await API.getPreferences()
         }
         getPreferences().finally(() => {
-            // setPreferences(newPreferences)
-            setPreferences(
-                {
-                    'lat': 15.15,
-                    'lon': 51.51,
-                    'radiusKms': 100,
-                    'length': 200,
-                    'expectedTime': 300,
-                    'difficulty': 2,
-                    'ascent': 400
-                }
-            )
-            newPreferences = preferences
+            setPosition({ 'lat': tmpPref.lat, 'lon': tmpPref.lon })
+            setRadius(tmpPref.radiusKms)
+            setLength(tmpPref.maxLength - (suggestionType ? BEGINNER : ADVANCED).lengthOffset)
+            setExpectedTime(tmpPref.expectedTimeMax - (suggestionType ? BEGINNER : ADVANCED).expectedTimeOffset)
+            setDifficulty(tmpPref.difficultyMax - (suggestionType ? BEGINNER : ADVANCED).difficultyOffset)
+            setAscent(tmpPref.ascentMax - (suggestionType ? BEGINNER : ADVANCED).ascentOffset)
+            setSuggestionType(tmpPref.suggestionType)
         })
     }, [])
 
     const handlePreferencesUpdate = () => {
-        console.log(newPreferences)
+        const prefFilter =
+        {
+            "lat": position.lat,
+            "lon": position.lon,
+            "radiusKms": radius <= (suggestionType ? BEGINNER : ADVANCED).minRadius ?
+                (suggestionType ? BEGINNER : ADVANCED).minRadius :
+                radius,
+            "minLength": (length - (suggestionType ? BEGINNER : ADVANCED).lengthOffset) <= (suggestionType ? BEGINNER : ADVANCED).lengthOffset ?
+                (suggestionType ? BEGINNER : ADVANCED).lengthOffset :
+                length - (suggestionType ? BEGINNER : ADVANCED).lengthOffset,
+            "maxLength": length + (suggestionType ? BEGINNER : ADVANCED).lengthOffset,
+            "expectedTimeMin": (expectedTime - (suggestionType ? BEGINNER : ADVANCED).expectedTimeOffset) <= (suggestionType ? BEGINNER : ADVANCED).expectedTimeOffset ?
+                (suggestionType ? BEGINNER : ADVANCED).expectedTimeOffset :
+                expectedTime - (suggestionType ? BEGINNER : ADVANCED).expectedTimeOffset,
+            "expectedTimeMax": expectedTime + (suggestionType ? BEGINNER : ADVANCED).expectedTimeOffset,
+            "difficultyMin": (difficulty - (suggestionType ? BEGINNER : ADVANCED).difficultyOffset) <= (suggestionType ? BEGINNER : ADVANCED).difficultyOffset ?
+                (suggestionType ? BEGINNER : ADVANCED).difficultyOffset :
+                difficulty - (suggestionType ? BEGINNER : ADVANCED).difficultyOffset,
+            "difficultyMax": difficulty + (suggestionType ? BEGINNER : ADVANCED).difficultyOffset,
+            "ascentMin": (ascent - (suggestionType ? BEGINNER : ADVANCED).ascentOffset) <= (suggestionType ? BEGINNER : ADVANCED).ascentOffset ?
+                (suggestionType ? BEGINNER : ADVANCED).ascentOffset :
+                ascent - (suggestionType ? BEGINNER : ADVANCED).ascentOffset,
+            "ascentMax": ascent + (suggestionType ? BEGINNER : ADVANCED).ascentOffset,
+            'suggestionType': suggestionType
+        }
         const setPreferences = async () => {
-            await API.setPreferences(newPreferences)
+            await API.setPreferences(prefFilter)
         }
         setPreferences().then(() => {
+            setUpdateError(false)
             setUpdateFinished(true)
+        }).catch(() => {
+            setUpdateFinished(false)
+            setUpdateError(true)
         })
     }
 
@@ -78,8 +96,15 @@ const HikerDashboard = (props) => {
         setTimeout(() => {
             if (updateFinished)
                 setUpdateFinished(false)
-        }, 2500);
+        }, 3000);
     }, [updateFinished])
+
+    useEffect(() => {
+        setTimeout(() => {
+            if (updateError)
+                setUpdateError(false)
+        }, 3000);
+    }, [updateError])
 
     return (
         <>
@@ -111,12 +136,12 @@ const HikerDashboard = (props) => {
                             fontFamily: "Bakbak One, display", fontWeight: "50", borderColor: "purple"
                         }}>
                             <b>
-                                {props?.user?.role == 0 ? "Hiker" : ""}
-                                {props?.user?.role == 1 ? "Friend" : ""}
-                                {props?.user?.role == 2 ? "Local guide" : ""}
-                                {props?.user?.role == 3 ? "Platform manager" : ""}
-                                {props?.user?.role == 4 ? "Hut worker" : ""}
-                                {props?.user?.role == 5 ? "Emergency operator" : ""}
+                                {props?.user?.role === 0 ? "Hiker" : ""}
+                                {props?.user?.role === 1 ? "Friend" : ""}
+                                {props?.user?.role === 2 ? "Local guide" : ""}
+                                {props?.user?.role === 3 ? "Platform manager" : ""}
+                                {props?.user?.role === 4 ? "Hut worker" : ""}
+                                {props?.user?.role === 5 ? "Emergency operator" : ""}
                             </b>
                         </Typography>
                     </Grid>
@@ -138,13 +163,13 @@ const HikerDashboard = (props) => {
                                 <Typography className="unselectable" sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
                                     <b>Starting point</b>
                                 </Typography>
-                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>Latitude: {preferences?.lat} - Longitude: {preferences?.lon}</Typography>
+                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>Latitude: {positionStatic.lat.toFixed(5)} - Longitude: {positionStatic.lon.toFixed(5)}</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Typography className="unselectable" sx={{ fontSize: "18px" }}>
                                     Choose a point on the map to fix your favorite starting point.
                                 </Typography>
-                                <MapContainer center={[preferences?.lat, preferences?.lon]} zoom={9}
+                                <MapContainer center={[position.lat, position.lon]} zoom={9}
                                     scrollWheelZoom={{ xs: false, sm: false, md: false, lg: true, xl: true }} zoomControl={false}
                                     style={{ width: "auto", minHeight: "40vh", height: "40%" }}>
                                     <TileLayer
@@ -152,11 +177,13 @@ const HikerDashboard = (props) => {
                                         url={"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}
                                     />
                                     <ZoomControl position='bottomright' />
+                                    <ClickServiceManagement setPosition={setPosition} />
+                                    <FetchServiceManagement position={position} />
                                     <Marker
                                         key={0}
-                                        position={[preferences?.lat, preferences?.lon]}>
-                                        <Popup position={[preferences?.lat, preferences?.lon]}>
-                                            <HikePopup hike={{ positions: [preferences?.lat, preferences?.lon] }} />
+                                        position={[position.lat, position.lon]}>
+                                        <Popup position={[position.lat, position.lon]}>
+                                            <HikePopup hike={{ positions: [position.lat, position.lon] }} />
                                         </Popup>
                                     </Marker>
                                 </MapContainer>
@@ -168,14 +195,14 @@ const HikerDashboard = (props) => {
                                 <Typography className="unselectable" sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
                                     <b>Radius</b>
                                 </Typography>
-                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{preferences?.radiusKms.toFixed(2)}km</Typography>
+                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{radiusStatic.toFixed(2)}km</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Typography className="unselectable" sx={{ fontSize: "18px" }}>
                                     Insert here the radius to determine the area from which you'd prefer to start your hikes.
                                 </Typography>
                                 <TextField onChange={(e) => {
-                                    newPreferences.radiusKms = e.target.value
+                                    e.target.value === "" ? setRadius(0.0) : setRadius(parseFloat(e.target.value))
                                 }} variant="outlined" label="Radius" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
@@ -185,14 +212,14 @@ const HikerDashboard = (props) => {
                                 <Typography className="unselectable" sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
                                     <b>Length</b>
                                 </Typography>
-                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{preferences?.length.toFixed(2)}m</Typography>
+                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{lengthStatic.toFixed(2)}m</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Typography className="unselectable" sx={{ fontSize: "18px" }}>
                                     Insert here the length of your ideal hike.
                                 </Typography>
                                 <TextField onChange={(e) => {
-                                    newPreferences.length = e.target.value
+                                    e.target.value === "" ? setLength(0.0) : setLength(parseFloat(e.target.value))
                                 }} variant="outlined" label="Length" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
@@ -202,14 +229,14 @@ const HikerDashboard = (props) => {
                                 <Typography className="unselectable" sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
                                     <b>Expected time</b>
                                 </Typography>
-                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{fromMinutesToHours(preferences?.expectedTime)}</Typography>
+                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{fromMinutesToHours(expectedTimeStatic)}</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Typography className="unselectable" sx={{ fontSize: "18px" }}>
                                     Insert here the expected time for your ideal hike.
                                 </Typography>
                                 <TextField onChange={(e) => {
-                                    newPreferences.expectedTime = e.target.value
+                                    e.target.value === "" ? setExpectedTime(0.0) : setExpectedTime(parseFloat(e.target.value))
                                 }} variant="outlined" label="Expected time" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
@@ -220,9 +247,9 @@ const HikerDashboard = (props) => {
                                     <b>Difficulty</b>
                                 </Typography>
                                 <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>
-                                    {preferences?.difficulty == 0 ? "Tourist" : <></>}
-                                    {preferences?.difficulty == 1 ? "Hiker" : <></>}
-                                    {preferences?.difficulty == 2 ? "Pro" : <></>}
+                                    {difficulty === 0 ? "Tourist" : <></>}
+                                    {difficulty === 1 ? "Hiker" : <></>}
+                                    {difficulty === 2 ? "Pro" : <></>}
                                 </Typography>
                             </AccordionSummary>
                             <AccordionDetails>
@@ -231,14 +258,29 @@ const HikerDashboard = (props) => {
                                 </Typography>
                                 <div style={{ display: "flex", justifyContent: "space-between", marginLeft: "25%", marginRight: "25%" }}>
                                     <Button onClick={() => {
-                                        newPreferences.difficulty = 0
-                                    }} variant="outlined" sx={{ borderRadius: "28px", color: "black", borderColor: "black", "&:hover": { backgroundColor: "#55B657", borderColor: "#000000", color: "white" } }}><b>Tourist</b></Button>
+                                        setDifficulty(0)
+                                    }} variant="outlined" sx={{
+                                        borderRadius: "28px", color: difficulty === 0 ? "white" : "black", borderColor: "black", "&:hover":
+                                        {
+                                            backgroundColor: "#55B657", color: "white"
+                                        }, backgroundColor: difficulty === 0 ? "#55B657" : "white"
+                                    }}><b>Tourist</b></Button>
                                     <Button onClick={() => {
-                                        newPreferences.difficulty = 1
-                                    }} variant="outlined" sx={{ borderRadius: "28px", color: "black", borderColor: "black", "&:hover": { backgroundColor: "#1a79aa", borderColor: "#000000", color: "white" } }}><b>Hiker</b></Button>
+                                        setDifficulty(1)
+                                    }} variant="outlined" sx={{
+                                        borderRadius: "28px", color: difficulty === 1 ? "white" : "black", borderColor: "black", "&:hover":
+                                        {
+                                            backgroundColor: "#1a79aa", color: "white"
+                                        }, backgroundColor: difficulty === 1 ? "#1a79aa" : "white"
+                                    }}><b>Hiker</b></Button>
                                     <Button onClick={() => {
-                                        newPreferences.difficulty = 2
-                                    }} variant="outlined" sx={{ borderRadius: "28px", color: "black", borderColor: "black", "&:hover": { backgroundColor: "#FA6952", borderColor: "#000000", color: "white" } }}><b>Pro</b></Button>
+                                        setDifficulty(2)
+                                    }} variant="outlined" sx={{
+                                        borderRadius: "28px", color: difficulty === 2 ? "white" : "black", borderColor: "black", "&:hover":
+                                        {
+                                            backgroundColor: "#FA6952", color: "white"
+                                        }, backgroundColor: difficulty === 2 ? "#FA6952" : "white"
+                                    }}><b>Pro</b></Button>
                                 </div>
                             </AccordionDetails>
                         </Accordion>
@@ -248,14 +290,14 @@ const HikerDashboard = (props) => {
                                 <Typography className="unselectable" sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
                                     <b>Ascent</b>
                                 </Typography>
-                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{preferences?.ascent}m</Typography>
+                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{ascentStatic}m</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Typography className="unselectable" sx={{ fontSize: "18px" }}>
                                     Insert here the ascent for your ideal hike.
                                 </Typography>
                                 <TextField onChange={(e) => {
-                                    newPreferences.ascent = e.target.value
+                                    e.target.value === "" ? setAscent(0.0) : setAscent(parseFloat(e.target.value))
                                 }} variant="outlined" label="Ascent" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
@@ -266,6 +308,12 @@ const HikerDashboard = (props) => {
                                 <b>Your preferences have been correctly updated.</b>
                             </Typography>
                         </div> : <></>}
+                        {updateError ? <div style={{ marginRight: "25px" }}>
+                            <Typography className="unselectable" sx={{ fontSize: "18px" }}>
+                                <b>There's been an error with your preferences. Check fields value.</b>
+                            </Typography>
+                        </div> : <></>}
+                        <FormControlLabel control={<MaterialUISwitch onChange={e => { setSuggestionType(!suggestionType) }} defaultChecked />} label={!suggestionType ? "Beginner" : "Advanced"} />
                         <Button variant="filled"
                             onClick={handlePreferencesUpdate}
                             sx={{
@@ -280,6 +328,67 @@ const HikerDashboard = (props) => {
             </Grid>
         </>
     );
+}
+
+const MaterialUISwitch = styled(Switch)(({ theme }) => ({
+    width: 62,
+    height: 34,
+    padding: 7,
+    '& .MuiSwitch-switchBase': {
+        margin: 1,
+        padding: 0,
+        transform: 'translateX(6px)',
+        '&.Mui-checked': {
+            color: '#fff',
+            transform: 'translateX(22px)',
+            '& .MuiSwitch-thumb:before': {
+                backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 0 16 16"><path fill="${encodeURIComponent(
+                    '#fff',
+                )}" d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16Zm.25-14.75v1.5a.25.25 0 0 1-.5 0v-1.5a.25.25 0 0 1 .5 0Zm0 12v1.5a.25.25 0 1 1-.5 0v-1.5a.25.25 0 1 1 .5 0ZM4.5 1.938a.25.25 0 0 1 .342.091l.75 1.3a.25.25 0 0 1-.434.25l-.75-1.3a.25.25 0 0 1 .092-.341Zm6 10.392a.25.25 0 0 1 .341.092l.75 1.299a.25.25 0 1 1-.432.25l-.75-1.3a.25.25 0 0 1 .091-.34ZM2.28 4.408l1.298.75a.25.25 0 0 1-.25.434l-1.299-.75a.25.25 0 0 1 .25-.434Zm10.392 6 1.299.75a.25.25 0 1 1-.25.434l-1.3-.75a.25.25 0 0 1 .25-.434ZM1 8a.25.25 0 0 1 .25-.25h1.5a.25.25 0 0 1 0 .5h-1.5A.25.25 0 0 1 1 8Zm12 0a.25.25 0 0 1 .25-.25h1.5a.25.25 0 1 1 0 .5h-1.5A.25.25 0 0 1 13 8ZM2.03 11.159l1.298-.75a.25.25 0 0 1 .25.432l-1.299.75a.25.25 0 0 1-.25-.432Zm10.392-6 1.299-.75a.25.25 0 1 1 .25.433l-1.3.75a.25.25 0 0 1-.25-.434ZM4.5 14.061a.25.25 0 0 1-.092-.341l.75-1.3a.25.25 0 0 1 .434.25l-.75 1.3a.25.25 0 0 1-.342.091Zm6-10.392a.25.25 0 0 1-.091-.342l.75-1.299a.25.25 0 1 1 .432.25l-.75 1.3a.25.25 0 0 1-.341.09ZM6.494 1.415l.13.483a.25.25 0 1 1-.483.13l-.13-.483a.25.25 0 0 1 .483-.13ZM9.86 13.972l.13.483a.25.25 0 1 1-.483.13l-.13-.483a.25.25 0 0 1 .483-.13ZM3.05 3.05a.25.25 0 0 1 .354 0l.353.354a.25.25 0 0 1-.353.353l-.354-.353a.25.25 0 0 1 0-.354Zm9.193 9.193a.25.25 0 0 1 .353 0l.354.353a.25.25 0 1 1-.354.354l-.353-.354a.25.25 0 0 1 0-.353ZM1.545 6.01l.483.13a.25.25 0 1 1-.13.483l-.483-.13a.25.25 0 1 1 .13-.482Zm12.557 3.365.483.13a.25.25 0 1 1-.13.483l-.483-.13a.25.25 0 1 1 .13-.483Zm-12.863.436a.25.25 0 0 1 .176-.306l.483-.13a.25.25 0 1 1 .13.483l-.483.13a.25.25 0 0 1-.306-.177Zm12.557-3.365a.25.25 0 0 1 .176-.306l.483-.13a.25.25 0 1 1 .13.483l-.483.13a.25.25 0 0 1-.306-.177ZM3.045 12.944a.299.299 0 0 1-.029-.376l3.898-5.592a.25.25 0 0 1 .062-.062l5.602-3.884a.278.278 0 0 1 .392.392L9.086 9.024a.25.25 0 0 1-.062.062l-5.592 3.898a.299.299 0 0 1-.382-.034l-.005-.006Zm3.143 1.817a.25.25 0 0 1-.176-.306l.129-.483a.25.25 0 0 1 .483.13l-.13.483a.25.25 0 0 1-.306.176ZM9.553 2.204a.25.25 0 0 1-.177-.306l.13-.483a.25.25 0 1 1 .483.13l-.13.483a.25.25 0 0 1-.306.176Z"/></svg>')`,
+            },
+            '& + .MuiSwitch-track': {
+                opacity: 1,
+                backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#aab4be',
+            },
+        },
+    },
+    '& .MuiSwitch-thumb': {
+        backgroundColor: theme.palette.mode === 'dark' ? '#003892' : '#001e3c',
+        width: 32,
+        height: 32,
+        '&:before': {
+            content: "''",
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            left: 0,
+            top: 0,
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
+            backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="21" width="21" viewBox="0 0 18 18"><path fill="${encodeURIComponent(
+                '#fff',
+            )}" d="M4.5 1A1.5 1.5 0 0 0 3 2.5V3h4v-.5A1.5 1.5 0 0 0 5.5 1h-1zM7 4v1h2V4h4v.882a.5.5 0 0 0 .276.447l.895.447A1.5 1.5 0 0 1 15 7.118V13H9v-1.5a.5.5 0 0 1 .146-.354l.854-.853V9.5a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v.793l.854.853A.5.5 0 0 1 7 11.5V13H1V7.118a1.5 1.5 0 0 1 .83-1.342l.894-.447A.5.5 0 0 0 3 4.882V4h4zM1 14v.5A1.5 1.5 0 0 0 2.5 16h3A1.5 1.5 0 0 0 7 14.5V14H1zm8 0v.5a1.5 1.5 0 0 0 1.5 1.5h3a1.5 1.5 0 0 0 1.5-1.5V14H9zm4-11H9v-.5A1.5 1.5 0 0 1 10.5 1h1A1.5 1.5 0 0 1 13 2.5V3z"/></svg>')`,
+        },
+    },
+    '& .MuiSwitch-track': {
+        opacity: 1,
+        backgroundColor: theme.palette.mode === 'dark' ? '#8796A5' : '#aab4be',
+        borderRadius: 20 / 2,
+    },
+}));
+
+const ClickServiceManagement = (props) => {
+    const map = useMap()
+    map.on('click', (e) => {
+        props.setPosition({ 'lat': e.latlng.lat, 'lon': e.latlng.lng })
+    })
+}
+
+const FetchServiceManagement = (props) => {
+    const map = useMap()
+    useEffect(() => {
+        map.flyTo([props.position.lat, props.position.lon])
+    }, [props.position])
 }
 
 export default HikerDashboard;

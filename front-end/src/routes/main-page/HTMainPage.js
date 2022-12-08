@@ -36,6 +36,7 @@ const HTMainPage = (props) => {
         }
         getPreferences().then(() => {
             setPreferences(tmpPref)
+            console.log(preferences)
         })
     }, [])
 
