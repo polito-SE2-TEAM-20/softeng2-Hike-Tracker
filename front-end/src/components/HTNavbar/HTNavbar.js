@@ -17,17 +17,6 @@ import './navbar-style.css'
 import { Divider } from '@mui/material';
 import { displayTypeFlex, displayTypeBlock } from '../../extra/DisplayType';
 
-const bull = (
-    <Box
-        component="span"
-        sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
-    >
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-square-fill" viewBox="0 0 16 16">
-            <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2z" />
-        </svg>
-    </Box>
-);
-
 function HTNavbar(props) {
     const settings = ['Sign in', 'Sign out'];
     const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -111,13 +100,14 @@ function HTNavbar(props) {
                                         </MenuItem>
                                     )
                                 }
-                                if (!props.isLoggedIn && !page.reqLogin) {
+                                else if (!props.isLoggedIn && !page.reqLogin) {
                                     return (
                                         <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}>
                                             <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Bakbak One, display" }}>{page.title}</Typography>
                                         </MenuItem>
                                     )
                                 }
+                                else return (<></>)
                             })}
                         </Menu>
                     </Box>
@@ -155,7 +145,7 @@ function HTNavbar(props) {
                                     </Button>
                                 )
                             }
-                            if (!props.isLoggedIn && !page.reqLogin) {
+                            else if (!props.isLoggedIn && !page.reqLogin) {
                                 return (
                                     <Button style={{ textTransform: "none", fontFamily: "Bakbak One, display", fontSize: "18px", marginRight: "12px" }}
                                         key={page.title}
@@ -170,6 +160,7 @@ function HTNavbar(props) {
                                     </Button>
                                 )
                             }
+                            else return(<></>)
                         }
                         )}
                     </Box>
@@ -205,19 +196,19 @@ function HTNavbar(props) {
                                         {props.user?.firstName} {props.user?.lastName}
                                     </Typography>
                                     <Typography color="white" className='unselectable' fontFamily={"Bakbak One, display"} fontSize="14px">
-                                        {props.user?.role == 0 ? "Hiker" : ""}
-                                        {props.user?.role == 1 ? "Friend" : ""}
-                                        {props.user?.role == 2 ? "Local guide" : ""}
-                                        {props.user?.role == 3 ? "Platform manager" : ""}
-                                        {props.user?.role == 4 ? "Hut worker" : ""}
-                                        {props.user?.role == 5 ? "Emergency operator" : ""}
+                                        {props.user?.role === 0 ? "Hiker" : ""}
+                                        {props.user?.role === 1 ? "Friend" : ""}
+                                        {props.user?.role === 2 ? "Local guide" : ""}
+                                        {props.user?.role === 3 ? "Platform manager" : ""}
+                                        {props.user?.role === 4 ? "Hut worker" : ""}
+                                        {props.user?.role === 5 ? "Emergency operator" : ""}
                                     </Typography>
                                 </div>
                             </Tooltip> : <></>
 
                         }
                         {
-                            props.isLoggedIn && props?.user?.role == 0 ?
+                            props.isLoggedIn && props?.user?.role === 0 ?
                                 <>
                                     <Tooltip style={{ marginLeft: "20px" }}>
                                         <IconButton onClick={() => { navigate('/hikerdashboard') }} sx={{ p: 0 }}>
@@ -233,7 +224,7 @@ function HTNavbar(props) {
                                 <></>
                         }
                         {
-                            props.isLoggedIn && props?.user?.role == 3 ?
+                            props.isLoggedIn && props?.user?.role === 3 ?
                                 <>
                                     <Tooltip style={{ marginLeft: "20px" }}>
                                         <IconButton onClick={() => { navigate('/admindashboard') }} sx={{ p: 0 }}>
@@ -291,12 +282,12 @@ function HTNavbar(props) {
                                                 {props.user?.firstName} {props.user?.lastName}
                                             </Typography>
                                             <Typography color="black" fontFamily={"Bakbak One, display"} fontSize="16px">
-                                                {props.user?.role == 0 ? " Hiker" : ""}
-                                                {props.user?.role == 1 ? " Friend" : ""}
-                                                {props.user?.role == 2 ? " Local guide" : ""}
-                                                {props.user?.role == 3 ? " Platform manager" : ""}
-                                                {props.user?.role == 4 ? " Hut worker" : ""}
-                                                {props.user?.role == 5 ? " Emergency operator" : ""}
+                                                {props.user?.role === 0 ? " Hiker" : ""}
+                                                {props.user?.role === 1 ? " Friend" : ""}
+                                                {props.user?.role === 2 ? " Local guide" : ""}
+                                                {props.user?.role === 3 ? " Platform manager" : ""}
+                                                {props.user?.role === 4 ? " Hut worker" : ""}
+                                                {props.user?.role === 5 ? " Emergency operator" : ""}
                                             </Typography>
                                         </div>
                                         <Divider />
