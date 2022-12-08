@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -8,7 +9,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { DataSource, IsNull } from 'typeorm';
 
 import {
   CurrentUser,
@@ -51,14 +52,27 @@ export class UserHikesController {
   @Post('start')
   @HttpCode(HttpStatus.OK)
   async startHike(
-    @Body() body: StartHikeDto,
+    @Body() { hikeId }: StartHikeDto,
     @CurrentUser() user: UserContext,
   ): Promise<UserHikeFull> {
-    await this.hikesService.ensureExistsOrThrow(body.hikeId);
+    await this.hikesService.ensureExistsOrThrow(hikeId);
+
+    // make sure they don't already have a hike started
+    const existingHike = await this.service.getRepository().findOneBy({
+      hikeId,
+      userId: user.id,
+      finishedAt: IsNull(),
+    });
+
+    if (existingHike) {
+      throw new BadRequestException(
+        `Found user hike in progress: ${existingHike.id}. Please finish it first.`,
+      );
+    }
 
     const userHike = await this.service.create({
       userId: user.id,
-      hikeId: body.hikeId,
+      hikeId,
     });
 
     return await this.service.getFullUserHike(userHike.id);
