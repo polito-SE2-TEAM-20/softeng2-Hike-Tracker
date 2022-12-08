@@ -109,7 +109,7 @@ const HikerDashboard = (props) => {
     return (
         <>
             <HTNavbar user={props?.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
-            <Grid container columns={12} display={displayTypeFlex.pc} style={{ marginTop: "75px" }}>
+            <Grid container columns={12} display={displayTypeFlex.pc} style={{ marginTop: "75px", marginBottom: "50px" }}>
                 <Grid item lg={2}>
 
                 </Grid>
@@ -387,7 +387,7 @@ const ClickServiceManagement = (props) => {
 const FetchServiceManagement = (props) => {
     const map = useMap()
     useEffect(() => {
-        map.flyTo([props.position.lat, props.position.lon])
+        map.flyTo([props.position.lat, props.position.lon], 11)
     }, [props.position])
 }
 
