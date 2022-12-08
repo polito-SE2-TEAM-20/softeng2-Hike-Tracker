@@ -276,6 +276,8 @@ export class HikesController {
 
     const points = await pointsQuery.getMany();
 
+    console.log('linked points', points);
+
     await this.dataSource.transaction(async (entityManager) => {
       // remove all existing links
       await entityManager.getRepository(HikePoint).delete({
@@ -294,6 +296,7 @@ export class HikesController {
       );
     });
 
+    console.log('after tx');
     return await this.service.getFullHike(hikeId);
   }
 
@@ -367,13 +370,18 @@ export class HikesController {
     }
     //Antonio's code ends here
 
+    console.log('==== upsert se before');
     // update start and end point
     await this.service.upsertStartEndPoints({ id, startPoint, endPoint });
+    console.log('==== upsert se after');
 
+    console.log('==== empty data before', data);
     if (!isEmpty(keys(data))) {
       await this.service.getRepository().update({ id }, data);
     }
+    console.log('==== empty data after');
 
+    console.log('==== get full hike before');
     return await this.service.getFullHike(id);
   }
 
