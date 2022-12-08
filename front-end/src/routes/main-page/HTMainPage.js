@@ -7,6 +7,7 @@ import { CardMedia } from "@mui/material";
 import mainPagePicture from '../../Assets/tmpmainpage.jpg'
 import mainPagePicture2 from '../../Assets/mainpage2.jpg'
 import mainPagePicture3 from '../../Assets/mainpage3.jpg'
+import compassImage from '../../Assets/compass.jpg'
 import asidePicture from '../../Assets/aside.jpg'
 import API from "../../API/API";
 import { useEffect, useState } from "react";
@@ -62,8 +63,8 @@ const HTMainPage = (props) => {
                     props.isLoggedIn && props?.user?.role === 0 ?
                         <>
                             <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} columns={12} >
-                                <Grid container item xs={4} sm={4} md={4} lg={4} xl={4} width="fit-content">
-                                    <Grid item>
+                                <Grid container item xs={0} sm={0} md={4} lg={4} xl={4} width="fit-content">
+                                    <Grid item display={{ xs: "none", sm: "none", md: "flex", lg: "flex", xl: "flex" }}>
                                         <CardMedia component="img"
                                             style={{ objectFit: "cover", height: "100vh", marginTop: "25px" }}
                                             image={asidePicture}
@@ -71,42 +72,79 @@ const HTMainPage = (props) => {
                                         </CardMedia>
                                     </Grid>
                                 </Grid>
-                                <Grid container item xs={2} sm={2} md={2} lg={2} xl={2} columns={3} style={{ marginTop: "50px" }}>
-                                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginBottom: "25px", display: "flex", justifyContent: "left", marginLeft: "50px" }}>
-                                        <Typography
-                                            variant="h2"
-                                            className="unselectable"
-                                            sx={{
-                                                justifyContent: "left",
-                                                textAlign: "left",
-                                                color: '#ffffff',
-                                                textDecoration: 'none',
-                                                marginTop: "32px",
-                                                "@keyframes headerMovement": {
-                                                    '0%': {
-                                                        textShadow: "0 0 1.00rem #EBC824"
-                                                    },
-                                                    '25%': {
-                                                        textShadow: "0 0 0.75rem #C2A41D"
-                                                    },
-                                                    '50%': {
-                                                        textShadow: "0 0 0.50rem #1a1a1a"
-                                                    },
-                                                    '75%': {
-                                                        textShadow: "0 0 0.75rem #C2A41D"
-                                                    },
-                                                    '100%': {
-                                                        textShadow: "0 0 1.00rem #EBC824"
-                                                    }
-                                                },
-                                                animationIterationCount: "infinite",
-                                                animationDuration: "3s",
-                                                animationName: "headerMovement"
-                                            }}
-                                            fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "32px", xl: "32px" }}
-                                        >
-                                            Based on your preferences
-                                        </Typography>
+                                <Grid container item xs={12} sm={12} md={2} lg={2} xl={2} columns={3} style={{ marginTop: "50px" }}>
+                                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ marginBottom: "25px", display: "flex", justifyContent: { xs: "center", sm: "center", md: "left", lg: "left", xl: "left" }, marginLeft: { xs: "none", sm: "none", md: "48px", lg: "48px", xl: "48px" } }}>
+                                        {
+                                            loading && Object.keys(preferences).length !== 0 ?
+                                                <Typography
+                                                    variant="h2"
+                                                    className="unselectable"
+                                                    sx={{
+                                                        justifyContent: "left",
+                                                        textAlign: "left",
+                                                        color: '#ffffff',
+                                                        textDecoration: 'none',
+                                                        marginTop: "32px",
+                                                        "@keyframes headerMovement": {
+                                                            '0%': {
+                                                                textShadow: "0 0 1.00rem #EBC824"
+                                                            },
+                                                            '25%': {
+                                                                textShadow: "0 0 0.75rem #C2A41D"
+                                                            },
+                                                            '50%': {
+                                                                textShadow: "0 0 0.50rem #1a1a1a"
+                                                            },
+                                                            '75%': {
+                                                                textShadow: "0 0 0.75rem #C2A41D"
+                                                            },
+                                                            '100%': {
+                                                                textShadow: "0 0 1.00rem #EBC824"
+                                                            }
+                                                        },
+                                                        animationIterationCount: "infinite",
+                                                        animationDuration: "3s",
+                                                        animationName: "headerMovement"
+                                                    }}
+                                                    fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "32px", xl: "32px" }}
+                                                >
+                                                    Based on your preferences
+                                                </Typography> :
+                                                <Typography
+                                                    variant="h2"
+                                                    className="unselectable"
+                                                    sx={{
+                                                        justifyContent: "left",
+                                                        textAlign: "left",
+                                                        color: '#ffffff',
+                                                        textDecoration: 'none',
+                                                        marginTop: "32px",
+                                                        "@keyframes headerMovement": {
+                                                            '0%': {
+                                                                textShadow: "0 0 1.00rem #EBC824"
+                                                            },
+                                                            '25%': {
+                                                                textShadow: "0 0 0.75rem #C2A41D"
+                                                            },
+                                                            '50%': {
+                                                                textShadow: "0 0 0.50rem #1a1a1a"
+                                                            },
+                                                            '75%': {
+                                                                textShadow: "0 0 0.75rem #C2A41D"
+                                                            },
+                                                            '100%': {
+                                                                textShadow: "0 0 1.00rem #EBC824"
+                                                            }
+                                                        },
+                                                        animationIterationCount: "infinite",
+                                                        animationDuration: "3s",
+                                                        animationName: "headerMovement"
+                                                    }}
+                                                    fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "32px", xl: "32px" }}
+                                                >
+                                                    Suggestions
+                                                </Typography>
+                                        }
                                     </Grid>
                                     {
                                         !loading ? <>
@@ -120,20 +158,62 @@ const HTMainPage = (props) => {
                                     }
                                     {
                                         loading && Object.keys(preferences).length === 0 ?
-                                            <Typography
-                                                variant="h2"
-                                                className="unselectable"
-                                                sx={{
-                                                    justifyContent: "left",
-                                                    textAlign: "left",
-                                                    color: '#ffffff',
-                                                    textDecoration: 'none',
-                                                    marginTop: "32px"
-                                                }}
-                                                fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "24px", xl: "24px" }}
-                                            >
-                                                Add your preferences to the hiker dashboard to get the best suggestions.
-                                            </Typography>
+                                            <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} sx={{
+                                                marginLeft: { xs: "none", sm: "none", md: "48px", lg: "48px", xl: "48px" },
+                                                display: { xs: "flex", sm: "flex", md: "flex", lg: "flex", xl: "flex" },
+                                                justifyContent: { xs: "center", sm: "center", md: "left", lg: "left", xl: "left" }
+                                            }}>
+                                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                                    <Typography
+                                                        variant="h2"
+                                                        className="unselectable"
+                                                        sx={{
+                                                            justifyContent: "left",
+                                                            textAlign: "left",
+                                                            color: '#ffffff',
+                                                            textDecoration: 'none',
+                                                        }}
+                                                        fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "24px", xl: "24px" }}
+                                                    >
+                                                        Add your preferences to the hiker dashboard to get the best suggestions.
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                                    <Typography
+                                                        variant="h4"
+                                                        className="unselectable"
+                                                        sx={{
+                                                            justifyContent: "left",
+                                                            textAlign: "left",
+                                                            color: '#bababa',
+                                                            textDecoration: 'none'
+                                                        }}
+                                                        fontSize={{ xs: "18px", sm: "18px", md: "12px", lg: "12px", xl: "12px" }}
+                                                    >
+                                                        Your data will only be used for providing you a better experience on our website.
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                                    <Button variant="outlined"
+                                                        textDecoration="none"
+                                                        onClick={() => { navigate('/hikerdashboard') }}
+                                                        sx={{
+                                                            borderRadius: "60px", borderColor: "white",
+                                                            color: "white", textTransform: "none",
+                                                            "&:hover": { borderColor: "#EBC824", color: "#EBC824" },
+                                                            marginTop: "15px"
+                                                        }}>
+                                                        Go to the dashboard
+                                                    </Button>
+                                                </Grid>
+                                                <Grid item display={{ xs: "flex", sm: "flex", md: "flex", lg: "flex", xl: "flex" }}>
+                                                    <CardMedia component="img"
+                                                        style={{ objectFit: "cover", height: "60vh", marginTop: "25px" }}
+                                                        image={compassImage}
+                                                        alt="Paella dish">
+                                                    </CardMedia>
+                                                </Grid>
+                                            </Grid>
                                             :
                                             <>
                                             </>
@@ -167,7 +247,7 @@ const HTMainPage = (props) => {
                                     }
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                         {
-                                            listOfHikes.length > 6 ?
+                                            listOfHikes.length > 6 && Object.keys(preferences).length !== 0 ?
                                                 <div style={{ marginTop: "28px", display: "flex", justifyContent: "center" }}>
                                                     <Button variant="outlined"
                                                         textDecoration="none"

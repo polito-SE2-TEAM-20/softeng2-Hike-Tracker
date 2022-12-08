@@ -24,7 +24,7 @@ const HikerDashboard = (props) => {
 
     const [updateFinished, setUpdateFinished] = useState(false)
     const [updateError, setUpdateError] = useState(false)
-    const [position, setPosition] = useState({ 'lat': 12.34, 'lon': 56.78 })
+    const [position, setPosition] = useState({ 'lat': 45.0651752130794, 'lon': 7.661497396350511 })
     const [radius, setRadius] = useState(0.0)
     const [length, setLength] = useState(0.0)
     const [expectedTime, setExpectedTime] = useState(0.0)
@@ -44,13 +44,15 @@ const HikerDashboard = (props) => {
             tmpPref = await API.getPreferences()
         }
         getPreferences().finally(() => {
-            setPosition({ 'lat': tmpPref.lat, 'lon': tmpPref.lon })
-            setRadius(tmpPref.radiusKms)
-            setLength(tmpPref.maxLength - (suggestionType ? BEGINNER : ADVANCED).lengthOffset)
-            setExpectedTime(tmpPref.expectedTimeMax - (suggestionType ? BEGINNER : ADVANCED).expectedTimeOffset)
-            setDifficulty(tmpPref.difficultyMax - (suggestionType ? BEGINNER : ADVANCED).difficultyOffset)
-            setAscent(tmpPref.ascentMax - (suggestionType ? BEGINNER : ADVANCED).ascentOffset)
-            setSuggestionType(tmpPref.suggestionType)
+            if (Object.keys(tmpPref).length !== 0) {
+                setPosition({ 'lat': tmpPref.lat, 'lon': tmpPref.lon })
+                setRadius(tmpPref.radiusKms)
+                setLength(tmpPref.maxLength - (suggestionType ? BEGINNER : ADVANCED).lengthOffset)
+                setExpectedTime(tmpPref.expectedTimeMax - (suggestionType ? BEGINNER : ADVANCED).expectedTimeOffset)
+                setDifficulty(tmpPref.difficultyMax - (suggestionType ? BEGINNER : ADVANCED).difficultyOffset)
+                setAscent(tmpPref.ascentMax - (suggestionType ? BEGINNER : ADVANCED).ascentOffset)
+                setSuggestionType(tmpPref.suggestionType)
+            }
         })
     }, [])
 
