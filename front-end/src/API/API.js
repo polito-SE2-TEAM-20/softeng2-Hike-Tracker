@@ -109,7 +109,7 @@ async function getHikeByListOfPaths(listOfPaths) {
 async function getHikePathByHike(hike) {
     var outHike = hike
     outHike.positions = []
-    if (outHike.gpxPath == undefined || outHike.gpxPath == "")
+    if (outHike.gpxPath === undefined || outHike.gpxPath === "")
         return outHike
     let response = await fetch((APIURL + hike.gpxPath), {
         method: 'GET'
@@ -400,25 +400,33 @@ const getPreferences = async () => {
     if (response.ok) {
         const preferences = await response.json()
         return preferences
-    } else if (response.status == 404) {
+    } else if (response.status === 404) {
         return {}
+    } else {
+        const errDetail = await response.json()
+        throw errDetail.message
     }
 }
 
 
 // Francesco Grande, [11/30/22 4:27 PM]
-// POST me/set_preferences ti permette di salvare o modificare le preferenze, il body è fatto tipo così: {
+// POST me/set_preferences ti permette di salvare o modificare le preferenze, il body è fatto tipo così: 
+// {
 //     "lat": 5.005,
 //     "lon": 5.004,
 //     "radiusKms": 10,
-//     "length": 5000,
-//     "expectedTime": 1000,
-//     "difficulty": 2,
-//     "ascent": 100
+//     "minLength": 4010,
+//     "maxLength": 6000,
+//     "expectedTimeMin": 500,
+//     "expectedTimeMax": 1500,
+//     "difficultyMin": 1,
+//     "difficultyMax": 2,
+//     "ascentMin": 50,
+//     "ascentMax": 150
 // }
 const setPreferences = async (preferences) => {
     console.log(preferences)
-    const response = await fetch((API + '/me/set_preferences'), {
+    const response = await fetch((APIURL + '/me/set_preferences'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

@@ -1,4 +1,4 @@
-import { Grid, Switch, Typography, CircularProgress, Paper, Divider } from "@mui/material";
+import { Grid, Switch, Typography, CircularProgress, Divider, FormControlLabel } from "@mui/material";
 import { displayTypeFlex } from "../../extra/DisplayType";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import './admin-dashboard-style.css'
@@ -10,7 +10,6 @@ import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 import BadgeIcon from '@mui/icons-material/Badge';
 import GroupsIcon from '@mui/icons-material/Groups';
 import HTButton from "../../components/buttons/Button";
-import { FormControlLabel } from "@mui/material";
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 
 export const AdminDashboardPC = (props) => {
@@ -41,12 +40,12 @@ export const AdminDashboardPC = (props) => {
                         fontWeight: "50"
                     }}>
                         <b>
-                            {props?.user?.role == 0 ? "Hiker" : ""}
-                            {props?.user?.role == 1 ? "Friend" : ""}
-                            {props?.user?.role == 2 ? "Local guide" : ""}
-                            {props?.user?.role == 3 ? "Platform manager" : ""}
-                            {props?.user?.role == 4 ? "Hut worker" : ""}
-                            {props?.user?.role == 5 ? "Emergency operator" : ""}
+                            {props?.user?.role === 0 ? "Hiker" : ""}
+                            {props?.user?.role === 1 ? "Friend" : ""}
+                            {props?.user?.role === 2 ? "Local guide" : ""}
+                            {props?.user?.role === 3 ? "Platform manager" : ""}
+                            {props?.user?.role === 4 ? "Hut worker" : ""}
+                            {props?.user?.role === 5 ? "Emergency operator" : ""}
                         </b>
                     </Typography>
                 </Grid>
@@ -93,6 +92,7 @@ export const AdminDashboardPC = (props) => {
                         props.loaded && props.listOfRequests.filter(x => {
                             if (x.role === 2 && props.filter.local) return x
                             if (x.role === 4 && props.filter.hut) return x
+                            return x
                         }).length === 0 ?
                             <Grid container style={{ marginTop: "0px", width: "auto", minHeight: "100vh", height: "100%", display: "flex", justifyContent: "center" }}>
                                 <Grid item style={{ marginTop: "50px" }} >
@@ -115,10 +115,12 @@ export const AdminDashboardPC = (props) => {
                         props.loaded && props.listOfRequests.filter(x => {
                             if (x.role === 2 && props.filter.local) return x
                             if (x.role === 4 && props.filter.hut) return x
+                            return x
                         }).length !== 0 ?
                             props.listOfRequests.filter(x => {
                                 if (x.role === 2 && props.filter.local) return x
                                 if (x.role === 4 && props.filter.hut) return x
+                                return x
                             }).map(request => {
                                 if (request.role === 2) // local guide
                                     return (
@@ -180,6 +182,7 @@ export const AdminDashboardPC = (props) => {
                                             </AccordionDetails>
                                         </Accordion>
                                     )
+                                else return (<></>)
                             }
                             )
                             : <></>
@@ -218,12 +221,12 @@ export const AdminDashboardTABLET = (props) => {
                         fontWeight: "50"
                     }}>
                         <b>
-                            {props?.user?.role == 0 ? "Hiker" : ""}
-                            {props?.user?.role == 1 ? "Friend" : ""}
-                            {props?.user?.role == 2 ? "Local guide" : ""}
-                            {props?.user?.role == 3 ? "Platform manager" : ""}
-                            {props?.user?.role == 4 ? "Hut worker" : ""}
-                            {props?.user?.role == 5 ? "Emergency operator" : ""}
+                            {props?.user?.role === 0 ? "Hiker" : ""}
+                            {props?.user?.role === 1 ? "Friend" : ""}
+                            {props?.user?.role === 2 ? "Local guide" : ""}
+                            {props?.user?.role === 3 ? "Platform manager" : ""}
+                            {props?.user?.role === 4 ? "Hut worker" : ""}
+                            {props?.user?.role === 5 ? "Emergency operator" : ""}
                         </b>
                     </Typography>
                 </Grid>
@@ -242,11 +245,11 @@ export const AdminDashboardTABLET = (props) => {
                     </Grid>
                 </Grid>
 
-                <Grid container md={12} item sx={{marginTop: "14px", borderStyle: "solid", borderRadius: "15px", borderWidth: "1px", borderColor: "#bababa", width:"fit-content", display: "flex", justifyContent: "left"}}>
-                    <Grid item md={12} style={{ display: "flex", justifyContent: "center", width:"fit-content" }}>
+                <Grid container md={12} item sx={{ marginTop: "14px", borderStyle: "solid", borderRadius: "15px", borderWidth: "1px", borderColor: "#bababa", width: "fit-content", display: "flex", justifyContent: "left" }}>
+                    <Grid item md={12} style={{ display: "flex", justifyContent: "center", width: "fit-content" }}>
                         <FormControlLabel control={<Switch onChange={e => { props.setFilter({ 'hut': props.filter.hut, 'local': e.target.checked }) }} defaultChecked />} label="Show local guides requests" />
                     </Grid>
-                    <Grid item md={12} style={{ display: "flex", justifyContent: "center", width:"fit-content" }}>
+                    <Grid item md={12} style={{ display: "flex", justifyContent: "center", width: "fit-content" }}>
                         <FormControlLabel control={<Switch onChange={e => { props.setFilter({ 'hut': e.target.checked, 'local': props.filter.local }) }} defaultChecked />} label="Show hut workers requests" />
                     </Grid>
                 </Grid>
@@ -270,6 +273,7 @@ export const AdminDashboardTABLET = (props) => {
                         props.loaded && props.listOfRequests.filter(x => {
                             if (x.role === 2 && props.filter.local) return x
                             if (x.role === 4 && props.filter.hut) return x
+                            return x
                         }).length === 0 ?
                             <Grid container style={{ marginTop: "0px", width: "auto", minHeight: "100vh", height: "100%", display: "flex", justifyContent: "center" }}>
                                 <Grid item style={{ marginTop: "50px" }} >
@@ -292,10 +296,12 @@ export const AdminDashboardTABLET = (props) => {
                         props.loaded && props.listOfRequests.filter(x => {
                             if (x.role === 2 && props.filter.local) return x
                             if (x.role === 4 && props.filter.hut) return x
+                            return x
                         }).length !== 0 ?
                             props.listOfRequests.filter(x => {
                                 if (x.role === 2 && props.filter.local) return x
                                 if (x.role === 4 && props.filter.hut) return x
+                                return x
                             }).map(request => {
                                 if (request.role === 2) // local guide
                                     return (
@@ -357,6 +363,7 @@ export const AdminDashboardTABLET = (props) => {
                                             </AccordionDetails>
                                         </Accordion>
                                     )
+                                else return (<></>)
                             }
                             )
                             : <></>
@@ -395,17 +402,17 @@ export const AdminDashboardMOBILE = (props) => {
                         fontWeight: "50"
                     }}>
                         <b>
-                            {props?.user?.role == 0 ? "Hiker" : ""}
-                            {props?.user?.role == 1 ? "Friend" : ""}
-                            {props?.user?.role == 2 ? "Local guide" : ""}
-                            {props?.user?.role == 3 ? "Platform manager" : ""}
-                            {props?.user?.role == 4 ? "Hut worker" : ""}
-                            {props?.user?.role == 5 ? "Emergency operator" : ""}
+                            {props?.user?.role === 0 ? "Hiker" : ""}
+                            {props?.user?.role === 1 ? "Friend" : ""}
+                            {props?.user?.role === 2 ? "Local guide" : ""}
+                            {props?.user?.role === 3 ? "Platform manager" : ""}
+                            {props?.user?.role === 4 ? "Hut worker" : ""}
+                            {props?.user?.role === 5 ? "Emergency operator" : ""}
                         </b>
                     </Typography>
                 </Grid>
             </Grid>
-            <Grid container item xs={6} justifyContent="center" height="fit-content" sx={{ marginBottom: "35px", marginTop: "18px" }}>
+            <Grid container item xs={10} justifyContent="center" height="fit-content" sx={{ marginBottom: "35px", marginTop: "18px" }}>
                 <Grid item xs={12}>
                     <Grid xs={12}>
                         <Typography className="unselectable" fontSize={24} textAlign={"center"}>
@@ -419,11 +426,11 @@ export const AdminDashboardMOBILE = (props) => {
                     </Grid>
                 </Grid>
 
-                <Grid container item xs={12} sx={{padding: "8px", marginTop: "14px", borderStyle: "solid", borderRadius: "15px", borderWidth: "1px", borderColor: "#bababa", display: "flex", justifyContent: "center"}}>
+                <Grid container item xs={12} sx={{ padding: "8px", marginTop: "14px", borderStyle: "solid", borderRadius: "15px", borderWidth: "1px", borderColor: "#bababa", display: "flex", justifyContent: "center" }}>
                     <Grid item xs={12} style={{ display: "flex", justifyContent: "center" }}>
                         <FormControlLabel control={<Switch onChange={e => { props.setFilter({ 'hut': props.filter.hut, 'local': e.target.checked }) }} defaultChecked />} label="Show local guides requests" />
                     </Grid>
-                    <Divider variant="middle" sx={{borderBottomWidth: 4}} />
+                    <Divider variant="middle" sx={{ borderBottomWidth: 4 }} />
                     <Grid item xs={12} style={{ display: "flex", justifyContent: "center" }}>
                         <FormControlLabel control={<Switch onChange={e => { props.setFilter({ 'hut': e.target.checked, 'local': props.filter.local }) }} defaultChecked />} label="Show hut workers requests" />
                     </Grid>
@@ -448,6 +455,7 @@ export const AdminDashboardMOBILE = (props) => {
                         props.loaded && props.listOfRequests.filter(x => {
                             if (x.role === 2 && props.filter.local) return x
                             if (x.role === 4 && props.filter.hut) return x
+                            return x
                         }).length === 0 ?
                             <Grid container style={{ marginTop: "0px", width: "auto", minHeight: "100vh", height: "100%", display: "flex", justifyContent: "center" }}>
                                 <Grid item style={{ marginTop: "50px" }} >
@@ -470,10 +478,12 @@ export const AdminDashboardMOBILE = (props) => {
                         props.loaded && props.listOfRequests.filter(x => {
                             if (x.role === 2 && props.filter.local) return x
                             if (x.role === 4 && props.filter.hut) return x
+                            return x
                         }).length !== 0 ?
                             props.listOfRequests.filter(x => {
                                 if (x.role === 2 && props.filter.local) return x
                                 if (x.role === 4 && props.filter.hut) return x
+                                return x
                             }).map(request => {
                                 if (request.role === 2) // local guide
                                     return (
@@ -482,7 +492,7 @@ export const AdminDashboardMOBILE = (props) => {
                                                 <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
                                                     {request.firstName + " " + request.lastName}
                                                 </Typography>
-                                                <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}><GroupsIcon sx={{ marginRight: "20px" }} />Local guide</Typography>
+                                                {/* <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}><GroupsIcon sx={{ marginRight: "20px" }} />Local guide</Typography> */}
                                             </AccordionSummary>
                                             <AccordionDetails>
                                                 <Grid container>
@@ -495,7 +505,7 @@ export const AdminDashboardMOBILE = (props) => {
                                                     <Grid item xs={12}>
                                                         <Typography><b>Email</b>: {request.email}</Typography>
                                                     </Grid>
-                                                    <Grid item xs={12} sx={{ display: "flex", justifyContent: "right" }}>
+                                                    <Grid item xs={12} sx={{ display: "flex", justifyContent: "right", marginTop: "10px" }}>
                                                         {/* <div style={{ marginRight: "24px" }}> */}
                                                         <HTButton navigate={() => { props.acceptUser(request.id) }} text="Accept" textSize="18px" textColor="white" color="#33aa33" />
                                                         {/* </div> */}
@@ -512,7 +522,7 @@ export const AdminDashboardMOBILE = (props) => {
                                                 <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
                                                     {request.firstName + " " + request.lastName}
                                                 </Typography>
-                                                <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}><BadgeIcon sx={{ marginRight: "20px" }} />Hut worker</Typography>
+                                                {/* <Typography sx={{ fontSize: "18px", color: 'text.secondary' }}><BadgeIcon sx={{ marginRight: "20px" }} />Hut worker</Typography> */}
                                             </AccordionSummary>
                                             <AccordionDetails>
                                                 <Grid container>
@@ -525,7 +535,7 @@ export const AdminDashboardMOBILE = (props) => {
                                                     <Grid item xs={12}>
                                                         <Typography><b>Email</b>: {request.email}</Typography>
                                                     </Grid>
-                                                    <Grid item xs={12} sx={{ display: "flex", justifyContent: "right" }}>
+                                                    <Grid item xs={12} sx={{ display: "flex", justifyContent: "right", marginTop: "10px" }}>
                                                         {/* <div style={{ marginRight: "24px" }}> */}
                                                         <HTButton navigate={() => { props.acceptUser(request.id) }} text="Accept" textSize="18px" textColor="white" color="#33aa33" />
                                                         {/* </div> */}
@@ -535,6 +545,7 @@ export const AdminDashboardMOBILE = (props) => {
                                             </AccordionDetails>
                                         </Accordion>
                                     )
+                                else return (<></>)
                             }
                             )
                             : <></>

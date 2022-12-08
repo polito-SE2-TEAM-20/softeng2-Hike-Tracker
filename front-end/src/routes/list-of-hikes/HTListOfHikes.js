@@ -72,7 +72,7 @@ const HTListOfHikes = (props) => {
                     <Grid container columns={5} style={{ marginTop: "25px", display: "flex", justifyContent: "center" }}>
                         {
                             loading ?
-                                listOfHikes.length == 0 ?
+                                listOfHikes.length === 0 ?
                                     <Typography fontFamily={"Bakbak One, display"} fontWeight="600" fontSize="32px">
                                         No matching hikes.
                                     </Typography>
