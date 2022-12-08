@@ -10,6 +10,12 @@ export const UserHikeState = {
     ALL: 3
 }
 
+export const TrackingState = {
+    NOT_STARTED: 0,
+    STARTED: 1,
+    FINISHED: 2
+}
+
 export function getHikeDifficultyString(level) {
     switch(level) {
         case HikeDifficultyLevel.Tourist: {
