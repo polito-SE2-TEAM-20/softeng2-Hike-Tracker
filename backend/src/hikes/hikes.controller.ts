@@ -374,18 +374,13 @@ export class HikesController {
     }
     //Antonio's code ends here
 
-    // console.log('==== upsert se before');
     // update start and end point
     await this.service.upsertStartEndPoints({ id, startPoint, endPoint });
-    // console.log('==== upsert se after');
 
-    // console.log('==== empty data before', data);
     if (!isEmpty(keys(data))) {
       await this.service.getRepository().update({ id }, data);
     }
-    // console.log('==== empty data after');
 
-    // console.log('==== get full hike before');
     return await this.service.getFullHike(id);
   }
 
