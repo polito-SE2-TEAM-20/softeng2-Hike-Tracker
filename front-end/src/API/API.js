@@ -656,7 +656,7 @@ async function addPointToTracingkHike(hikeTrackId, lat, lon) {
         }
     }
 
-    const response = await fetch((APIURL + '/user-hikes/'+ {hikeTrackId} + '/track-point'), {
+    const response = await fetch((APIURL + '/user-hikes/'+ hikeTrackId + '/track-point'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -682,7 +682,7 @@ async function addPointToTracingkHike(hikeTrackId, lat, lon) {
 
 async function stopTrackingHike(hikeTrackId) {
 
-    const response = await fetch((APIURL + '/user-hikes/' + {hikeTrackId} + '/finish'), {
+    const response = await fetch((APIURL + '/user-hikes/' + hikeTrackId + '/finish'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -706,7 +706,7 @@ async function stopTrackingHike(hikeTrackId) {
 
 async function getUserHikeTrackingDetails(hikeTrackId) {
 
-    const response = await fetch((APIURL + '/user-hikes/'+ {hikeTrackId}), {
+    const response = await fetch((APIURL + '/user-hikes/'+ hikeTrackId), {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
