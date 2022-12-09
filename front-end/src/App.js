@@ -153,18 +153,14 @@ const modifyHutInformation =(information, hutId, setShow, setErrorMessage) =>{
         <Route path="/listofhikes" element={<HTListOfHikes user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/listofhuts" element={<HTListOfHuts user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/browsehikes" element={<HTBrowseHikes user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
-        <Route path="/singlehike" element={<SingleHike user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut}/>} />
-        {/*<Route path="/newHike" element={<HTAddHike user={user?.user} addNewGpx={API.addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />*/}
         <Route path="/signup" element={<SignUpForm doRegister={doRegister} />} />
-        <Route path="/hutpage" element={<HTHutPage isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/newHut" element={<NewHutForm user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} addNewHut={API.addNewHut}/>}/>
         <Route path="/myHuts" element={<MyHutsPage isLoggedIn={loggedIn} doLogOut={doLogOut}/>}/>
         <Route path="/myHikes" element={<MyHikesPage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} deleteHike={deleteHike} rowsAffected={rowsAffected} setRowsAffected={setRowsAffected}/>}/>
         <Route path="/showhike/:hikeid" element={<ShowHike user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />}/>
         <Route path="/showhut/:hutid" element={<ShowHut user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />}/>
         <Route path="/newParking" element={<NewParking user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} addNewParkingLot={API.addNewParkingLot}/>}/>
-        <Route path="/newHikeStEnd" element={<NewHikeStEnd addNewGpx={API.addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user}/>} />
         <Route path="/edithike/:hikeid" element={<EditHikePage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut}/>} />
         <Route path="/newHike" element={<NewHikeStEnd addNewGpx={API.addNewGpx} isLoggedIn={loggedIn} doLogOut={doLogOut} user={user?.user}/>} />
         <Route path="/hikerdashboard" element={<HikerDashboard user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
