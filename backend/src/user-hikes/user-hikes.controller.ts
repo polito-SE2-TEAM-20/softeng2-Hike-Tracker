@@ -91,6 +91,10 @@ export class UserHikesController {
       user,
     );
 
+    if (!!userHike.finishedAt) {
+      throw new BadRequestException('Hike is finished');
+    }
+
     // insert new point into db
     await this.dataSource.transaction(async (entityManager) => {
       const lastPoint = await this.userHikeTrackPointsService
