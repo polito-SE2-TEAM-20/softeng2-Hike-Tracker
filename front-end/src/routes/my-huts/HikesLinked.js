@@ -29,7 +29,7 @@ const HikesLinked = (props) => {
     const [hikeCondition, setHikeCondition] = useState(-1);
     const [show, setShow] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-
+    const [hikesUpdatableWrite, setHikesUpdatableWrite] = useState([])
     const navigate = useNavigate()
 
     useEffect(() => {  
@@ -37,15 +37,17 @@ const HikesLinked = (props) => {
 
         API.getHikesUpdatableHutWorker()
            .then((hikes)=>{
-            setHikesUpdatable(oldHikes => hikes)
+            setHikesUpdatable(oldHikes => hikes);
+            setHikesUpdatableWrite(oldHikes => hikes);
             setLoaded(true);
             console.log(hikes);
+            
            })
       
     }, [])
 
-    const modifyHike = (hikeId) =>{
-        let object = {condition: hikeCondition, cause: cause};
+    const modifyHike = (hikeId, index) =>{ 
+        let object = {condition: hikesUpdatableWrite[index].condition, cause: hikesUpdatableWrite[index].cause};
         API.updateHikeCondition(object, hikeId)
            .then((updatedHike) =>{
               setShow(false);
@@ -109,7 +111,7 @@ const HikesLinked = (props) => {
                     }
                     {
                         loaded && hikesUpdatable.length !== 0 ?
-                            hikesUpdatable.map(hike => {
+                            hikesUpdatable.map((hike, index) => {
                                     return (
                                         <Accordion sx={{ml:"20px", mr:"80px"}}>
                                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -132,17 +134,17 @@ const HikesLinked = (props) => {
                                                         <Typography><b>Expected time</b>: {hike.expectedTime}</Typography>
                                                     </Grid>
                                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                                        <Typography><b>Hike condition</b>: <ConditionSelect hikeCondition={hikeCondition} setHikeCondition={setHikeCondition}/></Typography>
+                                                        <Typography><b>Hike condition</b>: <ConditionSelect hikesUpdatableWrite={hikesUpdatableWrite} index={index}/></Typography>
                                                     </Grid>
                                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                                     <><Typography><b>Cause:</b></Typography>
                                                     <TextField required fullWidth variant="standard" 
-                                                    value={cause}
-                                                     onChange={(e) => { setCause(e.target.value) }}
+                                                   //  value={list[index].cause}
+                                                     onChange={(e) => { hikesUpdatableWrite[index].cause = (e.target.value) }}
                                                     ></TextField></>
                                                     </Grid>
                                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}sx={{ display: "flex", justifyContent: "right", mt:10 }}>
-                                                        <HTButton onClick={() => { modifyHike(hike.id) }} text="Modify hike condition" textSize="18px" textColor="white" color="#33aa33" />
+                                                        <HTButton navigate ={() => { modifyHike(hike.id, index) }} text="Modify hike condition" textSize="18px" textColor="white" color="#33aa33" />
                                                     </Grid>
                                                 </Grid>
                                             </AccordionDetails>
@@ -169,10 +171,10 @@ function ConditionSelect(props) {
         <Select
           labelId="demo-simple-select-label"
           id="demo-seimple-select"
-          value={props.hikeCondition}
+          // value={props.hikeCondition}
           fullWidth
           variant="standard"
-          onChange={ev => props.setHikeCondition(ev.target.value)}
+          onChange={ev => props.hikesUpdatableWrite[props.index].condition = (ev.target.value)}
         >
           <MenuItem value={0}>
             Open
