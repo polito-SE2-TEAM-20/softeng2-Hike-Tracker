@@ -85,17 +85,23 @@ function NewHutForm(props) {
   const [errorMessage, setErrorMessage] = useState('');
   const [show, setShow] = useState(false);
 
+  const [hutId, setHutId] = useState(-1);
+
 
   const handleNext = () => {
     if(activeStep ===(steps.length - 3)){
-        if([name, latitude, longitude, region, province, address, city].some(t=> t.length ===0)){
+        if([name, latitude, longitude].some(t=> t.length ===0)){
         setErrorMessage("All fields with the * should be filled");
         setShow(true);
     {/*else if(!province.match(/^[a-zA-Z]+[a-zA-Z]+$/) || !region.match(/^[a-zA-Z]+[a-zA-Z]+$/) ){
             setErrorMessage("insert a valid name for region and province");
             setShow(true);
             //check if the coordinate are with the comma or the point*/}
+    {/*if([name, latitude, longitude, region, province, address, city].some(t=> t.length ===0)){
+        setErrorMessage("All fields with the * should be filled");
+        setShow(true);*/ }
     }
+
     else if(!latitude.toString().match(/^[-+]?([0-9]*[.])?[0-9]+$/)) {
             setErrorMessage("insert a valid value for the latitude ");
             setShow(true);
@@ -122,7 +128,18 @@ function NewHutForm(props) {
         let object = {title: name, elevation: parseFloat(elevation), description: description,  website: website, ownerName: owner, numberOfBeds: parseInt(beds), location : {lat: parseFloat(latitude), lon: parseFloat(longitude), name: name, address: add.join(",")}, price: parseFloat(price)}
         setShow(false);
         setActiveStep(activeStep + 1);
-        props.addNewHut(object).catch((err)=> {setErrorMessage(err); setShow(true)})
+
+        props.addNewHut(object)
+           .then(newHut =>{
+            console.log(newHut);
+            setHutId(newHut.id);
+            setShow(false);
+            setErrorMessage('');
+           })
+           .catch(err=>{
+            setShow(true);
+            setErrorMessage(err);
+           })
 
     }
   };
@@ -141,6 +158,16 @@ function NewHutForm(props) {
   const goBackLocalGuide = () => {
     navigate('/');
   };
+
+  const goToshowHut = () => {
+    navigate(`/showHut/${hutId}`)
+
+  }
+
+  const goToAddNewHut = () => {
+    navigate('/newHut');
+
+  }
 
   const handleBack = () => {
     setActiveStep(activeStep - 1);
@@ -189,7 +216,10 @@ function NewHutForm(props) {
           </Stepper>
           {activeStep === steps.length ? (
             <React.Fragment>
-              <Typography variant="h5" gutterBottom>
+              {
+                errorMessage===''? (
+                  <>
+                  <Typography variant="h5" gutterBottom>
                 HUT INSERTED
               </Typography>
               <Typography variant="subtitle1">
@@ -198,6 +228,28 @@ function NewHutForm(props) {
               <Button onClick={goBackLocalGuide} sx={{ mt: 3, ml: 1 }}>
                     Go Back
                   </Button>
+                  <Button onClick={goToshowHut} sx={{ mt: 3, ml: 5 }}>
+                    Go to hut deatils
+                  </Button>
+                </>
+                 
+                ):(
+                  <>
+                  <Typography variant="h5" gutterBottom>
+                HUT NOT INSERTED
+              </Typography>
+              <Typography variant="subtitle1">
+                Something went wrong: {errorMessage}
+              </Typography>
+              <Button onClick={goBackLocalGuide} sx={{ mt: 3, ml: 1 }}>
+                    Go Back
+                  </Button>
+                  <Button onClick={goToAddNewHut} sx={{ mt: 3, ml: 5 }}>
+                    Add new hut 
+                  </Button>
+                </> )
+              }
+              
             </React.Fragment>
           ) : (
             <>

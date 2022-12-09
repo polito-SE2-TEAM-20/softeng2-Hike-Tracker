@@ -43,7 +43,7 @@
       "URL": "/newHut",
       "reqLogin": true,
       "role": [
-        2, 4
+        2
       ]
     },
     {
@@ -60,6 +60,14 @@
       "reqLogin": true,
       "role": [
         2
+      ]
+    },
+    {
+      "title": "My huts",
+      "URL": "/hutworkerhuts",
+      "reqLogin": true,
+      "role": [
+        4
       ]
     }
   ]

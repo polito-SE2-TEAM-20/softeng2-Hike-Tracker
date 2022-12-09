@@ -499,11 +499,18 @@ function modifyHutInformation(information, hutId) {
     })
 }
 
-async function editHikeStartEndPoint(hikeId, startPoint, endPoint) {
+async function editHikeStartEndPoint(hikeId, startPoint, endPoint, referencePoint, title, description, length, expectedTime, ascent, difficulty) {
 
     const body = {
         startPoint: startPoint,
-        endPoint: endPoint
+        endPoint: endPoint,
+        referencePoints: referencePoint,
+        title: title,
+        description: description,
+        length: length,
+        expectedTime: expectedTime,
+        ascent: ascent,
+        difficulty: difficulty
     }
 
     const response = await fetch((APIURL + '/hikes/' + hikeId), {
@@ -540,12 +547,12 @@ async function linkPointsToHike(hikeId, huts, parkingLots) {
         linkedPoints: []
     }
 
-    for(let i = 0; i < hutIds.length; i++) {
+    for (let i = 0; i < hutIds.length; i++) {
         body.linkedPoints.push({
             hutId: hutIds[i]
         })
     }
-    for(let i = 0; i < parkingLotIds.length; i++) {
+    for (let i = 0; i < parkingLotIds.length; i++) {
         body.linkedPoints.push({
             parkingLotId: parkingLotIds[i]
         })

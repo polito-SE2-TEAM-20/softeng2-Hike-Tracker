@@ -208,7 +208,7 @@ const HTMainPage = (props) => {
                                                 </Grid>
                                                 <Grid item display={{ xs: "flex", sm: "flex", md: "flex", lg: "flex", xl: "flex" }}>
                                                     <CardMedia component="img"
-                                                        style={{ objectFit: "cover", height: "60vh", marginTop: "25px" }}
+                                                        style={{ objectFit: "cover", height: "60vh", marginTop: "25px", width: "60vw" }}
                                                         image={compassImage}
                                                         alt="Paella dish">
                                                     </CardMedia>

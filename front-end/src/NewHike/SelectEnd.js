@@ -9,7 +9,6 @@ function EndPointSelect(props) {
 
     return <>
       <FormControl fullWidth required>
-        <InputLabel id="demo-simple-select-label">End Point</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-seimple-select"
@@ -69,7 +68,7 @@ function EndCoordinates(props) {
 
     }
     return <>
-  <Grid item xs={12} sm={6}>
+  <Grid item xs={12} sm={12}>
                     <TextField
                       required id="endPointName"
                       name="endPointName" label="End Point Name"
@@ -79,7 +78,7 @@ function EndCoordinates(props) {
                       onChange={(e) => props.setEndPointName(e.target.value)}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       id="endPointAdd"
                       name="endPointAdd" label="End  Point Address"
@@ -88,7 +87,7 @@ function EndCoordinates(props) {
                       onChange={(e) => props.setEndPointAdd(e.target.value)}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       required
                       name="endPointLat"
@@ -100,7 +99,7 @@ function EndCoordinates(props) {
                       onChange={(e) => props.setEndPointLat(e.target.value)}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       required
                       name="endPointLon"
@@ -171,7 +170,7 @@ function EndHut(props) {
                     return(
                         
             <MenuItem value={el.id} >
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={12}>
                     <TextField
                       name="hutName"
                       label="Hut name"
@@ -181,7 +180,7 @@ function EndHut(props) {
                       value={el.title}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       name="coordinates"
                       label="Coordinates"
@@ -191,7 +190,7 @@ function EndHut(props) {
                       value={el.point.position.coordinates}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       name="address"
                       label="Address"
@@ -268,7 +267,7 @@ function EndParking(props) {
                     return(
                         
             <MenuItem value={el.id} >
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={12}>
                     <TextField
                       name="parkingName"
                       label="Parking name"
@@ -279,7 +278,7 @@ function EndParking(props) {
                     />
                   </Grid>
 
-                  <Grid item xs={12} sm={3}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       name="spots"
                       label="Spots"
@@ -290,7 +289,7 @@ function EndParking(props) {
                     />
                   </Grid>
 
-                  <Grid item xs={12} sm={3}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       name="address"
                       label="Address"

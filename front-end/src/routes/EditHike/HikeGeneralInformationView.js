@@ -13,7 +13,7 @@ function HikeGeneralInformationView(props) {
                     required id="title" name="title" label="Title"
                     fullWidth variant="standard"
                     value={props.title}
-                    disabled
+                    // disabled
                     onChange={(e) => props.setTitle(e.target.value)}
                 />
             </Grid>
@@ -22,7 +22,7 @@ function HikeGeneralInformationView(props) {
                     required id="lengthStr" name="lengthStr"
                     label="Length (m)" fullWidth variant="standard" type="number" min={0}
                     value={props.lengthStr}
-                    disabled
+                    //disabled
                     onChange={(e) => { props.setLengthStr(e.target.value) }}
                 />
             </Grid>
@@ -31,7 +31,7 @@ function HikeGeneralInformationView(props) {
                     required id="expectedTimeStr" name="expectedTimeStr" label="Expected Time (hh:mm)"
                     fullWidth variant="standard" min={0} type="text"
                     value={props.expectedTimeStr}
-                    disabled
+                    //disabled
                     onChange={(e) => { props.setExpectedTimeStr(e.target.value) }}
                 />
             </Grid>
@@ -40,16 +40,17 @@ function HikeGeneralInformationView(props) {
                     required id="ascentStr" name="ascentStr" label="Ascent (m)"
                     fullWidth variant="standard" type="number" min={0}
                     value={props.ascentStr}
-                    disabled
+                    // disabled
                     onChange={(e) => props.setAscentStr(e.target.value)}
                 />
             </Grid>
 
             <Grid item xs={12} sm={6}>
-                <DifficultySelect 
-                    setDifficultyStr={props.setDifficultyStr} 
+                <DifficultySelect
+                    setDifficultyStr={props.setDifficultyStr}
                     difficultyStr={props.difficultyStr}
-                    disabled>
+                //disabled
+                >
                 </DifficultySelect>
             </Grid>
             <Grid item xs={12} sm={3}>
@@ -108,7 +109,7 @@ function HikeGeneralInformationView(props) {
                     }
                     //mettere un alert se vai oltre
                     value={props.description}
-                    disabled
+                    //disabled
                     onChange={(e) => props.setDescription(e.target.value)}
                 />
             </Grid>

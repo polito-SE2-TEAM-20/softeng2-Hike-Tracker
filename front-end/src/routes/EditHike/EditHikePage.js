@@ -81,7 +81,7 @@ function EditHikePage(props) {
     // states for the popup after adding a new hike
     const [open, setOpen] = useState(false);
     const [err, setErr] = useState(null);
-    
+
     //Get hike deatils
     useEffect(() => {
         const getHike = async () => {
@@ -124,6 +124,7 @@ function EditHikePage(props) {
         }
     }, [referencePoint])
 
+
     //TODO
     useEffect(() => {
         if (fileContents) {
@@ -133,7 +134,7 @@ function EditHikePage(props) {
             const positions = gpx.tracks[0].points.map(p => [p.lat, p.lon]);
             console.log(gpx);
             // controllare perchè se non ci sono i punti da errore
-            const waypoints = gpx.waypoints.map(reference => [reference.name, reference.desc, reference.lat, reference.lon])
+            {/*} const waypoints = gpx.waypoints.map(reference => [reference.name, reference.desc, reference.lat, reference.lon])
 
             // get all the waypoints from the gpx file, insert them if they are on the track
             // and give them a name if they don't have one in the gpx file
@@ -156,6 +157,7 @@ function EditHikePage(props) {
 
             //set List reference point con i waypoints se presenti nel gpx file
             setReferencePoint([]);
+        */}
             setPositionsState(positions);
 
             getInformation(positions[0][0], positions[0][1])
@@ -173,13 +175,28 @@ function EditHikePage(props) {
                 })
         }
     }, [fileContents]);
- 
+
+
+    function toHoursAndMinutes(totalMinutes) {
+        const minutes = totalMinutes % 60;
+        const hours = Math.floor(totalMinutes / 60);
+
+        return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}`;
+    }
+
+    function padTo2Digits(num) {
+        return num.toString().padStart(2, '0');
+    }
+
     const fillPreDefinedHikeDetails = () => {
         if (hikeDetails !== null && hikeDetails !== undefined) {
             setTitle(hikeDetails.title)
             setLengthStr(hikeDetails.length)
             setAscentStr(hikeDetails.ascent)
-            setExpectedTimeStr(hikeDetails.expectedTime)
+            // expected time reformat in hh:mm not just minutes
+            let time = toHoursAndMinutes(hikeDetails.expectedTime);
+            console.log(time);
+            setExpectedTimeStr(time);
 
             setDifficultyStr(hikeDetails.difficulty);
             setCountry(hikeDetails.country)
@@ -188,22 +205,38 @@ function EditHikePage(props) {
             setCity(hikeDetails.city)
             setDescription(hikeDetails.description)
 
-            if (hikeDetails.linkedPoints !== null && 
+            if (hikeDetails.linkedPoints !== null &&
                 hikeDetails.linkedPoints !== undefined) {
-                    setConnectedHuts(
-                        hikeDetails.linkedPoints.filter((item) => {
-                            return item.type === "hut"
-                        }).map((item) => {
-                            return item.entity
-                        })
-                    )
+                setConnectedHuts(
+                    hikeDetails.linkedPoints.filter((item) => {
+                        return item.type === "hut"
+                    }).map((item) => {
+                        return item.entity
+                    })
+                )
             } else {
                 setConnectedHuts([])
             }
 
+
+            if (hikeDetails.referencePoints !== null && hikeDetails.referencePoints !== undefined) {
+                console.log(hikeDetails.referencePoints)
+                let list = []
+                hikeDetails.referencePoints.forEach((item) => {
+                    console.log(item);
+                    list.push({ name: item.name, address: item.address, lat: item.position.coordinates[1], lon: item.position.coordinates[0] })
+                    console.log(listReferencePoint)
+                })
+                setListReferencePoint(list)
+
+
+            } else {
+                setListReferencePoint([])
+            }
+
             if (hikeDetails.startPoint) {
                 const startPoint = hikeDetails.startPoint;
-                switch(startPoint.type) {
+                switch (startPoint.type) {
                     case "point": {
                         setStartPointType(SelectStartEndPointType.COORDINATES);
                         setStartPointLon(startPoint.point?.position?.coordinates[0])
@@ -249,7 +282,7 @@ function EditHikePage(props) {
 
             if (hikeDetails.endPoint) {
                 const endPoint = hikeDetails.endPoint;
-                switch(endPoint.type) {
+                switch (endPoint.type) {
                     case "point": {
                         setEndPointType(SelectStartEndPointType.COORDINATES);
                         setEndPointLon(endPoint.point?.position?.coordinates[0])
@@ -293,11 +326,13 @@ function EditHikePage(props) {
         }
     }
 
+
+    // the radius should be 5
     const nearHutDiscoveryRadius = 400;
     const getNearHuts = (lon, lat) => {
-        let radiusPoint= {
-            lon: parseFloat(lon), 
-            lat: parseFloat(lat), 
+        let radiusPoint = {
+            lon: parseFloat(lon),
+            lat: parseFloat(lat),
             radiusKms: nearHutDiscoveryRadius
         }
         API.getListOfHutsAndParkingLots(radiusPoint)
@@ -308,7 +343,7 @@ function EditHikePage(props) {
                     } else {
                         return oldHuts.concat(parkigsAndHuts.huts.filter((item) => {
                             let index = -1;
-                            for(let i = 0; i < oldHuts.length; i++) {
+                            for (let i = 0; i < oldHuts.length; i++) {
                                 if (oldHuts[i].id === item.id) {
                                     index = i;
                                 }
@@ -316,7 +351,7 @@ function EditHikePage(props) {
                             return index === -1
                         }))
                     }
-                }) 
+                })
             });
     }
 
@@ -354,6 +389,9 @@ function EditHikePage(props) {
         let prova = false;
         //let objTagliatoLat = (object[0].toString().match(/^-?\d+(?:\.\d{0,6})?/)[0])
         //let objTagliatoLon = (object[1].toString().match(/^-?\d+(?:\.\d{0,6})?/)[0])
+        console.log(referencePointLat);
+        console.log(referencePointLon);
+        console.log(positionsState);
         let indexOfObject = positionsState.filter(object => (object[0] === referencePointLat && object[1] === referencePointLon))
         if (listReferencePoint.map(el => el.name).includes(referencePointName)) {
             setErrorMessage("There is already a reference point with  the same name, choose another one");
@@ -392,7 +430,10 @@ function EditHikePage(props) {
 
     const handleEdit = (event) => {
         event.preventDefault();
-        if (title.trim() === '' || title === null || title === undefined) {
+        if (title === '' || title === null || title === undefined) {
+            setErrorMessage('The title cannot be empty');
+            setShow(true);
+        } else if (title.trim().length === 0) {
             setErrorMessage('The title cannot be empty');
             setShow(true);
         } else if (lengthStr === '' || lengthStr === null || lengthStr === undefined) {
@@ -407,7 +448,10 @@ function EditHikePage(props) {
         } else if (difficultyStr === '' || difficultyStr === null || difficultyStr === undefined) {
             setErrorMessage('Choose a difficulty for this hike');
             setShow(true);
-        } else if (description.trim() === '' || description === null || description === undefined) {
+        } else if (description === '' || description === null || description === undefined) {
+            setErrorMessage('The description for the hike cannot be empty');
+            setShow(true);
+        } else if (description.trim().length === 0) {
             setErrorMessage('The description for the hike cannot be empty');
             setShow(true);
         } else if (country.trim() === '' || country === null || country === undefined) {
@@ -428,27 +472,27 @@ function EditHikePage(props) {
         } else {
             let start = {};
             let end = {};
-            switch(startPointType) {
+            switch (startPointType) {
                 case SelectStartEndPointType.COORDINATES: {
-                    start = { 
+                    start = {
                         name: startPointName,
-                        address: information.display_name, 
-                        lat: startPointLat, 
-                        lon: startPointLon 
+                        address: information.display_name,
+                        lat: startPointLat,
+                        lon: startPointLon
                     };
                     break;
                 }
                 case SelectStartEndPointType.PARKING: {
                     if (startPointParking !== null) {
-                        start = { 
-                            parkingLotId: startPointParking.id                      
+                        start = {
+                            parkingLotId: startPointParking.id
                         };
                     }
                     break;
                 }
                 case SelectStartEndPointType.HUT: {
                     if (startPointHut !== null) {
-                        start = { 
+                        start = {
                             hutId: startPointHut.id
                         };
                     }
@@ -456,27 +500,27 @@ function EditHikePage(props) {
                 }
             }
 
-            switch(endPointType) {
+            switch (endPointType) {
                 case SelectStartEndPointType.COORDINATES: {
-                    end = { 
+                    end = {
                         name: startPointName,
-                        address: information.display_name, 
-                        lat: startPointLat, 
-                        lon: startPointLon 
+                        address: information.display_name,
+                        lat: startPointLat,
+                        lon: startPointLon
                     };
                     break;
                 }
                 case SelectStartEndPointType.PARKING: {
                     if (endPointParking !== null) {
-                        end = { 
+                        end = {
                             parkingLotId: endPointParking.id
                         };
-                    } 
+                    }
                     break;
                 }
                 case SelectStartEndPointType.HUT: {
                     if (endPointHut !== null) {
-                        end = { 
+                        end = {
                             hutId: endPointHut.id
                         };
                     }
@@ -484,7 +528,13 @@ function EditHikePage(props) {
                 }
             }
 
-            API.editHikeStartEndPoint(hikeId, start, end)
+            let a = expectedTimeStr.split(':'); // split it at the colons
+            let minutes = parseInt(a[0]) * 60 + parseInt(a[1]);
+            const expectedTime = parseInt(minutes);
+            const length = parseFloat(lengthStr);
+            const ascent = parseFloat(ascentStr);
+            const difficulty = parseFloat(difficultyStr);
+            API.editHikeStartEndPoint(hikeId, start, end, listReferencePoint, title, description, length, expectedTime, ascent, difficulty)
                 .then((startEndPointEditResult) => {
                     API.linkPointsToHike(hikeId, connectedHuts, [])
                         .then((linkHutResult) => {
@@ -531,25 +581,25 @@ function EditHikePage(props) {
             }
         })
     }
-    
+
     return (
         <React.Fragment>
             <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} />
             {
-                <PopupEditHike id={hikeId} err={err} open={open} setOpen={setOpen}/>
+                <PopupEditHike id={hikeId} err={err} open={open} setOpen={setOpen} />
             }
             {
-                loading && 
+                loading &&
                 <Grid
                     container
                     direction="row"
                     justifyContent="center"
                     alignItems="center">
-                        <CircularProgress />
+                    <CircularProgress />
                 </Grid>
             }
             {
-                (!loading && hikeDetails) && 
+                (!loading && hikeDetails) &&
                 <Grid>
                     <Typography fontFamily="Bakbak One, display" fontWeight="700" variant="h4" gutterBottom sx={{ p: 2 }} mt={12}>
                         EDIT YOUR HIKE
@@ -623,77 +673,123 @@ function EditHikePage(props) {
                             }
 
                             {
-                                listReferencePoint.length &&
-                                <>
-                                    <Grid item xs={12} sm={12}>
-                                        <Typography variant="h8" gutterBottom>
-                                            REFERENCE POINTS
-                                        </Typography>
-                                    </Grid>
-                                    {listReferencePoint.map((reference) => {
-                                        <RefrenceView reference={reference}
-                                            handleEditReferencePoint={handleEditReferencePoint}
-                                            handleDeleteReferencePoint={handleDeleteReferencePoint} />
-                                    })}
+                                listReferencePoint.length ?
+                                    (<>
+                                        <Grid item xs={12} sm={12}><Typography variant="h8" gutterBottom>REFERENCE POINTS</Typography></Grid>
+                                        {listReferencePoint.map((reference) => {
+                                            return (
+                                                <>
+                                                    <>
+                                                        <Grid item xs={12} sm={2}>
+                                                            <TextField id="referencename" name="referencename"
+                                                                label="Reference Point Name" fullWidth
+                                                                autoComplete="referencename" variant="standard"
+                                                                value={reference.name}
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={12} sm={3.5}>
+                                                            <TextField
+                                                                name="referencePointAdd"
+                                                                label="Reference Point Address"
+                                                                fullWidth
+                                                                autoComplete="referencePointAdd"
+                                                                variant="standard"
+                                                                value={reference.address}
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={12} sm={2}>
+                                                            <TextField name="referencelat"
+                                                                label="Reference Point Latitude" fullWidth
+                                                                autoComplete="referencelat" variant="standard"
+                                                                id="outlined-disabled"
+                                                                value={reference.lat}
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={12} sm={2}>
+                                                            <TextField
+                                                                name="referencePointLon"
+                                                                label="Reference Point Longitude"
+                                                                fullWidth
+                                                                autoComplete="referencePointLon"
+                                                                variant="standard"
+                                                                id="outlined-disabled"
+                                                                value={reference.lon}
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={12} sm={1} mt={2}>
+                                                            <Button edge="end" onClick={() => handleEditReferencePoint(reference.name)} >
+                                                                <EditIcon />
+                                                            </Button>
+                                                        </Grid>
 
-                                </>
+                                                        <Grid item xs={12} sm={1} mt={2}>
+                                                            <Button edge="end" onClick={() => handleDeleteReferencePoint(reference.name)} >
+                                                                <DeleteIcon />
+                                                            </Button>
+                                                        </Grid>
+
+                                                    </>
+                                                </>
+                                            )
+                                        })}
+
+                                    </>
+                                    ) : (<h2></h2>)
                             }
                             {
-                                !newReferencePoint &&
-                                <Grid item xs={12}>
-                                    <Button onClick={handleNewReferencePoint}>
-                                        ADD A NEW REFERENCE POINT
-                                    </Button>
-                                    <h6 xs={{ ml: 8 }}>
-                                        Or click on the map
-                                    </h6>
-                                </Grid>
-                            }
-                            {
-                                newReferencePoint &&
-                                <>
-                                    <Grid item xs={12} sm={3.5}>
-                                        <TextField
-                                            required
-                                            id="referencePointName" name="referencePointName"
-                                            label="Reference Point Name" fullWidth
-                                            autoComplete="referencePointName" variant="standard"
-                                            value={referencePointName}
-                                            onChange={(e) => setReferencePointName(e.target.value)}
-                                        />
-                                    </Grid>
+                                !newReferencePoint ?
+                                    (
+                                        <>
+                                            <Grid item xs={12}>
+                                                <Button onClick={handleNewReferencePoint}>ADD A NEW REFERENCE POINT</Button>
+                                                <h6 xs={{ ml: 8 }}>Or click on the map</h6>
+                                            </Grid>
+                                        </>
+                                    )
+                                    :
+                                    (<>
+                                        <Grid item xs={12} sm={3.5}>
+                                            <TextField
+                                                required
+                                                id="referencePointName" name="referencePointName"
+                                                label="Reference Point Name" fullWidth
+                                                autoComplete="referencePointName" variant="standard"
+                                                value={referencePointName}
+                                                onChange={(e) => setReferencePointName(e.target.value)}
+                                            />
+                                        </Grid>
 
-                                    <Grid item xs={12} sm={3.5}>
-                                        <TextField
-                                            required id="referencePointAdd"
-                                            name="referencePointAdd" label="Reference Point Address"
-                                            fullWidth autoComplete="referencePointAdd" variant="standard"
-                                            value={referencePointAdd}
-                                            onChange={(e) => setReferencePointAdd(e.target.value)}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} sm={2}>
-                                        <TextField
-                                            required
-                                            id="referencePointLat" name="referencePointLat"
-                                            label="Reference Point Latitude" fullWidth
-                                            placeholder='41.43'
-                                            autoComplete="referencePointLat" variant="standard"
-                                            value={referencePointLat}
-                                            onChange={(e) => setReferencePointLat(e.target.value)}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} sm={2}>
-                                        <TextField
-                                            required id="referencePointLon"
-                                            name="referencePointLon" label="Reference Point Longitude"
-                                            fullWidth autoComplete="referencePointLon" variant="standard"
-                                            value={referencePointLon} placeholder='-71.15'
-                                            onChange={(e) => { setReferencePointLon(e.target.value); }}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} sm={1} mt={2}><Button onClick={handleListreferencePoints}>ADD</Button></Grid>
-                                </>
+                                        <Grid item xs={12} sm={3.5}>
+                                            <TextField
+                                                required id="referencePointAdd"
+                                                name="referencePointAdd" label="Reference Point Address"
+                                                fullWidth autoComplete="referencePointAdd" variant="standard"
+                                                value={referencePointAdd}
+                                                onChange={(e) => setReferencePointAdd(e.target.value)}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={2}>
+                                            <TextField
+                                                required
+                                                id="referencePointLat" name="referencePointLat"
+                                                label="Reference Point Latitude" fullWidth
+                                                placeholder='41.43'
+                                                autoComplete="referencePointLat" variant="standard"
+                                                value={referencePointLat}
+                                                onChange={(e) => setReferencePointLat(e.target.value)}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={2}>
+                                            <TextField
+                                                required id="referencePointLon"
+                                                name="referencePointLon" label="Reference Point Longitude"
+                                                fullWidth autoComplete="referencePointLon" variant="standard"
+                                                value={referencePointLon} placeholder='-71.15'
+                                                onChange={(e) => { setReferencePointLon(e.target.value); }}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12} sm={1} mt={2}><Button onClick={handleListreferencePoints}>ADD</Button></Grid>
+                                    </>)
                             }
                         </Grid>
                         {
@@ -703,16 +799,16 @@ function EditHikePage(props) {
                                 </Button>
                             </Stack>
                         }
-                        {/* { <Grid sx={{ p: 2, ml: 5, mr: 5 }}>
+                        <Grid sx={{ p: 2, ml: 5, mr: 5 }}>
                             <Paper elevation={5}>
-                                <Map 
-                                    startPointLat={startPointLat} startPointLon={startPointLon} 
-                                    endPointLat={endPointLat} endPointLon={endPointLon} 
-                                    positionsState={positionsState} setPuntiDaTrack={setPuntiDaTrack} 
-                                    puntiDaTrack={puntiDaTrack} referencePoint={referencePoint} 
-                                    setReferencePoint={setReferencePoint} listReferencePoint={listReferencePoint}/>
+                                <Map
+                                    startPointLat={startPointLat} startPointLon={startPointLon}
+                                    endPointLat={endPointLat} endPointLon={endPointLon}
+                                    positionsState={positionsState} setPuntiDaTrack={setPuntiDaTrack}
+                                    puntiDaTrack={puntiDaTrack} referencePoint={referencePoint}
+                                    setReferencePoint={setReferencePoint} listReferencePoint={listReferencePoint} />
                             </Paper>
-                        </Grid>} */}
+                        </Grid>
                     </Grid>
                 </Grid>
             }
@@ -733,9 +829,10 @@ function ConnectedHuts(props) {
     return (
         <Card
             style={{
-                marginRight:24, marginLeft: 24, marginTop: 32, marginBottom: 24,
-                width:"100%",
-                justifyContent: "center"}}>
+                marginRight: 24, marginLeft: 24, marginTop: 32, marginBottom: 24,
+                width: "100%",
+                justifyContent: "center"
+            }}>
             <CardContent>
                 <Grid
                     item>
@@ -744,14 +841,14 @@ function ConnectedHuts(props) {
                     </Typography>
                 </Grid>
                 <Grid container>
-                    { 
+                    {
                         props.connectedHutList.length > 0 &&
                         props.connectedHutList.map((hutItem) => {
                             return (
                                 <Grid item >
                                     <HutItemView
                                         type={LinkHutItemViewTye.ADDED}
-                                        hut={hutItem} 
+                                        hut={hutItem}
                                         deleteHutAction={props.deleteHutAction}
                                         addHutAction={props.addHutAction}>
                                     </HutItemView>
@@ -760,23 +857,23 @@ function ConnectedHuts(props) {
                         })
                     }
                 </Grid>
-                
+
                 <Grid
                     item
-                    style={{marginTop: 32}}>
+                    style={{ marginTop: 32 }}>
                     <Typography variant="h6" gutterBottom>
                         Huts close to hike (can be connected to your hike)
                     </Typography>
                 </Grid>
                 <Grid
                     container>
-                    { 
+                    {
                         props.hutList.length > 0 &&
                         props.hutList.filter((item) => {
                             if (props.connectedHutList.length > 0) {
                                 let index = -1
-                                for(let i = 0; i < props.connectedHutList.length; i++) {
-                                    if (item.id === props.connectedHutList[i].id){
+                                for (let i = 0; i < props.connectedHutList.length; i++) {
+                                    if (item.id === props.connectedHutList[i].id) {
                                         index = i
                                     }
                                 }
@@ -789,7 +886,7 @@ function ConnectedHuts(props) {
                                 <Grid item>
                                     <HutItemView
                                         type={LinkHutItemViewTye.AVAILABLE}
-                                        hut={hutItem} 
+                                        hut={hutItem}
                                         deleteHutAction={props.deleteHutAction}
                                         addHutAction={props.addHutAction}>
                                     </HutItemView>
@@ -808,10 +905,11 @@ const LinkHutItemViewTye = {
 }
 function HutItemView(props) {
     return (
-        <Card 
+        <Card
             style={{
                 marginTop: 12, marginBotom: 12, marginRight: 8, marginLeft: 8,
-                width: 320}}>
+                width: 320
+            }}>
             <CardContent>
                 <Typography variant="h6">
                     {props.hut.title}
@@ -820,28 +918,28 @@ function HutItemView(props) {
                     {props.hut.point.address}
                 </Typography>
                 {
-                    props.type === LinkHutItemViewTye.ADDED && 
-                    <DeleteIcon 
-                        color="#1a1a1a" 
-                        onClick={() => {props.deleteHutAction(props.hut)}}>
+                    props.type === LinkHutItemViewTye.ADDED &&
+                    <DeleteIcon
+                        color="#1a1a1a"
+                        onClick={() => { props.deleteHutAction(props.hut) }}>
 
                     </DeleteIcon>
                 }
                 {
-                    props.type === LinkHutItemViewTye.AVAILABLE && 
-                    <Button 
-                        variant="contained" 
+                    props.type === LinkHutItemViewTye.AVAILABLE &&
+                    <Button
+                        variant="contained"
                         color="success"
-                        onClick={() => {props.addHutAction(props.hut)}}>
+                        onClick={() => { props.addHutAction(props.hut) }}>
                         ADD
                     </Button>
                 }
-                
+
             </CardContent>
         </Card>
     )
 }
-
+{/*}
 function RefrenceView(props) {
     const reference = props.reference;
     return (
@@ -895,10 +993,7 @@ function RefrenceView(props) {
             </Grid>
         </>
     )
-}
+}*/}
 
 export { EditHikePage }
-
-
-
 
