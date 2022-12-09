@@ -177,13 +177,26 @@ function EditHikePage(props) {
     }, [fileContents]);
 
 
+    function toHoursAndMinutes(totalMinutes) {
+        const minutes = totalMinutes % 60;
+        const hours = Math.floor(totalMinutes / 60);
+
+        return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}`;
+    }
+
+    function padTo2Digits(num) {
+        return num.toString().padStart(2, '0');
+    }
+
     const fillPreDefinedHikeDetails = () => {
         if (hikeDetails !== null && hikeDetails !== undefined) {
             setTitle(hikeDetails.title)
             setLengthStr(hikeDetails.length)
             setAscentStr(hikeDetails.ascent)
             // expected time reformat in hh:mm not just minutes
-            setExpectedTimeStr(hikeDetails.expectedTime)
+            let time = toHoursAndMinutes(hikeDetails.expectedTime);
+            console.log(time);
+            setExpectedTimeStr(time);
 
             setDifficultyStr(hikeDetails.difficulty);
             setCountry(hikeDetails.country)
@@ -407,7 +420,10 @@ function EditHikePage(props) {
 
     const handleEdit = (event) => {
         event.preventDefault();
-        if (title.trim() === '' || title === null || title === undefined) {
+        if (title === '' || title === null || title === undefined) {
+            setErrorMessage('The title cannot be empty');
+            setShow(true);
+        } else if (title.trim().length === 0) {
             setErrorMessage('The title cannot be empty');
             setShow(true);
         } else if (lengthStr === '' || lengthStr === null || lengthStr === undefined) {
@@ -422,7 +438,10 @@ function EditHikePage(props) {
         } else if (difficultyStr === '' || difficultyStr === null || difficultyStr === undefined) {
             setErrorMessage('Choose a difficulty for this hike');
             setShow(true);
-        } else if (description.trim() === '' || description === null || description === undefined) {
+        } else if (description === '' || description === null || description === undefined) {
+            setErrorMessage('The description for the hike cannot be empty');
+            setShow(true);
+        } else if (description.trim().length === 0) {
             setErrorMessage('The description for the hike cannot be empty');
             setShow(true);
         } else if (country.trim() === '' || country === null || country === undefined) {
@@ -493,7 +512,13 @@ function EditHikePage(props) {
                 }
             }
 
-            API.editHikeStartEndPoint(hikeId, start, end, listReferencePoint)
+            let a = expectedTimeStr.split(':'); // split it at the colons
+            let minutes = parseInt(a[0]) * 60 + parseInt(a[1]);
+            const expectedTime = parseInt(minutes);
+            const length = parseFloat(lengthStr);
+            const ascent = parseFloat(ascentStr);
+            const difficulty = parseFloat(difficultyStr);
+            API.editHikeStartEndPoint(hikeId, start, end, listReferencePoint, title, description, length, expectedTime, ascent, difficulty)
                 .then((startEndPointEditResult) => {
                     API.linkPointsToHike(hikeId, connectedHuts, [])
                         .then((linkHutResult) => {

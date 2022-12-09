@@ -497,12 +497,18 @@ function modifyHutInformation(information, hutId) {
     })
 }
 
-async function editHikeStartEndPoint(hikeId, startPoint, endPoint, referencePoint) {
+async function editHikeStartEndPoint(hikeId, startPoint, endPoint, referencePoint, title, description, length, expectedTime, ascent, difficulty) {
 
     const body = {
         startPoint: startPoint,
         endPoint: endPoint,
-        referencePoints: referencePoint
+        referencePoints: referencePoint,
+        title: title,
+        description: description,
+        length: length,
+        expectedTime: expectedTime,
+        ascent: ascent,
+        difficulty: difficulty
     }
 
     const response = await fetch((APIURL + '/hikes/' + hikeId), {
