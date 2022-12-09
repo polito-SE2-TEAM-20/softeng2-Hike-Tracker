@@ -120,7 +120,7 @@
 
 ## Screenshot
 
-![Screenshot](./extra/img.png)
+![Screenshot](./src/extra/img.png)
 
 ## Users Credentials
 
