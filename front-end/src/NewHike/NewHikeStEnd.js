@@ -215,11 +215,30 @@ function NewHikeStEnd(props) {
     setListReferencePoint(listReferencePoint.filter(el => el.name !== prova.name));
   }
 
+  const getAddressReference= (lat, lon)=>{
+    let addressReference = ""
+    getInformation(lat, lon)
+    .then(informations => {
+        addressReference = informations.display_name;
+        console.log(addressReference);
+        setReferencePointAdd(addressReference);
+        return addressReference;
+        
+    })
+    console.log(addressReference);
+    
+
+  }
+
   const handleListreferencePoints = (event) => {
     const indexOfReference = listReferencePoint.filter(object => (object.lat === referencePointLat && object.lon === referencePointLon));
     let prova = false;
     //let objTagliatoLat = (object[0].toString().match(/^-?\d+(?:\.\d{0,6})?/)[0])
     //let objTagliatoLon = (object[1].toString().match(/^-?\d+(?:\.\d{0,6})?/)[0])
+
+    let address = getAddressReference(referencePointLat, referencePointLon);
+    console.log(referencePointAdd)
+    console.log(getAddressReference(referencePointLat, referencePointLon))
     let indexOfObject = positionsState.filter(object => (object[0] === referencePointLat && object[1] === referencePointLon))
     if (listReferencePoint.map(el => el.name).includes(referencePointName)) {
       setErrorMessage("There is already a reference point with  the same name, choose another one");
@@ -233,9 +252,9 @@ function NewHikeStEnd(props) {
     } else if (indexOfObject.length === 0) {
       setErrorMessage("Coordinates are not part of the track");
       setShow(true);
-    } else {
+    } else {  
       let stringaNome = referencePointName.toString();
-      setListReferencePoint([...listReferencePoint, { name: stringaNome, address: referencePointAdd, lat: referencePointLat, lon: referencePointLon }]);
+      setListReferencePoint([...listReferencePoint, { name: stringaNome, address: getAddressReference(referencePointLat, referencePointLon), lat: referencePointLat, lon: referencePointLon }]);
       setNewReferencePoint(false);
       setReferencePoint([]);
       setReferencePointLat('');
@@ -410,9 +429,8 @@ function NewHikeStEnd(props) {
                                    difficultyStr={difficultyStr} country={country} setCountry={setCountry} region={region}
                                    setRegion= {setRegion} province={province} setProvince={setProvince} city={city}
                                    setCity={setCity} description={description} setDescription={setDescription}/>
-
-                  <Grid item xs={12} sm={12}><Typography variant="h8" gutterBottom>START POINT</Typography></Grid>
-                  <Grid item xs={12} sm={12}>
+                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={6}><Typography variant="h8" gutterBottom>START POINT</Typography></Grid>
                     <StartPointSelect startPointName={startPointName} setStartPointName={setStartPointName} 
                                          setStartPointAdd={setStartPointAdd} startPointAdd={startPointAdd} 
                                          setStartPointLat={setStartPointLat} setStartPointLon={setStartPointLon}
@@ -421,10 +439,10 @@ function NewHikeStEnd(props) {
                                          setHutId={setHutId} hutId={hutId} setParkingId={setParkingId} parkingId={parkingId}
                                           positionsState={positionsState} information={information}
                                          ></StartPointSelect>
-                                        
-                  </Grid>
-                  <Grid item xs={12} sm={12}><Typography variant="h8" gutterBottom>END POINT</Typography></Grid>
-                  <Grid item xs={12} sm={12}>
+                  </Grid>  
+                  <Grid item xs={12} sm={6}>
+
+                  <Grid item xs={12} sm={6}><Typography variant="h8" gutterBottom>END POINT</Typography></Grid>
                     <EndPointSelect 
                                          endPointName={endPointName} setEndPointName={setEndPointName}
                                          endPointAdd={endPointAdd}  setEndPointAdd={setEndPointAdd} 
@@ -436,8 +454,8 @@ function NewHikeStEnd(props) {
                                           informationEnd= {informationEnd}
                                           positionsState={positionsState}
                      ></EndPointSelect>
-                                        
-                  </Grid>
+                    </Grid>
+
 
                   {
                     listReferencePoint.length ?
@@ -461,6 +479,7 @@ function NewHikeStEnd(props) {
                                     fullWidth
                                     autoComplete="referencePointAdd"
                                     variant="standard"
+                                    disabled
                                     value={reference.address}
                                   />
                                 </Grid>
@@ -531,8 +550,9 @@ function NewHikeStEnd(props) {
                             required id="referencePointAdd"
                             name="referencePointAdd" label="Reference Point Address"
                             fullWidth autoComplete="referencePointAdd" variant="standard"
+                            disabled
                             value={referencePointAdd}
-                            onChange={(e) => setReferencePointAdd(e.target.value)}
+                            // onChange={(e) => setReferencePointAdd(e.target.value)}
                           />
                         </Grid>
                         <Grid item xs={12} sm={2}>

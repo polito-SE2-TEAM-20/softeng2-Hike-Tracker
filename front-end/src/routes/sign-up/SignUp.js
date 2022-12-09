@@ -48,7 +48,7 @@ function SignUpForm(props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState(null);
   const [informationMessage, setInformationMessage] = useState('');
   const [showInformation, setShowInformation ] = useState(false);
   const [hutId, setHutId] = useState();
@@ -280,15 +280,15 @@ function RoleSelect(props) {
         <MenuItem value={2}>
           Local Guide
         </MenuItem>
-        <MenuItem value={3}>
+        {/*<MenuItem value={3}>
           Platform Manager
-          </MenuItem>
+</MenuItem>*/}
         <MenuItem value={4}>
           Hut Worker
         </MenuItem>
-        <MenuItem value={5}>
+        {/*<MenuItem value={5}>
           Emergency Operator
-        </MenuItem>
+</MenuItem>*/}
       </Select>
     </FormControl>
   </>

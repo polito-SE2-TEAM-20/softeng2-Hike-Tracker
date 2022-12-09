@@ -9,7 +9,6 @@ function StartPointSelect(props) {
 
     return <>
       <FormControl fullWidth required>
-        <InputLabel id="demo-simple-select-label">Start Point</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-seimple-select"
@@ -65,7 +64,7 @@ function StartCoordinates(props) {
        console.log(props.information.display_name)
     }
     return <>
-  <Grid item xs={12} sm={6}>
+  <Grid item xs={12} sm={12}>
                     <TextField
                       required id="startPointName"
                       name="startPointName" label="Start Point Name"
@@ -75,7 +74,7 @@ function StartCoordinates(props) {
                       onChange={(e) => props.setStartPointName(e.target.value)}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       id="startPointAdd"
                       name="startPointAdd" label="Start  Point Address"
@@ -84,7 +83,7 @@ function StartCoordinates(props) {
                       onChange={(e) => props.setStartPointAdd(e.target.value)}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       required
                       name="startPointLat"
@@ -96,7 +95,7 @@ function StartCoordinates(props) {
                       onChange={(e) => props.setStartPointLat(e.target.value)}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       required
                       name="startPointLon"
@@ -169,7 +168,7 @@ function StartHut(props) {
                     return(
                         
             <MenuItem value={el.id} >
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={12}>
                     <TextField
                       name="hutName"
                       label="Hut name"
@@ -179,7 +178,7 @@ function StartHut(props) {
                       value={el.title}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       name="coordinates"
                       label="Coordinates"
@@ -189,7 +188,7 @@ function StartHut(props) {
                       value={el.point.position.coordinates}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       name="address"
                       label="Address"
@@ -268,7 +267,7 @@ function StartParking(props) {
                     return(
                         
             <MenuItem value={el?.id} >
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={12}>
                     <TextField
                       name="parkingName"
                       label="Parking name"
@@ -278,7 +277,7 @@ function StartParking(props) {
                       value={el?.point.name}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={3}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       name="spots"
                       label="Spots"
@@ -289,7 +288,7 @@ function StartParking(props) {
                     />
                   </Grid>
 
-                  <Grid item xs={12} sm={3}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       name="address"
                       label="Address"
