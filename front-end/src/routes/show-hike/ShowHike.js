@@ -185,7 +185,7 @@ const ShowHike = (props) => {
                     }
                 </Grid>
                 {
-                    props.user?.role === UserRoles.HIKER &&
+                    (false && props.user?.role === UserRoles.HIKER) &&
                     <Fab 
                         variant="extended" 
                         size="medium" 
