@@ -1,5 +1,5 @@
 
-import { Grid, Typography, CircularProgress, Skeleton} from "@mui/material";
+import { Grid, Typography, CircularProgress, Skeleton } from "@mui/material";
 import { displayTypeFlex } from "../../extra/DisplayType";
 import '../admin-dashboard/admin-dashboard-style.css'
 import Accordion from '@mui/material/Accordion';
@@ -25,95 +25,105 @@ const HikesLinked = (props) => {
 
     const [loaded, setLoaded] = useState(false);
     const [hikesUpdatable, setHikesUpdatable] = useState([]);
-    const [cause, setCause] = useState("");
-    const [hikeCondition, setHikeCondition] = useState(-1);
+    const [cause, setCause] = useState([]);
+    const [hikeCondition, setHikeCondition] = useState([]);
     const [show, setShow] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-    const [hikesUpdatableWrite, setHikesUpdatableWrite] = useState([])
+    const [hikesUpdatableWrite, setHikesUpdatableWrite] = useState([]);
+
     const navigate = useNavigate()
 
-    useEffect(() => {  
+    useEffect(() => {
         setLoaded(false);
 
         API.getHikesUpdatableHutWorker()
-           .then((hikes)=>{
-            setHikesUpdatable(oldHikes => hikes);
-            setHikesUpdatableWrite(oldHikes => hikes);
-            setLoaded(true);
-            console.log(hikes);
-            
-           })
-      
+            .then((hikes) => {
+                setHikesUpdatable(oldHikes => hikes);
+                setHikesUpdatableWrite(oldHikes => hikes);
+                setLoaded(true);
+                console.log(hikes);
+                console.log(hikesUpdatable);
+                setCause(hikesUpdatable.map(x => ({ 'id': x.id, 'cause': x.cause })))
+            })
+
     }, [])
 
-    const modifyHike = (hikeId, index) =>{ 
-        let object = {condition: hikesUpdatableWrite[index].condition, cause: hikesUpdatableWrite[index].cause};
+    const modifyHike = (hikeId, index) => {
+        let object = { condition: hikesUpdatableWrite[index].condition, cause: hikesUpdatableWrite[index].cause };
         API.updateHikeCondition(object, hikeId)
-           .then((updatedHike) =>{
-              setShow(false);
-              setErrorMessage('');
-           })
-           .catch((err) =>{
-            setErrorMessage(err);
-            setShow(true);
-           })
+            .then((updatedHike) => {
+                setShow(false);
+                setErrorMessage('');
+            })
+            .catch((err) => {
+                setErrorMessage(err);
+                setShow(true);
+            })
     }
 
     const gotoLogin = () => {
         navigate("/login", { replace: false })
     }
+    const functionCause = (hikeId) => {
+        for (let index in hikesUpdatable) {
+            if (hikesUpdatable[index].id === hikeId) {
+                return hikesUpdatable[index].cause;
+            }
+        }
+        return '';
+    }
 
     return (
         <>
-        <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
+            <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
 
-        <Grid container columns={12} display="flex" justifyContent="center" style={{ marginTop: "105px" }}>
-            {console.log(hikesUpdatable)}
-            <Grid container item lg={8} xl={6} justifyContent="center" height="fit-content" sx={{ marginLeft: "25px", marginBottom: "35px" }}>
-                <Grid item lg={6} xl={6}>
-                    <Grid lg={12} xl={12}>
-                        <Typography className="unselectable" fontSize={32}>
-                            <b>Hikes Linked</b>
-                        </Typography>
+            <Grid container columns={12} display="flex" justifyContent="center" style={{ marginTop: "105px" }}>
+                {console.log(hikesUpdatable)}
+                <Grid container item lg={8} xl={6} justifyContent="center" height="fit-content" sx={{ marginLeft: "25px", marginBottom: "35px" }}>
+                    <Grid item lg={6} xl={6}>
+                        <Grid lg={12} xl={12}>
+                            <Typography className="unselectable" fontSize={32}>
+                                <b>Hikes Linked</b>
+                            </Typography>
+                        </Grid>
+                        <Grid lg={12} xl={12}>
+                            <Typography className="unselectable" fontSize={14} color="#555555">
+                                Here are the hikes linked to your hut
+                            </Typography>
+                        </Grid>
                     </Grid>
-                    <Grid lg={12} xl={12}>
-                        <Typography className="unselectable" fontSize={14} color="#555555">
-                            Here are the hikes linked to your hut
-                        </Typography>
-                    </Grid>
-                </Grid>
 
-                <Grid lg={12} xl={12} sx={{ marginTop: "28px" }}>
-                    {
-                        !loaded ?
-                            <Grid container style={{ marginTop: "0px", width: "auto", minHeight: "100vh", height: "100%", display: "flex", justifyContent: "center" }}>
-                                <Grid item style={{ marginTop: "50px" }} >
-                                    <Typography variant="h5" lg={12} xl={12} style={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
-                                        Loading...
-                                    </Typography>
-                                    <div style={{ display: "flex", justifyContent: "center" }}>
-                                        <CircularProgress lg={12} xl={12} size="72px" />
-                                    </div>
+                    <Grid lg={12} xl={12} sx={{ marginTop: "28px" }}>
+                        {
+                            !loaded ?
+                                <Grid container style={{ marginTop: "0px", width: "auto", minHeight: "100vh", height: "100%", display: "flex", justifyContent: "center" }}>
+                                    <Grid item style={{ marginTop: "50px" }} >
+                                        <Typography variant="h5" lg={12} xl={12} style={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
+                                            Loading...
+                                        </Typography>
+                                        <div style={{ display: "flex", justifyContent: "center" }}>
+                                            <CircularProgress lg={12} xl={12} size="72px" />
+                                        </div>
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                            : <></>
-                    }
-                    {
-                        loaded && hikesUpdatable.length === 0 ?
-                            <Grid container style={{ marginTop: "0px", width: "auto", minHeight: "100vh", height: "100%", display: "flex", justifyContent: "center" }}>
-                                <Grid item style={{ marginTop: "50px" }} >
-                                    <Typography variant="h5" className="unselectable">
-                                        {hikesUpdatable.length === 0  &&  "There are no hikes linked to your hut"}
-                                    </Typography>
+                                : <></>
+                        }
+                        {
+                            loaded && hikesUpdatable.length === 0 ?
+                                <Grid container style={{ marginTop: "0px", width: "auto", minHeight: "100vh", height: "100%", display: "flex", justifyContent: "center" }}>
+                                    <Grid item style={{ marginTop: "50px" }} >
+                                        <Typography variant="h5" className="unselectable">
+                                            {hikesUpdatable.length === 0 && "There are no hikes linked to your hut"}
+                                        </Typography>
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                            : <></>
-                    }
-                    {
-                        loaded && hikesUpdatable.length !== 0 ?
-                            hikesUpdatable.map((hike, index) => {
+                                : <></>
+                        }
+                        {
+                            loaded && hikesUpdatable.length !== 0 ?
+                                hikesUpdatable.map((hike, index) => {
                                     return (
-                                        <Accordion sx={{ml:"20px", mr:"80px"}}>
+                                        <Accordion sx={{ ml: "20px", mr: "80px" }}>
                                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                                 <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
                                                     {hike.title}
@@ -134,63 +144,70 @@ const HikesLinked = (props) => {
                                                         <Typography><b>Expected time</b>: {hike.expectedTime}</Typography>
                                                     </Grid>
                                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                                        <Typography><b>Hike condition</b>: <ConditionSelect hikesUpdatableWrite={hikesUpdatableWrite} index={index}/></Typography>
+                                                        <Typography><b>Hike condition</b>: <ConditionSelect hikesUpdatableWrite={hikesUpdatableWrite} index={index} /></Typography>
                                                     </Grid>
                                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                                    <><Typography><b>Cause:</b></Typography>
-                                                    <TextField required fullWidth variant="standard" 
-                                                   //  value={list[index].cause}
-                                                     onChange={(e) => { hikesUpdatableWrite[index].cause = (e.target.value) }}
-                                                    ></TextField></>
+                                                        <><Typography><b>Cause: {hikesUpdatable[index].cause === '' ? ('') : (hikesUpdatable[index].cause)}</b></Typography>
+                                                            <TextField required fullWidth variant="standard"
+                                                                value={functionCause(hike.id)}
+                                                                onChange={(e) => {
+                                                                    setCause(cause.map(el => {
+                                                                        if (el.id === hike.id) {
+                                                                            el.cause = (e.target.value);
+                                                                        }
+                                                                        return el;
+                                                                    }))
+                                                                }}
+                                                            ></TextField></>
                                                     </Grid>
-                                                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}sx={{ display: "flex", justifyContent: "right", mt:10 }}>
-                                                        <HTButton navigate ={() => { modifyHike(hike.id, index) }} text="Modify hike condition" textSize="18px" textColor="white" color="#33aa33" />
+                                                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "right", mt: 10 }}>
+                                                        <HTButton navigate={() => { modifyHike(hike.id, index) }} text="Modify hike condition" textSize="18px" textColor="white" color="#33aa33" />
                                                     </Grid>
                                                 </Grid>
                                             </AccordionDetails>
                                         </Accordion>
                                     )
-                            }
-                            )
-                            : <></>
-                    }
+                                }
+                                )
+                                : <></>
+                        }
+                    </Grid>
                 </Grid>
             </Grid>
-        </Grid>
         </>
     )
 }
 
-export {HikesLinked}
+export { HikesLinked }
 
 
 function ConditionSelect(props) {
     return <>
-  
-      <FormControl fullWidth required>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-seimple-select"
-          // value={props.hikeCondition}
-          fullWidth
-          variant="standard"
-          onChange={ev => props.hikesUpdatableWrite[props.index].condition = (ev.target.value)}
-        >
-          <MenuItem value={0}>
-            Open
-          </MenuItem>
-          <MenuItem value={1}>
-            Closed
-          </MenuItem>
-          <MenuItem value={2}>
-            Partially Blocked
-          </MenuItem>
-          <MenuItem value={3}>
-            Special gear required
-          </MenuItem>
-        </Select>
-      </FormControl>
-    </>
-  }
 
-  export {ConditionSelect}
+        <FormControl fullWidth required>
+            <Select
+                labelId="demo-simple-select-label"
+                id="demo-seimple-select"
+                // value={props.hikeCondition}
+                fullWidth
+                variant="standard"
+                onChange={ev => props.hikesUpdatableWrite[props.index].condition = (ev.target.value)}
+            >
+                <MenuItem value={0}>
+                    Open
+                </MenuItem>
+                <MenuItem value={1}>
+                    Closed
+                </MenuItem>
+                <MenuItem value={2}>
+                    Partially Blocked
+                </MenuItem>
+                <MenuItem value={3}>
+                    Special gear required
+                </MenuItem>
+            </Select>
+        </FormControl>
+    </>
+}
+
+export { ConditionSelect }
