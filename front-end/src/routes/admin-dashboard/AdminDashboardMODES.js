@@ -92,7 +92,6 @@ export const AdminDashboardPC = (props) => {
                         props.loaded && props.listOfRequests.filter(x => {
                             if (x.role === 2 && props.filter.local) return x
                             if (x.role === 4 && props.filter.hut) return x
-                            return x
                         }).length === 0 ?
                             <Grid container style={{ marginTop: "0px", width: "auto", minHeight: "100vh", height: "100%", display: "flex", justifyContent: "center" }}>
                                 <Grid item style={{ marginTop: "50px" }} >
@@ -115,12 +114,10 @@ export const AdminDashboardPC = (props) => {
                         props.loaded && props.listOfRequests.filter(x => {
                             if (x.role === 2 && props.filter.local) return x
                             if (x.role === 4 && props.filter.hut) return x
-                            return x
                         }).length !== 0 ?
                             props.listOfRequests.filter(x => {
                                 if (x.role === 2 && props.filter.local) return x
                                 if (x.role === 4 && props.filter.hut) return x
-                                return x
                             }).map(request => {
                                 if (request.role === 2) // local guide
                                     return (
@@ -273,7 +270,6 @@ export const AdminDashboardTABLET = (props) => {
                         props.loaded && props.listOfRequests.filter(x => {
                             if (x.role === 2 && props.filter.local) return x
                             if (x.role === 4 && props.filter.hut) return x
-                            return x
                         }).length === 0 ?
                             <Grid container style={{ marginTop: "0px", width: "auto", minHeight: "100vh", height: "100%", display: "flex", justifyContent: "center" }}>
                                 <Grid item style={{ marginTop: "50px" }} >
@@ -296,12 +292,10 @@ export const AdminDashboardTABLET = (props) => {
                         props.loaded && props.listOfRequests.filter(x => {
                             if (x.role === 2 && props.filter.local) return x
                             if (x.role === 4 && props.filter.hut) return x
-                            return x
                         }).length !== 0 ?
                             props.listOfRequests.filter(x => {
                                 if (x.role === 2 && props.filter.local) return x
                                 if (x.role === 4 && props.filter.hut) return x
-                                return x
                             }).map(request => {
                                 if (request.role === 2) // local guide
                                     return (
@@ -455,7 +449,6 @@ export const AdminDashboardMOBILE = (props) => {
                         props.loaded && props.listOfRequests.filter(x => {
                             if (x.role === 2 && props.filter.local) return x
                             if (x.role === 4 && props.filter.hut) return x
-                            return x
                         }).length === 0 ?
                             <Grid container style={{ marginTop: "0px", width: "auto", minHeight: "100vh", height: "100%", display: "flex", justifyContent: "center" }}>
                                 <Grid item style={{ marginTop: "50px" }} >
@@ -478,12 +471,10 @@ export const AdminDashboardMOBILE = (props) => {
                         props.loaded && props.listOfRequests.filter(x => {
                             if (x.role === 2 && props.filter.local) return x
                             if (x.role === 4 && props.filter.hut) return x
-                            return x
                         }).length !== 0 ?
                             props.listOfRequests.filter(x => {
                                 if (x.role === 2 && props.filter.local) return x
                                 if (x.role === 4 && props.filter.hut) return x
-                                return x
                             }).map(request => {
                                 if (request.role === 2) // local guide
                                     return (
