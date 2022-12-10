@@ -483,7 +483,6 @@ describe('Huts (e2e)', () => {
         .request()
         .get(`/huts/hutWorker/iWorkAt`)
         .expect(({ body }) =>{
-          console.log(body);
           expect(body).toIncludeAllPartialMembers([hutW1,hutW3]);
         })
       });
