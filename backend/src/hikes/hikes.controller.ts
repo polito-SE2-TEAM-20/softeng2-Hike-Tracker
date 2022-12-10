@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs-extra';
-import { isNil, propEq } from 'ramda';
+import { isEmpty, isNil, keys, propEq } from 'ramda';
 import { DataSource, In } from 'typeorm';
 
 import {
@@ -234,6 +234,10 @@ export class HikesController {
   ): Promise<HikeFull> {
     await this.service.ensureExistsOrThrow(hikeId);
 
+    if (!linkedPoints.length) {
+      return await this.service.getFullHike(hikeId);
+    }
+
     // get points of these entities
     const hutIds = linkedPoints.filter((v) => !!v.hutId).map((v) => v.hutId);
     const parkingLotIds = linkedPoints
@@ -276,6 +280,8 @@ export class HikesController {
 
     const points = await pointsQuery.getMany();
 
+    console.log('linked points', points);
+
     await this.dataSource.transaction(async (entityManager) => {
       // remove all existing links
       await entityManager.getRepository(HikePoint).delete({
@@ -294,6 +300,7 @@ export class HikesController {
       );
     });
 
+    console.log('after tx');
     return await this.service.getFullHike(hikeId);
   }
 
@@ -370,7 +377,9 @@ export class HikesController {
     // update start and end point
     await this.service.upsertStartEndPoints({ id, startPoint, endPoint });
 
-    await this.service.getRepository().update({ id }, data);
+    if (!isEmpty(keys(data))) {
+      await this.service.getRepository().update({ id }, data);
+    }
 
     return await this.service.getFullHike(id);
   }

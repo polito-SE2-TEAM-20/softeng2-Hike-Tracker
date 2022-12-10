@@ -26,9 +26,9 @@ import {
   transformToClass,
   valToNumber,
 } from '@app/common';
+import { HikeCondition } from '@app/common/enums/hike-condition.enum';
 
 import { StartEndPointTransformer } from './hikes.utils';
-import { HikeCondition } from '@app/common/enums/hike-condition.enum';
 
 export class PointWithRadius {
   @IsLatitude()
@@ -280,6 +280,7 @@ export class UpdateHikeDto extends OmitType(PartialType(HikeDto), [
   @Type(() => ReferencePointDto)
   referencePoints?: ReferencePointDto[];
 
+  @IsOptional()
   @ValidateNested()
   @Type(() => StartEndPointDto)
   startPoint?: StartEndPointDto | null;
