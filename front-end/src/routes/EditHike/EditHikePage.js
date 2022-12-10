@@ -16,6 +16,7 @@ import { getInformation } from "../../lib/common/Address";
 import { Map } from "./Map";
 import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import { PopupEditHike } from "./PopupEditHike";
+import { ErrorDialog } from "../../components/ErrorDialog/ErrorDialog";
 
 
 
@@ -23,6 +24,9 @@ function EditHikePage(props) {
 
     const match = useMatch('/edithike/:hikeid')
     const hikeId = match.params.hikeid ? match.params.hikeid : -1;
+
+    const [hasErrorOnLoad, setHasErrorOnLoad] = useState(false);
+    const [errorOnLoad, SetErrorOnLoad] = useState(null);
 
     //Hike deatils vars
     const [hikeDetails, setHikeDetails] = useState(null);
@@ -45,10 +49,13 @@ function EditHikePage(props) {
     const [show, setShow] = useState('');
 
     const [puntiDaTrack, setPuntiDaTrack] = useState([]);
-    const [information, setInformation] = useState('');
-    const [informationEnd, setInformationEnd] = useState('');
 
     //Start point params
+    const [startPointLonGpx, setStartPointLonGpx] = useState('');
+    const [startPointLatGpx, setStartPointLatGpx] = useState('');
+    const [startPointNameGpx, setStartPointNameGpx] = useState('Start Point');
+    const [startPointAddGpx, setStartPointAddGpx] = useState('');
+
     const [startPointType, setStartPointType] = useState('');
     const [startPointLon, setStartPointLon] = useState('');
     const [startPointLat, setStartPointLat] = useState('');
@@ -58,6 +65,11 @@ function EditHikePage(props) {
     const [startPointParking, setStartPointParking] = useState(null);
 
     //End point params
+    const [endPointLatGpx, setEndPointLatGpx] = useState('');
+    const [endPointLonGpx, setEndPointLonGpx] = useState('');
+    const [endPointNameGpx, setEndPointNameGpx] = useState('End Point');
+    const [endPointAddGpx, setEndPointAddGpx] = useState('');
+
     const [endPointType, setEndPointType] = useState('');
     const [endPointLat, setEndPointLat] = useState('');
     const [endPointLon, setEndPointLon] = useState('');
@@ -82,36 +94,39 @@ function EditHikePage(props) {
     const [open, setOpen] = useState(false);
     const [err, setErr] = useState(null);
 
-    //Get hike deatils
-    useEffect(() => {
-        const getHike = async () => {
-            setLoading(true);
+    //Get hike deatils with gpx file
+    const getHikeAndGpxFile = async () => {
+        setLoading(true);
 
-            const details = await API.getSingleHikeByID(hikeId);
-            if (details) {
+        const details = await API.getSingleHikeByID(hikeId);
+        if (details) {
+
+            const gpxFile = await API.getPathByID(details.gpxPath)
+
+            if (gpxFile) {
+                setFileContents(gpxFile)
                 setHikeDetails(details);
                 setLoading(false);
+            } else {
+                setLoading(false)
+                setHasErrorOnLoad(true);
+                SetErrorOnLoad("Failed to get hike details. Please try again.")
             }
+        } else {
+            setLoading(false)
+            setHasErrorOnLoad(true);
+            SetErrorOnLoad("Failed to get hike details. Please try again.")
         }
-        getHike();
+    }
+
+    useEffect(() => { 
+        getHikeAndGpxFile();
     }, [])
 
     //Update fields based on hike details
     useEffect(() => {
         if (hikeDetails) {
             fillPreDefinedHikeDetails()
-        }
-    }, [hikeDetails])
-
-    //Getting and parsing GPX file
-    useEffect(() => {
-        if (hikeDetails) {
-            const getGPXFile = async () => {
-                //Getting GPX file
-                const gpxFile = await API.getPathByID(hikeDetails.gpxPath)
-                setFileContents(gpxFile)
-            }
-            getGPXFile()
         }
     }, [hikeDetails])
 
@@ -162,17 +177,21 @@ function EditHikePage(props) {
 
             getInformation(positions[0][0], positions[0][1])
                 .then(informations => {
-                    setInformation(informations);
-                    setRegion(informations.address.state);
-                    setProvince(informations.address.county);
-                    setCountry(informations.address.country);
-                    setCity(informations.address.village);
+                    setStartPointLatGpx(positions[0][0])
+                    setStartPointLonGpx(positions[0][1])
+                    setStartPointNameGpx(informations.name)
+                    setStartPointAddGpx(informations.display_name)
                 })
 
             getInformation(positions[positions.length - 1][0], positions[positions.length - 1][1])
                 .then(informations => {
-                    setInformationEnd(informations);
+                    setEndPointLatGpx(positions[positions.length - 1][0])
+                    setEndPointLonGpx(positions[positions.length - 1][1])
+                    setEndPointNameGpx(informations.name)
+                    setEndPointAddGpx(informations.display_name)
                 })
+
+            
         }
     }, [fileContents]);
 
@@ -234,6 +253,9 @@ function EditHikePage(props) {
                 setListReferencePoint([])
             }
 
+            let startLonHut, startLatHut;
+            let endLonHut, endLatHut;
+
             if (hikeDetails.startPoint) {
                 const startPoint = hikeDetails.startPoint;
                 switch (startPoint.type) {
@@ -245,10 +267,8 @@ function EditHikePage(props) {
                         setStartPointAdd(startPoint.point?.address)
                         setStartPointHut(null)
                         setStartPointParking(null)
-                        getNearHuts(
-                            startPoint.point?.position?.coordinates[0],
-                            startPoint.point?.position?.coordinates[1]
-                        )
+                        startLonHut = startPoint.point?.position?.coordinates[0]
+                        startLatHut = startPoint.point?.position?.coordinates[1]
                         break;
                     }
                     case "parkingLot": {
@@ -257,10 +277,8 @@ function EditHikePage(props) {
                         setStartPointType(SelectStartEndPointType.PARKING)
                         setStartPointParking(startPoint.entity)
                         setStartPointHut(null)
-                        getNearHuts(
-                            startPoint.entity?.point?.position?.coordinates[0],
-                            startPoint.entity?.point.position?.coordinates[1]
-                        )
+                        startLonHut = startPoint.entity?.point?.position?.coordinates[0]
+                        startLatHut = startPoint.entity?.point.position?.coordinates[1]
                         break;
                     }
                     case "hut": {
@@ -269,15 +287,21 @@ function EditHikePage(props) {
                         setStartPointType(SelectStartEndPointType.HUT)
                         setStartPointHut(startPoint.entity)
                         setStartPointParking(null)
-                        getNearHuts(
-                            startPoint.entity?.point?.position?.coordinates[0],
-                            startPoint.entity?.point?.position?.coordinates[1]
-                        )
+                        startLonHut = startPoint.entity?.point?.position?.coordinates[0]
+                        startLatHut = startPoint.entity?.point?.position?.coordinates[1]
                         break;
                     }
                 }
             } else {
-                //TODO: set gpx start point as starting point
+                setStartPointType(SelectStartEndPointType.COORDINATES);
+                setStartPointLon(startPointLonGpx)
+                setStartPointLat(startPointAddGpx)
+                setStartPointName(startPointNameGpx)
+                setStartPointAdd(startPointAddGpx)
+                setStartPointHut(null)
+                setStartPointParking(null)
+                startLonHut = startPointLonGpx
+                startLatHut = startPointLatGpx
             }
 
             if (hikeDetails.endPoint) {
@@ -289,10 +313,8 @@ function EditHikePage(props) {
                         setEndPointLat(endPoint.point?.position?.coordinates[1])
                         setEndPointName(endPoint.point?.name)
                         setEndPointAdd(endPoint.point?.address)
-                        getNearHuts(
-                            endPoint.point?.position?.coordinates[0],
-                            endPoint.point?.position?.coordinates[1]
-                        )
+                        endLonHut = endPoint.point?.position?.coordinates[0]
+                        endLatHut = endPoint.point?.position?.coordinates[1]
                         break;
                     }
                     case "parkingLot": {
@@ -301,10 +323,8 @@ function EditHikePage(props) {
                         setEndPointType(SelectStartEndPointType.PARKING)
                         setEndPointParking(endPoint.entity)
                         setEndPointHut(null)
-                        getNearHuts(
-                            endPoint.entity?.point?.position?.coordinates[0],
-                            endPoint.entity?.point?.position?.coordinates[1]
-                        )
+                        endLonHut = endPoint.entity?.point?.position?.coordinates[0]
+                        endLatHut = endPoint.entity?.point?.position?.coordinates[1]
                         break;
                     }
                     case "hut": {
@@ -313,16 +333,29 @@ function EditHikePage(props) {
                         setEndPointType(SelectStartEndPointType.HUT)
                         setEndPointHut(endPoint.entity)
                         setEndPointParking(null)
-                        getNearHuts(
-                            endPoint.entity?.point?.position?.coordinates[0],
-                            endPoint.entity?.point?.position?.coordinates[1]
-                        )
+                        endLonHut = endPoint.entity?.point?.position?.coordinates[0]
+                        endLatHut = endPoint.entity?.point?.position?.coordinates[1]
                         break;
                     }
                 }
             } else {
-                //TODO: set gpx end point as ending point
+                setEndPointType(SelectStartEndPointType.COORDINATES);
+                setEndPointLon(endPointLonGpx)
+                setEndPointLat(endPointLatGpx)
+                setEndPointName(endPointNameGpx)
+                setEndPointAdd(endPointAddGpx)
+                endLonHut = endPointLonGpx
+                endLatHut = endPointLatGpx
             }
+
+            getNearHuts(
+                startLonHut,
+                startLatHut
+            )
+            getNearHuts(
+                endLonHut,
+                endLatHut
+            )
         }
     }
 
@@ -479,7 +512,7 @@ function EditHikePage(props) {
                 case SelectStartEndPointType.COORDINATES: {
                     start = {
                         name: startPointName,
-                        address: information.display_name,
+                        address: startPointAdd,
                         lat: startPointLat,
                         lon: startPointLon
                     };
@@ -506,10 +539,10 @@ function EditHikePage(props) {
             switch (endPointType) {
                 case SelectStartEndPointType.COORDINATES: {
                     end = {
-                        name: startPointName,
-                        address: information.display_name,
-                        lat: startPointLat,
-                        lon: startPointLon
+                        name: endPointName,
+                        address: endPointAdd,
+                        lat: endPointLat,
+                        lon: endPointLon
                     };
                     break;
                 }
@@ -596,11 +629,27 @@ function EditHikePage(props) {
                 loading &&
                 <Grid
                     container
-                    direction="row"
+                    direction="column"
                     justifyContent="center"
                     alignItems="center">
-                    <CircularProgress />
+                    <Grid item>
+                        <CircularProgress />
+                    </Grid>
                 </Grid>
+            }
+            {
+                hasErrorOnLoad &&
+                <ErrorDialog
+                    isOpen={hasErrorOnLoad}
+                    message={errorOnLoad}
+                    buttonText="Try Again"
+                    closeAction={() => {
+                        setHasErrorOnLoad(false)
+                        SetErrorOnLoad(null)
+                        getHikeAndGpxFile()
+                    }}>
+
+                </ErrorDialog>
             }
             {
                 (!loading && hikeDetails) &&
@@ -642,7 +691,6 @@ function EditHikePage(props) {
                                     pointType={startPointType} setPointType={setStartPointType}
                                     hut={startPointHut} setHut={setStartPointHut}
                                     parking={startPointParking} setParking={setStartPointParking}
-                                    information={information}
                                 />
 
                             </Grid>
@@ -661,7 +709,6 @@ function EditHikePage(props) {
                                     pointType={endPointType} setPointType={setEndPointType}
                                     hut={endPointHut} setHut={setEndPointHut}
                                     parking={endPointParking} setParking={setEndPointParking}
-                                    information={informationEnd}
                                 />
                             </Grid>
 
