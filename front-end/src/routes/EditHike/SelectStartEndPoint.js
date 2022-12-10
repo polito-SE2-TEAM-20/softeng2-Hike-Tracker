@@ -293,7 +293,7 @@ function ParkingItemView(props) {
     )
 }
 
-const parkingAndHutDiscoveryRadius = 400;
+const parkingAndHutDiscoveryRadius = 5;
 
 export const SelectStartEndPointMode = {
     START : 0,
