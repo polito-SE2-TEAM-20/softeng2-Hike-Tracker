@@ -1,13 +1,13 @@
 /* istanbul ignore file */
 
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
-import { isTest } from '@app/common';
+import { GroupValidationPipe, isTest } from '@app/common';
 
 export function prepareApp(app: NestExpressApplication | INestApplication) {
   app.useGlobalPipes(
-    new ValidationPipe({
+    new GroupValidationPipe({
       forbidNonWhitelisted: true,
       whitelist: true,
     }),

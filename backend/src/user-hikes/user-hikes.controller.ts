@@ -28,6 +28,27 @@ import { StartHikeDto, TrackPointDto } from './user-hikes.dto';
 import { UserHikeFull } from './user-hikes.interface';
 import { UserHikesService } from './user-hikes.service';
 
+// class MyQueryDtoInner {
+//   @IsString()
+//   @MinLength(1)
+//   id!: string;
+// }
+
+// class MyQueryDto {
+//   @IsString()
+//   @MinLength(1)
+//   test!: string;
+
+//   @ValidateNested()
+//   @Type(() => MyQueryDtoInner)
+//   @Transform(({ value, key, obj }) => {
+//     if (typeof value !== 'string') return value;
+//     console.log({ key, value, obj });
+//     return transformToClass(MyQueryDtoInner, JSON.parse(value));
+//   })
+//   obj!: MyQueryDtoInner;
+// }
+
 @Controller('user-hikes')
 export class UserHikesController {
   constructor(
@@ -36,6 +57,11 @@ export class UserHikesController {
     private hikesService: HikesService,
     private userHikeTrackPointsService: UserHikeTrackPointsService,
   ) {}
+
+  // @Get('test/error')
+  // async error() {
+  //   await this.dataSource.getRepository(Hike).update({ id: 100 }, {});
+  // }
 
   @RolesOnly(
     UserRole.hiker,
