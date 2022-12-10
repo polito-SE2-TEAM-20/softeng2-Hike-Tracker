@@ -107,13 +107,10 @@ function TrackingHikePage(props) {
     }
 
     return (
-        <>
-            {/* <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} /> */}
-            <Grid
-                container>
-
-                {/* Action container */}
-                {
+        <Grid container>
+            <HTNavbar item user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} />
+            {/* Action container */}
+            {
                     <TrackingActionsView
                         state={trackingState}
                         startAction={startTrackingAction}
@@ -140,9 +137,7 @@ function TrackingHikePage(props) {
 
                     </TurnOnLocationDialog>
                 }
-
-            </Grid>
-        </>
+        </Grid>
     )
 }
 

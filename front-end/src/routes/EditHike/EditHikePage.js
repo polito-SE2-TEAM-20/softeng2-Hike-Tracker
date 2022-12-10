@@ -50,12 +50,6 @@ function EditHikePage(props) {
 
     const [puntiDaTrack, setPuntiDaTrack] = useState([]);
 
-    //Start point params
-    const [startPointLonGpx, setStartPointLonGpx] = useState('');
-    const [startPointLatGpx, setStartPointLatGpx] = useState('');
-    const [startPointNameGpx, setStartPointNameGpx] = useState('Start Point');
-    const [startPointAddGpx, setStartPointAddGpx] = useState('');
-
     const [startPointType, setStartPointType] = useState('');
     const [startPointLon, setStartPointLon] = useState('');
     const [startPointLat, setStartPointLat] = useState('');
@@ -125,10 +119,10 @@ function EditHikePage(props) {
 
     //Update fields based on hike details
     useEffect(() => {
-        if (hikeDetails) {
+        if (hikeDetails && fileContents) {
             fillPreDefinedHikeDetails()
         }
-    }, [hikeDetails])
+    }, [hikeDetails, fileContents])
 
     //TODO
     useEffect(() => {
@@ -141,59 +135,59 @@ function EditHikePage(props) {
 
 
     //TODO
-    useEffect(() => {
-        if (fileContents) {
-            let gpxParser = require('gpxparser');
-            var gpx = new gpxParser();
-            gpx.parse(fileContents);
-            const positions = gpx.tracks[0].points.map(p => [p.lat, p.lon]);
-            console.log(gpx);
-            // controllare perchè se non ci sono i punti da errore
-            {/*} const waypoints = gpx.waypoints.map(reference => [reference.name, reference.desc, reference.lat, reference.lon])
+    // useEffect(() => {
+    //     if (fileContents) {
+    //         let gpxParser = require('gpxparser');
+    //         var gpx = new gpxParser();
+    //         gpx.parse(fileContents);
+    //         const positions = gpx.tracks[0].points.map(p => [p.lat, p.lon]);
+    //         console.log(gpx);
+    //         // controllare perchè se non ci sono i punti da errore
+    //         {/*} const waypoints = gpx.waypoints.map(reference => [reference.name, reference.desc, reference.lat, reference.lon])
 
-            // get all the waypoints from the gpx file, insert them if they are on the track
-            // and give them a name if they don't have one in the gpx file
-            let i = 1;
-            let prova = [];
-            waypoints.forEach(el => {
+    //         // get all the waypoints from the gpx file, insert them if they are on the track
+    //         // and give them a name if they don't have one in the gpx file
+    //         let i = 1;
+    //         let prova = [];
+    //         waypoints.forEach(el => {
 
-                let indexOfObject = positionsState.filter(object => (object[0] === el[2] && object[1] === el[3]))
-                if (indexOfObject.length !== 0) {
-                    if (el.name === '' || el.name === null || el.name === undefined) {
-                        prova = [...prova, { name: i, address: el[1], lat: el[2], lon: el[3] }];
-                        i++;
-                    } else {
-                        prova = [...prova, { name: el[0], address: el[1], lat: el[2], lon: el[3] }];
-                    }
-                }
-                // controllare che due waypoints non abbiano lo stesso nome
-                setListReferencePoint(prova);
-            })
+    //             let indexOfObject = positionsState.filter(object => (object[0] === el[2] && object[1] === el[3]))
+    //             if (indexOfObject.length !== 0) {
+    //                 if (el.name === '' || el.name === null || el.name === undefined) {
+    //                     prova = [...prova, { name: i, address: el[1], lat: el[2], lon: el[3] }];
+    //                     i++;
+    //                 } else {
+    //                     prova = [...prova, { name: el[0], address: el[1], lat: el[2], lon: el[3] }];
+    //                 }
+    //             }
+    //             // controllare che due waypoints non abbiano lo stesso nome
+    //             setListReferencePoint(prova);
+    //         })
 
-            //set List reference point con i waypoints se presenti nel gpx file
-            setReferencePoint([]);
-        */}
-            setPositionsState(positions);
+    //         //set List reference point con i waypoints se presenti nel gpx file
+    //         setReferencePoint([]);
+    //     */}
+    //         setPositionsState(positions);
 
-            getInformation(positions[0][0], positions[0][1])
-                .then(informations => {
-                    setStartPointLatGpx(positions[0][0])
-                    setStartPointLonGpx(positions[0][1])
-                    setStartPointNameGpx(informations.name)
-                    setStartPointAddGpx(informations.display_name)
-                })
+    //         getInformation(positions[0][0], positions[0][1])
+    //             .then(informations => {
+    //                 setStartPointLatGpx(positions[0][0])
+    //                 setStartPointLonGpx(positions[0][1])
+    //                 setStartPointNameGpx(informations.name)
+    //                 setStartPointAddGpx(informations.display_name)
+    //             })
 
-            getInformation(positions[positions.length - 1][0], positions[positions.length - 1][1])
-                .then(informations => {
-                    setEndPointLatGpx(positions[positions.length - 1][0])
-                    setEndPointLonGpx(positions[positions.length - 1][1])
-                    setEndPointNameGpx(informations.name)
-                    setEndPointAddGpx(informations.display_name)
-                })
+    //         getInformation(positions[positions.length - 1][0], positions[positions.length - 1][1])
+    //             .then(informations => {
+    //                 setEndPointLatGpx(positions[positions.length - 1][0])
+    //                 setEndPointLonGpx(positions[positions.length - 1][1])
+    //                 setEndPointNameGpx(informations.name)
+    //                 setEndPointAddGpx(informations.display_name)
+    //             })
 
             
-        }
-    }, [fileContents]);
+    //     }
+    // }, [fileContents]);
 
 
     function toHoursAndMinutes(totalMinutes) {
@@ -207,8 +201,37 @@ function EditHikePage(props) {
         return num.toString().padStart(2, '0');
     }
 
-    const fillPreDefinedHikeDetails = () => {
-        if (hikeDetails !== null && hikeDetails !== undefined) {
+    const fillPreDefinedHikeDetails = async () => {
+        if (hikeDetails && fileContents) {
+        
+            //#region GPX parsing
+            let gpxParser = require('gpxparser');
+            var gpx = new gpxParser();
+            gpx.parse(fileContents);
+            const positions = gpx.tracks[0].points.map(p => [p.lat, p.lon]);
+
+            setPositionsState(positions);
+
+            let startLatGpx, startLonGpx, startNameGpx, startAddGpx;
+            let endLatGpx, endLonGpx, endtNameGpx, endAddGpx;
+
+            await getInformation(positions[0][0], positions[0][1])
+                .then(informations => {
+                    startLatGpx = positions[0][0]
+                    startLonGpx = positions[0][1]
+                    startNameGpx = informations.name
+                    startAddGpx = informations.display_name;
+                })
+
+            await getInformation(positions[positions.length - 1][0], positions[positions.length - 1][1])
+                .then(informations => {
+                    endLatGpx = positions[positions.length - 1][0]
+                    endLonGpx = positions[positions.length - 1][1]
+                    endtNameGpx = informations.name
+                    endAddGpx = informations.display_name
+                })
+            //#endregion
+
             setTitle(hikeDetails.title)
             setLengthStr(hikeDetails.length)
             setAscentStr(hikeDetails.ascent)
@@ -294,14 +317,14 @@ function EditHikePage(props) {
                 }
             } else {
                 setStartPointType(SelectStartEndPointType.COORDINATES);
-                setStartPointLon(startPointLonGpx)
-                setStartPointLat(startPointAddGpx)
-                setStartPointName(startPointNameGpx)
-                setStartPointAdd(startPointAddGpx)
+                setStartPointLon(startLonGpx)
+                setStartPointLat(startLatGpx)
+                setStartPointName(startNameGpx)
+                setStartPointAdd(startAddGpx)
                 setStartPointHut(null)
                 setStartPointParking(null)
-                startLonHut = startPointLonGpx
-                startLatHut = startPointLatGpx
+                startLonHut = startLonGpx
+                startLatHut = startLatGpx
             }
 
             if (hikeDetails.endPoint) {
@@ -340,12 +363,14 @@ function EditHikePage(props) {
                 }
             } else {
                 setEndPointType(SelectStartEndPointType.COORDINATES);
-                setEndPointLon(endPointLonGpx)
-                setEndPointLat(endPointLatGpx)
-                setEndPointName(endPointNameGpx)
-                setEndPointAdd(endPointAddGpx)
-                endLonHut = endPointLonGpx
-                endLatHut = endPointLatGpx
+                setEndPointLon(endLonGpx)
+                setEndPointLat(endLatGpx)
+                setEndPointName(endtNameGpx)
+                setEndPointAdd(endAddGpx)
+                setEndPointHut(null)
+                setEndPointParking(null)
+                endLonHut = endLonGpx
+                endLatHut = endLatGpx
             }
 
             getNearHuts(
@@ -452,13 +477,38 @@ function EditHikePage(props) {
     }
 
     const isStartingPointIsNull = () => {
-        return (startPointParking === null && startPointHut === null &&
-            (startPointLat === null || startPointLon === null || startPointName === null || startPointName.trim === '' ))
+
+        switch(startPointType) {
+            case SelectStartEndPointType.COORDINATES: {
+                return !((startPointLat !== null && startPointLat.toString().trim().length > 0) &&
+                    (startPointLon !== null && startPointLon.toString().trim().length > 0) &&
+                    (startPointName !== null && startPointName.toString().length > 0) &&
+                    (startPointAdd !== null && startPointAdd.toString().length > 0))
+            }
+            case SelectStartEndPointType.PARKING: {
+                return startPointParking === null
+            }
+            case SelectStartEndPointType.HUT: {
+                return startPointHut === null
+            }
+        }
     }
 
     const isEndingPointIsNull = () => {
-        return (endPointParking === null && endPointHut === null &&
-            (endPointLat === null || endPointLon === null || endPointName === null || endPointName.trim === '' ))
+        switch(endPointType) {
+            case SelectStartEndPointType.COORDINATES: {
+                return !((endPointLat !== null && endPointLat.toString().trim().length > 0) &&
+                    (endPointLon !== null && endPointLon.toString().trim() > 0) &&
+                    (endPointName !== null && endPointName.toString().length > 0) &&
+                    (endPointAdd !== null && endPointAdd.toString().length > 0))
+            }
+            case SelectStartEndPointType.PARKING: {
+                return endPointParking === null
+            }
+            case SelectStartEndPointType.HUT: {
+                return endPointHut === null
+            }
+        }
     }
 
     const handleEdit = (event) => {
@@ -584,7 +634,7 @@ function EditHikePage(props) {
                 })
                 .catch((err) => {
                     setOpen(true);
-                    setErr(err)
+                    setErr("Failed to update your hike")
                 });
                 //check the popup message for the error at the end
 

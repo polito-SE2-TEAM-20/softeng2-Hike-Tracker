@@ -54,7 +54,7 @@ function PopupEditHike(props) {
                     </>
                 }
                 {   
-                    props.err !== null && 
+                    (props.err !== null && props.err !== undefined ) && 
                     <>
                         <DialogTitle>{"Something Went Wrong while ediing your hike."}</DialogTitle>
                         <DialogContent>
