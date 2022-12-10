@@ -24,17 +24,12 @@ function HutWorkerHuts(props) {
 
     useEffect(() => {  
         setLoading(true);
-        API.getHutsHutWorker().then((huts) => {
-            setMyHuts(oldHuts => huts)
-            setLoading(false)
-            console.log(huts)
-        });    
-
-
-      
-    }, [])
-{/*
-        let loh= []
+    //     API.getHutsHutWorker().then((huts) => {
+    //         setMyHuts(oldHuts => huts)
+    //         setLoading(false)
+    //         console.log(huts)
+    //     });    
+ let loh= []
         
         const getHuts = async () => {
             loh = await API.getHutsHutWorker()
@@ -43,10 +38,14 @@ function HutWorkerHuts(props) {
             setMyHuts(loh);
             setLoading(false);
             console.log(loh)
+        }).catch(err =>{
+            console.log(err)
         })
 
 
-    */}
+      
+    }, [])
+
 
     const gotoLogin = () => {
         navigate("/login", { replace: false })

@@ -442,12 +442,15 @@ function EditHikePage(props) {
         } else if (expectedTimeStr === null || expectedTimeStr === '' || expectedTimeStr === undefined || expectedTimeStr === 0) {
             setErrorMessage('The time expected for the hike cannot be empty')
             setShow(true);
+        } else if (!expectedTimeStr.match(/^(([0-1]{0,1}[0-9])|(2[0-3])):[0-5]{0,1}[0-9]$/)) {
+            setErrorMessage('The time expected for the hike has to be in the format hh:mm e.g 12:30, 20:30')
+            setShow(true);
         } else if (ascentStr === '' || ascentStr === null || ascentStr === undefined) {
             setErrorMessage('The ascent for the hike cannot be empty');
             setShow(true);
         } else if (difficultyStr === '' || difficultyStr === null || difficultyStr === undefined) {
             setErrorMessage('Choose a difficulty for this hike');
-            setShow(true);
+             setShow(true);
         } else if (description === '' || description === null || description === undefined) {
             setErrorMessage('The description for the hike cannot be empty');
             setShow(true);
@@ -538,7 +541,7 @@ function EditHikePage(props) {
                 .then((startEndPointEditResult) => {
                     API.linkPointsToHike(hikeId, connectedHuts, [])
                         .then((linkHutResult) => {
-                            setOpen(true);
+                            setOpen(false);
                             setErr(null)
                         })
                         .catch((err) => {
@@ -550,6 +553,7 @@ function EditHikePage(props) {
                     setOpen(true);
                     setErr(err)
                 });
+                //check the popup message for the error at the end
 
             // setFileContents(null);
             // setTitle(''); setLengthStr(''); setAscentStr(''); setExpectedTimeStr('');
@@ -799,6 +803,14 @@ function EditHikePage(props) {
                                 </Button>
                             </Stack>
                         }
+                        {
+                show &&
+                <Alert variant="outlined" severity="error" onClose={() => {
+                    setErrorMessage('');
+                    setShow(false)
+                }}>{errorMessage}
+                </Alert>
+            }
                         <Grid sx={{ p: 2, ml: 5, mr: 5 }}>
                             <Paper elevation={5}>
                                 <Map
@@ -812,14 +824,7 @@ function EditHikePage(props) {
                     </Grid>
                 </Grid>
             }
-            {
-                show &&
-                <Alert variant="outlined" severity="error" onClose={() => {
-                    setErrorMessage('');
-                    setShow(false)
-                }}>{errorMessage}
-                </Alert>
-            }
+            
         </React.Fragment>
     );
 }
