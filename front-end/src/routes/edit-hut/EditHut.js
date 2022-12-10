@@ -45,27 +45,13 @@ const EditHut = (props) => {
     const [picData, setPicData] = useState([])
     const [dirty, setDirty] = useState(false)
 
-    const addNewPicture = () => {
-        /**
-         * upload a file
-         */
-
-        /**
-         * upload info about the file uploaded
-         */
-
-        /**
-         * insert the image into the picture array
-         */
-
-    }
-
     useEffect(() => {
         let tmpHut = { title: "", description: "", workingTimeStart: -1, workingTimeEnd: -1, numberOfBeds: -1, price: -1, ownerName: "", website: "", point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } }
         const getHut = async () => {
             tmpHut = await API.getSingleHutByID(hutid)
         }
         getHut().then(() => {
+            console.log(tmpHut)
             setHut(tmpHut)
             setLoading(false);
             setDescription(tmpHut.description);
@@ -104,14 +90,24 @@ const EditHut = (props) => {
         setPictures(tmpPictures)
     }
 
+    const handleDelete = id => {
+        let tmpPicData = [...picData]
+        tmpPicData = tmpPicData.filter(x => x.id !== id)
+        setPicData(tmpPicData)
+
+        let tmpPictures = [...pictures]
+        tmpPictures = tmpPictures.filter(x => x.name !== id)
+        setPictures(tmpPictures)
+    }
+
     useEffect(() => {
         const images = [...picData];
-        pictures.forEach((picture) => {
+        pictures.forEach(picture => {
             const reader = new FileReader()
             reader.onload = (e) => {
                 const { result } = e.target;
-                if (result && !images.includes(result)) {
-                    images.push(result)
+                if (result && !images.map(x => x.img).includes(result)) {
+                    images.push({ 'id': picture.name, 'img': result })
                     setPicData(images);
                 }
             }
@@ -152,6 +148,11 @@ const EditHut = (props) => {
                     setErr(err)
                 })
         }
+        const formData = new FormData()
+        pictures.forEach(picture => {
+            formData.append(picture.name, picture)
+        })
+        API.setHutPictures({ 'hutID': hutid, 'pictures': formData })
     }
 
     return (
@@ -382,14 +383,14 @@ const EditHut = (props) => {
                             {
                                 picData.map(picture => {
                                     return (
-                                        <Grid container item xs={4} sm={4} md={4} lg={4} xl={4} sx={{ display: "flex", justifyContent: "center" }}>
-                                            <PictureCard img={picture} />
+                                        <Grid id={picture.id} container item xs={4} sm={4} md={4} lg={4} xl={4} sx={{ display: "flex", justifyContent: "center" }}>
+                                            <PictureCard picture={picture} handleDelete={handleDelete} />
                                         </Grid>
                                     );
                                 })
                             }
                             <Grid item xs={3} sm={3} md={3} lg={3} xl={3} sx={{ display: "flex", justifyContent: "center" }}>
-                                <AddPictureCard addNewPicture={addNewPicture} handleUpload={handleUpload} />
+                                <AddPictureCard handleUpload={handleUpload} />
                             </Grid>
                         </Grid>
                     </Grid>

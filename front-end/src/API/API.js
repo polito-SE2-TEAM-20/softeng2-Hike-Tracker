@@ -636,16 +636,14 @@ const setHutPictures = async (request) => {
     const response = fetch((APIURL + '/hut-pictures/' + request.hutID), {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
             'Accept': '*/*'
         },
-        body: JSON.stringify(request.pictures)
+        body: request.pictures
     })
 
     if (response.ok) {
-        const listOfPictures = await response.json()
-        return listOfPictures.pictures
+        return true
     } else {
         const errDetail = await response.json();
         throw errDetail.message;
