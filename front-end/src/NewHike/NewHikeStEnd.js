@@ -280,6 +280,9 @@ function NewHikeStEnd(props) {
   } else if (expectedTimeStr === null || expectedTimeStr === '' || expectedTimeStr === undefined || expectedTimeStr === 0 ) {
       setErrorMessage('The time expected for the hike cannot be empty')
       setShow(true);
+  }    else if (!expectedTimeStr.match(/^(([0-1]{0,1}[0-9])|(2[0-3])):[0-5]{0,1}[0-9]$/)) {
+        setErrorMessage('The time expected for the hike has to be in the format hh:mm e.g 12:30, 20:30')
+        setShow(true);
   } else if (ascentStr === '' || ascentStr === null || ascentStr === undefined ) {
       setErrorMessage('The ascent for the hike cannot be empty');
       setShow(true);
@@ -318,7 +321,13 @@ function NewHikeStEnd(props) {
       }else if(parkingId !== null){
         start = {parkingLotId: parkingId, address: startPointAdd};
       }else{
-        start = {name: startPointName, address: information.display_name, lat: startPointLat, lon: startPointLon };
+        if(!startPointLat.toString().match(/^([0-9]*[.])?[0-9]+$/) || !startPointLon.toString().match(/^([0-9]*[.])?[0-9]+$/)){
+          setErrorMessage('Insert a valid value for the start point coordinates e.g. 42.33');
+          setShow(true);
+        }else{
+          start = {name: startPointName, address: information.display_name, lat: startPointLat, lon: startPointLon };
+
+        }
       }
 
       if(hutIdEnd!==null){
@@ -326,7 +335,13 @@ function NewHikeStEnd(props) {
       }else if(parkingIdEnd !== null){
         end = {parkingLotId: parkingIdEnd, address: endPointAdd};
       }else{
-        end = { name: endPointName, address: endPointAdd, lat: endPointLat, lon: endPointLon }
+        if(!endPointLat.toString().match(/^([0-9]*[.])?[0-9]+$/) || !endPointLon.toString().match(/^([0-9]*[.])?[0-9]+$/)){
+          setErrorMessage('Insert a valid value for the end point coordinates e.g. 42.33');
+          setShow(true);
+        }else{
+          end = { name: endPointName, address: endPointAdd, lat: endPointLat, lon: endPointLon }
+
+        }
     }
       const length = parseFloat(lengthStr);
       let a = expectedTimeStr.split(':'); // split it at the colons

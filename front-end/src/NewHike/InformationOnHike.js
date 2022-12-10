@@ -55,6 +55,7 @@ return(
                       fullWidth autoComplete="country"
                       variant="standard" type="text"
                       value={props.country}
+                      disabled
                       onChange={(e) => props.setCountry(e.target.value)}
                     />
                   </Grid>
@@ -65,6 +66,7 @@ return(
                       fullWidth autoComplete="region"
                       variant="standard" type="text"
                       value={props.region}
+                      disabled
                       onChange={(e) => props.setRegion(e.target.value)}
                     />
                   </Grid>
@@ -75,6 +77,7 @@ return(
                       autoComplete="province" variant="standard" type="text"
                       required
                       value={props.province}
+                      disabled
                       onChange={(e) => props.setProvince(e.target.value)}
                     />
                   </Grid>
@@ -85,6 +88,7 @@ return(
                       fullWidth autoComplete="city"
                       variant="standard" type="text"
                       value={props.city}
+                      disabled
                       onChange={(e) => props.setCity(e.target.value)}
                     />
                   </Grid>
@@ -96,7 +100,7 @@ return(
                       fullWidth autoComplete="description"
                       variant="standard" multiline
                       inputProps={
-                        { maxLength: 999 }
+                        { maxLength: 990 }
                       }
                       //mettere un alert se vai oltre
                       value={props.description}
