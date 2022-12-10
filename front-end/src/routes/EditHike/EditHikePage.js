@@ -574,7 +574,7 @@ function EditHikePage(props) {
                 .then((startEndPointEditResult) => {
                     API.linkPointsToHike(hikeId, connectedHuts, [])
                         .then((linkHutResult) => {
-                            setOpen(false);
+                            setOpen(true);
                             setErr(null)
                         })
                         .catch((err) => {
