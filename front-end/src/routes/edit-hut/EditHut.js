@@ -99,11 +99,9 @@ const EditHut = (props) => {
 
     const handleUpload = event => {
         const fileUploaded = event.target.files[0]
-        if (fileUploaded) {
-            const tmpPictures = [...pictures]
-            tmpPictures.push(fileUploaded)
-            setPictures(tmpPictures)
-        }
+        const tmpPictures = [...pictures]
+        tmpPictures.push(fileUploaded)
+        setPictures(tmpPictures)
     }
 
     useEffect(() => {
@@ -114,12 +112,12 @@ const EditHut = (props) => {
                 const { result } = e.target;
                 if (result && !images.includes(result)) {
                     images.push(result)
+                    setPicData(images);
                 }
             }
             reader.onloadend = () => setDirty(!dirty)
             reader.readAsDataURL(picture)
         })
-        setPicData(images);
     }, [pictures])
 
     const handleSubmit = () => {
