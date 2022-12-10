@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  IsBoolean,
   IsLatitude,
   IsLongitude,
   IsNumber,
@@ -24,6 +25,10 @@ export class PointWithRadius {
   @IsNumber()
   @Min(0.00001)
   radiusKms?: number | null;
+
+  @IsBoolean()
+  @IsOptional()
+  onlyMyOwn?: boolean;
 }
 
 export class FilterHutsDto {

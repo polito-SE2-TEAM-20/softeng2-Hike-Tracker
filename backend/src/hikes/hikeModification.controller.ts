@@ -20,19 +20,12 @@ export class HikeModificationController {
   @HttpCode(200)
   async filterHuts(
     @Body()
-    { lat, lon, radiusKms = 10 }: PointWithRadius,
+    { lat, lon, radiusKms = 10, onlyMyOwn = false }: PointWithRadius,
     @CurrentUser() { id: userId }: UserContext,
   ): Promise<{ huts: Hut[]; parkingLots: ParkingLot[] }> {
     const query1 = this.dataSource
       .getRepository(Hut)
       .createQueryBuilder('h')
-      .andWhere('h.userId = :userId', { userId });
-    const query2 = this.dataSource
-      .getRepository(ParkingLot)
-      .createQueryBuilder('pl')
-      .andWhere('pl.userId = :userId', { userId });
-
-    query1
       .andWhere('p.id is not null')
       .andWhere(
         `ST_DWithin(ST_MakePoint(${lon}, ${lat}), p."position", ${radiusKms}*1000)`,
@@ -40,13 +33,20 @@ export class HikeModificationController {
       .leftJoinAndMapOne('h.point', Point, 'p', 'p.id = h.pointId')
       .orderBy('h.id', 'DESC');
 
-    query2
+    const query2 = this.dataSource
+      .getRepository(ParkingLot)
+      .createQueryBuilder('pl')
       .andWhere('p.id is not null')
       .andWhere(
         `ST_DWithin(ST_MakePoint(${lon}, ${lat}), p."position", ${radiusKms}*1000)`,
       )
       .leftJoinAndMapOne('pl.point', Point, 'p', 'p.id = pl.pointId')
       .orderBy('pl.id', 'DESC');
+
+    if (onlyMyOwn) {
+      query1.andWhere('h.userId = :userId', { userId });
+      query2.andWhere('pl.userId = :userId', { userId });
+    }
 
     const huts = await query1.getMany();
     const parkingLots = await query2.getMany();
