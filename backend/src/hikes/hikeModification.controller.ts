@@ -20,7 +20,7 @@ export class HikeModificationController {
   @HttpCode(200)
   async filterHuts(
     @Body()
-    { lat, lon, radiusKms = 10, onlyMyOwn = false }: PointWithRadius,
+    { lat, lon, radiusKms = 10, onlyMyOwn = true }: PointWithRadius,
     @CurrentUser() { id: userId }: UserContext,
   ): Promise<{ huts: Hut[]; parkingLots: ParkingLot[] }> {
     const query1 = this.dataSource
