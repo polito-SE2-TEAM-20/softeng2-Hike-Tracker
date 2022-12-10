@@ -621,6 +621,66 @@ function updateHikeCondition(information, hikeId) {
     })
 }
 
+/**
+ *  @latenightdawn hut pictures
+    hut now contains field pictures, an array of strings - urls to images, 
+    just like with hike gpx, you need to concat with base url of server
+
+    POST /hut-pictures/:hutId
+    accepts form-data, just like hike import
+    fields:
+    
+    pictures: array of files
+*/
+const setHutPictures = async (request) => {
+    const response = fetch((APIURL + '/hut-pictures/' + request.hutID), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+        body: JSON.stringify(request.pictures)
+    })
+
+    if (response.ok) {
+        const listOfPictures = await response.json()
+        return listOfPictures.pictures
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+/*
+    POST /hut-pictures/:hutId/modify
+    accepts json
+    {
+    pictures: array of strings
+    }
+
+    With this endpoint you can update pictures array: remove images, reorder existing ones.
+ */
+
+const modifyHutPictures = async (request) => {
+    const response = fetch((APIURL + '/hut-pictures/' + request.hutID + '/modify'), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+        body: JSON.stringify(request.params)
+    })
+
+    if (response.ok) {
+        return true
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
 
 const API = {
     getListOfHikes, getListOfGPXFiles, getPathByID,
@@ -632,6 +692,7 @@ const API = {
     approveUserByID, getPreferences, setPreferences, deleteHikeId,
     getHutsHutWorker, modifyHutInformation, editHikeStartEndPoint, getHikesUpdatableHutWorker,
     linkPointsToHike,
-    updateHikeCondition
+    updateHikeCondition,
+    setHutPictures, modifyHutPictures
 }
 export default API

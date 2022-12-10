@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router";
 import { useMatch } from "react-router-dom";
 import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import hutIcon from '../../Assets/hut-icon.png'
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import API from '../../API/API.js';
 import { Skeleton } from "@mui/material";
 import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, useMapEvents, ZoomControl, Polyline, useMap } from 'react-leaflet'
@@ -13,8 +13,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import {PopupModifyHut} from './PopupModifyHut'
+import { PopupModifyHut } from './PopupModifyHut'
 import * as React from 'react';
+import { AddPictureCard, PictureCard } from "./PictureCard";
 
 const Difficulty = (props) => {
     if (!props.loading) {
@@ -37,25 +38,43 @@ const EditHut = (props) => {
     const navigate = useNavigate()
     const match = useMatch('/edithut/:hutid')
     const hutid = (match && match.params && match.params.hutid) ? match.params.hutid : -1
-    const [hut, setHut] = useState({ title: "", numberOfBeds: -1, description:"", workingTimeStart:-1, workingTimeEnd:-1, price: -1, ownerName: "", website: "", point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } })
+    const [hut, setHut] = useState({ title: "", numberOfBeds: -1, description: "", workingTimeStart: -1, workingTimeEnd: -1, price: -1, ownerName: "", website: "", point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } })
     const [loading, setLoading] = useState(true)
     const [openPictureDialog, setOpenPictureDialog] = useState(false)
+    const [pictures, setPictures] = useState([])
+    const [picData, setPicData] = useState([])
+    const [dirty, setDirty] = useState(false)
+
+    const addNewPicture = () => {
+        /**
+         * upload a file
+         */
+
+        /**
+         * upload info about the file uploaded
+         */
+
+        /**
+         * insert the image into the picture array
+         */
+
+    }
 
     useEffect(() => {
-        let tmpHike = { title: "", description:"", workingTimeStart:-1, workingTimeEnd:-1, numberOfBeds: -1, price: -1, ownerName: "", website: "", point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } }
+        let tmpHut = { title: "", description: "", workingTimeStart: -1, workingTimeEnd: -1, numberOfBeds: -1, price: -1, ownerName: "", website: "", point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } }
         const getHut = async () => {
-            tmpHike = await API.getSingleHutByID(hutid)
+            tmpHut = await API.getSingleHutByID(hutid)
         }
         getHut().then(() => {
-            setHut(tmpHike)
+            setHut(tmpHut)
             setLoading(false);
-            setDescription(tmpHike.description);
-            setWorkingTimeEnd(tmpHike.workingTimeEnd);
-            setWorkingTimeStart(tmpHike.workingTimeStart);
-            setPrice(tmpHike.price);
-
+            setDescription(tmpHut.description);
+            setWorkingTimeEnd(tmpHut.workingTimeEnd);
+            setWorkingTimeStart(tmpHut.workingTimeStart);
+            setPrice(tmpHut.price);
+            setPictures(tmpHut.pictures)
         })
-    }, [])
+    }, [hutid])
 
     const [description, setDescription] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -74,11 +93,35 @@ const EditHut = (props) => {
     }
 
     const handleClear = () => {
-
         setDescription(hut.description); setWorkingTimeStart(hut.workingTimeStart);
         setWorkingTimeEnd(hut.workingTimeEnd); setPrice(hut.price);
-
     }
+
+    const handleUpload = event => {
+        const fileUploaded = event.target.files[0]
+        if (fileUploaded) {
+            const tmpPictures = [...pictures]
+            tmpPictures.push(fileUploaded)
+            setPictures(tmpPictures)
+        }
+    }
+
+    useEffect(() => {
+        const images = [...picData];
+        pictures.forEach((picture) => {
+            const reader = new FileReader()
+            reader.onload = (e) => {
+                const { result } = e.target;
+                if (result && !images.includes(result)) {
+                    images.push(result)
+                }
+            }
+            reader.onloadend = () => setDirty(!dirty)
+            reader.readAsDataURL(picture)
+        })
+        setPicData(images);
+    }, [pictures])
+
     const handleSubmit = () => {
         if (description === '' || description === null || description === undefined) {
             setErrorMessage("insert a valid description");
@@ -101,28 +144,28 @@ const EditHut = (props) => {
             let object = { description: description, workingTimeStart: workingTimeStart, workingTimeEnd: workingTimeEnd, price: parseFloat(price) }
             setShow(false);
             props.modifyHutInformation(object, hutid)
-              .then(modifiedHut=>{
-                console.log(modifiedHut);
-                setOp(true);
-                setErr(null)})
-                .catch((err)=>{
+                .then(modifiedHut => {
+                    console.log(modifiedHut);
                     setOp(true);
-                    setErr(err)})
-
+                    setErr(null)
+                })
+                .catch((err) => {
+                    setOp(true);
+                    setErr(err)
+                })
         }
-
     }
 
     return (
         <>
             <Grid container style={{ minHeight: "100vh", height: "100%" }}>
                 <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
-                
+
                 <Grid style={{ marginTop: "105px", marginLeft: "auto", marginRight: "auto", marginBottom: "400px", height: "40vh" }} item lg={3}>
-                {
-            op &&
-          <PopupModifyHut id={hutid} err={err} open={op} setOpen={setOp}/>
-        }
+                    {
+                        op &&
+                        <PopupModifyHut id={hutid} err={err} open={op} setOpen={setOp} />
+                    }
                     <Paper style={{ padding: "30px", height: "fit-content" }}>
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                             <Typography variant="h4">General information</Typography>
@@ -132,7 +175,7 @@ const EditHut = (props) => {
                         </Divider>
 
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                        {
+                            {
                                 !loading ?
                                     <Typography><b>Location:</b> {hut.point.address === "" || hut.point.address === null || hut.point.address === undefined ? "N/A" : hut.point.address}</Typography> :
                                     <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
@@ -162,13 +205,13 @@ const EditHut = (props) => {
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                             {
                                 !loading ? <><Typography><b>Description:</b></Typography>
-                                <TextField required fullWidth variant="standard" 
-                                value={description}
-                                multiline
-                                inputProps={
-                               { maxLength: 998 }
-                                 }
-                                    onChange={(e) => { setDescription(e.target.value) }}
+                                    <TextField required fullWidth variant="standard"
+                                        value={description}
+                                        multiline
+                                        inputProps={
+                                            { maxLength: 998 }
+                                        }
+                                        onChange={(e) => { setDescription(e.target.value) }}
                                     ></TextField></> :
                                     <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                             }
@@ -176,23 +219,23 @@ const EditHut = (props) => {
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                             {
                                 !loading ? <><Typography><b>Price:</b></Typography>
-                                <TextField required fullWidth variant="standard" 
-                                value={price}
-                                id="price"
-                    onChange={(e) => { setPrice(e.target.value) }}
-                                ></TextField></> :
+                                    <TextField required fullWidth variant="standard"
+                                        value={price}
+                                        id="price"
+                                        onChange={(e) => { setPrice(e.target.value) }}
+                                    ></TextField></> :
                                     <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                             }
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                        {
+                            {
                                 !loading ?
                                     <Typography><b>Number of beds</b> {hut.numberOfBeds === "" || hut.numberOfBeds === null || hut.numberOfBeds === undefined ? "N/A" : hut.numberOfBeds}</Typography> :
                                     <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                             }
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12} mt={1}>
-                        {
+                            {
                                 !loading ?
                                     <Typography><b>Website:</b> {hut.website === "" || hut.website === null || hut.website === undefined ? "N/A" : hut.website}</Typography> :
                                     <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
@@ -205,82 +248,57 @@ const EditHut = (props) => {
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                             {
                                 !loading ? <><Typography><b>Working time start:</b></Typography>
-                                <TextField required fullWidth variant="standard"
-                                 value={workingTimeStart}
-                                 id="workingTimeStart"
-                    onChange={(e) => { setWorkingTimeStart(e.target.value) }}
-                                 ></TextField></> :
+                                    <TextField required fullWidth variant="standard"
+                                        value={workingTimeStart}
+                                        id="workingTimeStart"
+                                        onChange={(e) => { setWorkingTimeStart(e.target.value) }}
+                                    ></TextField></> :
                                     <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                             }
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                             {
                                 !loading ? <><Typography><b>Working time finish:</b></Typography>
-                                <TextField required fullWidth variant="standard"
-                                 value={workingTimeEnd}
-                                 id="workingTimeEnd"
-                                 onChange={(e) => { setWorkingTimeEnd(e.target.value) }}
-                                 ></TextField></> :
+                                    <TextField required fullWidth variant="standard"
+                                        value={workingTimeEnd}
+                                        id="workingTimeEnd"
+                                        onChange={(e) => { setWorkingTimeEnd(e.target.value) }}
+                                    ></TextField></> :
                                     <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                             }
                         </Grid>
                         {
-                show ?
-                    <Alert sx={{ mt: 3 }} variant="outlined" severity="error" onClose={() => { setErrorMessage(''); setShow(false) }}>{errorMessage}</Alert> : <></>
-            }
-                        <Grid >
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} mt={3} pl={5} pr={5}>
-                    <Button variant="outlined"
-                        startIcon={<DeleteIcon />}
-                        onClick={handleClear}
-                        sx={{
-                            color: "#1a1a1a",
-                            borderColor: "#1a1a1a",
-                            borderRadius: "50px",
-                            "&:hover": { backgroundColor: "#1a1a1a", color: "white", borderColor: "black" },
-                            textTransform: "none",
-                            align: "right"
-                        }}>
-                        Reset
-                    </Button>
-                    <Button variant="outlined"
-                        onClick={handleSubmit}
-                        sx={{
-                            color: "#1a1a1a",
-                            borderColor: "#1a1a1a",
-                            borderRadius: "50px",
-                            "&:hover": { backgroundColor: "#1a1a1a", color: "white", borderColor: "black" },
-                            textTransform: "none"
-                        }}>
-                        Submit
-                    </Button>
-                </Grid>
-            </Grid>
-
-                        {
-                            props?.user?.role == 4 ? <>
-                                <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
-                                    <Chip label="Add a new image" />
-                                </Divider>
-                                <UploadPictureDialog open={openPictureDialog} setOpen={setOpenPictureDialog} />
-                                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                    {
-                                        !loading ? <Button variant="outlined"
-                                            onClick={() => { setOpenPictureDialog(true) }}
-                                            sx={{
-                                                color: "#1a1a1a",
-                                                borderColor: "#1a1a1a",
-                                                borderRadius: "50px",
-                                                "&:hover": { backgroundColor: "#1a1a1a", color: "white", borderColor: "black" },
-                                                textTransform: "none"
-                                            }}>
-                                            Upload a new picture
-                                        </Button> :
-                                            <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
-                                    }
-                                </Grid>
-                            </> : <></>
+                            show ?
+                                <Alert sx={{ mt: 3 }} variant="outlined" severity="error" onClose={() => { setErrorMessage(''); setShow(false) }}>{errorMessage}</Alert> : <></>
                         }
+                        <Grid >
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} mt={3} pl={5} pr={5}>
+                                <Button variant="outlined"
+                                    startIcon={<DeleteIcon />}
+                                    onClick={handleClear}
+                                    sx={{
+                                        color: "#1a1a1a",
+                                        borderColor: "#1a1a1a",
+                                        borderRadius: "50px",
+                                        "&:hover": { backgroundColor: "#1a1a1a", color: "white", borderColor: "black" },
+                                        textTransform: "none",
+                                        align: "right"
+                                    }}>
+                                    Reset
+                                </Button>
+                                <Button variant="outlined"
+                                    onClick={handleSubmit}
+                                    sx={{
+                                        color: "#1a1a1a",
+                                        borderColor: "#1a1a1a",
+                                        borderRadius: "50px",
+                                        "&:hover": { backgroundColor: "#1a1a1a", color: "white", borderColor: "black" },
+                                        textTransform: "none"
+                                    }}>
+                                    Submit
+                                </Button>
+                            </Grid>
+                        </Grid>
                     </Paper>
                 </Grid>
 
@@ -356,9 +374,28 @@ const EditHut = (props) => {
                         }
 
                     </Grid>
-
+                    <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} columns={4} sx={{ display: "flex", justifyContent: "left", marginTop: "24px", padding: "0px 64px 64px 64px" }}>
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} columns={4} sx={{ display: "flex", justifyContent: "center", marginTop: "18px", marginBottom: "24px" }}>
+                            <Typography variant="h1" fontSize={52} className="unselectable">
+                                Some pictures from the hut
+                            </Typography>
+                        </Grid>
+                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "left" }}>
+                            {
+                                picData.map(picture => {
+                                    return (
+                                        <Grid container item xs={4} sm={4} md={4} lg={4} xl={4} sx={{ display: "flex", justifyContent: "center" }}>
+                                            <PictureCard img={picture} />
+                                        </Grid>
+                                    );
+                                })
+                            }
+                            <Grid item xs={3} sm={3} md={3} lg={3} xl={3} sx={{ display: "flex", justifyContent: "center" }}>
+                                <AddPictureCard addNewPicture={addNewPicture} handleUpload={handleUpload} />
+                            </Grid>
+                        </Grid>
+                    </Grid>
                 </Grid>
-
             </Grid>
             {/*
             {console.log(hut.description)};
