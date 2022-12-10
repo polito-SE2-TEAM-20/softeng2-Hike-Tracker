@@ -329,6 +329,7 @@ export class HikesController {
     if (!isNil(hikeReferencePoints)) {
       const points = await this.dataSource.getRepository(HikePoint).findBy({
         hikeId: id,
+        type: PointType.referencePoint,
       });
 
       const pointsToDelete = points.map((hikePoint) => hikePoint.pointId);
@@ -355,7 +356,7 @@ export class HikesController {
       //INSERT into Points table of the RefPoints
       const referencePoints = await this.pointsService.getRepository().save(
         refPointsForDB.map<Partial<Point>>((point) => ({
-          type: 0,
+          type: PointType.point,
           position: point.point,
           address: point.address,
           name: point.name,
