@@ -14,7 +14,6 @@ import {
 } from '@app/common';
 import { finishTest } from '@app/testing';
 import { anyId, prepareTestApp, prepareVars } from '@test/base';
-import { Body } from '@nestjs/common';
 
 describe('Huts (e2e)', () => {
   let { dbName, app, restService, moduleRef, testService } = prepareVars();
@@ -41,7 +40,7 @@ describe('Huts (e2e)', () => {
     return {
       user,
       localGuide,
-      hutWorker
+      hutWorker,
     };
   };
 
@@ -317,7 +316,7 @@ describe('Huts (e2e)', () => {
       pictures: ['test1.png'],
     });
 
-    const testPics = ['img1.png', 'img2.jpeg', 'img3.jpeg'];
+    const testPics = ['img1.png', 'img2.jpeg', 'large.jpeg'];
     const req = restService
       .build(app, localGuide)
       .request()
@@ -423,67 +422,67 @@ describe('Huts (e2e)', () => {
 
     await testService.repo(HutWorker).save({
       hutId: hut.id,
-      userId: hutWorker.id
+      userId: hutWorker.id,
     });
-    
+
     await restService
       .build(app, hutWorker)
       .request()
       .put(`/huts/updateDescription/${hut.id}`)
       .send({
-        description: "This is a very beautiful hut.",
-        workingTimeStart: "08:00",
-        workingTimeEnd: "22:00",
-        price: 110
+        description: 'This is a very beautiful hut.',
+        workingTimeStart: '08:00',
+        workingTimeEnd: '22:00',
+        price: 110,
       })
-      .expect(({ body }) =>{
-        expect(body.description).toBe("This is a very beautiful hut.");
-        expect(body.workingTimeStart).toBe("08:00");
-        expect(body.workingTimeEnd).toBe("22:00");
+      .expect(({ body }) => {
+        expect(body.description).toBe('This is a very beautiful hut.');
+        expect(body.workingTimeStart).toBe('08:00');
+        expect(body.workingTimeEnd).toBe('22:00');
         expect(body.price).toBe(110);
-      })
-    });
+      });
+  });
 
   it('should retrieve huts where the hut worker works', async () => {
-      const { hutWorker, localGuide } = await setup();
-  
-      const hut1 = await testService.createHut({
-        userId: localGuide.id,
-        numberOfBeds: 1,
-        price: 100,
-      });
-  
-      await testService.createHut({
-        userId: localGuide.id,
-        numberOfBeds: 1,
-        price: 100,
-      });
+    const { hutWorker, localGuide } = await setup();
 
-      const hut3 = await testService.createHut({
-        userId: localGuide.id,
-        numberOfBeds: 1,
-        price: 100,
-      });
+    const hut1 = await testService.createHut({
+      userId: localGuide.id,
+      numberOfBeds: 1,
+      price: 100,
+    });
 
-      await testService.repo(HutWorker).save({
-        hutId: hut1.id,
-        userId: hutWorker.id
-      });
-      
-      await testService.repo(HutWorker).save({
-        hutId: hut3.id,
-        userId: hutWorker.id
-      });
+    await testService.createHut({
+      userId: localGuide.id,
+      numberOfBeds: 1,
+      price: 100,
+    });
 
-      const hutW1 = await testService.repo(Hut).findOneBy({id: hut1.id});
-      const hutW3 = await testService.repo(Hut).findOneBy({id: hut3.id});
+    const hut3 = await testService.createHut({
+      userId: localGuide.id,
+      numberOfBeds: 1,
+      price: 100,
+    });
 
-      await restService
-        .build(app, hutWorker)
-        .request()
-        .get(`/huts/hutWorker/iWorkAt`)
-        .expect(({ body }) =>{
-          expect(body).toIncludeAllPartialMembers([hutW1,hutW3]);
-        })
+    await testService.repo(HutWorker).save({
+      hutId: hut1.id,
+      userId: hutWorker.id,
+    });
+
+    await testService.repo(HutWorker).save({
+      hutId: hut3.id,
+      userId: hutWorker.id,
+    });
+
+    const hutW1 = await testService.repo(Hut).findOneBy({ id: hut1.id });
+    const hutW3 = await testService.repo(Hut).findOneBy({ id: hut3.id });
+
+    await restService
+      .build(app, hutWorker)
+      .request()
+      .get(`/huts/hutWorker/iWorkAt`)
+      .expect(({ body }) => {
+        expect(body).toIncludeAllPartialMembers([hutW1, hutW3]);
       });
+  });
 });

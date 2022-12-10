@@ -39,3 +39,5 @@ lerna-debug.log*
 
 /test-results
 /uploads
+
+test-data/large.jpeg
