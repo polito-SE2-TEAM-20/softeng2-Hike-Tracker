@@ -25,7 +25,9 @@ export class AppExceptionFilter implements ExceptionFilter {
 
       const res: any = exception.getResponse();
       if (res.message?.length) {
-        finalMessage = res.message.join(', ');
+        finalMessage = Array.isArray(res.message)
+          ? res.message.join(', ')
+          : res.message;
       }
 
       return response.status(status).json({
