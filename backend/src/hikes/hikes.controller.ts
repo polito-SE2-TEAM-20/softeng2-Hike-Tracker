@@ -234,51 +234,55 @@ export class HikesController {
   ): Promise<HikeFull> {
     await this.service.ensureExistsOrThrow(hikeId);
 
-    if (!linkedPoints.length) {
-      return await this.service.getFullHike(hikeId);
-    }
-
     // get points of these entities
     const hutIds = linkedPoints.filter((v) => !!v.hutId).map((v) => v.hutId);
     const parkingLotIds = linkedPoints
       .filter((v) => !!v.parkingLotId)
       .map((v) => v.parkingLotId);
 
-    const pointsQuery = this.dataSource
-      .getRepository(Point)
-      .createQueryBuilder('p');
+    const points: Point[] = [];
 
     if (hutIds.length) {
-      pointsQuery.orWhere((qb) => {
-        const subQuery = qb
-          .subQuery()
-          .select(['h.pointId'])
-          .from(Hut, 'h')
-          .andWhere('h.id IN (:...hutIds)', {
-            hutIds,
-          })
-          .getQuery();
+      const hutPoints = await this.dataSource
+        .getRepository(Point)
+        .createQueryBuilder('p')
+        .andWhere((qb) => {
+          const subQuery = qb
+            .subQuery()
+            .select(['h.pointId'])
+            .from(Hut, 'h')
+            .andWhere('h.id IN (:...hutIds)', {
+              hutIds,
+            })
+            .getQuery();
 
-        return `p.id IN ${subQuery}`;
-      });
+          return `p.id IN ${subQuery}`;
+        })
+        .getMany();
+
+      points.push(...hutPoints);
     }
 
     if (parkingLotIds.length) {
-      pointsQuery.orWhere((qb) => {
-        const subQuery = qb
-          .subQuery()
-          .select(['pl.pointId'])
-          .from(ParkingLot, 'pl')
-          .andWhere('pl.id IN (:...parkingLotIds)', {
-            parkingLotIds,
-          })
-          .getQuery();
+      const parkingLotPoints = await this.dataSource
+        .getRepository(Point)
+        .createQueryBuilder('p')
+        .andWhere((qb) => {
+          const subQuery = qb
+            .subQuery()
+            .select(['pl.pointId'])
+            .from(ParkingLot, 'pl')
+            .andWhere('pl.id IN (:...parkingLotIds)', {
+              parkingLotIds,
+            })
+            .getQuery();
 
-        return `p.id IN ${subQuery}`;
-      });
+          return `p.id IN ${subQuery}`;
+        })
+        .getMany();
+
+      points.push(...parkingLotPoints);
     }
-
-    const points = await pointsQuery.getMany();
 
     console.log('linked points', points);
 
@@ -290,14 +294,16 @@ export class HikesController {
       });
 
       // save new links
-      await entityManager.getRepository(HikePoint).save(
-        points.map<Partial<HikePoint>>(({ id: pointId }, index) => ({
-          index,
-          hikeId,
-          pointId,
-          type: PointType.linkedPoint,
-        })),
-      );
+      if (points.length) {
+        await entityManager.getRepository(HikePoint).save(
+          points.map<Partial<HikePoint>>(({ id: pointId }, index) => ({
+            index,
+            hikeId,
+            pointId,
+            type: PointType.linkedPoint,
+          })),
+        );
+      }
     });
 
     console.log('after tx');
