@@ -328,7 +328,7 @@ function EditHikePage(props) {
 
 
     // the radius should be 5
-    const nearHutDiscoveryRadius = 400;
+    const nearHutDiscoveryRadius = 5;
     const getNearHuts = (lon, lat) => {
         let radiusPoint = {
             lon: parseFloat(lon),
