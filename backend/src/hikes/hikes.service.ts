@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { pick } from 'ramda';
-import { DataSource, EntityManager, Repository } from 'typeorm';
+import { pick, isNil, propEq, } from 'ramda';
+import { DataSource, EntityManager, Repository, In } from 'typeorm';
 
 import {
   BaseService,
@@ -17,10 +17,12 @@ import {
   StartEndPoint,
   User,
   WithPoint,
+  mapToId,
+  orderEntities,
 } from '@app/common';
 import { PointsService } from '@core/points/points.service';
-
-import { StartEndPointDto } from './hikes.dto';
+import { hikeFilters } from './hikes.constants';
+import { FilteredHikesDto, StartEndPointDto } from './hikes.dto';
 
 export class HikesService extends BaseService<Hike> {
   constructor(
@@ -279,5 +281,71 @@ export class HikesService extends BaseService<Hike> {
     }
 
     return result;
+  }
+
+  async getFilteredHikes({ inPointRadius, ...body }: FilteredHikesDto) {
+    let joins = '';
+    const whereConditions: string[] = [];
+    let paramIndex = 1;
+    const params: unknown[] = [];
+
+    if (inPointRadius) {
+      whereConditions.push(
+        `ST_DWithin(ST_MakePoint($${paramIndex++}, $${paramIndex++}), p."position", $${paramIndex++})`,
+      );
+      params.push(
+        inPointRadius.lon,
+        inPointRadius.lat,
+        inPointRadius.radiusKms * 1000,
+      );
+
+      joins += `
+        inner join (
+          select spq.*
+          from (
+              select
+                hp."pointId",
+                hp."hikeId",
+                ROW_NUMBER() OVER(PARTITION BY hp."hikeId" ORDER BY hp."index" ASC) AS rank
+              from hike_points hp
+          ) spq
+          where spq.rank = 1
+        ) sq on sq."hikeId" = h.id
+        inner join points p on p.id = sq."pointId"
+      `;
+    }
+
+    // apply dynamic filters
+    Object.keys(body).forEach((filterKey) => {
+      const maybeFilter = hikeFilters[filterKey as keyof FilteredHikesDto];
+
+      if (maybeFilter && !isNil(body[filterKey])) {
+        whereConditions.push(
+          `h."${maybeFilter.entityField}" ${
+            maybeFilter.operator
+          } $${paramIndex++}`,
+        );
+        params.push(body[filterKey]);
+      }
+    });
+
+    const queryRaw = `
+      select h.*
+      from hikes h
+      ${joins}
+      where ${whereConditions.length ? whereConditions.join(' AND ') : 'true'}
+      order by h.id asc
+    `;
+
+    const rawHikes: Hike[] = await this
+      .hikesRepository
+      .query(queryRaw, params);
+    const hikeIds = mapToId(rawHikes);
+    const hikes = await this
+      .hikesRepository
+      .findBy({ id: In(hikeIds) });
+    const orderedHikes = orderEntities(hikes, hikeIds, propEq('id'));
+
+    return orderedHikes;
   }
 }
