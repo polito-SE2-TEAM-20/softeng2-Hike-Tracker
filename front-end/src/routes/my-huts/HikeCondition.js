@@ -1,14 +1,12 @@
 
-import { Grid, Typography, CircularProgress, Skeleton } from "@mui/material";
-import { displayTypeFlex } from "../../extra/DisplayType";
+import { Grid, Typography, Skeleton } from "@mui/material";
 import '../admin-dashboard/admin-dashboard-style.css'
 import HTButton from "../../components/buttons/Button";
 import API from '../../API/API.js';
 import TextField from '@mui/material/TextField';
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
-
+import { FormControl, MenuItem, Select } from "@mui/material";
 import { Chip, Divider, Paper } from "@mui/material";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { useMatch } from "react-router-dom";
 import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import { useEffect, useState } from "react";
@@ -16,13 +14,10 @@ import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours'
 import Alert from '@mui/material/Alert';
 import { PopupEditCondition } from "./PopupEditCondition";
 
-{/*
- */}
+function HikeCondition(props) {
 
-const HikeCondition = (props) => {
-
-    const navigate = useNavigate()
-    const match = useMatch('/modifyHikeCondition/:hikeid')
+    const navigate = useNavigate();
+    const match = useMatch('/modifyHikeCondition/:hikeid');
     const hikeid = (match && match.params && match.params.hikeid) ? match.params.hikeid : -1
     const [hike, setHike] = useState({ title: "", description: "", region: "", province: "", length: "", expectedTime: "", ascent: "", difficulty: "", cause: "", condition: "" })
     const [loading, setLoading] = useState(true);
@@ -34,33 +29,9 @@ const HikeCondition = (props) => {
     const [open, setOpen] = useState(false);
     const [hikeId, setHikeId] = useState('');
 
-    const modifyHike = () => {
-        if (hikeCondition === '' || hikeCondition === null || hikeCondition === undefined) {
-            setErrorMessage("specify a condition for the hike");
-            setShow(true);
-        } else if ((hikeCondition === 1 || hikeCondition === 2 || hikeCondition === 3) && (cause === '' || cause === null || cause === undefined)) {
-            setErrorMessage("specify a cause for the condition");
-            setShow(true);
-        } else {
-            let object = { condition: hikeCondition, cause: cause };
-            API.updateHikeCondition(object, hike.id)
-                .then((updatedHike) => {
-
-                    setOpen(true);
-                    setErr('');
-                })
-                .catch((err) => {
-                    setHikeId(hike.id);
-                    setOpen(true);
-                    setErr(err);
-
-                })
-        }
-
-    }
-
     useEffect(() => {
         let tmpHike = { title: "", description: "", region: "", province: "", length: "", expectedTime: "", ascent: "", difficulty: -1, cause: "", condition: "" }
+        
         const getHike = async () => {
             tmpHike = await API.getSingleHikeByID(hikeid)
         }
@@ -70,13 +41,46 @@ const HikeCondition = (props) => {
             setCause(tmpHike.cause);
             setHikeCondition(tmpHike.condition);
         })
-    }, [])
+    }, [hikeid])
+
+
+    const modifyHike = (event) => {
+
+        event.preventDefault();
+        if (hikeCondition === '' || hikeCondition === null || hikeCondition === undefined) {
+            setErrorMessage("specify a condition for the hike");
+            setShow(true);
+        } else if ((hikeCondition === 1 || hikeCondition === 2 || hikeCondition === 3) && (cause === '' || cause === null || cause === undefined)) {
+            setErrorMessage("specify a cause for the condition");
+            setShow(true);
+        } else {
+            let object = { condition: hikeCondition, cause: cause };
+            
+            props.updateHikeCondition(object, hikeid)
+                .then(updatedHike => {
+                    console.log("ciao");
+                    console.log(updatedHike.id)
+
+                    setOpen(true);
+                    setHikeId(updatedHike.id);
+
+                    setErr(null);
+                })
+                .catch((err) => {
+                    setHikeId(null);
+                    setOpen(true);
+                    setErr(err);
+
+                })
+        }
+
+    }
+
 
 
     const gotoLogin = () => {
         navigate("/login", { replace: false })
     }
-
     return (
         <Grid container style={{ minHeight: "100vh", height: "100%" }}>
 
@@ -104,7 +108,8 @@ const HikeCondition = (props) => {
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
-                            !loading ? <Typography>Province: {hike.province === "" ? "N/A" : hike.province}</Typography> :
+                            !loading ? 
+                            <Typography>Province: {hike.province === "" ? "N/A" : hike.province}</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
@@ -166,14 +171,16 @@ const HikeCondition = (props) => {
 
         </Grid>
     );
+
+
 }
 
-export { HikeCondition };
+export {HikeCondition}
 
 
 
 function ConditionSelect(props) {
-    return <>
+    return (<>
 
         <FormControl fullWidth required>
             <Select
@@ -198,6 +205,6 @@ function ConditionSelect(props) {
                 </MenuItem>
             </Select>
         </FormControl>
-    </>
+    </>);
 }
 

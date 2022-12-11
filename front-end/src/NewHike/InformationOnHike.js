@@ -1,9 +1,6 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-import { Button, Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
-import API from '../API/API.js';
 import {DifficultySelect} from './DifficultySelect'
 
 

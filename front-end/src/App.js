@@ -5,12 +5,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'leaflet/dist/leaflet.css'
 
 import HTBrowseHikes from './routes/browse-hikes/HTBrowseHikes.js'
-import SingleHike from './components/single-hike/SingleHike.js';
+//import SingleHike from './components/single-hike/SingleHike.js';
 import HTMainPage from './routes/main-page/HTMainPage';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import HTListOfHikes from './routes/list-of-hikes/HTListOfHikes';
-import { HTAddHike } from './NewHike/HTAddHike';
+//import { HTAddHike } from './NewHike/HTAddHike';
 import { NewHutForm } from './NewHut/NewHut';
 import { NewParking } from './NewParkingLot/NewParking';
 import HTListOfHuts from './routes/list-of-huts/HTListOfHuts'
@@ -21,7 +21,7 @@ import { NewHikeStEnd } from './NewHike/NewHikeStEnd';
 
 import LoginForm from './routes/login/Login';
 import {SignUpForm} from './routes/sign-up/SignUp';
-import HTHutPage from './routes/hut-page/HTHutPage';
+//import HTHutPage from './routes/hut-page/HTHutPage';
 import {HutWorkerHuts} from './routes/my-huts/HutWorkerHuts';
 import {HikesLinked} from './routes/my-huts/HikesLinked';
 import {HikeCondition} from './routes/my-huts/HikeCondition';
@@ -109,19 +109,7 @@ function App2() {
       }
       )
    }
-{/*}
-   const addNewHut =(hut, setShow, setErrorMessage) =>{
-    API.addNewHut(hut)
-       .then(newHut => {
-        setShow(false);
-        console.log(newHut);
-       })
-       .catch(err=>{
-        setShow(true);
-        setErrorMessage(err);
-       })
-   }
-  */}
+
 
 
    const deleteHike = (hikeID)=> {
@@ -133,20 +121,6 @@ function App2() {
     .catch((err)=>{console.log(err)})
 }
 
-
-{/*}
-const modifyHutInformation =(information, hutId, setShow, setErrorMessage) =>{
-  API.modifyHutInformation(information, hutId)
-     .then(newHut => {
-      setShow(false);
-      console.log(newHut);
-     })
-     .catch(err=>{
-      setShow(true);
-      setErrorMessage(err);
-     })
- }
-*/}
 
   return (
     <>
@@ -171,7 +145,7 @@ const modifyHutInformation =(information, hutId, setShow, setErrorMessage) =>{
         <Route path="/edithut/:hutid" element={<EditHut user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} modifyHutInformation={API.modifyHutInformation}/>}/>
         <Route path="/hutWorkerHuts/linkedHikes" element={<HikesLinked user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut}/>}/>
         <Route path="/trackhike/:hikeid" element={<TrackingHikePage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />}/>
-        <Route path="/modifyHikeCondition/:hikeid" element={<HikeCondition user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut}/>}/>
+        <Route path="/modifyHikeCondition/:hikeid" element={<HikeCondition user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} updateHikeCondition={API.updateHikeCondition}/>}/>
 
 
       </Routes>

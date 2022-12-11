@@ -216,7 +216,7 @@ function NewHikeStEnd(props) {
   }
 
   useEffect(() => {
-    if (referencePointLat== '' && referencePointLon !== '' && referencePointLat !== null && referencePointLon !== null && referencePoint !== undefined) {
+    if (referencePointLat=== '' && referencePointLon !== '' && referencePointLat !== null && referencePointLon !== null && referencePoint !== undefined) {
       setNewReferencePoint(true);
       setReferencePointLat(referencePoint.lat);
       setReferencePointLon(referencePoint.lon);
@@ -522,7 +522,7 @@ function NewHikeStEnd(props) {
                         })}
 
                       </>
-                      ) : (<h2></h2>)
+                      ) : (<h2> </h2>)
                   }
                   {
                     !newReferencePoint ?
@@ -581,7 +581,7 @@ function NewHikeStEnd(props) {
                   }
                 </Grid>
               </>
-            ) : (<h1></h1>)
+            ) : (<h1> </h1>)
           }
           {
             show ?
@@ -592,7 +592,7 @@ function NewHikeStEnd(props) {
               <Stack direction="row" justifyContent="end" sx={{ p: 2 }}>
                 <Button variant="contained" color="success" onClick={handleSubmit}>SUBMIT FORM</Button>
               </Stack>
-            ) : (<h1></h1>)
+            ) : (<h1> </h1>)
           }
           <Grid sx={{ p: 2 }}>
             <Paper elevation={5}>

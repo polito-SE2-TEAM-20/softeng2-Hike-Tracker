@@ -1,6 +1,5 @@
 
-import { Grid, Typography, CircularProgress, Skeleton } from "@mui/material";
-import { displayTypeFlex } from "../../extra/DisplayType";
+import { Grid, Typography, CircularProgress} from "@mui/material";
 import '../admin-dashboard/admin-dashboard-style.css'
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -11,16 +10,13 @@ import API from '../../API/API.js';
 import { useEffect, useState } from 'react';
 import HTNavbar from '../../components/HTNavbar/HTNavbar';
 import { useNavigate } from 'react-router-dom';
-
-
+import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours'
 
 
 const HikesLinked = (props) => {
 
     const [loaded, setLoaded] = useState(false);
     const [hikesUpdatable, setHikesUpdatable] = useState([]);
-    const [show, setShow] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
 
     const navigate = useNavigate()
 
@@ -103,13 +99,13 @@ const HikesLinked = (props) => {
                                                         <Typography><b>Description</b>: {hike.description}</Typography>
                                                     </Grid>
                                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                                        <Typography><b>Length</b>: {hike.length}</Typography>
+                                                        <Typography><b>Length</b>: {hike.length === "" ? "N/A" : (Math.round(hike.length * 10) / 10000).toFixed(2)}km</Typography>
                                                     </Grid>
                                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                                        <Typography><b>Ascent</b>: {hike.ascent}</Typography>
+                                                        <Typography><b>Ascent</b>: {hike.ascent === "" ? "N/A" : hike.ascent}m</Typography>
                                                     </Grid>
                                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                                        <Typography><b>Expected time</b>: {hike.expectedTime}</Typography>
+                                                        <Typography><b>Expected time</b>: {hike.expectedTime === "" ? "N/A" : fromMinutesToHours(hike.expectedTime)}</Typography>
                                                     </Grid>
                                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                                         <Typography><b>Hike condition</b>: <ConditionShow hike={hike} index={index} /></Typography>
