@@ -19,8 +19,8 @@ function SelectStartEndPoint(props) {
     }
 
     return <>
-        <FormControl fullWidth required>
-            <InputLabel id="demo-simple-select-label">{label}</InputLabel>
+        <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label"></InputLabel>
             <Select
                 labelId="demo-simple-select-label"
                 id="demo-seimple-select"
@@ -60,7 +60,7 @@ function SelectStartEndPoint(props) {
 
 function Coordinates(props) {
     return <>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={12}>
             <TextField
                 required id="pointName"
                 name="pointName" label="Name"
@@ -70,7 +70,7 @@ function Coordinates(props) {
                 onChange={(e) => props.setPointName(e.target.value)}
             />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={12}>
             <TextField
                 id="pointAdd"
                 name="pointAdd" label="Point Address"
@@ -79,7 +79,7 @@ function Coordinates(props) {
                 onChange={(e) => props.setPointAdd(e.target.value)}
             />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={12}>
             <TextField
                 required
                 name="pointLat"
@@ -91,7 +91,7 @@ function Coordinates(props) {
                 onChange={(e) => props.setPointLat(e.target.value)}
             />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} sm={12}>
             <TextField
                 required
                 name="pointLon"
@@ -221,32 +221,32 @@ function Parking(props) {
 function HutItemView(props) {
     return (
         <>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={12}>
                 <TextField
                     name="hutName"
                     label="Hut name"
                     fullWidth
-                    disabled
+                    //disabled
                     variant="standard"
                     value={props.hut.title}
                 />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={12}>
                 <TextField
                     name="coordinates"
                     label="Coordinates"
                     fullWidth
-                    disabled
+                    //disabled
                     variant="standard"
                     value={props.hut.point.position.coordinates}
                 />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={12}>
                 <TextField
                     name="address"
                     label="Address"
                     fullWidth
-                    disabled
+                    //disabled
                     variant="standard"
                     value={props.hut.point.address}
                 />
@@ -258,33 +258,33 @@ function HutItemView(props) {
 function ParkingItemView(props) {
     return (
         <>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={12}>
                 <TextField
                     name="parkingName"
                     label="Parking name"
                     fullWidth
-                    disabled
+                    //disabled
                     variant="standard"
                     value={props.parking?.point.name}
                 />
             </Grid>
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={12}>
                 <TextField
                     name="spots"
                     label="Spots"
                     fullWidth
-                    disabled
+                    //disabled
                     variant="standard"
                     value={props.parking?.maxCars}
                 />
             </Grid>
 
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={12}>
                 <TextField
                     name="address"
                     label="Address"
                     fullWidth
-                    disabled
+                    //disabled
                     variant="standard"
                     value={props.parking.point.address}
                 />

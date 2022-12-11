@@ -173,7 +173,7 @@ function StartHut(props) {
                       name="hutName"
                       label="Hut name"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el.title}
                     />
@@ -183,7 +183,7 @@ function StartHut(props) {
                       name="coordinates"
                       label="Coordinates"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el.point.position.coordinates}
                     />
@@ -193,7 +193,7 @@ function StartHut(props) {
                       name="address"
                       label="Address"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el.point.address}
 

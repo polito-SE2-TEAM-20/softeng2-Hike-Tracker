@@ -8,6 +8,21 @@ import L from 'leaflet';
 
 import HikePopup from '../components/hike-popup/HikePopup';
 
+async function getInformation(lat, lon) {
+  let response = await fetch((`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&addressdetails=1`), {
+    method: 'GET'
+  });
+  if (response.ok) {
+    console.log(response)
+    const informations = await response.json();
+    console.log(informations);
+    // setInformation(informations);
+    return informations;
+  } else {
+    const errDetail = await response.json();
+    throw errDetail.message;
+  }
+}
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -52,7 +67,7 @@ function getNearestPoint(arr, point) {
 
 
 
-const Inner = ({ positionsState, setPuntiDaTrack, setReferencePoint, puntiDaTrack, startPointLat, startPointLon }) => {
+const Inner = ({ positionsState, setPuntiDaTrack, setReferencePoint, puntiDaTrack, referencePointLat, referencePointLon, setReferencePointAdd }) => {
   const map = useMap();
 
   var popup = L.popup();
@@ -110,7 +125,21 @@ const Inner = ({ positionsState, setPuntiDaTrack, setReferencePoint, puntiDaTrac
     }
   }, [startPointLat, startPointLon]);*/}
 
+  useEffect(() => {
+    if (referencePointLat !== null && referencePointLon !== null) {
+      getInformation(referencePointLat, referencePointLon)
+        .then(informations => {
+          setReferencePointAdd(informations.display_name);
+          console.log(informations.display_name)
+        })
+        
+    }
+  
+  }, [referencePointLat, referencePointLon])
+
 }
+
+
 
 
 const Map = props => {

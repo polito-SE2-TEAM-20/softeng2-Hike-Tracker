@@ -175,7 +175,7 @@ function EndHut(props) {
                       name="hutName"
                       label="Hut name"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el.title}
                     />
@@ -185,7 +185,7 @@ function EndHut(props) {
                       name="coordinates"
                       label="Coordinates"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el.point.position.coordinates}
                     />
@@ -195,7 +195,7 @@ function EndHut(props) {
                       name="address"
                       label="Address"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el.point.address}
                     />
@@ -272,7 +272,7 @@ function EndParking(props) {
                       name="parkingName"
                       label="Parking name"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el?.point.name}
                     />
@@ -283,7 +283,7 @@ function EndParking(props) {
                       name="spots"
                       label="Spots"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el?.maxCars}
                     />
@@ -294,7 +294,7 @@ function EndParking(props) {
                       name="address"
                       label="Address"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el.point.address}
 

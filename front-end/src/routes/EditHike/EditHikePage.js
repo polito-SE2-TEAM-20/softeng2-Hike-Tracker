@@ -443,14 +443,14 @@ function EditHikePage(props) {
 
     //TODO
     const handleListreferencePoints = (event) => {
-        const indexOfReference = listReferencePoint.filter(object => (object.lat === referencePointLat && object.lon === referencePointLon));
+        const indexOfReference = listReferencePoint.filter(object => (object.lat === parseFloat(referencePointLat) && object.lon === parseFloat(referencePointLon)));
         let prova = false;
         //let objTagliatoLat = (object[0].toString().match(/^-?\d+(?:\.\d{0,6})?/)[0])
         //let objTagliatoLon = (object[1].toString().match(/^-?\d+(?:\.\d{0,6})?/)[0])
         console.log(referencePointLat);
         console.log(referencePointLon);
         console.log(positionsState);
-        let indexOfObject = positionsState.filter(object => (object[0] === referencePointLat && object[1] === referencePointLon))
+        let indexOfObject = positionsState.filter(object => (object[0] === parseFloat(referencePointLat) && object[1] === parseFloat(referencePointLon)))
         if (listReferencePoint.map(el => el.name).includes(referencePointName)) {
             setErrorMessage("There is already a reference point with  the same name, choose another one");
             setShow(true);
@@ -704,10 +704,10 @@ function EditHikePage(props) {
             {
                 (!loading && hikeDetails) &&
                 <Grid>
-                    <Typography fontFamily="Bakbak One, display" fontWeight="700" variant="h4" gutterBottom sx={{ p: 2 }} mt={12}>
+                    <Typography fontFamily="Bakbak One, display" fontWeight="700" variant="h4" gutterBottom sx={{ p: 2, ml:5, mr:5 }} mt={14}>
                         EDIT YOUR HIKE
                     </Typography>
-                    <Grid>
+                    <Grid sx={{ml:5, mr:5}}>
                         <Grid container spacing={3} sx={{ p: 2 }} >
                             <Grid item xs={12} sm={12}>
                                 <Typography variant="h8" gutterBottom>
@@ -725,13 +725,13 @@ function EditHikePage(props) {
                                 province={province} setProvince={setProvince}
                                 city={city} setCity={setCity}
                                 description={description} setDescription={setDescription} />
-
-                            <Grid item xs={12} sm={12}>
+<Grid item xs={12} sm={6}>
+                            <Grid item xs={12} sm={6}>
                                 <Typography variant="h8" gutterBottom>
                                     START POINT
                                 </Typography>
                             </Grid>
-                            <Grid item xs={12} sm={12}>
+                            
                                 <SelectStartEndPoint
                                     mode={SelectStartEndPointMode.START}
                                     pointName={startPointName} setPointName={setStartPointName}
@@ -744,12 +744,13 @@ function EditHikePage(props) {
                                 />
 
                             </Grid>
-                            <Grid item xs={12} sm={12}>
+                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12} sm={6}>
                                 <Typography variant="h8" gutterBottom>
                                     END POINT
                                 </Typography>
                             </Grid>
-                            <Grid item xs={12} sm={12}>
+                            
                                 <SelectStartEndPoint
                                     mode={SelectStartEndPointMode.END}
                                     pointName={endPointName} setPointName={setEndPointName}
@@ -908,7 +909,7 @@ function EditHikePage(props) {
                 }}>{errorMessage}
                 </Alert>
             }
-                        <Grid sx={{ p: 2, ml: 5, mr: 5 }}>
+                        <Grid sx={{ p: 2 }}>
                             <Paper elevation={5}>
                                 <Map
                                     startPointLat={startPointLat} startPointLon={startPointLon}

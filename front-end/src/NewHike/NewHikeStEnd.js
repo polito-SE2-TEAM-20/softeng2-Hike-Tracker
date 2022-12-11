@@ -215,31 +215,22 @@ function NewHikeStEnd(props) {
     setListReferencePoint(listReferencePoint.filter(el => el.name !== prova.name));
   }
 
-  const getAddressReference = (lat, lon) => {
-    let addressReference = ""
-    getInformation(lat, lon)
-      .then(informations => {
-        addressReference = informations.display_name;
-        console.log(addressReference);
-        setReferencePointAdd(addressReference);
-        return addressReference;
-
-      })
-    console.log(addressReference);
-
-
-  }
+  useEffect(() => {
+    if (referencePointLat== '' && referencePointLon !== '' && referencePointLat !== null && referencePointLon !== null && referencePoint !== undefined) {
+      setNewReferencePoint(true);
+      setReferencePointLat(referencePoint.lat);
+      setReferencePointLon(referencePoint.lon);
+      
+    }
+  }, [referencePoint])
 
   const handleListreferencePoints = (event) => {
-    const indexOfReference = listReferencePoint.filter(object => (object.lat === referencePointLat && object.lon === referencePointLon));
+    const indexOfReference = listReferencePoint.filter(object => (object.lat === parseFloat(referencePointLat) && object.lon === parseFloat(referencePointLon)));
     let prova = false;
     //let objTagliatoLat = (object[0].toString().match(/^-?\d+(?:\.\d{0,6})?/)[0])
     //let objTagliatoLon = (object[1].toString().match(/^-?\d+(?:\.\d{0,6})?/)[0])
 
-    let address = getAddressReference(referencePointLat, referencePointLon);
-    console.log(referencePointAdd)
-    console.log(getAddressReference(referencePointLat, referencePointLon))
-    let indexOfObject = positionsState.filter(object => (object[0] === referencePointLat && object[1] === referencePointLon))
+    let indexOfObject = positionsState.filter(object => (object[0] === parseFloat(referencePointLat) && object[1] === parseFloat(referencePointLon)))
     if (listReferencePoint.map(el => el.name).includes(referencePointName)) {
       setErrorMessage("There is already a reference point with  the same name, choose another one");
       setShow(true);
@@ -253,8 +244,10 @@ function NewHikeStEnd(props) {
       setErrorMessage("Coordinates are not part of the track");
       setShow(true);
     } else {
+      console.log(referencePointLat);
+      console.log(referencePointLon);
       let stringaNome = referencePointName.toString();
-      setListReferencePoint([...listReferencePoint, { name: stringaNome, address: getAddressReference(referencePointLat, referencePointLon), lat: referencePointLat, lon: referencePointLon }]);
+      setListReferencePoint([...listReferencePoint, { name: stringaNome, address: referencePointAdd, lat: referencePointLat, lon: referencePointLon }]);
       setNewReferencePoint(false);
       setReferencePoint([]);
       setReferencePointLat('');
@@ -395,15 +388,15 @@ function NewHikeStEnd(props) {
   return (
     <React.Fragment>
       <Grid >
-        {/*<HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin}/>*/}
+        <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin}/>
         {
           <PopupAddHike id={hikeId} err={err} open={open} setOpen={setOpen} />
         }
-        <Typography fontFamily="Bakbak One, display" fontWeight="700" variant="h4" gutterBottom sx={{ p: 2 }} mt={12}>
+        <Typography fontFamily="Bakbak One, display" fontWeight="700" variant="h4" gutterBottom sx={{ p: 2, mr:5, ml:5 }} mt={14}>
           INSERT A NEW HIKE
         </Typography>
-        <Grid container spacing={3} sx={{ p: 2 }}>
-          <Grid item xs={12} sm={6}>
+        <Grid container spacing={3} sx={{ p: 2, ml:2, mr:2}}>
+          <Grid item xs={12} sm={3}>
             <Button
               component="label"
               variant="outlined"
@@ -424,7 +417,7 @@ function NewHikeStEnd(props) {
             }
           </Grid>
         </Grid>
-        <Grid>
+        <Grid sx={{ml:5, mr:5}}>
           {
             selectedFile ? (
               <>
@@ -437,6 +430,7 @@ function NewHikeStEnd(props) {
                     difficultyStr={difficultyStr} country={country} setCountry={setCountry} region={region}
                     setRegion={setRegion} province={province} setProvince={setProvince} city={city}
                     setCity={setCity} description={description} setDescription={setDescription} />
+
                   <Grid item xs={12} sm={6}>
                     <Grid item xs={12} sm={6}><Typography variant="h8" gutterBottom>START POINT</Typography></Grid>
                     <StartPointSelect startPointName={startPointName} setStartPointName={setStartPointName}
@@ -534,9 +528,8 @@ function NewHikeStEnd(props) {
                     !newReferencePoint ?
                       (
                         <>
-                          <Grid item xs={12}>
-                            <Button onClick={handleNewReferencePoint}>ADD A NEW REFERENCE POINT</Button>
-                            <h6 xs={{ ml: 8 }}>Or click on the map</h6>
+                          <Grid item xs={12} sm={12}>
+                            <Button onClick={handleNewReferencePoint}>ADD A NEW REFERENCE POINT</Button><h6 >Or click on the map</h6>
                           </Grid>
                         </>
                       )
@@ -601,7 +594,7 @@ function NewHikeStEnd(props) {
               </Stack>
             ) : (<h1></h1>)
           }
-          <Grid sx={{ p: 2, ml: 5, mr: 5 }}>
+          <Grid sx={{ p: 2 }}>
             <Paper elevation={5}>
               <Map startPointLat={startPointLat} startPointLon={startPointLon} endPointLat={endPointLat} endPointLon={endPointLon} positionsState={positionsState} setPuntiDaTrack={setPuntiDaTrack} puntiDaTrack={puntiDaTrack} referencePoint={referencePoint} setReferencePoint={setReferencePoint} listReferencePoint={listReferencePoint} />
             </Paper>
