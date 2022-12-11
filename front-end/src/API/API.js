@@ -832,7 +832,24 @@ const modifyHutPictures = async (request) => {
     }
 }
 
+const getHikesBasedOnPreferences = async (preferences) => {
+    const response = await fetch((APIURL + "/something"), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+        body: preferences
+    })
 
+    if (response.ok) {
+        return await response.json()
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
 
 const API = {
     getListOfHikes, getListOfGPXFiles, getPathByID,
@@ -849,7 +866,6 @@ const API = {
     startTracingkHike, addPointToTracingkHike, stopTrackingHike,
     getUserHikeTrackingDetails, getAllUserTrackingHikes,
     //#endregion
-    updateHikeCondition,
-    setHutPictures, modifyHutPictures
+    setHutPictures, modifyHutPictures, getHikesBasedOnPreferences
 }
 export default API

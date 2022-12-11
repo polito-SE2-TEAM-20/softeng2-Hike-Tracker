@@ -43,6 +43,7 @@ const HTMainPage = (props) => {
     useEffect(() => {
         let loh = []
         const getHikes = async () => {
+            // loh = await API.getHikesBasedOnPreferences(preferences)
             loh = await API.getFilteredListOfHikes({ 'filter': preferences })
         }
         getHikes().then(() => {
