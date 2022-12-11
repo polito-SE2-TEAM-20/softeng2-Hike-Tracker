@@ -1,35 +1,24 @@
 import React from 'react'
-
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'leaflet/dist/leaflet.css'
-
 import HTBrowseHikes from './routes/browse-hikes/HTBrowseHikes.js'
-//import SingleHike from './components/single-hike/SingleHike.js';
 import HTMainPage from './routes/main-page/HTMainPage';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import HTListOfHikes from './routes/list-of-hikes/HTListOfHikes';
-//import { HTAddHike } from './NewHike/HTAddHike';
 import { NewHutForm } from './NewHut/NewHut';
 import { NewParking } from './NewParkingLot/NewParking';
 import HTListOfHuts from './routes/list-of-huts/HTListOfHuts'
 import ShowHut from './routes/show-hut/ShowHut'
 import {EditHut} from './routes/edit-hut/EditHut'
-
 import { NewHikeStEnd } from './NewHike/NewHikeStEnd';
-
 import LoginForm from './routes/login/Login';
 import {SignUpForm} from './routes/sign-up/SignUp';
-//import HTHutPage from './routes/hut-page/HTHutPage';
 import {HutWorkerHuts} from './routes/my-huts/HutWorkerHuts';
 import {HikesLinked} from './routes/my-huts/HikesLinked';
 import {HikeCondition} from './routes/my-huts/HikeCondition';
-
 import API from './API/API';
-
-
-
 import {
   BrowserRouter,
   Routes,

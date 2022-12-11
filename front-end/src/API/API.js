@@ -91,7 +91,7 @@ async function getPathByID(path) {
 
 async function getHikeByListOfPaths(listOfPaths) {
     const hikes = []
-    for (var pathIndex in listOfPaths) {
+    for (let pathIndex in listOfPaths) {
         let response = await fetch((APIURL + listOfPaths[pathIndex]), {
             method: 'GET'
         });
@@ -107,7 +107,7 @@ async function getHikeByListOfPaths(listOfPaths) {
 }
 
 async function getHikePathByHike(hike) {
-    var outHike = hike
+    let outHike = hike
     outHike.positions = []
     if (outHike.gpxPath === undefined || outHike.gpxPath === "")
         return outHike
