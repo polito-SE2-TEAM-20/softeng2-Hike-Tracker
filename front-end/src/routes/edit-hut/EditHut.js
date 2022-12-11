@@ -55,9 +55,10 @@ const EditHut = (props) => {
             console.log(hut)
             setLoading(false);
             setDescription(tmpHut.description);
-            setWorkingTimeEnd(tmpHut.workingTimeEnd);
-            setWorkingTimeStart(tmpHut.workingTimeStart);
             setPrice(tmpHut.price);
+            setWorkingTimeEnd(tmpHut.workingTimeEnd.slice(0, -3));
+            setWorkingTimeStart(tmpHut.workingTimeStart.slice(0, -3));
+
         })
     }, [hutid, dirty2])
 
@@ -102,9 +103,9 @@ const EditHut = (props) => {
     const handleDeleteRemote = pathname => {
         const remainingFiles = hut.pictures.filter(filename => filename !== pathname)
         const updateRemote = async () => {
-            await API.modifyHutPictures({'hutID': hut.id, 'params': remainingFiles})
+            await API.modifyHutPictures({ 'hutID': hut.id, 'params': remainingFiles })
         }
-        updateRemote().then(() => {setLoading(true); setDirty2(!dirty2)})
+        updateRemote().then(() => { setLoading(true); setDirty2(!dirty2) })
     }
 
     useEffect(() => {
@@ -319,23 +320,6 @@ const EditHut = (props) => {
                             <Difficulty loading={loading} diff={hut.difficulty} />
                         </Divider>
                     </Grid>
-                    {/* <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: "30px" }}>
-                    {
-                        !loading ?
-                            <Typography variant="h4">Some information on this hike</Typography>
-                            : <Typography variant="h4">Loading...</Typography>
-                    }
-                </Grid>
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                    {
-                        !loading ? <Typography>{hut.description === "" || hut.description === undefined || hut.description === null ? "No description provided." : hut.description}</Typography> :
-                            <>
-                                <Skeleton variant='rectangular' height={20} width={400} style={{ marginBottom: "10px" }} />
-                                <Skeleton variant='rectangular' height={20} width={400} style={{ marginBottom: "10px" }} />
-                                <Skeleton variant='rectangular' height={20} width={150} style={{ marginBottom: "10px" }} />
-                            </>
-                    }
-                </Grid> */}
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: "60px" }}>
                         {
                             !loading ?
@@ -432,158 +416,3 @@ const EditHut = (props) => {
 
 export { EditHut };
 
-
-{/*
-const EditHutForm = (props) => {
-    const navigate = useNavigate()
-    const match = useMatch('/edithut/:hutid')
-    const [description, setDescription] = useState(props.description);
-    const [errorMessage, setErrorMessage] = useState('');
-    const [show, setShow] = useState(false);
-    const [workingTimeStart, setWorkingTimeStart] = useState(props.workingTimeStart);
-    const [workingTimeEnd, setWorkingTimeEnd] = useState(props.workingTimeEnd);
-    const [price, setPrice] = useState(props.price);
-
-    const handleClear = () => {
-
-        setDescription(props.description); setWorkingTimeStart(props?.workingTimeStart);
-        setWorkingTimeEnd(props?.workingTimeEnd); setPrice(props.price);
-
-    }
-    const handleSubmit = () => {
-        if (description === '' || description === null || description === undefined) {
-            setErrorMessage("insert a valid description");
-            setShow(true);
-        } else if (workingTimeStart === '' || workingTimeStart === null || workingTimeStart === undefined || workingTimeEnd === null || workingTimeEnd === undefined || workingTimeEnd === '') {
-            console.log(workingTimeStart);
-            console.log(workingTimeEnd)
-            setErrorMessage("insert valid time");
-            setShow(true);
-        } else if (!workingTimeStart.match(/^([01][0-9]|2[0-3]):([0-5][0-9])$/) || !workingTimeEnd.match(/^([01][0-9]|2[0-3]):([0-5][0-9])$/)) {
-            console.log(workingTimeEnd);
-            console.log(workingTimeStart);
-            setErrorMessage("insert valid time e.g 12:40, 18:20");
-            setShow(true);
-        } else if (price === '' || price === null || price === undefined || price === null || price === undefined || price === '') {
-            console.log(price);
-            setErrorMessage("insert valid value for the price");
-            setShow(true);
-        } else {
-            let object = { description: description, workingTimeStart: workingTimeStart, workingTimeEnd: workingTimeEnd, price: parseFloat(price) }
-            setShow(false);
-            props.modifyHutInformation(object, props.hutid);
-
-        }
-
-    }
-
-
-    return (
-        <>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                <Typography variant="h4">Add Information</Typography>
-            </Grid>
-            <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
-                <Chip label="Description" />
-            </Divider>
-
-
-
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                <TextField
-                    required
-                    id="description"
-                    name="description"
-                    label="Description (max 1000 characters)"
-                    fullWidth
-                    autoComplete="description"
-                    variant="standard"
-                    multiline
-                    inputProps={
-                        { maxLength: 998 }
-                    }
-                    //mettere un alert se vai oltre
-                    value={description}
-                    onChange={(e) => { setDescription(e.target.value) }}
-                />
-            </Grid>
-
-            <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
-                <Chip label="Working time" />
-            </Divider>
-            <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
-                <TextField
-                    id="workingTimeStart"
-                    label="Working time start"
-                    fullWidth
-                    autoComplete="workingTimeStart"
-                    variant="standard"
-                    value={workingTimeStart}
-                    onChange={(e) => { setWorkingTimeStart(e.target.value) }}
-                />
-            </Grid>
-            <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
-                <TextField
-                    id="workingTimeEnd"
-                    label="Working Time End"
-                    fullWidth
-                    autoComplete="workingTimeEnd"
-                    variant="standard"
-                    value={workingTimeEnd}
-                    onChange={(e) => { setWorkingTimeEnd(e.target.value) }}
-                />
-            </Grid>
-            <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
-                <Chip label="Price" />
-            </Divider>
-            <Grid item xs={12} sm={6} md={6} lg={12} xl={12}>
-                <TextField
-                    id="price"
-                    label="Price per night"
-                    fullWidth
-                    autoComplete="price"
-                    variant="standard"
-                    value={price}
-                    onChange={(e) => { setPrice(e.target.value) }}
-                />
-            </Grid>
-            {
-                show ?
-                    <Alert sx={{ mt: 3 }} variant="outlined" severity="error" onClose={() => { setErrorMessage(''); setShow(false) }}>{errorMessage}</Alert> : <></>
-            }
-            <Grid >
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} mt={3} pl={5} pr={5}>
-                    <Button variant="outlined"
-                        startIcon={<DeleteIcon />}
-                        onClick={handleClear}
-                        sx={{
-                            color: "#1a1a1a",
-                            borderColor: "#1a1a1a",
-                            borderRadius: "50px",
-                            "&:hover": { backgroundColor: "#1a1a1a", color: "white", borderColor: "black" },
-                            textTransform: "none",
-                            align: "right"
-                        }}>
-                        Reset
-                    </Button>
-                    <Button variant="outlined"
-                        onClick={handleSubmit}
-                        sx={{
-                            color: "#1a1a1a",
-                            borderColor: "#1a1a1a",
-                            borderRadius: "50px",
-                            "&:hover": { backgroundColor: "#1a1a1a", color: "white", borderColor: "black" },
-                            textTransform: "none"
-                        }}>
-                        Submit
-                    </Button>
-                </Grid>
-            </Grid>
-
-
-        </>
-
-    );
-}
-
-export { EditHutForm };*/}

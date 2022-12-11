@@ -133,9 +133,9 @@ const ShowHut = (props) => {
                             !loading ? <Typography><b>Working time: </b>
                                 {hut.workingTimeStart === "" || hut.workingTimeStart === null || hut.workingTimeStart === undefined ?
                                     "not provided"
-                                    : hut.workingTimeStart} - {hut.workingTimeEnd === "" || hut.workingTimeEnd === null || hut.workingTimeEnd === undefined ?
+                                    : hut.workingTimeStart.slice(0,-3)} - {hut.workingTimeEnd === "" || hut.workingTimeEnd === null || hut.workingTimeEnd === undefined ?
                                         "not provided"
-                                        : hut.workingTimeEnd}
+                                        : hut.workingTimeEnd.slice(0,-3)}
                             </Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }

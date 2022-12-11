@@ -474,27 +474,30 @@ const getHutsHutWorker = async () => {
     }
 }
 
-function modifyHutInformation(information, hutId) {
-    return new Promise((resolve, reject) => {
-        fetch((APIURL + '/huts/updateDescription/' + hutId), {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
-            body: JSON.stringify(information),
 
-        }).then((async response => {
-            if (response.ok) {
-                const hutUpdated = await response.json()
-                return hutUpdated;
-            } else {
-                response.json()
-                    .then((message) => { reject(message); })
-                    .catch(() => { reject({ error: "Cannot communicate with the server" }) });
-            }
-        }))
-    })
+async function modifyHutInformation(information, hutId) {
+    const response = await fetch((APIURL + '/huts/updateDescription/' + hutId), {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(information),
+
+    });
+
+    if (response.ok) {
+        const hutUpdated = response.json()
+        return hutUpdated;
+    } else {
+        try {
+            const errDetail = response.json();
+            throw errDetail.message;
+        }
+        catch (err) {
+            throw err;
+        }
+    }
 }
 
 async function editHikeStartEndPoint(hikeId, startPoint, endPoint, referencePoint, title, description, length, expectedTime, ascent, difficulty) {
