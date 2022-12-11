@@ -47,12 +47,11 @@ export class AuthService {
 
     if (user.role === 4) {
       hutIds.forEach(async (hw) => {
-        const hutWorker = await this.dataSource.getRepository(HutWorker).save({
+        await this.dataSource.getRepository(HutWorker).save({
           userId: user.id,
           hutId: hw,
         });
-      })
-
+      });
     }
 
     await this.mailService.sendMail({

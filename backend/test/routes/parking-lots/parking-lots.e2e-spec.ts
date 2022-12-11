@@ -138,8 +138,8 @@ describe('Parking Lots (e2e)', () => {
   });
 
   it('should retrieve all parking lots in db', async () => {
-    const user1 = await testService.createUser()
-    const user2 = await testService.createUser()
+    const user1 = await testService.createUser();
+    const user2 = await testService.createUser();
 
     const lot1 = {
       maxCars: 2,
@@ -177,11 +177,11 @@ describe('Parking Lots (e2e)', () => {
       .expect(201);
 
     await restService
-    .build(app, user2)
-    .request()
-    .post('/parkingLot/insertLot')
-    .send(lot2)
-    .expect(201);
+      .build(app, user2)
+      .request()
+      .post('/parkingLot/insertLot')
+      .send(lot2)
+      .expect(201);
 
     await restService
       .build(app, user1)
@@ -229,7 +229,7 @@ describe('Parking Lots (e2e)', () => {
               name: lot2.location.name,
             },
             id: expect.any(TypeID),
-          }
+          },
         ]);
       });
   });

@@ -6,5 +6,5 @@ export enum HikeLimits {
   province = 256,
   city = 512,
   country = 256,
-  cause = 256
+  cause = 256,
 }

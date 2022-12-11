@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { head, pick } from 'ramda';
+import { pick } from 'ramda';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 
 import {
@@ -64,8 +64,6 @@ export class HikesService extends BaseService<Hike> {
       throw new Error(this.errorMessage);
     }
 
-    console.log('hike with refs', hike);
-
     // get linked points
     const linkedHuts = (await (entityManager || this.dataSource)
       .getRepository(Hut)
@@ -120,12 +118,16 @@ export class HikesService extends BaseService<Hike> {
       entityManager,
     );
 
-    return {
+    const finalHike = {
       ...hike,
       linkedPoints,
       startPoint,
       endPoint,
     };
+
+    console.log('final hike with all stuff', finalHike);
+
+    return finalHike;
   }
 
   async getStartEndPoints(
@@ -134,33 +136,37 @@ export class HikesService extends BaseService<Hike> {
   ): Promise<
     Record<'startPoint' | 'endPoint', LinkedPoint | undefined | null>
   > {
-    const startEndPoints = (await this.pointsService
-      .getRepository(entityManager)
-      .createQueryBuilder('p')
-      .innerJoinAndMapOne(
-        'p.hikePoint',
-        HikePoint,
-        'hp',
-        '(hp.pointId = p.id and hp.hikeId = :hikeId and hp.type IN (:...types))',
-        { hikeId, types: [PointType.startPoint, PointType.endPoint] },
-      )
-      .leftJoinAndMapOne('p.hut', Hut, 'h', 'h.pointId = p.id')
-      .leftJoinAndMapOne('p.parkingLot', ParkingLot, 'pl', 'pl.pointId = p.id')
-      .getMany()) as StartEndPoint[];
+    let startPoint: LinkedPoint | null = null;
+    let endPoint: LinkedPoint | null = null;
+    // get start end points
+    await Promise.all(
+      [PointType.startPoint, PointType.endPoint].map(async (type) => {
+        const point = (await this.pointsService
+          .getRepository(entityManager)
+          .createQueryBuilder('p')
+          .innerJoinAndMapOne(
+            'p.hikePoint',
+            HikePoint,
+            'hp',
+            '(hp.pointId = p.id and hp.hikeId = :hikeId and hp.type = :type)',
+            { hikeId, type },
+          )
+          .leftJoinAndMapOne('p.hut', Hut, 'h', 'h.pointId = p.id')
+          .leftJoinAndMapOne(
+            'p.parkingLot',
+            ParkingLot,
+            'pl',
+            'pl.pointId = p.id',
+          )
+          .getOne()) as StartEndPoint;
 
-    const maybeStartPoint = head(
-      startEndPoints.filter((p) => p.hikePoint.type === PointType.startPoint),
+        if (!!point && type === PointType.startPoint) {
+          startPoint = this.composeLinkedPoint(point);
+        } else if (point && type === PointType.endPoint) {
+          endPoint = this.composeLinkedPoint(point);
+        }
+      }),
     );
-    const maybeEndPoint = head(
-      startEndPoints.filter((p) => p.hikePoint.type === PointType.endPoint),
-    );
-
-    const startPoint: LinkedPoint | null = maybeStartPoint
-      ? this.composeLinkedPoint(maybeStartPoint)
-      : null;
-    const endPoint: LinkedPoint | null = maybeEndPoint
-      ? this.composeLinkedPoint(maybeEndPoint)
-      : null;
 
     return {
       startPoint,

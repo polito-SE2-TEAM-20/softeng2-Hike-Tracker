@@ -512,27 +512,27 @@ export class HikesController {
       );
     }
 
-    const pointsToDelete = await this.dataSource
-      .getRepository(HikePoint)
-      .findBy({
-        hikeId: id,
-      });
+    // const pointsToDelete = await this.dataSource
+    //   .getRepository(HikePoint)
+    //   .findBy({
+    //     hikeId: id,
+    //   });
 
     const deletion = await this.service.getRepository().delete({
       id,
     });
 
-    if (deletion.affected === 0 || isNil(deletion.affected)) {
-      throw new BadRequestException('Hike not found.');
-    }
+    // if (deletion.affected === 0 || isNil(deletion.affected)) {
+    //   throw new BadRequestException('Hike not found.');
+    // }
 
-    const pointsID = pointsToDelete.map((point) => point.pointId);
+    // const pointsID = pointsToDelete.map((point) => point.pointId);
 
-    await this.pointsService.getRepository().delete({
-      id: In(pointsID),
-    });
+    // await this.pointsService.getRepository().delete({
+    //   id: In(pointsID),
+    // });
 
-    return { rowsAffected: deletion.affected };
+    return { rowsAffected: isNil(deletion.affected) ? 0 : deletion.affected };
   }
 
   @Get(':id')

@@ -15,7 +15,7 @@ describe('Users Preferences (e2e)', () => {
   });
 
   const setup = async () => {
-    const user = await testService.createUser({role: UserRole.hiker});
+    const user = await testService.createUser({ role: UserRole.hiker });
 
     return {
       user,
@@ -24,21 +24,21 @@ describe('Users Preferences (e2e)', () => {
 
   it('should set user preferences', async () => {
     const { user } = await setup();
-  
+
     const preferences = {
-      "lat": 5.005,
-      "lon": 5.004,
-      "radiusKms": 10,
-      "minLength": 4010,
-      "maxLength": 6000,
-      "expectedTimeMin": 500,
-      "expectedTimeMax": 1500,
-      "difficultyMin": 1,
-      "difficultyMax": 2,
-      "ascentMin": 50,
-      "ascentMax": 150,
-      "suggestionType": false
-    }
+      lat: 5.005,
+      lon: 5.004,
+      radiusKms: 10,
+      minLength: 4010,
+      maxLength: 6000,
+      expectedTimeMin: 500,
+      expectedTimeMax: 1500,
+      difficultyMin: 1,
+      difficultyMax: 2,
+      ascentMin: 50,
+      ascentMax: 150,
+      suggestionType: false,
+    };
 
     await restService
       .build(app, user)
@@ -48,70 +48,67 @@ describe('Users Preferences (e2e)', () => {
       .expect(201)
       .expect(({ body }) => {
         expect(body).toMatchObject({
-            "lat": preferences.lat,
-            "lon": preferences.lon,
-            "radiusKms": preferences.radiusKms,
-            "minLength": preferences.minLength,
-            "maxLength": preferences.maxLength,
-            "expectedTimeMin": preferences.expectedTimeMin,
-            "expectedTimeMax": preferences.expectedTimeMax,
-            "difficultyMin": preferences.difficultyMin,
-            "difficultyMax": preferences.difficultyMax,
-            "ascentMin": preferences.ascentMin,
-            "ascentMax": preferences.ascentMax,
-            "suggestionType": preferences.suggestionType
-          })
+          lat: preferences.lat,
+          lon: preferences.lon,
+          radiusKms: preferences.radiusKms,
+          minLength: preferences.minLength,
+          maxLength: preferences.maxLength,
+          expectedTimeMin: preferences.expectedTimeMin,
+          expectedTimeMax: preferences.expectedTimeMax,
+          difficultyMin: preferences.difficultyMin,
+          difficultyMax: preferences.difficultyMax,
+          ascentMin: preferences.ascentMin,
+          ascentMax: preferences.ascentMax,
+          suggestionType: preferences.suggestionType,
         });
+      });
   });
-
 
   it('should get user preferences', async () => {
     const { user } = await setup();
 
     const preferences = {
-      "lat": 5.005,
-      "lon": 5.004,
-      "radiusKms": 10,
-      "minLength": 4010,
-      "maxLength": 6000,
-      "expectedTimeMin": 500,
-      "expectedTimeMax": 1500,
-      "difficultyMin": 1,
-      "difficultyMax": 2,
-      "ascentMin": 50,
-      "ascentMax": 150,
-      "suggestionType": false
-    }
+      lat: 5.005,
+      lon: 5.004,
+      radiusKms: 10,
+      minLength: 4010,
+      maxLength: 6000,
+      expectedTimeMin: 500,
+      expectedTimeMax: 1500,
+      difficultyMin: 1,
+      difficultyMax: 2,
+      ascentMin: 50,
+      ascentMax: 150,
+      suggestionType: false,
+    };
 
     await restService
-    .build(app, user)
-    .request()
-    .post('/me/set_preferences')
-    .send(preferences)
-    .expect(201)
+      .build(app, user)
+      .request()
+      .post('/me/set_preferences')
+      .send(preferences)
+      .expect(201);
 
     await restService
-    .build(app, user)
-    .request()
-    .get('/me/preferences')
-    .expect(200)
-    .expect(({ body }) => {
-      expect(body).toMatchObject({
-        "lat": preferences.lat,
-        "lon": preferences.lon,
-        "radiusKms": preferences.radiusKms,
-        "minLength": preferences.minLength,
-        "maxLength": preferences.maxLength,
-        "expectedTimeMin": preferences.expectedTimeMin,
-        "expectedTimeMax": preferences.expectedTimeMax,
-        "difficultyMin": preferences.difficultyMin,
-        "difficultyMax": preferences.difficultyMax,
-        "ascentMin": preferences.ascentMin,
-        "ascentMax": preferences.ascentMax,
-        "suggestionType": preferences.suggestionType
+      .build(app, user)
+      .request()
+      .get('/me/preferences')
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toMatchObject({
+          lat: preferences.lat,
+          lon: preferences.lon,
+          radiusKms: preferences.radiusKms,
+          minLength: preferences.minLength,
+          maxLength: preferences.maxLength,
+          expectedTimeMin: preferences.expectedTimeMin,
+          expectedTimeMax: preferences.expectedTimeMax,
+          difficultyMin: preferences.difficultyMin,
+          difficultyMax: preferences.difficultyMax,
+          ascentMin: preferences.ascentMin,
+          ascentMax: preferences.ascentMax,
+          suggestionType: preferences.suggestionType,
+        });
       });
-    });
-
-
   });
-})
+});
