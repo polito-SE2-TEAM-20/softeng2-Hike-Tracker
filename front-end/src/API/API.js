@@ -598,27 +598,30 @@ async function getHikesUpdatableHutWorker() {
     }
 }
 
-function updateHikeCondition(information, hikeId) {
-    return new Promise((resolve, reject) => {
-        fetch((APIURL + '/hikes/condition/' + hikeId), {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
-            body: JSON.stringify(information),
 
-        }).then((async response => {
-            if (response.ok) {
-                const hikeConditionUpdate = await response.json()
-                return hikeConditionUpdate;
-            } else {
-                response.json()
-                    .then((message) => { reject(message); })
-                    .catch(() => { reject({ error: "Cannot communicate with the server" }) });
-            }
-        }))
-    })
+async function updateHikeCondition(information, hikeId) {
+    const response = await fetch((APIURL + '/hikes/condition/' + hikeId), {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(information),
+
+    });
+
+    if (response.ok) {
+        const hikeConditionUpdate = response.json()
+        return hikeConditionUpdate;
+    } else {
+        try {
+            const errDetail = response.json();
+            throw errDetail.message;
+        }
+        catch (err) {
+            throw err;
+        }
+    }
 }
 
 //#region Tracking Hike

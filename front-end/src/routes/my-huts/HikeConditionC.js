@@ -1,4 +1,4 @@
-
+import { useMatch } from "react-router-dom";
 import { Grid, Typography, Skeleton } from "@mui/material";
 import '../admin-dashboard/admin-dashboard-style.css'
 import HTButton from "../../components/buttons/Button";
@@ -7,33 +7,34 @@ import TextField from '@mui/material/TextField';
 import { FormControl, MenuItem, Select } from "@mui/material";
 import { Chip, Divider, Paper } from "@mui/material";
 import { useNavigate } from "react-router";
-import { useMatch } from "react-router-dom";
+
 import HTNavbar from "../../components/HTNavbar/HTNavbar";
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from 'react';
 import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours'
 import Alert from '@mui/material/Alert';
 import { PopupEditCondition } from "./PopupEditCondition";
 
 function HikeCondition(props) {
 
-    const navigate = useNavigate();
+    
     const match = useMatch('/modifyHikeCondition/:hikeid');
-    const hikeid = (match && match.params && match.params.hikeid) ? match.params.hikeid : -1
+    const hikeId = match.params.hikeid ? match.params.hikeid : -1;
+
+
     const [hike, setHike] = useState({ title: "", description: "", region: "", province: "", length: "", expectedTime: "", ascent: "", difficulty: "", cause: "", condition: "" })
     const [loading, setLoading] = useState(true);
     const [cause, setCause] = useState('');
     const [hikeCondition, setHikeCondition] = useState('');
     const [show, setShow] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-    const [err, setErr] = useState('');
+    const [err, setErr] = useState(null);
     const [open, setOpen] = useState(false);
-    const [hikeId, setHikeId] = useState('');
-
+const navigate = useNavigate();
     useEffect(() => {
         let tmpHike = { title: "", description: "", region: "", province: "", length: "", expectedTime: "", ascent: "", difficulty: -1, cause: "", condition: "" }
         
         const getHike = async () => {
-            tmpHike = await API.getSingleHikeByID(hikeid)
+            tmpHike = await API.getSingleHikeByID(hikeId)
         }
         getHike().then(() => {
             setHike(tmpHike)
@@ -41,12 +42,11 @@ function HikeCondition(props) {
             setCause(tmpHike.cause);
             setHikeCondition(tmpHike.condition);
         })
-    }, [hikeid])
+    }, [])
 
 
-    const modifyHike = (event) => {
+    const modifyHike = () => {
 
-        event.preventDefault();
         if (hikeCondition === '' || hikeCondition === null || hikeCondition === undefined) {
             setErrorMessage("specify a condition for the hike");
             setShow(true);
@@ -56,18 +56,14 @@ function HikeCondition(props) {
         } else {
             let object = { condition: hikeCondition, cause: cause };
             
-            props.updateHikeCondition(object, hikeid)
+            props.updateHikeCondition(object, hikeId)
                 .then(updatedHike => {
                     console.log("ciao");
                     console.log(updatedHike.id)
-
                     setOpen(true);
-                    setHikeId(updatedHike.id);
-
                     setErr(null);
                 })
                 .catch((err) => {
-                    setHikeId(null);
                     setOpen(true);
                     setErr(err);
 
@@ -160,7 +156,7 @@ function HikeCondition(props) {
                         }
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "right", mt: 2 }}>
-                        <HTButton navigate={() => { modifyHike(hike.id) }} text="Modify hike condition" textSize="18px" textColor="white" color="#33aa33" />
+                        <HTButton navigate={() => { modifyHike() }} text="Modify hike condition" textSize="18px" textColor="white" color="#33aa33" />
                     </Grid>
                 </Paper>
                 {

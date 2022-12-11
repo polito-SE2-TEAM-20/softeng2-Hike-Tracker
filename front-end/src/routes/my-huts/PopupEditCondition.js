@@ -15,66 +15,65 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 function PopupEditCondition(props) {
   const navigate = useNavigate();
 
-const retry = () => {
-  //TODO navigate to the hike details
-  props.setOpen(false);
-  navigate(`/modifyHikeCondition/${props.id}`)
-};
+  const retry = () => {
+    props.setOpen(false);
+    navigate(`/modifyHikeCondition/${props.id}`)
+  };
 
-const goBack = () => {
-  props.setOpen(false);
-  navigate('/hutWorkerHuts/linkedHikes');
-};
+  const goBack = () => {
+    props.setOpen(false);
+    navigate('/hutWorkerHuts/linkedHikes');
+  };
 
-const goHome = () => {
-  props.setOpen(false);
-  navigate('/')
-};
+  const goHome = () => {
+    props.setOpen(false);
+    navigate('/')
+  };
+
   const handleClose = () => {
     props.setOpen(false);
   };
 
   return (
     <div>
-    <Dialog
-      open={props.open}
-      TransitionComponent={Transition}
-      keepMounted
-      onClose={handleClose}
-      aria-describedby="alert-dialog-slide-description"
-    >
-      {
-        props.id? ( <>
-        <DialogTitle>{"Hike condition correctly modified"}</DialogTitle>
-      <DialogContent>
-        <DialogContentText id="alert-dialog-slide-description">
-        You have modified the condition of the hike, go back to see it
+      <Dialog
+        open={props.open}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleClose}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        {
+          (props.err === null || props.err === undefined) &&
+          <>
+            <DialogTitle>{"Hike condition correctly modified"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-slide-description">
+                You have modified the condition of the hike, go back to see it
 
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={goBack}>Go back</Button>
-        <Button onClick={goHome}>Go to the home page</Button>
-      </DialogActions>
-        </>
-
-        ):(
- <>
-        <DialogTitle>{"Something Went Wrong"}</DialogTitle>
-      <DialogContent>
-        <DialogContentText id="alert-dialog-slide-description">
-        {props.err}
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={goBack}>Go back</Button>
-        <Button onClick={retry}>Change the condition again</Button>
-      </DialogActions>
-        </>
-        )
-      }
-    </Dialog>
-  </div>  );
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={goBack}>Go back</Button>
+              <Button onClick={goHome}>Go to the home page</Button>
+            </DialogActions>
+          </>
+        }{(props.err !== null && props.err !== undefined) &&
+          <>
+            <DialogTitle>{"Something Went Wrong"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-slide-description">
+                {props.err}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={goBack}>Go back</Button>
+              <Button onClick={retry}>Change the condition again</Button>
+            </DialogActions>
+          </>
+        }
+      </Dialog>
+    </div>);
 }
 
-export {PopupEditCondition}
+export { PopupEditCondition }

@@ -17,7 +17,8 @@ import LoginForm from './routes/login/Login';
 import {SignUpForm} from './routes/sign-up/SignUp';
 import {HutWorkerHuts} from './routes/my-huts/HutWorkerHuts';
 import {HikesLinked} from './routes/my-huts/HikesLinked';
-import {HikeCondition} from './routes/my-huts/HikeCondition';
+import {HikeCondition} from './routes/my-huts/HikeConditionC';
+
 import API from './API/API';
 import {
   BrowserRouter,
