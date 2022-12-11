@@ -32,91 +32,105 @@
 
 ## API Server
 
-- GET `/api/admins`
-  - Request parameter: empty
-  - Response body: list of users
-- GET `/api/surveys`
-  - No parameters, empty request body
-  - Response body: list of all surveys
-- GET `/api/surveys/admin/:ID`
-  - Request parameter: Admin ID
-  - Response body: list of surveys associated to a given admin
-- GET `/api/surveys/ID/:ID`
-  - Request parameter: Survey ID
-  - Response body: a survey given its ID
-- GET `/api/s2u/:SID`
-  - Request parameter: ID which associate a survey to an username
-  - Response body: an object containing the surveyID, the username and the SID.
-- GET `/api/surveys/ans/:QID/:S2U`
-  - Request parameter: questionID and S2U, which is an identificator to univocally bend a username to a survey during the compiling phase
-  - Response body: answers to the question identified by the QID.
-- GET `/api/surveys/questions/:ID`
-  - Request parameter: surveyID
-  - Response body: list of questions by a given surveyID
-- GET `/api/surveys/checkbox/:ID`
-  - Request parameter: questionID
-  - Response body: list of checkboxes by a given questionID
-- POST `/api/surveys/add`
-  - Request body: 
-  - ```{
-        title: request.body.title,
-        q_amount: request.body.q_amount,
-        n_response: request.body.n_response,
-        admin_id: request.body.admin_id
-        }```
-  - Response body: list of surveys associated to a given admin
-- GET `/api/surveys/lastID`
-  - Request parameter: empty
-  - Response body: get the lastID inserted into ```surveys``` table
-- POST `/api/surveys/question/add`
-  - Request body: ```{
-        q_title: request.body.title,
-        type: request.body.type,
-        s_id: request.body.s_id,
-        order: request.body.order,
-        min: request.body.min,
-        max: request.body.max
-    }```
-  - Response body: empty
-- GET `/api/surveys/question/lastID`
-  - Request parameter: empty
-  - Response body: get the lastID inserted into ```questions``` table
-- POST `/api/surveys/checkbox/add`
-  - Request parameter: ```{checkbox.content, checkbox.q_id}```
-  - Response body: empty
-- POST `/api/surveys/answer`
-  - Request body: ```{
-            s_id: request.body.s_id,
-            user: request.body.user
-        }```
-  - Response body: empty
-- GET `/api/surveys/answer/lastID`
-  - Request parameter: empty
-  - Response body: get the lastID inserted into ```answers``` table
-- POST `/api/surveys/answer/add`
-  - Request parameter: a single answer
-  - Response body: empty
-- PATCH `/api/surveys/updateAmount/:sid`
-  - Request parameter: the survey id of which we want to increment the amount of response received
-  - Response body: empty
-- POST `/api/sessions`
-  - Request parameter: empty
-  - Response body: empty
-- DELETE `/api/sessions/current`
-  - Request parameter: empty
-  - Response body: empty
-- GET `/api/sessions/current`
-  - Request parameter: empty
-  - Response body: empty
+- GET `/hikes`
+  - Request: empty
+  - Response: list of hikes
+- POST `/hikes/filteredHikes`
+  - Request: an object containing the filter
+  - Response: filtered list of hikes
+- GET `/hikes/:hikeID`
+  - Request: empty
+  - Response: an object containing all the information about a single hike
+- GET `/me/hikes`
+  - Request: empty
+  - Response: list of hikes inserted by a local guide identified by their auth token
+- GET `/:path`
+  - Request: empty
+  - Response: the gpxFile corresponding to the path indicated by the path parameter
+- POST `/huts/filter`
+  - Request: filter
+  - Response: filtered list of huts
+- GET `/huts/:hutID`
+  - Request: empty
+  - Response: an object containing all the information about a single hut
+- GET `/huts/mine`
+  - Request: empty
+  - Response: list of huts owned by the user based on the auth token 
+- POST `/hike-modification/hutsAndParkingLots`
+  - Request: radius
+  - Response: a list containing all the huts and the parking lots contained in the circumference
+- POST `/auth/login`
+  - Request: credentials
+  - Response: an object containing all the user information
+- GET `/auth/register`
+  - Request: credentials
+  - Response: an object containing all the user information
+- POST `/huts/createHut`
+  - Request: an object containing all the information about the hut inserted by the user
+  - Response: the hut object returned from the backend
+- POST `/parkingLot/insertLot`
+  - Request: an object containing all the information about the parking lot inserted by the user
+  - Response: the parking lot object returned from the backend
+- POST `/hikes/import`
+  - Request: a formdata object containing the gpx file to be uploaded
+  - Response: an object containing the track associated to the gpx file
+- PUT `/hikes/:hikeID`
+  - Request: an object containing the hike information
+  - Response: the information about whether the insertion has been completed successfully or not
+- GET `/auth/not_approved/local_guides`
+  - Request: empty
+  - Response: the list of not approved local guides
+- GET `/auth/not_approved/hut_workers`
+  - Request: empty
+  - Response: the list of not approved hut workers
+- PUT `/auth/approve_user`
+  - Request: the id of the user to be approved
+  - Response: the information about whether the insertion has been completed successfully or not
+- GET `/me/preferences`
+  - Request: empty
+  - Response: list of preferences associated to the user by their auth token
+- POST `/me/set_preferences`
+  - Request: an object containing all the preferences
+  - Response: the information about whether the insertion has been completed successfully or not
+- DELETE `/hikes/:hikeID`
+  - Request: the ID of an hike
+  - Response: a list containing all the rows affected by the deletion of the hike idetified by the hikeID in the request
+- GET `/huts/hutWorker/iWorkAt`
+  - Request: empty
+  - Response: list of all the huts in which the hut worker works
+- PUT `/hut/updateDescription/:hutID`
+  - Request: an object containing all the information about a hut to be updated
+  - Response: an object containing all the updated information abuot the hut specified by the hutID
+- PUT `/hikes/:hikeID`
+  - Request: an object containing all the indormation about a hike in order to edit start and ending point
+  - Response: an object containing the updated information about the hike identified by the hikeID
+- POST `/hikes/linkPoints`
+  - Request: an object containing the hikeID and a list containing all the linked points
+  - Response: an object containing all the hike details
+- GET `/hikes/hutWorkerHikes`
+  - Request: empty
+  - Response: list of all the updatable hikes based on the auth token of the logged user
+- PUT `/hikes/condition`
+  - Request: an object containing all the information about hikes conditions
+  - Response: an object containing the updated hike
+- POST `/hut-pictures`
+  - Request: an object containing the array of pictures to be added to the hut
+  - Response: the information about whether the insertion has been completed successfully or not
+- POST `/hut-pictures/:hutID/modify`
+  - Request: a list of strings containing the pathname of the images associated to the hut corresponding to the one identified by the hutID
+  - Response: the information about whether the insertion has been completed successfully or not
 
 ## Database Tables
 
-- Table `admins` - contains id email name hash
-- Table `answers` - contains id s2u_id q_id content_text content_check
-- Table `checkboxes` - contains id content q_id
-- Table `questions` - contains id q_title type s_id order min max
-- Table `s2u` - contains id s_id user
-- Table `surveys` - contains id title q_amount n_response admin_id date
+- Table `hikes` - hike info is stored here
+- Table `hike_points` - table connecting points to hikes
+- Table `hut-worker` - table connecting huts to users (workers)
+- Table `huts` - huts info
+- Table `parking_lots` - parking lots info
+- Table `points` - all geo coordinates are here, plain lat/lon/addresses, hut positions, parking lot positions, start/end points
+- Table `user_hike_track_points` - points tracked by users during hiking 
+- Table `user_hikes` - all hikes performed by users
+- Table `users` - users info
 
 ## Screenshot
 

@@ -24,6 +24,7 @@ import {SignUpForm} from './routes/sign-up/SignUp';
 import HTHutPage from './routes/hut-page/HTHutPage';
 import {HutWorkerHuts} from './routes/my-huts/HutWorkerHuts';
 import {HikesLinked} from './routes/my-huts/HikesLinked';
+import {HikeCondition} from './routes/my-huts/HikeCondition';
 
 import API from './API/API';
 
@@ -170,6 +171,8 @@ const modifyHutInformation =(information, hutId, setShow, setErrorMessage) =>{
         <Route path="/edithut/:hutid" element={<EditHut user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} modifyHutInformation={API.modifyHutInformation}/>}/>
         <Route path="/hutWorkerHuts/linkedHikes" element={<HikesLinked user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut}/>}/>
         <Route path="/trackhike/:hikeid" element={<TrackingHikePage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />}/>
+        <Route path="/modifyHikeCondition/:hikeid" element={<HikeCondition user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut}/>}/>
+
 
       </Routes>
     </>

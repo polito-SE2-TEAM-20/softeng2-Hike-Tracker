@@ -153,6 +153,28 @@ const ShowHike = (props) => {
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
+
+                    <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
+                        <Chip label="Actions" />
+                    </Divider>
+
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        {
+                            (props.user?.role === UserRoles.HIKER) &&
+                            <Fab 
+                                variant="extended" 
+                                size="medium" 
+                                color="primary" 
+                                aria-label="start-navigaion"
+                                onClick={() => {
+                                    handleStartTrackHiking() 
+                                }}>
+                                <NavigationIcon />
+                                Start This Hike
+                            </Fab>
+                        }
+                    </Grid>
+
                 </Paper>
             </Grid>
             <Grid style={{ marginTop: "105px", marginLeft: "auto", marginRight: "auto", marginBottom: "25px", height: "80vh", paddingLeft: "25px", paddingRight: "25px" }} item lg={6}>
@@ -184,20 +206,6 @@ const ShowHike = (props) => {
                             </>
                     }
                 </Grid>
-                {
-                    (props.user?.role === UserRoles.HIKER) &&
-                    <Fab 
-                        variant="extended" 
-                        size="medium" 
-                        color="primary" 
-                        aria-label="add"
-                        onClick={() => {
-                            handleStartTrackHiking() 
-                        }}>
-                        <NavigationIcon />
-                        Start This Hike
-                    </Fab>
-                }
             </Grid>
             {
                 <ErrorDialog 
