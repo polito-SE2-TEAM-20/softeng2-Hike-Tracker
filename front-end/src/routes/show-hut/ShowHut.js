@@ -241,11 +241,15 @@ const ShowHut = (props) => {
                     }
                 </Grid>
                 <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} columns={4} sx={{ display: "flex", justifyContent: "left", marginTop: "24px", padding: "0px 64px 64px 64px" }}>
+                    {
+                        hut !== undefined && hut.pictures !== undefined && hut.pictures.length !== 0 ?
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12} columns={4} sx={{ display: "flex", justifyContent: "center", marginTop: "18px", marginBottom: "24px" }}>
                             <Typography variant="h1" fontSize={52} className="unselectable">
                                 Some pictures from the hut
                             </Typography>
-                        </Grid>
+                        </Grid> : <></>
+                    }
+                        
                         <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "left" }}>
                             {
                                 hut !== undefined && hut.pictures !== undefined ?
