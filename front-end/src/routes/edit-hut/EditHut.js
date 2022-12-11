@@ -104,7 +104,7 @@ const EditHut = (props) => {
         const updateRemote = async () => {
             await API.modifyHutPictures({'hutID': hut.id, 'params': remainingFiles})
         }
-        updateRemote().then(setDirty2(!dirty2))
+        updateRemote().then(() => {setLoading(true); setDirty2(!dirty2)})
     }
 
     useEffect(() => {
