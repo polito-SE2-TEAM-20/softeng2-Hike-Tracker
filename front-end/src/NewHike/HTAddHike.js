@@ -5,22 +5,32 @@ import { Map } from './Map.js';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import { Button } from "@mui/material";
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import { spacing } from '@mui/system';
+import { Button, Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Avatar from '@mui/material/Avatar';
+import IconButton from '@mui/material/IconButton';
+import FormGroup from '@mui/material/FormGroup';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import Stack from "@mui/material/Stack";
 import { Paper } from '@mui/material';
+
+import WarningIcon from '@mui/icons-material/Warning';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import Alert from '@mui/material/Alert';
 import HTNavbar from '../components/HTNavbar/HTNavbar'
-import { StartPointSelect } from './SelectStart'
-import { EndPointSelect } from './SelectEnd'
-import { PopupAddHike } from './PopupAddHike.js';
-import { InformationOnHike } from './InformationOnHike.js';
-import EditIcon from '@mui/icons-material/Edit';
+import { warning } from '@remix-run/router';
 
-
-
-function NewHikeStEnd(props) {
+function HTAddHike(props) {
 
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState(null);
@@ -44,39 +54,26 @@ function NewHikeStEnd(props) {
 
   const [puntiDaTrack, setPuntiDaTrack] = useState([]);
   const [information, setInformation] = useState('');
-  const [informationEnd, setInformationEnd] = useState('');
 
+  const [startPoint, setStartPoint] = useState({ name: "", address: null, lat: "", lon: "" });
   const [startPointLon, setStartPointLon] = useState('');
   const [startPointLat, setStartPointLat] = useState('');
   const [startPointName, setStartPointName] = useState('Start Point');
   const [startPointAdd, setStartPointAdd] = useState('');
-  const [startPointType, setStartPointType] = useState('');
 
-  const [hutId, setHutId] = useState('');
-  const [parkingId, setParkingId] = useState('');
-
-  const [hutIdEnd, setHutIdEnd] = useState('');
-  const [parkingIdEnd, setParkingIdEnd] = useState('');
-
+  const [endPoint, setEndPoint] = useState({ name: "", address: null, lat: "", lon: "" });
   const [endPointLat, setEndPointLat] = useState('');
   const [endPointLon, setEndPointLon] = useState('');
   const [endPointName, setEndPointName] = useState('End Point');
   const [endPointAdd, setEndPointAdd] = useState('');
-  const [endPointType, setEndPointType] = useState('');
 
   const [newReferencePoint, setNewReferencePoint] = useState(false);
   const [listReferencePoint, setListReferencePoint] = useState([]);
-  const [referencePoint, setReferencePoint] = useState([]);
-  const [referencePointLat, setReferencePointLat] = useState('');
-  const [referencePointLon, setReferencePointLon] = useState('');
+  const [referencePoint, setReferencePoint] = useState({});
+  const [referencePointLat, setReferencePointLat] = useState(' ');
+  const [referencePointLon, setReferencePointLon] = useState(' ');
   const [referencePointName, setReferencePointName] = useState('');
   const [referencePointAdd, setReferencePointAdd] = useState('');
-
-
-  // states for the popup after adding a new hike
-  const [open, setOpen] = useState(false);
-  const [hikeId, setHikeId] = useState(null);
-  const [err, setErr] = useState(null);
 
   async function getInformation(lat, lon) {
     let response = await fetch((`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&addressdetails=1`), {
@@ -94,6 +91,7 @@ function NewHikeStEnd(props) {
     }
   }
 
+
   const hiddenFileInput = React.useRef(null);
   const handleClick = event => {
     hiddenFileInput.current.click();
@@ -101,13 +99,16 @@ function NewHikeStEnd(props) {
     setTitle(''); setLengthStr(''); setAscentStr(''); setExpectedTimeStr('');
     setDifficultyStr(0); setCountry(''); setRegion('');
     setProvince(''); setCity(''); setDescription(''); setPositionsState([]); setErrorMessage(''); setShow('');
-    setPuntiDaTrack([]); setInformation(''); setStartPointLon('');
+    setPuntiDaTrack([]); setInformation(''); setStartPoint({ name: "", address: null, lat: "", lon: "" }); setStartPointLon('');
     setStartPointLat(''); setStartPointName('Start Point'); setStartPointAdd('');
-    setEndPointLat(''); setEndPointLon(''); setEndPointName('End Point'); setEndPointAdd('');
+    setEndPoint({ name: "", address: null, lat: "", lon: "" });
+    setEndPointLat('');
+    setEndPointLon('');
+    setEndPointName('End Point');
+    setEndPointAdd('');
     setNewReferencePoint(false);
-    setListReferencePoint([]); setReferencePoint([]); setReferencePointLat(''); setReferencePointLon('');
+    setListReferencePoint([]); setReferencePoint({}); setReferencePointLat(' '); setReferencePointLon(' ');
     setReferencePointName(''); setReferencePointAdd('');
-    setStartPointType(''); setEndPointType('');
   };
 
 
@@ -116,23 +117,28 @@ function NewHikeStEnd(props) {
     setIsFilePicked(true);
     setSelectedFile(fileUploaded);
 
+
     const reader = new FileReader()
     reader.onload = (e) => {
       setFileContents(reader.result)
     };
     if (event.target.files[0] && event.target.files) {
-      reader.readAsText(fileUploaded);
+      reader.readAsText(fileUploaded)
     }
 
   };
 
   useEffect(() => {
-    if (referencePoint.length !== 0 && referencePoint !== null && referencePoint !== '' && referencePoint !== {} && referencePoint !== undefined) {
+
+    if (puntiDaTrack?.length !== 0) {
+
+    }
+    if (referencePoint !== {} && referencePoint !== null && referencePoint !== '') {
       setNewReferencePoint(true);
       setReferencePointLat(referencePoint.lat);
       setReferencePointLon(referencePoint.lon);
     }
-  }, [referencePoint])
+  }, [puntiDaTrack, referencePoint])
 
   useEffect(() => {
     if (fileContents) {
@@ -143,34 +149,44 @@ function NewHikeStEnd(props) {
       console.log(gpx);
       // controllare perchè se non ci sono i punti da errore
       const waypoints = gpx.waypoints.map(reference => [reference.name, reference.desc, reference.lat, reference.lon])
-
-      // get all the waypoints from the gpx file, insert them if they are on the track
-      // and give them a name if they don't have one in the gpx file
+      console.log(waypoints);
+      setListReferencePoint([]);
       let i = 1;
+
       let prova = [];
       waypoints.forEach(el => {
+        console.log(i);
+        console.log(el.name)
+        if (el.name === '' || el.name === null || el.name === undefined) {
+          prova = [...prova, { name: i, address: el[1], lat: el[2], lon: el[3] }];
+          i++;
+        } else {
 
-        let indexOfObject = positionsState.filter(object => (object[0] === el[2] && object[1] === el[3]))
-        if (indexOfObject.length !== 0) {
-          if (el.name === '' || el.name === null || el.name === undefined) {
-            prova = [...prova, { name: i, address: el[1], lat: el[2], lon: el[3] }];
-            i++;
-          } else {
-            prova = [...prova, { name: el[0], address: el[1], lat: el[2], lon: el[3] }];
-          }
+          prova = [...prova, { name: el[0], address: el[1], lat: el[2], lon: el[3] }];
         }
+
         // controllare che due waypoints non abbiano lo stesso nome
+        console.log(prova);
         setListReferencePoint(prova);
       })
 
+
       //set List reference point con i waypoints se presenti nel gpx file
       setReferencePoint([]);
+
+      setStartPointLat(positions[0][0]);
+      setStartPointLon(positions[0][1]);
+      setEndPointLat(positions[positions.length - 1][0]);
+      setEndPointLon(positions[positions.length - 1][1]);
       setPositionsState(positions);
+      setStartPoint([{ name: startPointName, address: startPointAdd, lat: positions[0][0], lon: positions[0][1] }]);
+      setEndPoint([{ name: endPointName, address: endPointAdd, lat: positions[positions.length - 1][0], lon: positions[positions.length - 1][1] }]);
       setDescription(gpx.tracks[0].desc);
       setDifficultyStr(gpx.tracks[0].type);
       setAscentStr(gpx.tracks[0].elevation.pos);
       setTitle(gpx.tracks[0].name);
       setLengthStr(gpx.tracks[0].distance.total);
+      //getRegion(positions[0][0], positions[0][1]);
 
       getInformation(positions[0][0], positions[0][1])
         .then(informations => {
@@ -179,23 +195,20 @@ function NewHikeStEnd(props) {
           setProvince(informations.address.county);
           setCountry(informations.address.country);
           setCity(informations.address.village);
-        })
+          setStartPointAdd(informations.display_name);
 
+        })
       getInformation(positions[positions.length - 1][0], positions[positions.length - 1][1])
         .then(informations => {
-          console.log("information on end")
-          console.log(informations);
-          setInformationEnd(informations);
+          setEndPointAdd(informations.display_name);
         })
     }
   }, [fileContents]);
 
-  // after button add new reference point as been clicked
-  function handleNewReferencePoint() {
+  const handleNewReferencePoint = (event) => {
     setNewReferencePoint(true);
   }
 
-  // delete a reference point from the list of reference point
   function handleDeleteReferencePoint(n) {
     const indexOfObject = listReferencePoint.findIndex(object => object.name === n)
     const prova = listReferencePoint.splice(indexOfObject, 1);
@@ -205,9 +218,14 @@ function NewHikeStEnd(props) {
   function handleEditReferencePoint(n) {
     const indexOfObject = listReferencePoint.findIndex(object => object.name === n)
     const elemento = listReferencePoint[indexOfObject]
+    console.log(listReferencePoint.filter(el => el.name === elemento.name))
+    console.log(listReferencePoint.filter(el => el.name === elemento.name)[0].lat);
     setReferencePointLat(listReferencePoint.filter(el => el.name === elemento.name)[0].lat);
+    console.log(listReferencePoint.filter(el => el.name === elemento.name)[0].lon);
     setReferencePointLon(listReferencePoint.filter(el => el.name === elemento.name)[0].lon);
+    console.log(listReferencePoint.filter(el => el.name === elemento.name)[0].name);
     setReferencePointName(listReferencePoint.filter(el => el.name === elemento.name)[0].name);
+    console.log(listReferencePoint.filter(el => el.name === elemento.name)[0].address);
     setReferencePointAdd(listReferencePoint.filter(el => el.name === elemento.name)[0].address);
     setNewReferencePoint(true)
 
@@ -215,23 +233,14 @@ function NewHikeStEnd(props) {
     setListReferencePoint(listReferencePoint.filter(el => el.name !== prova.name));
   }
 
-  useEffect(() => {
-    if (referencePointLat=== '' && referencePointLon !== '' && referencePointLat !== null && referencePointLon !== null && referencePoint !== undefined) {
-      setNewReferencePoint(true);
-      setReferencePointLat(referencePoint.lat);
-      setReferencePointLon(referencePoint.lon);
-      
-    }
-  }, [referencePoint])
-
   const handleListreferencePoints = (event) => {
-    const indexOfReference = listReferencePoint.filter(object => (object.lat === parseFloat(referencePointLat) && object.lon === parseFloat(referencePointLon)));
+    const indexOfReference = listReferencePoint.filter(object => (object.lat === referencePointLat && object.lon === referencePointLon));
     let prova = false;
     //let objTagliatoLat = (object[0].toString().match(/^-?\d+(?:\.\d{0,6})?/)[0])
     //let objTagliatoLon = (object[1].toString().match(/^-?\d+(?:\.\d{0,6})?/)[0])
-
-    let indexOfObject = positionsState.filter(object => (object[0] === parseFloat(referencePointLat) && object[1] === parseFloat(referencePointLon)))
+    let indexOfObject = positionsState.filter(object => (object[0] === referencePointLat && object[1] === referencePointLon))
     if (listReferencePoint.map(el => el.name).includes(referencePointName)) {
+      console.log("c'è già un reference point con quel nome")
       setErrorMessage("There is already a reference point with  the same name, choose another one");
       setShow(true);
     } else if (referencePointName === '' || referencePointLat === '' || referencePointLon === '') {
@@ -244,89 +253,94 @@ function NewHikeStEnd(props) {
       setErrorMessage("Coordinates are not part of the track");
       setShow(true);
     } else {
-      console.log(referencePointLat);
-      console.log(referencePointLon);
       let stringaNome = referencePointName.toString();
       setListReferencePoint([...listReferencePoint, { name: stringaNome, address: referencePointAdd, lat: referencePointLat, lon: referencePointLon }]);
+
       setNewReferencePoint(false);
-      setReferencePoint([]);
+      setReferencePoint(null);
       setReferencePointLat('');
       setReferencePointLon('');
       setReferencePointAdd('');
       setReferencePointName('');
 
+
     }
   }
 
-
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (title === '' || title === null || title === undefined) {
+    if (title === null || title === '' || title === undefined) {
       setErrorMessage('The title cannot be empty');
       setShow(true);
-    } else if (title.trim().length === 0) {
-      setErrorMessage('The title cannot be empty');
-      setShow(true);
-    } else if (lengthStr === '' || lengthStr === null || lengthStr === undefined) {
+    } else if (lengthStr === '0' || lengthStr === '' || lengthStr === undefined) {
+
       setErrorMessage('The length cannot be empty');
       setShow(true);
-    } else if (expectedTimeStr === null || expectedTimeStr === '' || expectedTimeStr === undefined || expectedTimeStr === 0) {
-      setErrorMessage('The time expected for the hike cannot be empty')
-      setShow(true);
-    } else if (ascentStr === '' || ascentStr === null || ascentStr === undefined) {
+
+
+
+    } else if (ascentStr === '0' || ascentStr === '' || ascentStr === undefined) {
+
       setErrorMessage('The ascent for the hike cannot be empty');
       setShow(true);
-    } else if (difficultyStr.toString() === '' || difficultyStr === null || difficultyStr === undefined) {
-      setErrorMessage('Choose a difficulty for this hike');
+
+    } else if (expectedTimeStr === '0' || expectedTimeStr === null || expectedTimeStr === undefined || expectedTimeStr === '') {
+      setErrorMessage('The time expected for the hike cannot be empty')
       setShow(true);
-    } else if (description === '' || description === null || description === undefined) {
+
+    } else if (difficultyStr === null || difficultyStr === undefined) {
+      setErrorMessage('The difficulty for the hike cannot be empty');
+      setShow(true);
+    } else if (description === null || description === '' || description === undefined) {
+
       setErrorMessage('The description for the hike cannot be empty');
       setShow(true);
-    } else if (description.trim().length === 0) {
-      setErrorMessage('The description for the hike cannot be empty');
-      setShow(true);
-    } else if (country === '' || country === null || country === undefined) {
-      setErrorMessage('The country for the hike cannot be empty');
-      setShow(true);
-    } else if (country.trim().length === 0) {
-      setErrorMessage('The country for the hike cannot be empty');
-      setShow(true);
-    } else if (region === '' || region === null || region === undefined) {
+    } else if (region === null || region === '' || region === undefined) {
+      console.log('The rgion for the hike cannot be empty')
       setErrorMessage('The rgion for the hike cannot be empty');
       setShow(true);
-    } else if (region.trim().length === 0) {
-      setErrorMessage('The region for the hike cannot be empty');
-      setShow(true);
-    } else if (province === '' || province === null || province === undefined) {
+    } else if (province === null || province === '' || province === undefined) {
+
       setErrorMessage('The province for the hike cannot be empty');
       setShow(true);
-    } else if (province.trim().length === 0) {
-      setErrorMessage('The province for the hike cannot be empty');
+    } else if (startPointName === '' || startPointLat === '' || startPointLon === '' || startPointName === null || startPointLat === null || startPointLon === null || startPointAdd === '' || startPointAdd === null) {
+
+      setErrorMessage('The name, latitude and longitude of the starting point cannot be empty');
       setShow(true);
-    } else if ((hutId === null || hutId === undefined || hutId === '') && ((parkingId === null || parkingId === undefined || parkingId === '') && ((startPointLat === null || startPointLat === undefined || startPointLat === '') && (startPointLon === null || startPointLon === undefined || startPointLon === '')))) {
-      setErrorMessage('Insert a starting point');
+    } else if (endPointName === '' || endPointLat === '' || endPointLon === '' || endPointName === null || endPointLat === null || endPointLon === null || endPointAdd === '' || endPointAdd === null) {
+
+      setErrorMessage('The name, latitude and longitude of the ending point cannot be empty');
       setShow(true);
-    } else if ((hutIdEnd === null || hutIdEnd === undefined || hutIdEnd === '') && ((parkingIdEnd === null || parkingIdEnd === undefined || parkingIdEnd === '') && ((endPointLat === null || endPointLat === undefined || endPointLat === '') && (endPointLon === null || endPointLon === undefined || endPointLon === '')))) {
-      setErrorMessage('Insert a ending point');
+    } else if ((!startPointLat.toString().match(/^(\+|-)?([0-9]*[.])?[0-9]+$/)) || !startPointLon.toString().match(/^(\+|-)?([0-9]*[.])?[0-9]+$/)) {
+      setErrorMessage("insert a valid value for the latitude and longitude of the starting point e.g 45.1253 ");
       setShow(true);
-    } else {
-      let start = {};
-      let end = {};
-      if (hutId !== null) {
-        start = { hutId: hutId, address: startPointAdd };
-      } else if (parkingId !== null) {
-        start = { parkingLotId: parkingId, address: startPointAdd };
-      } else {
-        start = { name: startPointName, address: information.display_name, lat: startPointLat, lon: startPointLon };
+      {/*
+        
+        if([title, lengthStr, expectedTimeStr, ascentStr, difficultyStr, description, region, province, startPointName, startPointLat, startPointLon,  endPointName,  endPointLat, endPointLon].some(t=> t.length ===0)){
+          setErrorMessage("All fields with the * should be filled");
+          setShow(true);
+      }else if(title.match(/^\s+$/)){
+          setErrorMessage("insert a valid name for the hut");
+          setShow(true);
+      }else if(!province.match(/^[a-zA-Z]+[a-zA-Z]+$/) || !region.match(/^[a-zA-Z]+[a-zA-Z]+$/) ){
+              setErrorMessage("insert a valid name for region and province");
+              setShow(true);
+              //check if the coordinate are with the comma or the point
+      }else if((!startPointLat.match(/^([0-9]*[.])?[0-9]+$/)) || !startPointLon.match(/^([0-9]*[.])?[0-9]+$/)  ) {
+              setErrorMessage("insert a valid value for the latitude and longitude of the starting point e.g 45.1253 ");
+              setShow(true);
+      }else if(!endPointLat.match(/^([0-9]*[.])?[0-9]+$/) || !endPointLon.match(/^([0-9]*[.])?[0-9]+$/)  ) {
+              setErrorMessage("insert a valid value for the latitude and longitude of the ending point e.g 45.1253 ");
+              setShow(true);
+      }else if(!ascentStr.match(/^([0-9]*[.])?[0-9]+$/)) {
+              setErrorMessage("insert a valid value for the ascent ");
+              setShow(true);
       }
 
-      if (hutIdEnd !== null) {
-        end = { hutId: hutIdEnd, address: endPointAdd };
-      } else if (parkingIdEnd !== null) {
-        end = { parkingLotId: parkingIdEnd, address: endPointAdd };
-      } else {
-        end = { name: endPointName, address: endPointAdd, lat: endPointLat, lon: endPointLon }
-      }
+        */ }
+
+
+    } else {
       const length = parseFloat(lengthStr);
       let a = expectedTimeStr.split(':'); // split it at the colons
       let minutes = parseInt(a[0]) * 60 + parseInt(a[1]);
@@ -344,59 +358,50 @@ function NewHikeStEnd(props) {
       formData.append('region', region);
       formData.append('province', province);
       formData.append('referencePoints', JSON.stringify(listReferencePoint));
-      formData.append('startPoint', JSON.stringify(start));
-      formData.append('endPoint', JSON.stringify(end));
+      formData.append('startPoint', JSON.stringify({ name: startPointName, address: startPointAdd, lat: startPointLat, lon: startPointLon }));
+      formData.append('endPoint', JSON.stringify({ name: endPointName, address: endPointAdd, lat: endPointLat, lon: endPointLon }));
       //controllare che questi ultimi due funzionino 
       formData.append('country', country);
       formData.append('city', city);
-      formData.append('condition', 0);
-      props.addNewGpx(formData)
-        .then(newHike => {
-          console.log(newHike);
-          setOpen(true);
-          setHikeId(newHike.id);
-          setErr(null)
-        })
-        .catch((err) => {
-          setOpen(true);
-          setHikeId(null);
-          setErr(err)
-        })
-
-      setSelectedFile(null); setFileContents(null); setIsFilePicked(false);
+      props.addNewGpx(formData).then(newHike =>{console.log(newHike)}).catch((err) => { setErrorMessage(err); setShow(true) })
+      setSelectedFile(null);
+      setFileContents(null);
+      setIsFilePicked(false);
       setTitle(''); setLengthStr(''); setAscentStr(''); setExpectedTimeStr('');
       setDifficultyStr(0); setCountry(''); setRegion('');
       setProvince(''); setCity(''); setDescription(''); setPositionsState([]); setErrorMessage(''); setShow('');
-      setPuntiDaTrack([]); setInformation(''); setStartPointLon('');
+      setPuntiDaTrack([]); setInformation(''); setStartPoint({ name: "", address: null, lat: "", lon: "" }); setStartPointLon('');
       setStartPointLat(''); setStartPointName('Start Point'); setStartPointAdd('');
+      setEndPoint({ name: "", address: null, lat: "", lon: "" });
       setEndPointLat('');
       setEndPointLon('');
       setEndPointName('End Point');
       setEndPointAdd('');
       setNewReferencePoint(false);
-      setListReferencePoint([]); setReferencePoint([]); setReferencePointLat(' '); setReferencePointLon(' ');
+      setListReferencePoint([]); setReferencePoint({}); setReferencePointLat(' '); setReferencePointLon(' ');
       setReferencePointName(''); setReferencePointAdd('');
-
+      navigate('/');
     }
 
   }
+
   const gotoLogin = () => {
     navigate("/login", { replace: false })
   }
-
+  const gotoLocalGuide = () => {
+    navigate("/localGuide", { replace: false })
+  }
 
   return (
     <React.Fragment>
       <Grid >
-        <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin}/>
-        {
-          <PopupAddHike id={hikeId} err={err} open={open} setOpen={setOpen} />
-        }
-        <Typography fontFamily="Bakbak One, display" fontWeight="700" variant="h4" gutterBottom sx={{ p: 2, mr:5, ml:5 }} mt={14}>
+        <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
+
+        <Typography fontFamily="Bakbak One, display" fontWeight="700" variant="h4" gutterBottom sx={{ p: 2 }} mt={12}>
           INSERT A NEW HIKE
         </Typography>
-        <Grid container spacing={3} sx={{ p: 2, ml:2, mr:2}}>
-          <Grid item xs={12} sm={3}>
+        <Grid container spacing={3} sx={{ p: 2 }}>
+          <Grid item xs={12} sm={6}>
             <Button
               component="label"
               variant="outlined"
@@ -417,47 +422,189 @@ function NewHikeStEnd(props) {
             }
           </Grid>
         </Grid>
-        <Grid sx={{ml:5, mr:5}}>
+        <Grid>
           {
             selectedFile ? (
               <>
                 <Typography variant="h6" gutterBottom sx={{ p: 2 }}>Insert information on the hike</Typography>
                 <Grid container spacing={3} sx={{ p: 2 }} >
-                  <Grid item xs={12} sm={12}><Typography variant="h8" gutterBottom>INFORMATIONS</Typography></Grid>
-                  <InformationOnHike title={title} setTitle={setTitle} setLengthStr={setLengthStr} lengthStr={lengthStr}
-                    expectedTimeStr={expectedTimeStr} setExpectedTimeStr={setExpectedTimeStr}
-                    ascentStr={ascentStr} setAscentStr={setAscentStr} setDifficultyStr={setDifficultyStr}
-                    difficultyStr={difficultyStr} country={country} setCountry={setCountry} region={region}
-                    setRegion={setRegion} province={province} setProvince={setProvince} city={city}
-                    setCity={setCity} description={description} setDescription={setDescription} />
-
-                  <Grid item xs={12} sm={6}>
-                    <Grid item xs={12} sm={6}><Typography variant="h8" gutterBottom>START POINT</Typography></Grid>
-                    <StartPointSelect startPointName={startPointName} setStartPointName={setStartPointName}
-                      setStartPointAdd={setStartPointAdd} startPointAdd={startPointAdd}
-                      setStartPointLat={setStartPointLat} setStartPointLon={setStartPointLon}
-                      startPointLat={startPointLat} startPointLon={startPointLon}
-                      setStartPointType={setStartPointType} startPointType={startPointType}
-                      setHutId={setHutId} hutId={hutId} setParkingId={setParkingId} parkingId={parkingId}
-                      positionsState={positionsState} information={information}
-                    ></StartPointSelect>
+                  <Grid item xs={12}>
+                    <TextField
+                      required id="title" name="title" label="Title"
+                      fullWidth variant="standard"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                    />
                   </Grid>
                   <Grid item xs={12} sm={6}>
-
-                    <Grid item xs={12} sm={6}><Typography variant="h8" gutterBottom>END POINT</Typography></Grid>
-                    <EndPointSelect
-                      endPointName={endPointName} setEndPointName={setEndPointName}
-                      endPointAdd={endPointAdd} setEndPointAdd={setEndPointAdd}
-                      setEndPointLat={setEndPointLat} endPointLat={endPointLat}
-                      endPointLon={endPointLon} setEndPointLon={setEndPointLon}
-                      setEndPointType={setEndPointType} endPointType={endPointType}
-                      setHutIdEnd={setHutIdEnd} hutIdEnd={hutIdEnd}
-                      setParkingIdEnd={setParkingIdEnd} parkingIdEnd={parkingIdEnd}
-                      informationEnd={informationEnd}
-                      positionsState={positionsState}
-                    ></EndPointSelect>
+                    <TextField
+                      required id="lengthStr" name="lengthStr"
+                      label="Length (m)" fullWidth variant="standard" type="number" min={0}
+                      value={lengthStr}
+                      onChange={(e) => { setLengthStr(e.target.value) }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      required id="expectedTimeStr" name="expectedTimeStr" label="Expected Time (hh:mm)"
+                      fullWidth variant="standard" min={0} type="text"
+                      value={expectedTimeStr}
+                      onChange={(e) => { setExpectedTimeStr(e.target.value) }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      required id="ascentStr" name="ascentStr" label="Ascent (m)"
+                      fullWidth variant="standard" type="number" min={0}
+                      value={ascentStr}
+                      onChange={(e) => setAscentStr(e.target.value)}
+                    />
                   </Grid>
 
+                  <Grid item xs={12} sm={6}>
+                    <DifficultySelect setDifficultyStr={setDifficultyStr} difficultyStr={difficultyStr}></DifficultySelect>
+                  </Grid>
+                  <Grid item xs={12} sm={3}>
+                    <TextField
+                      required id="country"
+                      name="country" label="Country"
+                      fullWidth autoComplete="country"
+                      variant="standard" type="text"
+                      value={country}
+                      onChange={(e) => setCountry(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={3}>
+                    <TextField
+                      required id="region"
+                      name="region" label="Region"
+                      fullWidth autoComplete="region"
+                      variant="standard" type="text"
+                      value={region}
+                      onChange={(e) => setRegion(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={3}>
+                    <TextField
+                      id="province" name="province"
+                      label="Province" fullWidth
+                      autoComplete="province" variant="standard" type="text"
+                      required
+                      value={province}
+                      onChange={(e) => setProvince(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={3}>
+                    <TextField
+                      required id="city"
+                      name="city" label="City"
+                      fullWidth autoComplete="city"
+                      variant="standard" type="text"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12}>
+                    <TextField
+                      required id="description"
+                      name="description" label="Description (max 1000 characters)"
+                      fullWidth autoComplete="description"
+                      variant="standard" multiline
+                      inputProps={
+                        { maxLength: 999 }
+                      }
+                      //mettere un alert se vai oltre
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={12}><Typography variant="h8" gutterBottom>START POINT</Typography></Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      required id="startPointName"
+                      name="startPointName" label="Start Point Name"
+                      fullWidth autoComplete="startPointName"
+                      variant="standard" type="text"
+                      value={startPointName}
+                      onChange={(e) => setStartPointName(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      id="startPointAdd"
+                      name="startPointAdd" label="Start  Point Address"
+                      fullWidth autoComplete="startPointAdd" variant="standard"
+                      value={startPointAdd}
+                      onChange={(e) => setStartPointAdd(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      required
+                      name="startPointLat"
+                      label="Start Point Latitude"
+                      variant="standard"
+                      type="text"
+                      fullWidth
+                      value={startPointLat}
+                      onChange={(e) => setStartPointLat(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      required
+                      name="startPointLon"
+                      label="Start Point Longitude"
+                      fullWidth
+                      variant="standard"
+                      min={0}
+                      value={startPointLon}
+                      onChange={(e) => setStartPointLon(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={12}><Typography variant="h8" gutterBottom>END POINT</Typography></Grid>
+
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      required
+                      id="endPointName" name="endPointName"
+                      label="End Point Name" fullWidth
+                      autoComplete="endPointName" variant="standard"
+                      value={endPointName}
+                      onChange={(e) => setEndPointName(e.target.value)}
+                    />
+                  </Grid>
+
+
+
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      id="endPointAdd"
+                      name="endPointAdd" label=" End Point Address"
+                      fullWidth autoComplete="endPointAdd" variant="standard"
+                      value={endPointAdd}
+                      onChange={(e) => setEndPointAdd(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      required
+                      name="endPointLat" label="End Point Latitude"
+                      fullWidth autoComplete="endPointLat" variant="standard"
+                      value={endPointLat}
+                      onChange={(e) => setEndPointLat(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      required
+                      name="endPointLon" label="End Point Longitude"
+                      fullWidth autoComplete="endPointLon" variant="standard"
+                      value={endPointLon}
+                      onChange={(e) => setEndPointLon(e.target.value)}
+                    />
+                  </Grid>
 
                   {
                     listReferencePoint.length ?
@@ -467,6 +614,8 @@ function NewHikeStEnd(props) {
                           return (
                             <>
                               <>
+
+
                                 <Grid item xs={12} sm={2}>
                                   <TextField id="referencename" name="referencename"
                                     label="Reference Point Name" fullWidth
@@ -481,7 +630,6 @@ function NewHikeStEnd(props) {
                                     fullWidth
                                     autoComplete="referencePointAdd"
                                     variant="standard"
-                                    disabled
                                     value={reference.address}
                                   />
                                 </Grid>
@@ -489,6 +637,7 @@ function NewHikeStEnd(props) {
                                   <TextField name="referencelat"
                                     label="Reference Point Latitude" fullWidth
                                     autoComplete="referencelat" variant="standard"
+
                                     id="outlined-disabled"
                                     value={reference.lat}
                                   />
@@ -522,14 +671,15 @@ function NewHikeStEnd(props) {
                         })}
 
                       </>
-                      ) : (<h2> </h2>)
+                      ) : (<h2></h2>)
                   }
                   {
                     !newReferencePoint ?
                       (
                         <>
-                          <Grid item xs={12} sm={12}>
-                            <Button onClick={handleNewReferencePoint}>ADD A NEW REFERENCE POINT</Button><h6 >Or click on the map</h6>
+                          {console.log(newReferencePoint)}
+                          <Grid item xs={12}>
+                            <Button onClick={handleNewReferencePoint}>ADD A NEW REFERENCE POINT</Button>
                           </Grid>
                         </>
                       )
@@ -548,12 +698,11 @@ function NewHikeStEnd(props) {
 
                         <Grid item xs={12} sm={3.5}>
                           <TextField
-                            required id="referencePointAdd"
+                            id="referencePointAdd"
                             name="referencePointAdd" label="Reference Point Address"
                             fullWidth autoComplete="referencePointAdd" variant="standard"
-                            disabled
                             value={referencePointAdd}
-                          // onChange={(e) => setReferencePointAdd(e.target.value)}
+                            onChange={(e) => setReferencePointAdd(e.target.value)}
                           />
                         </Grid>
                         <Grid item xs={12} sm={2}>
@@ -581,7 +730,7 @@ function NewHikeStEnd(props) {
                   }
                 </Grid>
               </>
-            ) : (<h1> </h1>)
+            ) : (<h1></h1>)
           }
           {
             show ?
@@ -592,11 +741,11 @@ function NewHikeStEnd(props) {
               <Stack direction="row" justifyContent="end" sx={{ p: 2 }}>
                 <Button variant="contained" color="success" onClick={handleSubmit}>SUBMIT FORM</Button>
               </Stack>
-            ) : (<h1> </h1>)
+            ) : (<h1></h1>)
           }
-          <Grid sx={{ p: 2 }}>
+          <Grid sx={{ p: 2, marginLeft: "250px", marginRight: "250px" }}>
             <Paper elevation={5}>
-              <Map startPointLat={startPointLat} startPointLon={startPointLon} endPointLat={endPointLat} endPointLon={endPointLon} positionsState={positionsState} setPuntiDaTrack={setPuntiDaTrack} puntiDaTrack={puntiDaTrack} referencePoint={referencePoint} setReferencePoint={setReferencePoint} listReferencePoint={listReferencePoint} />
+              <Map positionsState={positionsState} setPuntiDaTrack={setPuntiDaTrack} puntiDaTrack={puntiDaTrack} referencePoint={referencePoint} setReferencePoint={setReferencePoint} listReferencePoint={listReferencePoint} />
             </Paper>
           </Grid>
         </Grid>
@@ -605,9 +754,35 @@ function NewHikeStEnd(props) {
   );
 }
 
-
-export { NewHikeStEnd }
-
+export { HTAddHike }
 
 
+function DifficultySelect(props) {
+  return <>
+
+    <FormControl fullWidth required>
+      <InputLabel id="demo-simple-select-label">Difficulty</InputLabel>
+      <Select
+        labelId="demo-simple-select-label"
+        id="demo-seimple-select"
+        value={props.difficultyStr}
+        fullWidth
+        name="difficultyStr"
+        variant="standard"
+        label="difficultyStr"
+        onChange={ev => props.setDifficultyStr(ev.target.value)}
+      >
+        <MenuItem value={0}>
+          Tourist
+        </MenuItem>
+        <MenuItem value={1}>
+          Hiker
+        </MenuItem>
+        <MenuItem value={2}>
+          Professional Hiker
+        </MenuItem>
+      </Select>
+    </FormControl>
+  </>
+}
 

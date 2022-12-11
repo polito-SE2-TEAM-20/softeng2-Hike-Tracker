@@ -6,7 +6,7 @@ import hutIcon from '../../Assets/hut-icon.png'
 import { useEffect, useState } from "react";
 import API from '../../API/API.js';
 import { Skeleton } from "@mui/material";
-import { MapContainer, TileLayer, Marker, Popup, ZoomControl} from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, ZoomControl } from 'react-leaflet'
 import { PictureCard } from "../edit-hut/PictureCard";
 
 const Difficulty = (props) => {
@@ -118,13 +118,13 @@ const ShowHut = (props) => {
 
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
-                            !loading ? <Typography><b>Price:</b> {hut.price === "" || hut.price === null || hut.price === undefined ? "N/A" : hut.price}€ per night</Typography> :
+                            !loading ? <Typography><b>Price:</b> {hut.price.toString() === "" || hut.price === null || hut.price === undefined ? "N/A" : hut.price}€ per night</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
-                            !loading ? <Typography><b>Number of beds:</b> {hut.numberOfBeds === "" || hut.numberOfBeds === null || hut.numberOfBeds === undefined ? "N/A" : hut.numberOfBeds} beds</Typography> :
+                            !loading ? <Typography><b>Number of beds:</b> {hut.numberOfBeds.toString() === "" || hut.numberOfBeds === null || hut.numberOfBeds === undefined ? "N/A" : hut.numberOfBeds} beds</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
@@ -243,28 +243,28 @@ const ShowHut = (props) => {
                 <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} columns={4} sx={{ display: "flex", justifyContent: "left", marginTop: "24px", padding: "0px 64px 64px 64px" }}>
                     {
                         hut !== undefined && hut.pictures !== undefined && hut.pictures.length !== 0 ?
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} columns={4} sx={{ display: "flex", justifyContent: "center", marginTop: "18px", marginBottom: "24px" }}>
-                            <Typography variant="h1" fontSize={52} className="unselectable">
-                                Some pictures from the hut
-                            </Typography>
-                        </Grid> : <></>
+                            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} columns={4} sx={{ display: "flex", justifyContent: "center", marginTop: "18px", marginBottom: "24px" }}>
+                                <Typography variant="h1" fontSize={52} className="unselectable">
+                                    Some pictures from the hut
+                                </Typography>
+                            </Grid> : <></>
                     }
-                        
-                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "left" }}>
-                            {
-                                hut !== undefined && hut.pictures !== undefined ?
-                                    hut?.pictures.map(picture => {
-                                        console.log(picture)
-                                        return (
-                                            <Grid id={picture.id} container item xs={4} sm={4} md={4} lg={4} xl={4} sx={{ display: "flex", justifyContent: "center" }}>
-                                                <PictureCard isEditable={false} isLocal={false} picture={picture} />
-                                            </Grid>
-                                        );
-                                    })
-                                    : <></>
-                            }
-                        </Grid>
+
+                    <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "left" }}>
+                        {
+                            hut !== undefined && hut.pictures !== undefined ?
+                                hut?.pictures.map(picture => {
+                                    console.log(picture)
+                                    return (
+                                        <Grid id={picture.id} container item xs={4} sm={4} md={4} lg={4} xl={4} sx={{ display: "flex", justifyContent: "center" }}>
+                                            <PictureCard isEditable={false} isLocal={false} picture={picture} />
+                                        </Grid>
+                                    );
+                                })
+                                : <></>
+                        }
                     </Grid>
+                </Grid>
             </Grid>
         </Grid>
     );
