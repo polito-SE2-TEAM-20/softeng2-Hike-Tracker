@@ -311,6 +311,7 @@ const HTMainPage = (props) => {
                                 <Typography
                                     variant="h2"
                                     className="unselectable"
+                                    fontFamily="Unbounded"
                                     sx={{
                                         justifyContent: "left",
                                         textAlign: "left",
@@ -377,6 +378,7 @@ const HTMainPage = (props) => {
                                 <Typography
                                     variant="h2"
                                     className="unselectable"
+                                    fontFamily="Unbounded"
                                     sx={{
                                         justifyContent: "right",
                                         textAlign: "right",
