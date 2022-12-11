@@ -832,27 +832,6 @@ const modifyHutPictures = async (request) => {
     }
 }
 
-// const getPicture = async (picturePathname) => {
-//     const response = await fetch((APIURL + picturePathname), {
-//         method: 'GET',
-//         headers: {
-//             'Authorization': `Bearer ${localStorage.getItem('token')}`,
-//             'Accept': '*/*'
-//         }
-//     })
-
-//     if (response.ok) {
-//         return URL.createObjectURL(await response.blob())
-//     } else {
-//         const errDetail = await response.json();
-//         throw errDetail.message;
-//     }
-// }
-
-const getPicture = async (picturePathname) => {
-    const img = await require(APIURL + "/" + picturePathname).default
-    return img
-}
 
 
 const API = {
@@ -871,6 +850,6 @@ const API = {
     getUserHikeTrackingDetails, getAllUserTrackingHikes,
     //#endregion
     updateHikeCondition,
-    setHutPictures, modifyHutPictures, getPicture
+    setHutPictures, modifyHutPictures
 }
 export default API
