@@ -8,12 +8,6 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HTButton from "../../components/buttons/Button";
 import API from '../../API/API.js';
-import TextField from '@mui/material/TextField';
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
-
-
-
-
 import { useEffect, useState } from 'react';
 import HTNavbar from '../../components/HTNavbar/HTNavbar';
 import { useNavigate } from 'react-router-dom';
@@ -25,11 +19,8 @@ const HikesLinked = (props) => {
 
     const [loaded, setLoaded] = useState(false);
     const [hikesUpdatable, setHikesUpdatable] = useState([]);
-    const [cause, setCause] = useState([]);
-    const [hikeCondition, setHikeCondition] = useState([]);
     const [show, setShow] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-    const [hikesUpdatableWrite, setHikesUpdatableWrite] = useState([]);
 
     const navigate = useNavigate()
 
@@ -39,38 +30,15 @@ const HikesLinked = (props) => {
         API.getHikesUpdatableHutWorker()
             .then((hikes) => {
                 setHikesUpdatable(oldHikes => hikes);
-                setHikesUpdatableWrite(oldHikes => hikes);
                 setLoaded(true);
                 console.log(hikes);
                 console.log(hikesUpdatable);
-                setCause(hikesUpdatable.map(x => ({ 'id': x.id, 'cause': x.cause })))
             })
 
     }, [])
 
-    const modifyHike = (hikeId, index) => {
-        let object = { condition: hikesUpdatableWrite[index].condition, cause: hikesUpdatableWrite[index].cause };
-        API.updateHikeCondition(object, hikeId)
-            .then((updatedHike) => {
-                setShow(false);
-                setErrorMessage('');
-            })
-            .catch((err) => {
-                setErrorMessage(err);
-                setShow(true);
-            })
-    }
-
     const gotoLogin = () => {
         navigate("/login", { replace: false })
-    }
-    const functionCause = (hikeId) => {
-        for (let index in hikesUpdatable) {
-            if (hikesUpdatable[index].id === hikeId) {
-                return hikesUpdatable[index].cause;
-            }
-        }
-        return '';
     }
 
     return (
@@ -144,24 +112,14 @@ const HikesLinked = (props) => {
                                                         <Typography><b>Expected time</b>: {hike.expectedTime}</Typography>
                                                     </Grid>
                                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                                        <Typography><b>Hike condition</b>: <ConditionSelect hikesUpdatableWrite={hikesUpdatableWrite} index={index} /></Typography>
+                                                        <Typography><b>Hike condition</b>: <ConditionShow hike={hike} index={index} /></Typography>
                                                     </Grid>
                                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                                        <><Typography><b>Cause: {hikesUpdatable[index].cause === '' ? ('') : (hikesUpdatable[index].cause)}</b></Typography>
-                                                            <TextField required fullWidth variant="standard"
-                                                                value={functionCause(hike.id)}
-                                                                onChange={(e) => {
-                                                                    setCause(cause.map(el => {
-                                                                        if (el.id === hike.id) {
-                                                                            el.cause = (e.target.value);
-                                                                        }
-                                                                        return el;
-                                                                    }))
-                                                                }}
-                                                            ></TextField></>
+                                                        <><Typography><b>Cause:</b> {(hike.cause !== '' && hike.cause !== null && hike.cause !== undefined) ? hike.cause : 'N/A'}</Typography>
+                                                        </>
                                                     </Grid>
                                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "right", mt: 10 }}>
-                                                        <HTButton navigate={() => { modifyHike(hike.id, index) }} text="Modify hike condition" textSize="18px" textColor="white" color="#33aa33" />
+                                                        <HTButton navigate={() => { navigate(`/modifyHikeCondition/${hike.id}`) }} text="Modify hike condition" textSize="18px" textColor="white" color="#33aa33" />
                                                     </Grid>
                                                 </Grid>
                                             </AccordionDetails>
@@ -181,33 +139,26 @@ const HikesLinked = (props) => {
 export { HikesLinked }
 
 
-function ConditionSelect(props) {
+function ConditionShow(props) {
     return <>
+        {props.hike.condition === 0 &&
+            <>Open</>
+        }
+        {props.hike.condition === 1 &&
+            <>Closed</>
+        }
+        {props.hike.condition === 2 &&
+            <>Partially blocked</>
+        }
+        {props.hike.condition === 3 &&
+            <>Special gear required</>
+        }
+        {
+            (props.hike.condition === null || props.hike.condition === '' || props.hike.condition === undefined) &&
+            <>N/A</>
+        }
 
-        <FormControl fullWidth required>
-            <Select
-                labelId="demo-simple-select-label"
-                id="demo-seimple-select"
-                // value={props.hikeCondition}
-                fullWidth
-                variant="standard"
-                onChange={ev => props.hikesUpdatableWrite[props.index].condition = (ev.target.value)}
-            >
-                <MenuItem value={0}>
-                    Open
-                </MenuItem>
-                <MenuItem value={1}>
-                    Closed
-                </MenuItem>
-                <MenuItem value={2}>
-                    Partially Blocked
-                </MenuItem>
-                <MenuItem value={3}>
-                    Special gear required
-                </MenuItem>
-            </Select>
-        </FormControl>
     </>
 }
 
-export { ConditionSelect }
+export { ConditionShow }
