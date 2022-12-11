@@ -35,17 +35,29 @@ const HTListOfHikes = (props) => {
         "ascentMax": null
     })
     const [loading, setLoading] = useState(false)
+    const [isUserPrefHikes, setIsUserPrefHikes] = useState(false)
 
     useEffect(() => {
-        var loh = []
-        const getHikes = async () => {
-            loh = await API.getListOfHikes()
+        if (!isUserPrefHikes) {
+            var loh = []
+            const getHikes = async () => {
+                loh = await API.getListOfHikes()
+            }
+            getHikes().then(() => {
+                setListOfHikes(loh)
+                setLoading(true)
+            });
+        } else {
+            let loh = []
+            const getHikes = async () => {
+                loh = await API.getHikesBasedOnPreferences()
+            }
+            getHikes().then(() => {
+                setListOfHikes(loh)
+                setLoading(true)
+            });
         }
-        getHikes().then(() => {
-            setListOfHikes(loh)
-            setLoading(true)
-        });
-    }, [])
+    }, [isUserPrefHikes])
 
     useEffect(() => {
         var loh = []
@@ -66,7 +78,7 @@ const HTListOfHikes = (props) => {
             <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
             <Grid container style={{ marginTop: "75px" }}>
                 <Grid item sm>
-                    <HTTopBarFilterHike listOfHikes={listOfHikes} loading={loading} setFilter={setFilter} filter={filter} />
+                    <HTTopBarFilterHike listOfHikes={listOfHikes} loading={loading} setFilter={setFilter} filter={filter} isUserPrefHikes={isUserPrefHikes} setIsUserPrefHikes={setIsUserPrefHikes} />
                 </Grid>
                 <Grid item lg={9}>
                     <Grid container columns={5} style={{ marginTop: "25px", display: "flex", justifyContent: "center" }}>
