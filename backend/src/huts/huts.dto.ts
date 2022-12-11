@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
+  IsEmail,
   IsLatitude,
   IsLongitude,
   IsNumber,
@@ -8,6 +9,7 @@ import {
   IsString,
   MaxLength,
   Min,
+  MinLength,
   ValidateNested,
 } from 'class-validator';
 
@@ -90,6 +92,17 @@ export class CreateHutDto {
   @IsString()
   @IsOptional()
   website!: string;
+
+  @IsString()
+  @MinLength(1)
+  @MaxLength(HutLimits.phoneNumber)
+  phoneNumber!: string;
+
+  @IsString()
+  @IsEmail()
+  @MinLength(1)
+  @MaxLength(HutLimits.email)
+  email!: string;
 
   @IsString()
   @IsOptional()
