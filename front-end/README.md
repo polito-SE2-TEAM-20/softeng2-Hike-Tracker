@@ -137,14 +137,6 @@
 ![Screenshot](./src/extra/img.png)
 
 ## Users Credentials
-
-- username, password (plus any other requested info)
-- vivi@polito.it, myself - List of surveys: Pokémon: how much do you know about it?, Summer days: pick up your destination!, Favorite color, What kind of vegetable are you?
-- fulvio.corno@polito.it, fulviocorno - List of surveys: CPD: Web Application I, Next lecture day
-- andy@friends.com, friends - List of surveys: Scotland: a great country!
-- sibilla@gmail.com, sissisissi - List of surveys: empty
-- guest@guest.com, guestguest - List of surveys: empty
-
 - Email: provaMary@gmail.com, Password: qwertyMary (LOCAL GUIDE)
 - Email: provaMark@gmail.com, Password: qwertyMark (LOCAL GUIDE)
 - Email: provaMike@gmail.com, Password: qwertyMike (LOCAL GUIDE)
