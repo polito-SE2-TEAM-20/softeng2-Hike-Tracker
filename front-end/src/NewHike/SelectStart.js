@@ -159,7 +159,7 @@ function StartHut(props) {
           name="hutId"
           variant="standard"
           label="Hut"
-          onChange={ev => props.setHutId(ev.target.value)}
+          onChange={ev => {props.setHutId(ev.target.value); props.setParkingId(null)}}
         >
             {
                 
@@ -237,11 +237,9 @@ function StartParking(props) {
       if(props.parkingId !== null && props.parkingId!== ''){
           let element = listParking.filter((el)=> el.id === props.parkingId);
           console.log(element);
-          console.log(element[0]?.point?.address);
-          props.setStartPointAdd(element[0]?.point?.address);
-          props.setStartPointLat(element[0]?.point?.position.coordinates[0]);
-          props.setStartPointLon(element[0]?.point?.position.coordinates[1]);
-
+          console.log(element[0]?.point.address);
+          props.setStartPointAdd(element[0]?.point.address);
+          
       }
       
   }, [props.parkingId])
@@ -259,7 +257,7 @@ function StartParking(props) {
           name="parkingId"
           variant="standard"
           label="Parking"
-          onChange={ev => props.setParkingId(ev.target.value)}
+          onChange={ev => {props.setParkingId(ev.target.value); props.setHutId(null)}}
         >
             {
                 
@@ -272,7 +270,7 @@ function StartParking(props) {
                       name="parkingName"
                       label="Parking name"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el?.point.name}
                     />
@@ -282,7 +280,7 @@ function StartParking(props) {
                       name="spots"
                       label="Spots"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el?.maxCars}
                     />
@@ -293,7 +291,7 @@ function StartParking(props) {
                       name="address"
                       label="Address"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el.point.address}
 

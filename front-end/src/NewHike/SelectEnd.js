@@ -162,7 +162,7 @@ function EndHut(props) {
           name="hutIdEnd"
           variant="standard"
           label="Hut"
-          onChange={ev => {props.setHutIdEnd(ev.target.value)}}
+          onChange={ev => {props.setHutIdEnd(ev.target.value); props.setParkingIdEnd(null)}}
         >
             {
                 listHuts.map((el) => { 
@@ -217,7 +217,6 @@ function EndParking(props) {
 
     useEffect(() => {
         if(props.endPointType===1){
-            props.setEndPointAdd('');
             props.setEndPointLat(null);
             props.setEndPointLon(null);
             var loh = []
@@ -239,13 +238,11 @@ function EndParking(props) {
         if(props.parkingIdEnd !== null && props.parkingIdEnd!== ''){
             let element = listParking.filter((el)=> el.id === props.parkingIdEnd);
             console.log(element);
-            console.log(element[0]?.point?.address);
-            props.setEndPointAdd(element[0]?.point?.address);
-            props.setEndPointLat(element[0]?.point?.position.coordinates[0]);
-            props.setEndPointLon(element[0]?.point?.position.coordinates[1]);
+            console.log(element[0]?.point.address);
+            props.setEndPointAdd(element[0]?.point.address);
 
         }
-    }, [props.parkingId])
+    }, [props.parkingIdEnd])
     
   
   return <>
@@ -260,7 +257,7 @@ function EndParking(props) {
           name="parkingIdEnd"
           variant="standard"
           label="Parking"
-          onChange={ev => props.setParkingIdEnd(ev.target.value)}
+          onChange={ev => {props.setParkingIdEnd(ev.target.value); props.setHutIdEnd(null)}}
         >
             {
                 listParking.map((el) => { 

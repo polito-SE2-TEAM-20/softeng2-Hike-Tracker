@@ -24,7 +24,7 @@ const goToHikeDetails = () => {
 const addNewHike = () => {
   //TODO navigate to the hike details
   props.setOpen(false);
-  navigate('/newHikeStEnd')
+  navigate('/newHike')
 };
 
 const goHome = () => {

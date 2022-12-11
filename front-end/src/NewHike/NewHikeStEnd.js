@@ -481,7 +481,7 @@ function NewHikeStEnd(props) {
                                     fullWidth
                                     autoComplete="referencePointAdd"
                                     variant="standard"
-                                    disabled
+                                    //disabled
                                     value={reference.address}
                                   />
                                 </Grid>
@@ -548,12 +548,12 @@ function NewHikeStEnd(props) {
 
                         <Grid item xs={12} sm={3.5}>
                           <TextField
-                            required id="referencePointAdd"
+                            id="referencePointAdd"
                             name="referencePointAdd" label="Reference Point Address"
                             fullWidth autoComplete="referencePointAdd" variant="standard"
-                            disabled
+                            //disabled
                             value={referencePointAdd}
-                          // onChange={(e) => setReferencePointAdd(e.target.value)}
+                            onChange={(e) => setReferencePointAdd(e.target.value)}
                           />
                         </Grid>
                         <Grid item xs={12} sm={2}>

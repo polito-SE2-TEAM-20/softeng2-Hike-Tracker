@@ -6,7 +6,6 @@ import 'leaflet/dist/leaflet.css'
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, ZoomControl, Polyline, useMap } from 'react-leaflet'
 import L from 'leaflet';
 
-import HikePopup from '../components/hike-popup/HikePopup';
 
 
 delete L.Icon.Default.prototype._getIconUrl;
@@ -62,18 +61,7 @@ const ChoosenPoint = ({ latitude, longitude, setLatitude, setLongitude, setRegio
           setProvince(informations?.address?.county ? informations.address.county : '');
           setCountry(informations?.address?.country ? informations.address.country : '');
           setCity(informations?.address?.village ? informations.address.village : '');
-          console.log(informations);
-          let address = '';
-          if(informations.display_name){
-            if (informations.display_name.indexOf(',') > -1){
-            address = (informations.display_name.split(',')[0])
-          }else{
-            address = (informations.display_name);
-          }}else{
-            address = '';
-          }
-          
-          setAddress(address);
+          setAddress(informations?.display_name? informations.display_name : '');
         })
         
     }
@@ -86,18 +74,13 @@ const ChoosenPoint = ({ latitude, longitude, setLatitude, setLongitude, setRegio
         useEffect(() => {
           if ((latitude===null || latitude==='' || latitude===undefined) && (longitude===null || longitude ==='' || longitude===undefined) && positionShow===true) { 
             //setShowPosition(false);
-
             return; 
           }else{
             map.flyTo([latitude, longitude])
             console.log(latitude + ' ' + longitude)
             // setPositionShow(false);
-
           }
-        
-      
-          
-      
+
       }, [positionShow]);
     */}
 

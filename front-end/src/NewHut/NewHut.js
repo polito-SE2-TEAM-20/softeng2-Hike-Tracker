@@ -5,10 +5,8 @@ import { useState, useEffect } from 'react';
 import * as React from 'react';
 import { Grid } from '@mui/material'
 import CssBaseline from '@mui/material/CssBaseline';
-import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import Toolbar from '@mui/material/Toolbar';
 import Paper from '@mui/material/Paper';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -26,9 +24,6 @@ import { MapHut } from './MapHut.js';
 
 import login from '../Assets//login.jpg'; // Import using relative path
 import { useNavigate } from "react-router";
-
-
-
 
 const styles = {
   paperContainer: {
@@ -74,9 +69,7 @@ function NewHutForm(props) {
   const [emailAddress, setEmailAddress] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  // services / facilities
-  const [beds, setBeds] = useState(''); // number of beds
-  // const [foodSupply, setFoodSupply] = useState(''); // one of: none / simple buffet / diner / restaurant
+  const [beds, setBeds] = useState(''); 
   const [price, setPrice] = useState('');
 
   // other informations
@@ -91,26 +84,19 @@ function NewHutForm(props) {
 
 
   const handleNext = () => {
+    let addresssSenzaVirgole = address.split(',')[0]
     if (activeStep === (steps.length - 3)) {
       if ([name, latitude, longitude].some(t => t.length === 0)) {
         setErrorMessage("All fields with the * should be filled");
         setShow(true);
-        {/*else if(!province.match(/^[a-zA-Z]+[a-zA-Z]+$/) || !region.match(/^[a-zA-Z]+[a-zA-Z]+$/) ){
-            setErrorMessage("insert a valid name for region and province");
-            setShow(true);
-            //check if the coordinate are with the comma or the point*/}
-        {/*if([name, latitude, longitude, region, province, address, city].some(t=> t.length ===0)){
-        setErrorMessage("All fields with the * should be filled");
-        setShow(true);*/ }
-      }
 
-      else if (!latitude.toString().match(/^[-+]?([0-9]*[.])?[0-9]+$/)) {
+      }else if (!latitude.toString().match(/^[-+]?([0-9]*[.])?[0-9]+$/)) {
         setErrorMessage("insert a valid value for the latitude ");
         setShow(true);
       } else if (!longitude.toString().match(/^[-+]?([0-9]*[.])?[0-9]+$/)) {
         setErrorMessage("insert a valid value for the longitude ");
         setShow(true);
-      } else if (address.indexOf(',') > -1) {
+      } else if (addresssSenzaVirgole.indexOf(',') > -1) {
         
         setErrorMessage("insert an address without commas ");
         setShow(true);
@@ -129,7 +115,7 @@ function NewHutForm(props) {
     } else if (activeStep === (steps.length - 1)) {
       //cosa cambia tra title e name???
  
-      let add = [address, city, province, region, country];
+      let add = [addresssSenzaVirgole, city, province, region, country];
       console.log(add.join(','))
       let object = { title: name, elevation: parseFloat(elevation), description: description, 
                     website: website, ownerName: owner, numberOfBeds: parseInt(beds), 
@@ -263,7 +249,6 @@ function NewHutForm(props) {
               </React.Fragment>
             ) : (
               <>
-                {/*<Box component="form" onSubmit={handleNext}>*/}
                 <React.Fragment>
                   {getStepContent(activeStep)}
 
@@ -296,10 +281,8 @@ function NewHutForm(props) {
                     >
                       {activeStep === steps.length - 1 ? 'Enter the new Hut' : 'Next'}
                     </Button>
-                    {/*<MapHut latitude={latitude} longitude={longitude}/>*/}
                   </Box>
                 </React.Fragment>
-                {/*</Box>*/}
               </>
             )}
 
