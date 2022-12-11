@@ -36,6 +36,7 @@ const HTMainPage = (props) => {
             tmpPref = await API.getPreferences()
         }
         getPreferences().then(() => {
+            console.log(tmpPref)
             setPreferences(tmpPref)
         })
 
@@ -451,7 +452,7 @@ const HTMainPage = (props) => {
                         justifyContent: "left",
                         marginTop: "24px",
                         paddingTop: "15px",
-                        marginLeft: "250px"
+                        marginLeft: { xs: "18px", sm: "18px", md: "24px", lg: "250px", xl: "250px" }
                     }}
                     fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "24px", xl: "24px" }}>
                     <b>HackTheHike.com</b>
@@ -464,7 +465,7 @@ const HTMainPage = (props) => {
                         textDecoration: 'none',
                         display: "flex",
                         justifyContent: "left",
-                        marginLeft: "250px"
+                        marginLeft: { xs: "18px", sm: "18px", md: "24px", lg: "250px", xl: "250px" }
                     }}
                     fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "14px", xl: "14px" }}>
                     All rights reserved. 2022.

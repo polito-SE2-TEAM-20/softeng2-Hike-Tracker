@@ -181,9 +181,6 @@ const HikerDashboard = (props) => {
                                     <Marker
                                         key={0}
                                         position={[position.lat, position.lon]}>
-                                        <Popup position={[position.lat, position.lon]}>
-                                            <HikePopup hike={{ positions: [position.lat, position.lon] }} />
-                                        </Popup>
                                     </Marker>
                                 </MapContainer>
                             </AccordionDetails>
@@ -211,7 +208,7 @@ const HikerDashboard = (props) => {
                                 <Typography className="unselectable" sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
                                     <b>Length</b>
                                 </Typography>
-                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{lengthStatic.toFixed(2)}m</Typography>
+                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{lengthStatic.toFixed(2)}km</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Typography className="unselectable" sx={{ fontSize: "18px" }}>
@@ -396,9 +393,6 @@ const HikerDashboard = (props) => {
                                     <Marker
                                         key={0}
                                         position={[position.lat, position.lon]}>
-                                        <Popup position={[position.lat, position.lon]}>
-                                            <HikePopup hike={{ positions: [position.lat, position.lon] }} />
-                                        </Popup>
                                     </Marker>
                                 </MapContainer>
                             </AccordionDetails>
@@ -426,7 +420,7 @@ const HikerDashboard = (props) => {
                                 <Typography className="unselectable" sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
                                     <b>Length</b>
                                 </Typography>
-                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{lengthStatic.toFixed(2)}m</Typography>
+                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{lengthStatic.toFixed(2)}km</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Typography className="unselectable" sx={{ fontSize: "18px" }}>
@@ -611,9 +605,6 @@ const HikerDashboard = (props) => {
                                     <Marker
                                         key={0}
                                         position={[position.lat, position.lon]}>
-                                        <Popup position={[position.lat, position.lon]}>
-                                            <HikePopup hike={{ positions: [position.lat, position.lon] }} />
-                                        </Popup>
                                     </Marker>
                                 </MapContainer>
                             </AccordionDetails>
@@ -641,7 +632,7 @@ const HikerDashboard = (props) => {
                                 <Typography className="unselectable" sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
                                     <b>Length</b>
                                 </Typography>
-                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{lengthStatic.toFixed(2)}m</Typography>
+                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{lengthStatic.toFixed(2)}km</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Typography className="unselectable" sx={{ fontSize: "18px" }}>
