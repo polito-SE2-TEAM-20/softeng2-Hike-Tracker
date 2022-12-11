@@ -89,11 +89,9 @@ function NewParking(props) {
 
 
   const handleClear = () => {
-    if (activeStep === (steps.length - 3)) {
+    if (activeStep === (steps.length - 2)) {
       setName(''); setLatitude(''); setLongitude(''); setCountry(''); setRegion(''); setProvince('');
-      setCity(''); setAddress(''); setSpots('');
-      setCountry('');
-    }
+      setCity(''); setAddress(''); setSpots('');    }
   };
 
   const goBackLocalGuide = () => {
