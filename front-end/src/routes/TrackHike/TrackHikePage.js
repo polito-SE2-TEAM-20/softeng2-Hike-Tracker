@@ -1,9 +1,14 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Slide, Typography } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Slide, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { MapContainer, Marker, Polyline, TileLayer, useMap } from "react-leaflet";
 import { useMatch } from "react-router";
 import API from "../../API/API";
 import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import { TrackingState } from "../../lib/common/Hike";
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+import StopCircleIcon from '@mui/icons-material/StopCircle';
+import { icon, Icon } from "leaflet";
+import currentLocationIcon from '../../Assets/current-location.png'
 
 function TrackingHikePage(props) {
 
@@ -107,27 +112,94 @@ function TrackingHikePage(props) {
     }
 
     return (
-        <Grid container>
+        <>
             <HTNavbar item user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} />
-            {/* Action container */}
-            {
+
+            <Grid
+                container
+                display="column"
+                justifyContent="center"
+                alignItems="center"
+                style={{marginTop: "10vh", height: "90vh", width:"100%"}}>
+                <Grid
+                    item
+                    style={{ height: "60vh", width: "100%" }}>
+                    <MapContainer
+                        style={{ height: "60vh" }}
+                        flex
+                        center={
+                            recordedGpsLocations.length > 0 ? [recordedGpsLocations[recordedGpsLocations.length - 1].coords.latitude,
+                            recordedGpsLocations[recordedGpsLocations.length - 1].coords.longitude] :
+                                [45.4408474, 12.3155151]
+                        }
+                        zoom={13}
+                        scrollWheelZoom={{ xs: false, sm: false, md: false, lg: true, xl: true }} zoomControl={true}>
+                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                        <Polyline
+                            pathOptions={{ fillColor: 'red', color: 'blue' }}
+                            positions={recordedGpsLocations.map((location) => {
+                                return [location.coords.latitude, location.coords.longitude]
+                            })}
+                        />
+                        {
+                            //Current location
+                            (trackHasBeenStarted && !trackHasBeenFinished && recordedGpsLocations.length > 0) &&
+                            <Marker
+                                icon={icon({
+                                    iconUrl: currentLocationIcon,
+                                    iconSize: [36, 36]
+                                })}
+                                key={[recordedGpsLocations[recordedGpsLocations.length - 1].coords.latitude,
+                                recordedGpsLocations[recordedGpsLocations.length - 1].coords.longitude]}
+                                position={[recordedGpsLocations[recordedGpsLocations.length - 1].coords.latitude,
+                                recordedGpsLocations[recordedGpsLocations.length - 1].coords.longitude]}>
+
+                            </Marker>
+                        }
+
+                        {
+                            //Starting point
+                            (trackHasBeenStarted && recordedGpsLocations.length > 0) &&
+                            <Marker
+                                key={"start"}
+                                position={[recordedGpsLocations[0].coords.latitude,
+                                recordedGpsLocations[0].coords.longitude]}>
+
+                            </Marker>
+                        }
+
+                        {
+                            //ending point
+                            (trackHasBeenFinished && recordedGpsLocations.length > 0) &&
+                            <Marker
+                                key={"end"}
+                                position={[recordedGpsLocations[recordedGpsLocations.length - 1].coords.latitude,
+                                recordedGpsLocations[recordedGpsLocations.length - 1].coords.longitude]}>
+
+                            </Marker>
+                        }
+
+                        {
+                            recordedGpsLocations.length > 0 &&
+                            <MapFlyTracker
+                                locations={recordedGpsLocations}>
+
+                            </MapFlyTracker>
+                        }
+
+                    </MapContainer>
+                </Grid>
+
+                <Grid
+                    item
+                    style={{ height: "30vh" }}>
                     <TrackingActionsView
                         state={trackingState}
                         startAction={startTrackingAction}
                         stopAction={stopTrackingAction}>
                     </TrackingActionsView>
-                }
+                </Grid>
 
-                {/* List of recorded gps locations */}
-                {
-                    recordedGpsLocations.length &&
-                    recordedGpsLocations.map((item) => {
-                        return (
-                            <GpsItemView
-                                gpsItem={item}/>
-                        )
-                    })
-                }
                 {
                     <TurnOnLocationDialog
                         isOpen={showTurnOnLocatonDialog}
@@ -137,28 +209,44 @@ function TrackingHikePage(props) {
 
                     </TurnOnLocationDialog>
                 }
-        </Grid>
+            </Grid>
+
+
+        </>
     )
 }
 
-function TrackingActionsView(props) {
-    //TODO
+function MapFlyTracker(props) {
+    const map = useMap()
+    useEffect(() => {
+        map.flyTo([props.locations[props.locations.length - 1].coords.latitude,
+            props.locations[props.locations.length - 1].coords.longitude], 17)
+    }, [props.locations])
+}
 
+function TrackingActionsView(props) {
     return (
         <Grid>
             {
                 props.state === TrackingState.NOT_STARTED &&
-                <Button
-                    onClick={() => props.startAction()}>
-                    Start
-                </Button>
+                <>
+                    <PlayCircleIcon
+                        style={{width:150, height: 150}}
+                        onClick={() => props.startAction()}>
+                    
+                    </PlayCircleIcon>
+                </>
+                
             }
             {
                 props.state === TrackingState.STARTED &&
-                <Button
-                    onClick={() => props.stopAction()}>
-                    Finish
-                </Button>
+                <>
+                    <StopCircleIcon
+                        style={{width:150, height: 150}}
+                        onClick={() => props.stopAction()}>
+                    
+                    </StopCircleIcon>
+                </>
             }
             {
                 props.state === TrackingState.FINISHED &&
