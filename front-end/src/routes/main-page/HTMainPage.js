@@ -27,7 +27,7 @@ const HikeLoading = () => {
 const HTMainPage = (props) => {
     const navigate = useNavigate()
     const [listOfHikes, setListOfHikes] = useState([])
-    const [loading, setLoading] = useState(false)
+    const [loaded, setLoading] = useState(false)
     const [preferences, setPreferences] = useState({})
 
     useEffect(() => {
@@ -38,19 +38,16 @@ const HTMainPage = (props) => {
         getPreferences().then(() => {
             setPreferences(tmpPref)
         })
-    }, [])
 
-    useEffect(() => {
         let loh = []
         const getHikes = async () => {
-            // loh = await API.getHikesBasedOnPreferences(preferences)
-            loh = await API.getFilteredListOfHikes({ 'filter': preferences })
+            loh = await API.getHikesBasedOnPreferences()
         }
         getHikes().then(() => {
             setListOfHikes(loh)
             setLoading(true)
         });
-    }, [preferences])
+    }, [])
 
     const gotoLogin = () => {
         navigate("/login", { replace: false })
@@ -76,7 +73,7 @@ const HTMainPage = (props) => {
                                 <Grid container item xs={12} sm={12} md={2} lg={2} xl={2} columns={3} style={{ marginTop: "50px" }}>
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ marginBottom: "25px", display: "flex", justifyContent: { xs: "center", sm: "center", md: "left", lg: "left", xl: "left" }, marginLeft: { xs: "none", sm: "none", md: "48px", lg: "48px", xl: "48px" } }}>
                                         {
-                                            loading && Object.keys(preferences).length !== 0 ?
+                                            loaded && Object.keys(preferences).length !== 0 ?
                                                 <Typography
                                                     variant="h2"
                                                     className="unselectable"
@@ -148,7 +145,7 @@ const HTMainPage = (props) => {
                                         }
                                     </Grid>
                                     {
-                                        !loading ? <>
+                                        !loaded ? <>
                                             <HikeLoading />
                                             <HikeLoading />
                                             <HikeLoading />
@@ -158,7 +155,7 @@ const HTMainPage = (props) => {
                                         </> : <></>
                                     }
                                     {
-                                        loading && Object.keys(preferences).length === 0 ?
+                                        loaded && Object.keys(preferences).length === 0 ?
                                             <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} sx={{
                                                 marginLeft: { xs: "none", sm: "none", md: "48px", lg: "48px", xl: "48px" },
                                                 display: { xs: "flex", sm: "flex", md: "flex", lg: "flex", xl: "flex" },
@@ -220,10 +217,21 @@ const HTMainPage = (props) => {
                                             </>
                                     }
                                     {
-                                        loading && Object.keys(preferences).length !== 0 ?
+                                        loaded && Object.keys(preferences).length !== 0 ?
                                             listOfHikes.length === 0 ?
-                                                <Typography fontFamily={"Bakbak One, display"} fontWeight="600" fontSize="32px">
-                                                    No hikes available.
+                                                <Typography
+                                                    variant="h2"
+                                                    className="unselectable"
+                                                    sx={{
+                                                        justifyContent: "left",
+                                                        textAlign: "left",
+                                                        color: '#ffffff',
+                                                        textDecoration: 'none',
+                                                        marginLeft: "48px"
+                                                    }}
+                                                    fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "24px", xl: "24px" }}
+                                                >
+                                                    There are no hikes matching your preferences.
                                                 </Typography>
                                                 :
                                                 listOfHikes.slice(0, 6).map((hike, index) => {

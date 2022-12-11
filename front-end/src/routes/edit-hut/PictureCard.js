@@ -50,7 +50,7 @@ export const PictureCard = (props) => {
     else {
         return (
             <Grid container item sx={{ backgroundColor: "red", width: "200px", height: "250px", marginLeft: "5px", marginRight: "5px", marginTop: "5px", marginBottom: "35px", borderRadius: "8px", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                <Grid sx={{display: props.isEditable ? "flex" : "none"}} item onClick={() => { props.handleDelete(props?.picture.id) }}>
+                <Grid sx={{display: props.isEditable ? "flex" : "none"}} item onClick={() => { props.handleDelete(props?.picture) }}>
                     <Typography
                         className="unselectable"
                         variant="h1"

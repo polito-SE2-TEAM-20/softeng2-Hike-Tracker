@@ -43,6 +43,7 @@ const EditHut = (props) => {
     const [pictures, setPictures] = useState([])
     const [picData, setPicData] = useState([])
     const [dirty, setDirty] = useState(false)
+    const [dirty2, setDirty2] = useState(false)
 
     useEffect(() => {
         let tmpHut = { title: "", description: "", workingTimeStart: -1, workingTimeEnd: -1, numberOfBeds: -1, price: -1, ownerName: "", website: "", pictures: [], point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } }
@@ -58,7 +59,7 @@ const EditHut = (props) => {
             setWorkingTimeStart(tmpHut.workingTimeStart);
             setPrice(tmpHut.price);
         })
-    }, [hutid])
+    }, [hutid, dirty2])
 
     const [description, setDescription] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -88,7 +89,7 @@ const EditHut = (props) => {
         setPictures(tmpPictures)
     }
 
-    const handleDelete = id => {
+    const handleDeleteLocal = id => {
         let tmpPicData = [...picData]
         tmpPicData = tmpPicData.filter(x => x.id !== id)
         setPicData(tmpPicData)
@@ -96,6 +97,14 @@ const EditHut = (props) => {
         let tmpPictures = [...pictures]
         tmpPictures = tmpPictures.filter(x => x.name !== id)
         setPictures(tmpPictures)
+    }
+
+    const handleDeleteRemote = pathname => {
+        const remainingFiles = hut.pictures.filter(filename => filename !== pathname)
+        const updateRemote = async () => {
+            await API.modifyHutPictures({'hutID': hut.id, 'params': remainingFiles})
+        }
+        updateRemote().then(setDirty2(!dirty2))
     }
 
     useEffect(() => {
@@ -381,7 +390,7 @@ const EditHut = (props) => {
                                 picData.map(picture => {
                                     return (
                                         <Grid id={picture.id} container item xs={4} sm={4} md={4} lg={4} xl={4} sx={{ display: "flex", justifyContent: "center" }}>
-                                            <PictureCard isEditable={true} isLocal={true} picture={picture} handleDelete={handleDelete} />
+                                            <PictureCard isEditable={true} isLocal={true} picture={picture} handleDelete={handleDeleteLocal} />
                                         </Grid>
                                     );
                                 })
@@ -392,7 +401,7 @@ const EditHut = (props) => {
                                         console.log(picture)
                                         return (
                                             <Grid id={picture.id} container item xs={4} sm={4} md={4} lg={4} xl={4} sx={{ display: "flex", justifyContent: "center" }}>
-                                                <PictureCard isEditable={true} isLocal={false} picture={picture} handleDelete={handleDelete} />
+                                                <PictureCard isEditable={true} isLocal={false} picture={picture} handleDelete={handleDeleteRemote} />
                                             </Grid>
                                         );
                                     })

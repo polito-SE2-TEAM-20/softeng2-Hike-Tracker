@@ -821,10 +821,11 @@ const modifyHutPictures = async (request) => {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
             'Accept': '*/*'
         },
-        body: JSON.stringify(request.params)
+        body: JSON.stringify({'pictures': request.params})
     })
 
     if (response.ok) {
+        console.log(response)
         return true
     } else {
         const errDetail = await response.json();
@@ -832,15 +833,13 @@ const modifyHutPictures = async (request) => {
     }
 }
 
-const getHikesBasedOnPreferences = async (preferences) => {
-    const response = await fetch((APIURL + "/something"), {
-        method: 'POST',
+const getHikesBasedOnPreferences = async () => {
+    const response = await fetch((APIURL + "/me/apply_preferences"), {
+        method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
             'Accept': '*/*'
         },
-        body: preferences
     })
 
     if (response.ok) {
