@@ -4,7 +4,6 @@ import path, { resolve } from 'node:path';
 
 import * as fs from 'fs-extra';
 import { omit } from 'ramda';
-import { In } from 'typeorm';
 
 import {
   HikeDifficulty,
@@ -12,7 +11,6 @@ import {
   HutWorker,
   latLonToGisPoint,
   mapToId,
-  Point,
   PointType,
   ROOT,
   UPLOAD_PATH,
@@ -515,9 +513,9 @@ describe('Hikes (e2e)', () => {
       .field('endPoint', JSON.stringify(hikeData2.endPoint))
       .expect(201);
 
-    const points = (
-      await testService.repo(HikePoint).findBy({ hikeId: hike.id })
-    ).map((point) => point.pointId);
+    // const points = (
+    //   await testService.repo(HikePoint).findBy({ hikeId: hike.id })
+    // ).map((point) => point.pointId);
 
     await restService
       .build(app, localGuide)
@@ -531,9 +529,9 @@ describe('Hikes (e2e)', () => {
     expect(
       await testService.repo(HikePoint).findBy({ hikeId: hike.id }),
     ).toBeEmpty();
-    expect(
-      await testService.repo(Point).findBy({ id: In(points) }),
-    ).toBeEmpty();
+    // expect(
+    //   await testService.repo(Point).findBy({ id: In(points) }),
+    // ).toBeEmpty();
 
     await restService
       .build(app, localGuide)

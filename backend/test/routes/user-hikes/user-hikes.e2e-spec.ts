@@ -76,10 +76,10 @@ describe('User Hikes (e2e)', () => {
   };
 
   it('should start new hike', async () => {
-    const { hiker, hike } = await setup();
+    const { userTwo, hike } = await setup();
 
     await restService
-      .build(app, hiker)
+      .build(app, userTwo)
       .request()
       .post(`/user-hikes/start`)
       .send({
@@ -96,6 +96,19 @@ describe('User Hikes (e2e)', () => {
           1000 * 2,
         );
       });
+  });
+
+  it('should not allow to start multiple hikes for same hike', async () => {
+    const { hiker, hike } = await setup();
+
+    await restService
+      .build(app, hiker)
+      .request()
+      .post(`/user-hikes/start`)
+      .send({
+        hikeId: hike.id,
+      })
+      .expect(400);
   });
 
   it('should return full user hike with all points', async () => {

@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs-extra';
-import { isEmpty, isNil, keys, propEq } from 'ramda';
+import { isEmpty, isNil, keys } from 'ramda';
 import { DataSource, In } from 'typeorm';
 
 import {
@@ -71,8 +71,7 @@ export class HikesController {
     @Body()
     { inPointRadius, ...body }: FilteredHikesDto,
   ): Promise<Hike[]> {
-
-    return await this.service.getFilteredHikes({inPointRadius, ...body})
+    return await this.service.getFilteredHikes({ inPointRadius, ...body });
   }
 
   @Post('import')

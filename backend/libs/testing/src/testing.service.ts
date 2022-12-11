@@ -2,6 +2,7 @@ import { randomInt } from 'crypto';
 
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { mergeRight } from 'ramda';
 import type {
   DataSource,
   DeepPartial,
@@ -73,7 +74,7 @@ export class TestingService {
   }
 
   async createHut(
-    data?: DeepPartial<Hut>,
+    data: DeepPartial<Hut> = {},
     pointData: Partial<Point> = {
       position: {
         type: 'Point',
@@ -89,7 +90,18 @@ export class TestingService {
     }
 
     const prettyPoint = await this.repo(Point).findOneByOrFail({ id: pointId });
-    const hut = await this.createBase<Hut>(Hut, { ...data, pointId });
+    const hut = await this.createBase<Hut>(Hut, {
+      ...mergeRight(
+        {
+          elevation: 100,
+          email: 'test@hehe.xd',
+          phoneNumber: '+393511234566',
+          description: '',
+        } as Partial<Hut>,
+        data,
+      ),
+      pointId,
+    });
 
     return { ...hut, point: prettyPoint };
   }
@@ -113,7 +125,16 @@ export class TestingService {
     const prettyPoint = await this.repo(Point).findOneByOrFail({ id: pointId });
 
     const parkingLot = await this.createBase<ParkingLot>(ParkingLot, {
-      ...data,
+      ...mergeRight(
+        {
+          maxCars: 1,
+          city: '',
+          country: '',
+          province: '',
+          region: '',
+        } as Partial<ParkingLot>,
+        data,
+      ),
       pointId,
     });
 

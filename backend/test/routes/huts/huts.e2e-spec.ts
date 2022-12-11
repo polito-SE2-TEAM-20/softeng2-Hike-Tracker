@@ -290,6 +290,8 @@ describe('Huts (e2e)', () => {
       elevation: 100,
       ownerName: 'Ricardo',
       website: 'https://own.go/co',
+      email: 'somebody@once.told',
+      phoneNumber: '+79016120033',
     };
 
     await restService
