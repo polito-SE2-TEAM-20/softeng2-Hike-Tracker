@@ -288,8 +288,6 @@ async function addNewParkingLot(parking) {
 }
 
 async function addNewGpx(formData) {
-    console.log({ formData })
-    console.log(localStorage)
     let response = await fetch((APIURL + '/hikes/import/'), {
         method: 'POST',
         body: formData,
