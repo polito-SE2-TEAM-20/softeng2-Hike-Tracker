@@ -149,9 +149,8 @@ const EditHut = (props) => {
                 })
         }
         const formData = new FormData()
-        pictures.forEach(picture => {
-            formData.append(picture.name, picture)
-        })
+        formData.append('pictures', pictures)
+        console.log(formData)
         API.setHutPictures({ 'hutID': hutid, 'pictures': formData })
     }
 

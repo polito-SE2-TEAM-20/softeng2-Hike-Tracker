@@ -227,8 +227,8 @@ function HTNavbar(props) {
                             props.isLoggedIn && props?.user?.role === 3 ?
                                 <>
                                     <Tooltip style={{ marginLeft: "20px" }}>
-                                        <IconButton onClick={() => { navigate('/admindashboard') }} sx={{ p: 0 }}>
-                                            <Button variant="outlined" sx={{
+                                        <IconButton sx={{ p: 0 }}>
+                                            <Button onClick={() => { navigate('/admindashboard') }} variant="outlined" sx={{
                                                 "&:hover": { borderColor: "#EBC824", color: "#EBC824" },
                                                 borderRadius: "24px", color: "white", textTransform: "none", borderColor: "white"
                                             }}><b>Dashboard</b></Button>
@@ -240,8 +240,8 @@ function HTNavbar(props) {
                         }
                         {
                             props.isLoggedIn ? <Tooltip style={{ marginLeft: "20px" }}>
-                                <IconButton onClick={() => { props.doLogOut() }} sx={{ p: 0 }}>
-                                    <Button variant="outlined" sx={{
+                                <IconButton sx={{ p: 0 }}>
+                                    <Button variant="outlined" onClick={() => { props.doLogOut() }} sx={{
                                         borderRadius: "24px", color: "white", textTransform: "none", borderColor: "white",
                                         "&:hover": { borderColor: "#EBC824", color: "#EBC824" }
                                     }}><b>Sign out</b></Button>
