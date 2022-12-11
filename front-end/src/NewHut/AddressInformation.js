@@ -159,7 +159,7 @@ function AddressInformation(props) {
        
        {/*} <Button onClick={setShowPosition(true)}>SHOW on the map</Button>*/}
       </Typography>
-      <Button
+      {/*<Button
                         variant="contained"
                         //startIcon={<DeleteIcon />}
                         onClick={handleShow}
@@ -167,7 +167,7 @@ function AddressInformation(props) {
                         //color="error"
                       >
                         {'Show on the map '}
-                      </Button>
+  </Button>*/}
       <Grid sx={{mt:2}}>
       <MapHut {...props}/>
       </Grid>

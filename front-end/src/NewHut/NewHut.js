@@ -72,6 +72,7 @@ function NewHutForm(props) {
   const [owner, setOwner] = useState('');
   const [website, setWebsite] = useState('');
   const [emailAddress, setEmailAddress] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   // services / facilities
   const [beds, setBeds] = useState(''); // number of beds
@@ -118,7 +119,7 @@ function NewHutForm(props) {
         setActiveStep(activeStep + 1);
       }
     } else if (activeStep === (steps.length - 2)) {
-      if (beds === '' || price === '' || beds === null || price === null) {
+      if (beds === '' || price === '' || beds === null || price === null || phoneNumber==='' || phoneNumber===null || phoneNumber===undefined || emailAddress===null || emailAddress==='') {
         setErrorMessage("All fields with the * should be filled");
         setShow(true);
       } else {
@@ -130,7 +131,10 @@ function NewHutForm(props) {
  
       let add = [address, city, province, region, country];
       console.log(add.join(','))
-      let object = { title: name, elevation: parseFloat(elevation), description: description, website: website, ownerName: owner, numberOfBeds: parseInt(beds), location: { lat: parseFloat(latitude), lon: parseFloat(longitude), name: name, address: add.join(",") }, price: parseFloat(price) }
+      let object = { title: name, elevation: parseFloat(elevation), description: description, 
+                    website: website, ownerName: owner, numberOfBeds: parseInt(beds), 
+                    location: { lat: parseFloat(latitude), lon: parseFloat(longitude), name: name, address: add.join(",") }, 
+                    price: parseFloat(price), phoneNumber: phoneNumber, email: emailAddress }
       setShow(false);
       setActiveStep(activeStep + 1);
 
@@ -155,7 +159,7 @@ function NewHutForm(props) {
       setName(''); setElevation(''); setLatitude(''); setLongitude(''); setRegion(''); setProvince(''); setAddress('');
       setCountry(''); setCity(''); setElevation('');
     } else if (activeStep === (steps.length - 2)) {
-      setWebsite(''); setOwner(''); setEmailAddress(''); setBeds(''); setDescription(''); setPrice('');
+      setWebsite(''); setOwner(''); setEmailAddress(''); setBeds(''); setDescription(''); setPrice(''); setPhoneNumber('');
     }
 
 
@@ -188,12 +192,12 @@ function NewHutForm(props) {
       case 1:
         return <HutDescription owner={owner} setOwner={setOwner} website={website} setWebsite={setWebsite} emailAddress={emailAddress}
           setEmailAddress={setEmailAddress} beds={beds} setBeds={setBeds} description={description} setDescription={setDescription}
-          price={price} setPrice={setPrice} />;
+          price={price} setPrice={setPrice} phoneNumber={phoneNumber} setPhoneNumber={setPhoneNumber} />;
       case 2:
         return <ReviewHutForm name={name} elevation={elevation} latitude={latitude}
           longitude={longitude} region={region} province={province}
           address={address} owner={owner} website={website} emailAddress={emailAddress}
-          beds={beds} description={description} price={price} country={country} city={city} />;
+          beds={beds} description={description} price={price} country={country} city={city} phoneNumber={phoneNumber} />;
       default:
         throw new Error('Unknown step');
     }
