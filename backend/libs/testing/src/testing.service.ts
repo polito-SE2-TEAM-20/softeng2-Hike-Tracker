@@ -155,7 +155,6 @@ export class TestingService {
   async createUser(
     data: DeepPartial<User> = {},
   ): Promise<User & { token?: string }> {
-   
     const password = Math.random().toString().slice(2);
     const email = `${Math.random().toString().slice(2)}@gmail.com`;
 

@@ -98,6 +98,22 @@ export class Hut {
   @Column(makePgJsonbArray(false))
   pictures!: string[];
 
+  @Column({
+    type: 'varchar',
+    length: HutLimits.phoneNumber,
+    nullable: true,
+    default: null,
+  })
+  phoneNumber!: string | null;
+
+  @Column({
+    type: 'varchar',
+    length: HutLimits.email,
+    nullable: true,
+    default: null,
+  })
+  email!: string | null;
+
   /**
    * TypeORM sql-gen only
    * @deprecated

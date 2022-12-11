@@ -8,7 +8,7 @@ import {
   generateTestDatabase,
   getTestDbOptions,
   TestingRestService,
-  TestingService
+  TestingService,
 } from '@app/testing';
 
 import { AppModule } from '../../src/app.module';

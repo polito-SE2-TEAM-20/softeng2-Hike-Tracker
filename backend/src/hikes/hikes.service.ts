@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { head, pick } from 'ramda';
-import { DataSource, EntityManager, Repository } from 'typeorm';
+import { pick, isNil, propEq, } from 'ramda';
+import { DataSource, EntityManager, Repository, In } from 'typeorm';
 
 import {
   BaseService,
@@ -17,10 +17,12 @@ import {
   StartEndPoint,
   User,
   WithPoint,
+  mapToId,
+  orderEntities,
 } from '@app/common';
 import { PointsService } from '@core/points/points.service';
-
-import { StartEndPointDto } from './hikes.dto';
+import { hikeFilters } from './hikes.constants';
+import { FilteredHikesDto, StartEndPointDto } from './hikes.dto';
 
 export class HikesService extends BaseService<Hike> {
   constructor(
@@ -63,8 +65,6 @@ export class HikesService extends BaseService<Hike> {
     if (!hike) {
       throw new Error(this.errorMessage);
     }
-
-    console.log('hike with refs', hike);
 
     // get linked points
     const linkedHuts = (await (entityManager || this.dataSource)
@@ -120,12 +120,16 @@ export class HikesService extends BaseService<Hike> {
       entityManager,
     );
 
-    return {
+    const finalHike = {
       ...hike,
       linkedPoints,
       startPoint,
       endPoint,
     };
+
+    console.log('final hike with all stuff', finalHike);
+
+    return finalHike;
   }
 
   async getStartEndPoints(
@@ -134,33 +138,37 @@ export class HikesService extends BaseService<Hike> {
   ): Promise<
     Record<'startPoint' | 'endPoint', LinkedPoint | undefined | null>
   > {
-    const startEndPoints = (await this.pointsService
-      .getRepository(entityManager)
-      .createQueryBuilder('p')
-      .innerJoinAndMapOne(
-        'p.hikePoint',
-        HikePoint,
-        'hp',
-        '(hp.pointId = p.id and hp.hikeId = :hikeId and hp.type IN (:...types))',
-        { hikeId, types: [PointType.startPoint, PointType.endPoint] },
-      )
-      .leftJoinAndMapOne('p.hut', Hut, 'h', 'h.pointId = p.id')
-      .leftJoinAndMapOne('p.parkingLot', ParkingLot, 'pl', 'pl.pointId = p.id')
-      .getMany()) as StartEndPoint[];
+    let startPoint: LinkedPoint | null = null;
+    let endPoint: LinkedPoint | null = null;
+    // get start end points
+    await Promise.all(
+      [PointType.startPoint, PointType.endPoint].map(async (type) => {
+        const point = (await this.pointsService
+          .getRepository(entityManager)
+          .createQueryBuilder('p')
+          .innerJoinAndMapOne(
+            'p.hikePoint',
+            HikePoint,
+            'hp',
+            '(hp.pointId = p.id and hp.hikeId = :hikeId and hp.type = :type)',
+            { hikeId, type },
+          )
+          .leftJoinAndMapOne('p.hut', Hut, 'h', 'h.pointId = p.id')
+          .leftJoinAndMapOne(
+            'p.parkingLot',
+            ParkingLot,
+            'pl',
+            'pl.pointId = p.id',
+          )
+          .getOne()) as StartEndPoint;
 
-    const maybeStartPoint = head(
-      startEndPoints.filter((p) => p.hikePoint.type === PointType.startPoint),
+        if (!!point && type === PointType.startPoint) {
+          startPoint = this.composeLinkedPoint(point);
+        } else if (point && type === PointType.endPoint) {
+          endPoint = this.composeLinkedPoint(point);
+        }
+      }),
     );
-    const maybeEndPoint = head(
-      startEndPoints.filter((p) => p.hikePoint.type === PointType.endPoint),
-    );
-
-    const startPoint: LinkedPoint | null = maybeStartPoint
-      ? this.composeLinkedPoint(maybeStartPoint)
-      : null;
-    const endPoint: LinkedPoint | null = maybeEndPoint
-      ? this.composeLinkedPoint(maybeEndPoint)
-      : null;
 
     return {
       startPoint,
@@ -273,5 +281,71 @@ export class HikesService extends BaseService<Hike> {
     }
 
     return result;
+  }
+
+  async getFilteredHikes({ inPointRadius, ...body }: FilteredHikesDto) {
+    let joins = '';
+    const whereConditions: string[] = [];
+    let paramIndex = 1;
+    const params: unknown[] = [];
+
+    if (inPointRadius) {
+      whereConditions.push(
+        `ST_DWithin(ST_MakePoint($${paramIndex++}, $${paramIndex++}), p."position", $${paramIndex++})`,
+      );
+      params.push(
+        inPointRadius.lon,
+        inPointRadius.lat,
+        inPointRadius.radiusKms * 1000,
+      );
+
+      joins += `
+        inner join (
+          select spq.*
+          from (
+              select
+                hp."pointId",
+                hp."hikeId",
+                ROW_NUMBER() OVER(PARTITION BY hp."hikeId" ORDER BY hp."index" ASC) AS rank
+              from hike_points hp
+          ) spq
+          where spq.rank = 1
+        ) sq on sq."hikeId" = h.id
+        inner join points p on p.id = sq."pointId"
+      `;
+    }
+
+    // apply dynamic filters
+    Object.keys(body).forEach((filterKey) => {
+      const maybeFilter = hikeFilters[filterKey as keyof FilteredHikesDto];
+
+      if (maybeFilter && !isNil(body[filterKey])) {
+        whereConditions.push(
+          `h."${maybeFilter.entityField}" ${
+            maybeFilter.operator
+          } $${paramIndex++}`,
+        );
+        params.push(body[filterKey]);
+      }
+    });
+
+    const queryRaw = `
+      select h.*
+      from hikes h
+      ${joins}
+      where ${whereConditions.length ? whereConditions.join(' AND ') : 'true'}
+      order by h.id asc
+    `;
+
+    const rawHikes: Hike[] = await this
+      .hikesRepository
+      .query(queryRaw, params);
+    const hikeIds = mapToId(rawHikes);
+    const hikes = await this
+      .hikesRepository
+      .findBy({ id: In(hikeIds) });
+    const orderedHikes = orderEntities(hikes, hikeIds, propEq('id'));
+
+    return orderedHikes;
   }
 }

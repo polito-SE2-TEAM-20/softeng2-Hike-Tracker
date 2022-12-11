@@ -1,5 +1,6 @@
 import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -11,6 +12,7 @@ import {
   STATIC_PREFIX,
   typeormOptions,
 } from '@app/common';
+import { AppExceptionFilter } from '@app/common/filters/app-exception.filter';
 
 import { AuthModule } from './auth/auth.module';
 import { HealthcheckModule } from './healthcheck/healthcheck.module';
@@ -55,6 +57,11 @@ import { UsersModule } from './users/users.module';
     UserHikesModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: AppExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}

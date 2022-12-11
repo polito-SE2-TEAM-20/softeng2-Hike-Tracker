@@ -28,6 +28,13 @@ export class HikePoint {
   })
   pointId!: number;
 
+  @PrimaryColumn({
+    type: 'smallint',
+    nullable: false,
+    default: PointType.point,
+  })
+  type!: PointType;
+
   /**
    * 0 - start point
    * order DESC limit 1 - end point
@@ -38,13 +45,6 @@ export class HikePoint {
     nullable: false,
   })
   index!: number;
-
-  @Column({
-    type: 'smallint',
-    nullable: false,
-    default: PointType.point,
-  })
-  type!: PointType;
 
   /**
    * TypeORM sql-gen only

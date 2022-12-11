@@ -42,7 +42,7 @@ export class RegisterDto {
   phoneNumber!: string;
 
   @IsArray()
-  @IsNumber({},{each: true})
+  @IsNumber({}, { each: true })
   @IsOptional()
   hutIds!: Array<number>;
 }

@@ -32,8 +32,6 @@ import {
   ID,
   latLonToGisPoint,
   LocalGuideOnly,
-  mapToId,
-  orderEntities,
   ParkingLot,
   ParseIdPipe,
   Point,
@@ -45,7 +43,6 @@ import { GpxService } from '@app/gpx';
 
 import { PointsService } from '../points/points.service';
 
-import { hikeFilters } from './hikes.constants';
 import {
   FilteredHikesDto,
   HikeDto,
@@ -74,69 +71,8 @@ export class HikesController {
     @Body()
     { inPointRadius, ...body }: FilteredHikesDto,
   ): Promise<Hike[]> {
-    let joins = '';
-    const whereConditions: string[] = [];
-    let paramIndex = 1;
-    const params: unknown[] = [];
 
-    if (inPointRadius) {
-      whereConditions.push(
-        `ST_DWithin(ST_MakePoint($${paramIndex++}, $${paramIndex++}), p."position", $${paramIndex++})`,
-      );
-      params.push(
-        inPointRadius.lon,
-        inPointRadius.lat,
-        inPointRadius.radiusKms * 1000,
-      );
-
-      joins += `
-        inner join (
-          select spq.*
-          from (
-              select
-                hp."pointId",
-                hp."hikeId",
-                ROW_NUMBER() OVER(PARTITION BY hp."hikeId" ORDER BY hp."index" ASC) AS rank
-              from hike_points hp
-          ) spq
-          where spq.rank = 1
-        ) sq on sq."hikeId" = h.id
-        inner join points p on p.id = sq."pointId"
-      `;
-    }
-
-    // apply dynamic filters
-    Object.keys(body).forEach((filterKey) => {
-      const maybeFilter = hikeFilters[filterKey as keyof FilteredHikesDto];
-
-      if (maybeFilter && !isNil(body[filterKey])) {
-        whereConditions.push(
-          `h."${maybeFilter.entityField}" ${
-            maybeFilter.operator
-          } $${paramIndex++}`,
-        );
-        params.push(body[filterKey]);
-      }
-    });
-
-    const queryRaw = `
-      select h.*
-      from hikes h
-      ${joins}
-      where ${whereConditions.length ? whereConditions.join(' AND ') : 'true'}
-      order by h.id asc
-    `;
-
-    const rawHikes: Hike[] = await this.service
-      .getRepository()
-      .query(queryRaw, params);
-    const hikeIds = mapToId(rawHikes);
-    const hikes = await this.service
-      .getRepository()
-      .findBy({ id: In(hikeIds) });
-    const orderedHikes = orderEntities(hikes, hikeIds, propEq('id'));
-
-    return orderedHikes;
+    return await this.service.getFilteredHikes({inPointRadius, ...body})
   }
 
   @Post('import')
@@ -234,51 +170,55 @@ export class HikesController {
   ): Promise<HikeFull> {
     await this.service.ensureExistsOrThrow(hikeId);
 
-    if (!linkedPoints.length) {
-      return await this.service.getFullHike(hikeId);
-    }
-
     // get points of these entities
     const hutIds = linkedPoints.filter((v) => !!v.hutId).map((v) => v.hutId);
     const parkingLotIds = linkedPoints
       .filter((v) => !!v.parkingLotId)
       .map((v) => v.parkingLotId);
 
-    const pointsQuery = this.dataSource
-      .getRepository(Point)
-      .createQueryBuilder('p');
+    const points: Point[] = [];
 
     if (hutIds.length) {
-      pointsQuery.orWhere((qb) => {
-        const subQuery = qb
-          .subQuery()
-          .select(['h.pointId'])
-          .from(Hut, 'h')
-          .andWhere('h.id IN (:...hutIds)', {
-            hutIds,
-          })
-          .getQuery();
+      const hutPoints = await this.dataSource
+        .getRepository(Point)
+        .createQueryBuilder('p')
+        .andWhere((qb) => {
+          const subQuery = qb
+            .subQuery()
+            .select(['h.pointId'])
+            .from(Hut, 'h')
+            .andWhere('h.id IN (:...hutIds)', {
+              hutIds,
+            })
+            .getQuery();
 
-        return `p.id IN ${subQuery}`;
-      });
+          return `p.id IN ${subQuery}`;
+        })
+        .getMany();
+
+      points.push(...hutPoints);
     }
 
     if (parkingLotIds.length) {
-      pointsQuery.orWhere((qb) => {
-        const subQuery = qb
-          .subQuery()
-          .select(['pl.pointId'])
-          .from(ParkingLot, 'pl')
-          .andWhere('pl.id IN (:...parkingLotIds)', {
-            parkingLotIds,
-          })
-          .getQuery();
+      const parkingLotPoints = await this.dataSource
+        .getRepository(Point)
+        .createQueryBuilder('p')
+        .andWhere((qb) => {
+          const subQuery = qb
+            .subQuery()
+            .select(['pl.pointId'])
+            .from(ParkingLot, 'pl')
+            .andWhere('pl.id IN (:...parkingLotIds)', {
+              parkingLotIds,
+            })
+            .getQuery();
 
-        return `p.id IN ${subQuery}`;
-      });
+          return `p.id IN ${subQuery}`;
+        })
+        .getMany();
+
+      points.push(...parkingLotPoints);
     }
-
-    const points = await pointsQuery.getMany();
 
     console.log('linked points', points);
 
@@ -290,14 +230,16 @@ export class HikesController {
       });
 
       // save new links
-      await entityManager.getRepository(HikePoint).save(
-        points.map<Partial<HikePoint>>(({ id: pointId }, index) => ({
-          index,
-          hikeId,
-          pointId,
-          type: PointType.linkedPoint,
-        })),
-      );
+      if (points.length) {
+        await entityManager.getRepository(HikePoint).save(
+          points.map<Partial<HikePoint>>(({ id: pointId }, index) => ({
+            index,
+            hikeId,
+            pointId,
+            type: PointType.linkedPoint,
+          })),
+        );
+      }
     });
 
     console.log('after tx');
@@ -329,6 +271,7 @@ export class HikesController {
     if (!isNil(hikeReferencePoints)) {
       const points = await this.dataSource.getRepository(HikePoint).findBy({
         hikeId: id,
+        type: PointType.referencePoint,
       });
 
       const pointsToDelete = points.map((hikePoint) => hikePoint.pointId);
@@ -355,7 +298,7 @@ export class HikesController {
       //INSERT into Points table of the RefPoints
       const referencePoints = await this.pointsService.getRepository().save(
         refPointsForDB.map<Partial<Point>>((point) => ({
-          type: 0,
+          type: PointType.point,
           position: point.point,
           address: point.address,
           name: point.name,
@@ -505,27 +448,27 @@ export class HikesController {
       );
     }
 
-    const pointsToDelete = await this.dataSource
-      .getRepository(HikePoint)
-      .findBy({
-        hikeId: id,
-      });
+    // const pointsToDelete = await this.dataSource
+    //   .getRepository(HikePoint)
+    //   .findBy({
+    //     hikeId: id,
+    //   });
 
     const deletion = await this.service.getRepository().delete({
       id,
     });
 
-    if (deletion.affected === 0 || isNil(deletion.affected)) {
-      throw new BadRequestException('Hike not found.');
-    }
+    // if (deletion.affected === 0 || isNil(deletion.affected)) {
+    //   throw new BadRequestException('Hike not found.');
+    // }
 
-    const pointsID = pointsToDelete.map((point) => point.pointId);
+    // const pointsID = pointsToDelete.map((point) => point.pointId);
 
-    await this.pointsService.getRepository().delete({
-      id: In(pointsID),
-    });
+    // await this.pointsService.getRepository().delete({
+    //   id: In(pointsID),
+    // });
 
-    return { rowsAffected: deletion.affected };
+    return { rowsAffected: isNil(deletion.affected) ? 0 : deletion.affected };
   }
 
   @Get(':id')

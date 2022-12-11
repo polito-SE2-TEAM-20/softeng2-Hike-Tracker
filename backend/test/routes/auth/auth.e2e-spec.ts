@@ -29,7 +29,7 @@ describe('Auth (e2e)', () => {
       role: UserRole.localGuide,
       firstName: 'Test',
       lastName: 'User',
-      phoneNumber: '3332204738'
+      phoneNumber: '3332204738',
     };
 
     const { body: user } = await restService
@@ -46,7 +46,9 @@ describe('Auth (e2e)', () => {
         expect(body).not.toHaveProperty('password');
       });
 
-    await testService.repo(User).update({ id: user.id }, { verified: true, approved: true });
+    await testService
+      .repo(User)
+      .update({ id: user.id }, { verified: true, approved: true });
 
     const {
       body: { token },

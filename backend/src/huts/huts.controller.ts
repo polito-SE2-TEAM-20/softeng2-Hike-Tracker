@@ -9,7 +9,8 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { isNil } from 'ramda';
+import { isNil, prop } from 'ramda';
+import { DataSource } from 'typeorm';
 
 import {
   CurrentUser,
@@ -25,14 +26,10 @@ import {
 
 import { CreateHutDto, FilterHutsDto } from './huts.dto';
 import { HutsService } from './huts.service';
-import { DataSource, In } from 'typeorm';
 
 @Controller('huts')
 export class HutsController {
-  constructor(
-    private service: HutsService,
-    private dataSource: DataSource
-  ) {}
+  constructor(private service: HutsService, private dataSource: DataSource) {}
 
   @Get('mine')
   @LocalGuideOnly()
@@ -117,18 +114,20 @@ export class HutsController {
     return await this.service.createNewHut(body, user.id);
   }
 
-
   //Used to get all the huts where the hut worker user is working
   @Get('hutWorker/iWorkAt')
   @HutWorkerOnly()
-  async getHutWorkerHuts(
-    @CurrentUser() user: UserContext
-  ) : Promise<Hut[]>{
-
+  async getHutWorkerHuts(@CurrentUser() user: UserContext): Promise<Hut[]> {
     //Retrieve all the hutsIDs given the hut worker
-    const myHuts = (await this.dataSource.getRepository(HutWorker).findBy({
-      userId: user.id,
-    })).map(hutWorker => hutWorker.hutId);
+    const myHuts = (
+      await this.dataSource.getRepository(HutWorker).findBy({
+        userId: user.id,
+      })
+    ).map(prop('hutId'));
+
+    if (!myHuts.length) {
+      return [];
+    }
 
     //Retrieve all the Huts where an hut worker is the user
     return await this.service
@@ -145,33 +144,36 @@ export class HutsController {
   async updateHutDescription(
     @Param('id', new ParseIntPipe()) id: ID,
     @CurrentUser() user: UserContext,
-    @Body() {
-      description,
-      workingTimeStart,
-      workingTimeEnd,
-      price
-    }
-  ) : Promise<Hut>{
-
-    if((!isNil(workingTimeStart) && isNil(workingTimeEnd)) || (!isNil(workingTimeEnd) && isNil(workingTimeStart)))
-      throw new BadRequestException("You must specify both starting/ending working time or none of them");
+    @Body() { description, workingTimeStart, workingTimeEnd, price },
+  ): Promise<Hut> {
+    if (
+      (!isNil(workingTimeStart) && isNil(workingTimeEnd)) ||
+      (!isNil(workingTimeEnd) && isNil(workingTimeStart))
+    )
+      throw new BadRequestException(
+        'You must specify both starting/ending working time or none of them',
+      );
 
     //Retrieve all the hutsIDs given the hut worker
-    const myHuts = (await this.dataSource.getRepository(HutWorker).findBy({
-      userId: user.id,
-    })).map(hutWorker => hutWorker.hutId);
+    const myHuts = (
+      await this.dataSource.getRepository(HutWorker).findBy({
+        userId: user.id,
+      })
+    ).map((hutWorker) => hutWorker.hutId);
 
     //If the user is not working to that hut will throw an exception
-    if(!myHuts.includes(id))
-      throw new BadRequestException("You are not authorized to modify this hut description.");
-    
+    if (!myHuts.includes(id))
+      throw new BadRequestException(
+        'You are not authorized to modify this hut description.',
+      );
+
     //Update the chosen hut with various fields
     return await this.dataSource.getRepository(Hut).save({
       id,
-      description: description || "",
-      workingTimeStart: workingTimeStart || "",
-      workingTimeEnd: workingTimeEnd || "",
-      price: price || null
-    })
+      description: description || '',
+      workingTimeStart: workingTimeStart || '',
+      workingTimeEnd: workingTimeEnd || '',
+      price: price || null,
+    });
   }
 }
