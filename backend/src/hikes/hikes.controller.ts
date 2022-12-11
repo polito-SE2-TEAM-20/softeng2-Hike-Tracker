@@ -32,8 +32,6 @@ import {
   ID,
   latLonToGisPoint,
   LocalGuideOnly,
-  mapToId,
-  orderEntities,
   ParkingLot,
   ParseIdPipe,
   Point,
