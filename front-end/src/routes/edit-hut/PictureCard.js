@@ -2,6 +2,7 @@ import { Grid, Input, Typography } from "@mui/material"
 import { Fab } from "@mui/material"
 import AddIcon from '@mui/icons-material/Add';
 import './edit-hut-style.css'
+import { APIURL } from "../../API/API";
 
 export const AddPictureCard = (props) => {
     return (
@@ -28,20 +29,40 @@ export const AddPictureCard = (props) => {
 }
 
 export const PictureCard = (props) => {
-    return (
-        <Grid container item sx={{ backgroundColor: "red", width: "200px", height: "250px", marginLeft: "5px", marginRight: "5px", marginTop: "5px", marginBottom: "35px", borderRadius: "8px", display: "flex", justifyContent: "center", alignItems: "center" }}>
-            <Grid item onClick={() => { props.handleDelete(props?.picture.id) }}>
-                <Typography
-                    className="unselectable"
-                    variant="h1"
-                    fontSize={24}
-                >
-                    <b>Remove</b>
-                </Typography>
+    if (props.isLocal) {
+        return (
+            <Grid container item sx={{ backgroundColor: "red", width: "200px", height: "250px", marginLeft: "5px", marginRight: "5px", marginTop: "5px", marginBottom: "35px", borderRadius: "8px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <Grid sx={{display: props.isEditable ? "flex" : "none"}} item onClick={() => { props.handleDelete(props?.picture.id) }}>
+                    <Typography
+                        className="unselectable"
+                        variant="h1"
+                        fontSize={24}
+                    >
+                        <b>Remove</b>
+                    </Typography>
+                </Grid>
+                <Grid item>
+                    <img src={props?.picture.img} style={{ width: "200px", height: "250px", borderRadius: "8px", objectFit: "cover" }} alt="not found" />
+                </Grid>
             </Grid>
-            <Grid item>
-                <img src={props?.picture.img} style={{ width: "200px", height: "250px", borderRadius: "8px", objectFit: "cover" }} alt="not found" />
+        )
+    }
+    else {
+        return (
+            <Grid container item sx={{ backgroundColor: "red", width: "200px", height: "250px", marginLeft: "5px", marginRight: "5px", marginTop: "5px", marginBottom: "35px", borderRadius: "8px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <Grid sx={{display: props.isEditable ? "flex" : "none"}} item onClick={() => { props.handleDelete(props?.picture.id) }}>
+                    <Typography
+                        className="unselectable"
+                        variant="h1"
+                        fontSize={24}
+                    >
+                        <b>Remove</b>
+                    </Typography>
+                </Grid>
+                <Grid item>
+                    <img src={APIURL + props?.picture} style={{ width: "200px", height: "250px", borderRadius: "8px", objectFit: "cover" }} alt="not found" />
+                </Grid>
             </Grid>
-        </Grid>
-    )
+        )
+    }
 }

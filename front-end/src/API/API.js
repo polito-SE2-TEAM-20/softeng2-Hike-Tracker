@@ -661,7 +661,7 @@ async function addPointToTracingkHike(hikeTrackId, lat, lon) {
         }
     }
 
-    const response = await fetch((APIURL + '/user-hikes/'+ hikeTrackId + '/track-point'), {
+    const response = await fetch((APIURL + '/user-hikes/' + hikeTrackId + '/track-point'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -711,7 +711,7 @@ async function stopTrackingHike(hikeTrackId) {
 
 async function getUserHikeTrackingDetails(hikeTrackId) {
 
-    const response = await fetch((APIURL + '/user-hikes/'+ hikeTrackId), {
+    const response = await fetch((APIURL + '/user-hikes/' + hikeTrackId), {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -737,8 +737,8 @@ async function getAllUserTrackingHikes(userHikeState) {
 
     const body = {}
 
-    switch(userHikeState){
-        case UserHikeState.ACTIVE: 
+    switch (userHikeState) {
+        case UserHikeState.ACTIVE:
         case UserHikeState.FINISHED: {
             body.state = userHikeState
             break;
@@ -786,7 +786,7 @@ async function getAllUserTrackingHikes(userHikeState) {
     pictures: array of files
 */
 const setHutPictures = async (request) => {
-    const response = fetch((APIURL + '/hut-pictures/' + request.hutID), {
+    const response = await fetch((APIURL + '/hut-pictures/' + request.hutID), {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -814,7 +814,7 @@ const setHutPictures = async (request) => {
  */
 
 const modifyHutPictures = async (request) => {
-    const response = fetch((APIURL + '/hut-pictures/' + request.hutID + '/modify'), {
+    const response = await fetch((APIURL + '/hut-pictures/' + request.hutID + '/modify'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -830,6 +830,28 @@ const modifyHutPictures = async (request) => {
         const errDetail = await response.json();
         throw errDetail.message;
     }
+}
+
+// const getPicture = async (picturePathname) => {
+//     const response = await fetch((APIURL + picturePathname), {
+//         method: 'GET',
+//         headers: {
+//             'Authorization': `Bearer ${localStorage.getItem('token')}`,
+//             'Accept': '*/*'
+//         }
+//     })
+
+//     if (response.ok) {
+//         return URL.createObjectURL(await response.blob())
+//     } else {
+//         const errDetail = await response.json();
+//         throw errDetail.message;
+//     }
+// }
+
+const getPicture = async (picturePathname) => {
+    const img = await require(APIURL + "/" + picturePathname).default
+    return img
 }
 
 
@@ -849,6 +871,6 @@ const API = {
     getUserHikeTrackingDetails, getAllUserTrackingHikes,
     //#endregion
     updateHikeCondition,
-    setHutPictures, modifyHutPictures
+    setHutPictures, modifyHutPictures, getPicture
 }
 export default API

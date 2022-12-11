@@ -40,25 +40,23 @@ const EditHut = (props) => {
     const hutid = (match && match.params && match.params.hutid) ? match.params.hutid : -1
     const [hut, setHut] = useState({ title: "", numberOfBeds: -1, description: "", workingTimeStart: -1, workingTimeEnd: -1, price: -1, ownerName: "", website: "", point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } })
     const [loading, setLoading] = useState(true)
-    const [openPictureDialog, setOpenPictureDialog] = useState(false)
     const [pictures, setPictures] = useState([])
     const [picData, setPicData] = useState([])
     const [dirty, setDirty] = useState(false)
 
     useEffect(() => {
-        let tmpHut = { title: "", description: "", workingTimeStart: -1, workingTimeEnd: -1, numberOfBeds: -1, price: -1, ownerName: "", website: "", point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } }
+        let tmpHut = { title: "", description: "", workingTimeStart: -1, workingTimeEnd: -1, numberOfBeds: -1, price: -1, ownerName: "", website: "", pictures: [], point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } }
         const getHut = async () => {
             tmpHut = await API.getSingleHutByID(hutid)
         }
         getHut().then(() => {
-            console.log(tmpHut)
             setHut(tmpHut)
+            console.log(hut)
             setLoading(false);
             setDescription(tmpHut.description);
             setWorkingTimeEnd(tmpHut.workingTimeEnd);
             setWorkingTimeStart(tmpHut.workingTimeStart);
             setPrice(tmpHut.price);
-            setPictures(tmpHut.pictures)
         })
     }, [hutid])
 
@@ -103,6 +101,7 @@ const EditHut = (props) => {
     useEffect(() => {
         const images = [...picData];
         pictures.forEach(picture => {
+            console.log(picture)
             const reader = new FileReader()
             reader.onload = (e) => {
                 const { result } = e.target;
@@ -149,8 +148,7 @@ const EditHut = (props) => {
                 })
         }
         const formData = new FormData()
-        formData.append('pictures', pictures)
-        console.log(formData)
+        pictures.forEach(picture => formData.append("pictures", picture))
         API.setHutPictures({ 'hutID': hutid, 'pictures': formData })
     }
 
@@ -383,10 +381,22 @@ const EditHut = (props) => {
                                 picData.map(picture => {
                                     return (
                                         <Grid id={picture.id} container item xs={4} sm={4} md={4} lg={4} xl={4} sx={{ display: "flex", justifyContent: "center" }}>
-                                            <PictureCard picture={picture} handleDelete={handleDelete} />
+                                            <PictureCard isEditable={true} isLocal={true} picture={picture} handleDelete={handleDelete} />
                                         </Grid>
                                     );
                                 })
+                            }
+                            {
+                                hut !== undefined && hut.pictures !== undefined ?
+                                    hut?.pictures.map(picture => {
+                                        console.log(picture)
+                                        return (
+                                            <Grid id={picture.id} container item xs={4} sm={4} md={4} lg={4} xl={4} sx={{ display: "flex", justifyContent: "center" }}>
+                                                <PictureCard isEditable={true} isLocal={false} picture={picture} handleDelete={handleDelete} />
+                                            </Grid>
+                                        );
+                                    })
+                                    : <></>
                             }
                             <Grid item xs={3} sm={3} md={3} lg={3} xl={3} sx={{ display: "flex", justifyContent: "center" }}>
                                 <AddPictureCard handleUpload={handleUpload} />

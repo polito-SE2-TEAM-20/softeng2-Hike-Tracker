@@ -1,13 +1,13 @@
 import { Button, Chip, Divider, Grid, Paper, Typography } from "@mui/material";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { useMatch } from "react-router-dom";
 import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import hutIcon from '../../Assets/hut-icon.png'
 import { useEffect, useState } from "react";
 import API from '../../API/API.js';
 import { Skeleton } from "@mui/material";
-import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, useMapEvents, ZoomControl, Polyline, useMap } from 'react-leaflet'
-import { UploadPictureDialog } from '../../components/map-filters/Dialogs'
+import { MapContainer, TileLayer, Marker, Popup, ZoomControl} from 'react-leaflet'
+import { PictureCard } from "../edit-hut/PictureCard";
 
 const Difficulty = (props) => {
     if (!props.loading) {
@@ -42,11 +42,10 @@ const ShowHut = (props) => {
     const hutid = (match && match.params && match.params.hutid) ? match.params.hutid : -1
     const [hut, setHut] = useState({ title: "", numberOfBeds: -1, price: -1, ownerName: "", website: "", point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } })
     const [loading, setLoading] = useState(true)
-    const [openPictureDialog, setOpenPictureDialog] = useState(false)
     const [hutsHutWorker, setHutsHutWorker] = useState([])
 
     useEffect(() => {
-        let tmpHike = { title: "", numberOfBeds: -1, price: -1, ownerName: "", website: "", point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } }
+        let tmpHike = { title: "", numberOfBeds: -1, price: -1, ownerName: "", website: "", pictures: [], point: { id: -1, type: -1, position: { type: "", coordinates: [0.0, 0.0] } } }
         const getHut = async () => {
             tmpHike = await API.getSingleHutByID(hutid)
         }
@@ -241,6 +240,27 @@ const ShowHut = (props) => {
                             </>
                     }
                 </Grid>
+                <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} columns={4} sx={{ display: "flex", justifyContent: "left", marginTop: "24px", padding: "0px 64px 64px 64px" }}>
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} columns={4} sx={{ display: "flex", justifyContent: "center", marginTop: "18px", marginBottom: "24px" }}>
+                            <Typography variant="h1" fontSize={52} className="unselectable">
+                                Some pictures from the hut
+                            </Typography>
+                        </Grid>
+                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "left" }}>
+                            {
+                                hut !== undefined && hut.pictures !== undefined ?
+                                    hut?.pictures.map(picture => {
+                                        console.log(picture)
+                                        return (
+                                            <Grid id={picture.id} container item xs={4} sm={4} md={4} lg={4} xl={4} sx={{ display: "flex", justifyContent: "center" }}>
+                                                <PictureCard isEditable={false} isLocal={false} picture={picture} />
+                                            </Grid>
+                                        );
+                                    })
+                                    : <></>
+                            }
+                        </Grid>
+                    </Grid>
             </Grid>
         </Grid>
     );
