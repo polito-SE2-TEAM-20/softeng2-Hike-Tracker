@@ -23,6 +23,7 @@ import { HikesController } from '@core/hikes/hikes.controller';
 import { MyTrackedHikesDto } from './me.dto';
 import { PreferencesDto } from './preferences.dto';
 import { UsersService } from './users.service';
+import { FilteredHikesDto } from '@core/hikes/hikes.dto';
 
 @Controller('me')
 @AuthenticatedOnly()
@@ -72,7 +73,7 @@ export class MeController {
   @HikerOnly()
   @HttpCode(200)
   @Get('preferences')
-  async getPreferences(@CurrentUser() user: UserContext) {
+  async getPreferences(@CurrentUser() user: UserContext): Promise<PreferencesDto> {
     return await this.usersService.getPreferences(user.id);
   }
 
@@ -82,14 +83,14 @@ export class MeController {
   async setPreferences(
     @CurrentUser() user: UserContext,
     @Body() body: PreferencesDto,
-  ) {
+  ): Promise<PreferencesDto> {
     return await this.usersService.setPreferences(user.id, body);
   }
 
   @HikerOnly()
   @HttpCode(200)
   @Get('apply_preferences')
-  async applyPreferences(@CurrentUser() user: UserContext) {
+  async applyPreferences(@CurrentUser() user: UserContext): Promise<Hike[]> {
     const preferences = await this.usersService.getPreferences(user.id);
 
     return await this.hikesService.getFilteredHikes({...preferences, inPointRadius: {lat: preferences.lat, lon: preferences.lon, radiusKms: preferences.radiusKms}});
