@@ -318,7 +318,7 @@ describe('Huts (e2e)', () => {
       pictures: ['test1.png'],
     });
 
-    const testPics = ['img1.png', 'img2.jpeg', 'large.jpeg'];
+    const testPics = ['img1.png', 'img2.jpeg', 'img3.jpeg'];
     const req = restService
       .build(app, localGuide)
       .request()
