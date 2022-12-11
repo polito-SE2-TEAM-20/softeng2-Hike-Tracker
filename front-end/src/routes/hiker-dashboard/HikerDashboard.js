@@ -8,8 +8,7 @@ import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { MapContainer, TileLayer, Marker, Popup, ZoomControl, useMap } from 'react-leaflet'
-import HikePopup from "../../components/hike-popup/HikePopup";
+import { MapContainer, TileLayer, Marker, ZoomControl, useMap } from 'react-leaflet'
 import { useState, useEffect } from "react";
 import API from '../../API/API'
 import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours'
@@ -47,13 +46,14 @@ const HikerDashboard = (props) => {
             if (Object.keys(tmpPref).length !== 0) {
                 setPosition({ 'lat': tmpPref.lat, 'lon': tmpPref.lon })
                 setRadius(tmpPref.radiusKms)
-                setLength(tmpPref.maxLength - (suggestionType ? BEGINNER : ADVANCED).lengthOffset)
-                setExpectedTime(tmpPref.expectedTimeMax - (suggestionType ? BEGINNER : ADVANCED).expectedTimeOffset)
-                setDifficulty(tmpPref.difficultyMax - (suggestionType ? BEGINNER : ADVANCED).difficultyOffset)
-                setAscent(tmpPref.ascentMax - (suggestionType ? BEGINNER : ADVANCED).ascentOffset)
+                setLength(tmpPref.minLength)
+                setExpectedTime(tmpPref.expectedTimeMin)
+                setDifficulty(tmpPref.difficultyMin)
+                setAscent(tmpPref.ascentMin)
                 setSuggestionType(tmpPref.suggestionType)
             }
         })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const handlePreferencesUpdate = () => {
@@ -61,26 +61,18 @@ const HikerDashboard = (props) => {
         {
             "lat": position.lat,
             "lon": position.lon,
-            "radiusKms": radius <= (suggestionType ? BEGINNER : ADVANCED).minRadius ?
-                (suggestionType ? BEGINNER : ADVANCED).minRadius :
+            "radiusKms": radius <= (!suggestionType ? BEGINNER : ADVANCED).minRadius ?
+                (!suggestionType ? BEGINNER : ADVANCED).minRadius :
                 radius,
-            "minLength": (length - (suggestionType ? BEGINNER : ADVANCED).lengthOffset) <= (suggestionType ? BEGINNER : ADVANCED).lengthOffset ?
-                (suggestionType ? BEGINNER : ADVANCED).lengthOffset :
-                length - (suggestionType ? BEGINNER : ADVANCED).lengthOffset,
-            "maxLength": length + (suggestionType ? BEGINNER : ADVANCED).lengthOffset,
-            "expectedTimeMin": (expectedTime - (suggestionType ? BEGINNER : ADVANCED).expectedTimeOffset) <= (suggestionType ? BEGINNER : ADVANCED).expectedTimeOffset ?
-                (suggestionType ? BEGINNER : ADVANCED).expectedTimeOffset :
-                expectedTime - (suggestionType ? BEGINNER : ADVANCED).expectedTimeOffset,
-            "expectedTimeMax": expectedTime + (suggestionType ? BEGINNER : ADVANCED).expectedTimeOffset,
-            "difficultyMin": (difficulty - (suggestionType ? BEGINNER : ADVANCED).difficultyOffset) <= (suggestionType ? BEGINNER : ADVANCED).difficultyOffset ?
-                (suggestionType ? BEGINNER : ADVANCED).difficultyOffset :
-                difficulty - (suggestionType ? BEGINNER : ADVANCED).difficultyOffset,
-            "difficultyMax": difficulty + (suggestionType ? BEGINNER : ADVANCED).difficultyOffset,
-            "ascentMin": (ascent - (suggestionType ? BEGINNER : ADVANCED).ascentOffset) <= (suggestionType ? BEGINNER : ADVANCED).ascentOffset ?
-                (suggestionType ? BEGINNER : ADVANCED).ascentOffset :
-                ascent - (suggestionType ? BEGINNER : ADVANCED).ascentOffset,
-            "ascentMax": ascent + (suggestionType ? BEGINNER : ADVANCED).ascentOffset,
-            'suggestionType': suggestionType
+            "minLength": length,
+            "maxLength": length + (!suggestionType ? BEGINNER : ADVANCED).lengthOffset,
+            "expectedTimeMin": expectedTime,
+            "expectedTimeMax": expectedTime + (!suggestionType ? BEGINNER : ADVANCED).expectedTimeOffset,
+            "difficultyMin": difficulty,
+            "difficultyMax": difficulty + (!suggestionType ? BEGINNER : ADVANCED).difficultyOffset,
+            "ascentMin": ascent,
+            "ascentMax": ascent + (!suggestionType ? BEGINNER : ADVANCED).ascentOffset,
+            'suggestionType': !suggestionType
         }
         const setPreferences = async () => {
             await API.setPreferences(prefFilter)
@@ -199,7 +191,7 @@ const HikerDashboard = (props) => {
                                 </Typography>
                                 <TextField onChange={(e) => {
                                     e.target.value === "" ? setRadius(0.0) : setRadius(parseFloat(e.target.value))
-                                }} variant="outlined" label="Radius" sx={{ width: "100%" }} />
+                                }} variant="outlined" label="Radius (in km)" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
 
@@ -208,7 +200,7 @@ const HikerDashboard = (props) => {
                                 <Typography className="unselectable" sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
                                     <b>Length</b>
                                 </Typography>
-                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{lengthStatic.toFixed(2)}km</Typography>
+                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{(lengthStatic.toFixed(2) / 1000).toFixed(2)}km</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Typography className="unselectable" sx={{ fontSize: "18px" }}>
@@ -216,7 +208,7 @@ const HikerDashboard = (props) => {
                                 </Typography>
                                 <TextField onChange={(e) => {
                                     e.target.value === "" ? setLength(0.0) : setLength(parseFloat(e.target.value))
-                                }} variant="outlined" label="Length" sx={{ width: "100%" }} />
+                                }} variant="outlined" label="Length (in meters)" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
 
@@ -233,7 +225,7 @@ const HikerDashboard = (props) => {
                                 </Typography>
                                 <TextField onChange={(e) => {
                                     e.target.value === "" ? setExpectedTime(0.0) : setExpectedTime(parseFloat(e.target.value))
-                                }} variant="outlined" label="Expected time" sx={{ width: "100%" }} />
+                                }} variant="outlined" label="Expected time (in minutes)" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
 
@@ -411,7 +403,7 @@ const HikerDashboard = (props) => {
                                 </Typography>
                                 <TextField onChange={(e) => {
                                     e.target.value === "" ? setRadius(0.0) : setRadius(parseFloat(e.target.value))
-                                }} variant="outlined" label="Radius" sx={{ width: "100%" }} />
+                                }} variant="outlined" label="Radius (in km)" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
 
@@ -420,7 +412,7 @@ const HikerDashboard = (props) => {
                                 <Typography className="unselectable" sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
                                     <b>Length</b>
                                 </Typography>
-                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{lengthStatic.toFixed(2)}km</Typography>
+                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{(lengthStatic.toFixed(2) / 1000).toFixed(2)}km</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Typography className="unselectable" sx={{ fontSize: "18px" }}>
@@ -428,7 +420,7 @@ const HikerDashboard = (props) => {
                                 </Typography>
                                 <TextField onChange={(e) => {
                                     e.target.value === "" ? setLength(0.0) : setLength(parseFloat(e.target.value))
-                                }} variant="outlined" label="Length" sx={{ width: "100%" }} />
+                                }} variant="outlined" label="Length (in meters)" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
 
@@ -445,7 +437,7 @@ const HikerDashboard = (props) => {
                                 </Typography>
                                 <TextField onChange={(e) => {
                                     e.target.value === "" ? setExpectedTime(0.0) : setExpectedTime(parseFloat(e.target.value))
-                                }} variant="outlined" label="Expected time" sx={{ width: "100%" }} />
+                                }} variant="outlined" label="Expected time (in minutes)" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
 
@@ -623,7 +615,7 @@ const HikerDashboard = (props) => {
                                 </Typography>
                                 <TextField onChange={(e) => {
                                     e.target.value === "" ? setRadius(0.0) : setRadius(parseFloat(e.target.value))
-                                }} variant="outlined" label="Radius" sx={{ width: "100%" }} />
+                                }} variant="outlined" label="Radius (in km)" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
 
@@ -632,7 +624,7 @@ const HikerDashboard = (props) => {
                                 <Typography className="unselectable" sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
                                     <b>Length</b>
                                 </Typography>
-                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{lengthStatic.toFixed(2)}km</Typography>
+                                <Typography className="unselectable" sx={{ fontSize: "18px", color: 'text.secondary' }}>{(lengthStatic.toFixed(2) / 1000).toFixed(2)}km</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Typography className="unselectable" sx={{ fontSize: "18px" }}>
@@ -640,7 +632,7 @@ const HikerDashboard = (props) => {
                                 </Typography>
                                 <TextField onChange={(e) => {
                                     e.target.value === "" ? setLength(0.0) : setLength(parseFloat(e.target.value))
-                                }} variant="outlined" label="Length" sx={{ width: "100%" }} />
+                                }} variant="outlined" label="Length (in meters)" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
 
@@ -657,7 +649,7 @@ const HikerDashboard = (props) => {
                                 </Typography>
                                 <TextField onChange={(e) => {
                                     e.target.value === "" ? setExpectedTime(0.0) : setExpectedTime(parseFloat(e.target.value))
-                                }} variant="outlined" label="Expected time" sx={{ width: "100%" }} />
+                                }} variant="outlined" label="Expected time (in minutes)" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
 
@@ -808,6 +800,7 @@ const FetchServiceManagement = (props) => {
     const map = useMap()
     useEffect(() => {
         map.flyTo([props.position.lat, props.position.lon], 11)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.position])
 }
 

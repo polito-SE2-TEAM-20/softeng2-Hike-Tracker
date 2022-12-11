@@ -1,15 +1,15 @@
 export const BEGINNER = {
-    'minRadius': 0.1,
-    'lengthOffset': 0.5,
-    'expectedTimeOffset': 15,
+    'minRadius': 40,
+    'lengthOffset': 1000,
+    'expectedTimeOffset': 30,
     'difficultyOffset' : 0,
-    'ascentOffset': 150
+    'ascentOffset': 200
 }
 
 export const ADVANCED = {
-    'minRadius': 0.1,
-    'lengthOffset': 1,
-    'expectedTimeOffset': 30,
+    'minRadius': 80,
+    'lengthOffset': 2000,
+    'expectedTimeOffset': 60,
     'difficultyOffset' : 1,
-    'ascentOffset': 300
+    'ascentOffset': 500
 }
