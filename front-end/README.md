@@ -144,3 +144,18 @@
 - andy@friends.com, friends - List of surveys: Scotland: a great country!
 - sibilla@gmail.com, sissisissi - List of surveys: empty
 - guest@guest.com, guestguest - List of surveys: empty
+
+- Email: provaMary@gmail.com, Password: qwertyMary (LOCAL GUIDE)
+- Email: provaMark@gmail.com, Password: qwertyMark (LOCAL GUIDE)
+- Email: provaMike@gmail.com, Password: qwertyMike (LOCAL GUIDE)
+- Email: vepapav822@cosaxu.com, Password: qwerty  (LOCAL GUIDE)
+
+- Email: cicicoco.1234@libero.it, Password: qwertyAndrea (HUT WORKER)
+- Email: xesica8246@covbase.com, Password: qwerty (HUT WORKER)
+- Email: docorix637@cnogs.com, Password: qwerty (HUT WORKER)
+
+
+- Email: provaAdam@gmail.com, Password: qwertyAdam (HIKER )
+- Email: provaPeter, Password: qwertyPeter (HIKER)
+- Email: premierensp@gmail.com, Password: qwerty (PLATFORM MANAGER)
+
