@@ -181,7 +181,7 @@ jobs:
           path: ~/softeng2-Hike-Tracker
       - run:
           name: Install deps
-          command: npm install
+          command: npm install --force
       - sonarcloud/scan
 workflows:
   demo-db:
