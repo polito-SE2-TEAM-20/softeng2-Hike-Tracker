@@ -1,5 +1,6 @@
 import { Grid, Paper } from "@mui/material";
-import Button from '../buttons/Button'
+import HTButton from '../buttons/Button'
+import {Button} from "@mui/material";
 import './httopfilter-style.css'
 import HTDropdown from './HTDropdown'
 import { useEffect, useState } from "react";
@@ -109,10 +110,14 @@ const HTTopBarFilterHike = (props) => {
                 <Grid item lg={12} xl={12} style={{ display: "flex", justifyContent: "center" }}>
                     <HTSlider value={asc} setFun={setAsc} max={maxAsc} text="Ascent" />
                 </Grid>
-
+                <Grid item lg={12} xl={12} style={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
+                    <Button fontSize="16px" variant="outlined" sx={{textTransform: "none", borderRadius: "28px", backgroundColor: props.isUserPrefHikes ? "blue" : "white", color: props.isUserPrefHikes ? "white" : "blue", "&:hover": {
+                        backgroundColor: "lightblue", color: "blue"
+                    }}} onClick={() => { props.setIsUserPrefHikes(!props.isUserPrefHikes) }}>Show hikes matching my preferences</Button>
+                </Grid>
                 <Grid lg={12} item style={{ display: "flex", justifyContent: "center" }}>
                     <Grid item>
-                        <Button text="Apply filters" size="16px" textColor="white" navigate={() => {
+                        <HTButton text="Apply filters" size="16px" textColor="white" navigate={() => {
                             props.setFilter(
                                 {
                                     "province": province === "" ? null : province,
@@ -130,7 +135,7 @@ const HTTopBarFilterHike = (props) => {
                         }} />
                     </Grid>
                     <Grid item style={{ marginLeft: "12px" }}>
-                        <Button text="Reset filters" size="16px" textColor="white" navigate={() => {
+                        <HTButton text="Reset filters" size="16px" textColor="white" navigate={() => {
                             resetAllFields();
                         }} />
                     </Grid>
@@ -161,13 +166,18 @@ const HTTopBarFilterHike = (props) => {
                 <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                     <HTSlider value={diff} setFun={setDiff} max={maxDiff} text="Difficulty" />
                 </Grid>
+                <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
+                    <Button fontSize="16px" variant="outlined" sx={{textTransform: "none", borderRadius: "28px", backgroundColor: props.isUserPrefHikes ? "blue" : "white", color: props.isUserPrefHikes ? "white" : "blue", "&:hover": {
+                        backgroundColor: "lightblue", color: "blue"
+                    }}} onClick={() => { props.setIsUserPrefHikes(!props.isUserPrefHikes) }}>Show hikes matching my preferences</Button>
+                </Grid>
                 <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                     <HTSlider value={asc} setFun={setAsc} max={maxAsc} text="Ascent" />
                 </Grid>
 
                 <Grid xs={12} sm={12} item style={{ display: "flex", justifyContent: "center" }}>
                     <Grid item>
-                        <Button text="Apply filters" size="16px" textColor="white" navigate={() => {
+                        <HTButton text="Apply filters" size="16px" textColor="white" navigate={() => {
                             props.setFilter(
                                 {
                                     "province": province === "" ? null : province,
@@ -185,7 +195,7 @@ const HTTopBarFilterHike = (props) => {
                         }} />
                     </Grid>
                     <Grid item style={{ marginLeft: "12px" }}>
-                        <Button text="Reset filters" size="16px" textColor="white" navigate={() => {
+                        <HTButton text="Reset filters" size="16px" textColor="white" navigate={() => {
                             resetAllFields();
                         }} />
                     </Grid>
@@ -219,10 +229,14 @@ const HTTopBarFilterHike = (props) => {
                 <Grid item md={12} sx={{ display: "flex", justifyContent: "center" }}>
                     <HTSlider value={asc} setFun={setAsc} max={maxAsc} text="Ascent" />
                 </Grid>
-
+                <Grid item md={12} sx={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
+                    <Button fontSize="16px" variant="outlined" sx={{textTransform: "none", borderRadius: "28px", backgroundColor: props.isUserPrefHikes ? "blue" : "white", color: props.isUserPrefHikes ? "white" : "blue", "&:hover": {
+                        backgroundColor: "lightblue", color: "blue"
+                    }}} onClick={() => { props.setIsUserPrefHikes(!props.isUserPrefHikes) }}>Show hikes matching my preferences</Button>
+                </Grid>
                 <Grid md={12} item style={{ display: "flex", justifyContent: "center" }}>
                     <Grid item>
-                        <Button text="Apply filters" size="16px" textColor="white" navigate={() => {
+                        <HTButton text="Apply filters" size="16px" textColor="white" navigate={() => {
                             props.setFilter(
                                 {
                                     "province": province === "" ? null : province,
@@ -240,7 +254,7 @@ const HTTopBarFilterHike = (props) => {
                         }} />
                     </Grid>
                     <Grid item style={{ marginLeft: "12px" }}>
-                        <Button text="Reset filters" size="16px" textColor="white" navigate={() => {
+                        <HTButton text="Reset filters" size="16px" textColor="white" navigate={() => {
                             resetAllFields();
                         }} />
                     </Grid>

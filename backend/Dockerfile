@@ -17,6 +17,7 @@ ADD . /srv
 RUN npm run build
 
 RUN mkdir -p /srv/uploads/gpx
+RUN mkdir -p /srv/uploads/images
 
 RUN chown -R node:node /srv/uploads
 

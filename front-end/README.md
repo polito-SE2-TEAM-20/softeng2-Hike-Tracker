@@ -1,70 +1,153 @@
-# Getting Started with Create React App
+# HackTheHike
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Team
+### s292447 Sagristano Vincenzo
+### s297925 Battipaglia Antonio
+### s300744 Gorodnev German
+### s303968 Zurru Laura
+### s296962 Grande Francesco
+### s301290 Gholami Erfan
 
-## Available Scripts
+## React Client Application Routes
 
-In the project directory, you can run:
+- Route `/`: main page in which, based on whether the user is logged in or not, there will be shown welcoming contents like suggested hikes or some information about the website.
+- Route `/listofhikes`: there is a page divided in two parts: a list of hikes (represented by means of cards) and a proper filter box.
+- Route `/listofhuts`: there is a page divided in two parts: a list of huts (represented by means of cards) and a proper filter box.
+- Route `/browsehikes`: there is a map containing all the markers for each hike. After clicking on a marker, an info box is displayed and clicking on its buttons it's possible to see more information about the hike or see its path on the map.
+- Route `/login`: in this page the user can log in by means of their credentials.
+- Route `/signup`: in this page, it's possible to sign up as a hiker, a local guide or a hut worker. An email is sent and, after having clicked on the link in the email, the administrator will be in charge of accepting either new local guides and new hut workers.
+- Route `/newHut`: here it's possible to create a new hut following a three-step procedure and selecting the location point on the map.
+- Route `/myHuts`: lists all the hut in which an hut worker works.
+- Route `/myHikes`: lists all the hikes created by a local guide.
+- Route `/showhike/:hikeid`: this page contains all the information about a single hike.
+- Route `/showhut/:hutid`: this page contains all the information about a single hut.
+- Route `/newParking`: here it's possible to create a new parking lot following a three-step procedure and selecting the location point on the map.
+- Route `/edithike/:hikeid`: in this page the local guide can edit all the information about their hike.
+- Route `/newHike`: here the user can create a new hike, filling the form with all the information related to the hike and uploading a GPX file containing all the points of the path.
+- Route `/hikerdashboard`: in this dashboard the hiker is able to set all their preferences such that the website will propose them the hikes that best fits their needings and tastes.
+- Route `/admindashboard`: in this dashboard the admin is able to accept the incoming requestes in order to complete the registration of local guides and hut workers.
+- Route `/hutWorkerHuts`: lists all the hut owned by the logged hut worker.
+- Route `/edithut/:hutid`: in this page the hut worker can edit all the information about their hut.
+- Route `/hutWorkerHuts/linkedHikes`: in this page there is a list of all the hikes linked to a certain hut in which the hut worker can edit all the conditions for each hike.
 
-### `npm start`
+## API Server
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- GET `/hikes`
+  - Request: empty
+  - Response: list of hikes
+- POST `/hikes/filteredHikes`
+  - Request: an object containing the filter
+  - Response: filtered list of hikes
+- GET `/hikes/:hikeID`
+  - Request: empty
+  - Response: an object containing all the information about a single hike
+- GET `/me/hikes`
+  - Request: empty
+  - Response: list of hikes inserted by a local guide identified by their auth token
+- GET `/:path`
+  - Request: empty
+  - Response: the gpxFile corresponding to the path indicated by the path parameter
+- POST `/huts/filter`
+  - Request: filter
+  - Response: filtered list of huts
+- GET `/huts/:hutID`
+  - Request: empty
+  - Response: an object containing all the information about a single hut
+- GET `/huts/mine`
+  - Request: empty
+  - Response: list of huts owned by the user based on the auth token 
+- POST `/hike-modification/hutsAndParkingLots`
+  - Request: radius
+  - Response: a list containing all the huts and the parking lots contained in the circumference
+- POST `/auth/login`
+  - Request: credentials
+  - Response: an object containing all the user information
+- GET `/auth/register`
+  - Request: credentials
+  - Response: an object containing all the user information
+- POST `/huts/createHut`
+  - Request: an object containing all the information about the hut inserted by the user
+  - Response: the hut object returned from the backend
+- POST `/parkingLot/insertLot`
+  - Request: an object containing all the information about the parking lot inserted by the user
+  - Response: the parking lot object returned from the backend
+- POST `/hikes/import`
+  - Request: a formdata object containing the gpx file to be uploaded
+  - Response: an object containing the track associated to the gpx file
+- PUT `/hikes/:hikeID`
+  - Request: an object containing the hike information
+  - Response: the information about whether the insertion has been completed successfully or not
+- GET `/auth/not_approved/local_guides`
+  - Request: empty
+  - Response: the list of not approved local guides
+- GET `/auth/not_approved/hut_workers`
+  - Request: empty
+  - Response: the list of not approved hut workers
+- PUT `/auth/approve_user`
+  - Request: the id of the user to be approved
+  - Response: the information about whether the insertion has been completed successfully or not
+- GET `/me/preferences`
+  - Request: empty
+  - Response: list of preferences associated to the user by their auth token
+- POST `/me/set_preferences`
+  - Request: an object containing all the preferences
+  - Response: the information about whether the insertion has been completed successfully or not
+- DELETE `/hikes/:hikeID`
+  - Request: the ID of an hike
+  - Response: a list containing all the rows affected by the deletion of the hike idetified by the hikeID in the request
+- GET `/huts/hutWorker/iWorkAt`
+  - Request: empty
+  - Response: list of all the huts in which the hut worker works
+- PUT `/hut/updateDescription/:hutID`
+  - Request: an object containing all the information about a hut to be updated
+  - Response: an object containing all the updated information abuot the hut specified by the hutID
+- PUT `/hikes/:hikeID`
+  - Request: an object containing all the indormation about a hike in order to edit start and ending point
+  - Response: an object containing the updated information about the hike identified by the hikeID
+- POST `/hikes/linkPoints`
+  - Request: an object containing the hikeID and a list containing all the linked points
+  - Response: an object containing all the hike details
+- GET `/hikes/hutWorkerHikes`
+  - Request: empty
+  - Response: list of all the updatable hikes based on the auth token of the logged user
+- PUT `/hikes/condition`
+  - Request: an object containing all the information about hikes conditions
+  - Response: an object containing the updated hike
+- POST `/hut-pictures`
+  - Request: an object containing the array of pictures to be added to the hut
+  - Response: the information about whether the insertion has been completed successfully or not
+- POST `/hut-pictures/:hutID/modify`
+  - Request: a list of strings containing the pathname of the images associated to the hut corresponding to the one identified by the hutID
+  - Response: the information about whether the insertion has been completed successfully or not
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Database Tables
 
-### `npm test`
+- Table `hikes` - hike info is stored here
+- Table `hike_points` - table connecting points to hikes
+- Table `hut-worker` - table connecting huts to users (workers)
+- Table `huts` - huts info
+- Table `parking_lots` - parking lots info
+- Table `points` - all geo coordinates are here, plain lat/lon/addresses, hut positions, parking lot positions, start/end points
+- Table `user_hike_track_points` - points tracked by users during hiking 
+- Table `user_hikes` - all hikes performed by users
+- Table `users` - users info
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Screenshot
 
-### `npm run build`
+![Screenshot](./src/extra/img.png)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Users Credentials
+- Email: provaMary@gmail.com, Password: qwertyMary (LOCAL GUIDE)
+- Email: provaMark@gmail.com, Password: qwertyMark (LOCAL GUIDE)
+- Email: provaMike@gmail.com, Password: qwertyMike (LOCAL GUIDE)
+- Email: vepapav822@cosaxu.com, Password: qwerty  (LOCAL GUIDE)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Email: cicicoco.1234@libero.it, Password: qwertyAndrea (HUT WORKER)
+- Email: xesica8246@covbase.com, Password: qwerty (HUT WORKER)
+- Email: docorix637@cnogs.com, Password: qwerty (HUT WORKER)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+- Email: provaAdam@gmail.com, Password: qwertyAdam (HIKER )
+- Email: provaPeter, Password: qwertyPeter (HIKER)
+- Email: premierensp@gmail.com, Password: qwerty (PLATFORM MANAGER)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)

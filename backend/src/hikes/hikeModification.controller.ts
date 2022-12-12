@@ -33,22 +33,27 @@ export class HikeModificationController {
       .andWhere('pl.userId = :userId', { userId });
 
     query1
+      .andWhere('p.id is not null')
       .andWhere(
         `ST_DWithin(ST_MakePoint(${lon}, ${lat}), p."position", ${radiusKms}*1000)`,
       )
-      .leftJoinAndMapOne('h.point', Point, 'p', 'p.id = h."pointId"')
+      .leftJoinAndMapOne('h.point', Point, 'p', 'p.id = h.pointId')
       .orderBy('h.id', 'DESC');
 
     query2
+      .andWhere('p.id is not null')
       .andWhere(
         `ST_DWithin(ST_MakePoint(${lon}, ${lat}), p."position", ${radiusKms}*1000)`,
       )
-      .leftJoinAndMapOne('pl.point', Point, 'p', 'p.id = pl."pointId"')
+      .leftJoinAndMapOne('pl.point', Point, 'p', 'p.id = pl.pointId')
       .orderBy('pl.id', 'DESC');
 
+    const huts = await query1.getMany();
+    const parkingLots = await query2.getMany();
+
     return {
-      huts: await query1.getMany(),
-      parkingLots: await query2.getMany(),
+      huts,
+      parkingLots,
     };
   }
 }

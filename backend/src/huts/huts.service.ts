@@ -10,7 +10,7 @@ import {
   orderEntities,
   Point,
   PointType,
-  User,
+  UserContext,
 } from '@app/common';
 
 import { CreateHutDto } from './huts.dto';
@@ -40,7 +40,11 @@ export class HutsService extends BaseService<Hut> {
     orderEntities(huts, ids, propEq('id'));
   }
 
-  async validatePermissions(hut: Hut, user: User): Promise<void> {
+  async getFullHut(id: ID, entityManager?: EntityManager): Promise<Hut> {
+    return await this.findByIdOrThrow(id, entityManager);
+  }
+
+  async validatePermissions(hut: Hut, user: UserContext): Promise<void> {
     if (hut.userId !== user.id) {
       throw new Error('Permissions error');
     }
@@ -49,29 +53,32 @@ export class HutsService extends BaseService<Hut> {
   /**
    * Create a new hut
    */
-  async createNewHut({ ...data }: CreateHutDto, userId: number): Promise<Hut> {
+  async createNewHut(
+    { location, ...data }: CreateHutDto,
+    userId: number,
+  ): Promise<Hut> {
+    if (!location) {
+      throw new Error('Location is required');
+    }
+
     //Create hut point
     const position: GPoint = {
       type: 'Point',
-      coordinates: [data.location!.lon, data.location!.lat],
+      coordinates: [location.lon, location.lat],
     };
 
     const point = await this.pointRepository.save({
       type: PointType.hut,
       position,
-      address: data.location?.address,
-      name: data.location?.name,
+      address: location.address,
+      name: location.name,
     });
 
     //Create a new hut in the DB
     const hut = await this.hutsRepository.save({
       userId,
-      title: data.title,
       pointId: point.id,
-      numberOfBeds: data.numberOfBeds,
-      price: data.price,
-      ownerName: data.ownerName,
-      website: data.website,
+      ...data,
     });
 
     //Return created hut

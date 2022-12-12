@@ -5,7 +5,8 @@
       "reqLogin": true,
       "role": [
         0,
-        2
+        2,
+        3
       ]
     },
     {
@@ -26,7 +27,7 @@
       "URL": "/listofhuts",
       "reqLogin": true,
       "role": [
-        0, 2
+        0, 2, 3, 4
       ]
     },
     {
@@ -58,7 +59,15 @@
       "URL": "/myhikes",
       "reqLogin": true,
       "role": [
-        -1
+        2
+      ]
+    },
+    {
+      "title": "My huts",
+      "URL": "/hutworkerhuts",
+      "reqLogin": true,
+      "role": [
+        4
       ]
     }
   ]
