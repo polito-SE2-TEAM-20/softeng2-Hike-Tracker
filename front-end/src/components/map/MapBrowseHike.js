@@ -48,7 +48,7 @@ export const MapBrowseHike = (props) => {
 
     const FlyToSelected = (props) => {
         const map = useMap()
-        if (props.index == -1)
+        if (props.index === -1)
             return;
         map.flyTo(props.dataset.filter(x => x.id == props.index)[0].positions[0], 14)
     }

@@ -90,18 +90,20 @@ const HTTopBarFilterHut = (props) => {
             <Grid container item xs={12} sm={12} columns={12} spacing={0} sx={{ display: displayTypeFlex.mobile }} style={{
                 borderStyle: "solid", borderColor: "#f2f2f2", width: "100vw", justifyContent: "center",
                 paddingTop: "15px", paddingBottom: "15px",
-                zIndex: "1", height: "30vh", marginTop: "25px", marginLeft: "auto", marginRight: "auto",
+                zIndex: "1", height: "40vh", marginTop: "25px", marginLeft: "auto", marginRight: "auto",
                 borderRadius: "8px", backgroundColor: "#fbfbfb"
             }}>
-                <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
-                    <HTSlider value={price} setFun={setPrice} max={maxPrice} text="Length" />
+                <Grid item xs={12} sm={12} style={{ display: "flex", justifyContent: "center" }}>
+                    <HTSlider value={price} setFun={setPrice} max={maxPrice} text="Price" />
                 </Grid>
-                <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
-                    <HTSlider value={numOfBeds} setFun={setNumOfBeds} max={maxNumOfBeds} text="Expected time" />
+                <Grid item xs={12} sm={12} style={{ display: "flex", justifyContent: "center" }}>
+                    <HTSlider value={numOfBeds} setFun={setNumOfBeds} max={maxNumOfBeds} text="Number of beds" />
                 </Grid>
-                <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
-                    <HTSlider value={altitude} setFun={setAltitude} max={maxAltitude} text="Altitude" />
-                </Grid>
+                {
+                    // <Grid item xs={12} sm={12} style={{ display: "flex", justifyContent: "center" }}>
+                    //     <HTSlider value={altitude} setFun={setAltitude} max={maxAltitude} text="Altitude" />
+                    // </Grid>
+                }
 
                 <Grid xs={12} sm={12} item style={{ display: "flex", justifyContent: "center" }}>
                     <Grid item>
@@ -133,15 +135,17 @@ const HTTopBarFilterHut = (props) => {
                 zIndex: "1", height: "40vh", marginTop: "25px", marginLeft: "auto", marginRight: "auto",
                 borderRadius: "8px", backgroundColor: "#fbfbfb"
             }}>
-                <Grid item md={12} sx={{ display: "flex", justifyContent: "center" }}>
-                    <HTSlider value={price} setFun={setPrice} max={maxPrice} text="Length" />
+                <Grid item md={12} style={{ display: "flex", justifyContent: "center" }}>
+                    <HTSlider value={price} setFun={setPrice} max={maxPrice} text="Price" />
                 </Grid>
-                <Grid item md={12} sx={{ display: "flex", justifyContent: "center" }}>
-                    <HTSlider value={numOfBeds} setFun={setNumOfBeds} max={maxNumOfBeds} text="Expected time" />
+                <Grid item md={12} style={{ display: "flex", justifyContent: "center" }}>
+                    <HTSlider value={numOfBeds} setFun={setNumOfBeds} max={maxNumOfBeds} text="Number of beds" />
                 </Grid>
-                <Grid item md={12} sx={{ display: "flex", justifyContent: "center" }}>
-                    <HTSlider value={altitude} setFun={setAltitude} max={maxAltitude} text="Altitude" />
-                </Grid>
+                {
+                    // <Grid item xs={12} sm={12} style={{ display: "flex", justifyContent: "center" }}>
+                    //     <HTSlider value={altitude} setFun={setAltitude} max={maxAltitude} text="Altitude" />
+                    // </Grid>
+                }
 
                 <Grid md={12} item style={{ display: "flex", justifyContent: "center" }}>
                     <Grid item>

@@ -2,15 +2,13 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-import { Button, Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import {FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import API from '../API/API.js';
-import { alignProperty } from '@mui/material/styles/cssUtils.js';
 
 function StartPointSelect(props) {
 
     return <>
       <FormControl fullWidth required>
-        <InputLabel id="demo-simple-select-label">Start Point</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-seimple-select"
@@ -51,15 +49,22 @@ function StartPointSelect(props) {
 function StartCoordinates(props) {
     console.log(props.startPointType)
 
-    if(props.startPointType===0){
+    if(props.startPointType===0 && props.positionsState.length!==0){
         props.setHutId(null);
         props.setParkingId(null);
        props.setStartPointLat(props.positionsState[0][0]);
+       console.log("set start point lat")
+       console.log(props.positionsState[0][0])
        props.setStartPointLon(props.positionsState[0][1]);
+       console.log("set start point lon")
+       console.log(props.positionsState[0][1])
+
        props.setStartPointAdd(props.information.display_name);
+       console.log("set start point address")
+       console.log(props.information.display_name)
     }
     return <>
-  <Grid item xs={12} sm={6}>
+  <Grid item xs={12} sm={12}>
                     <TextField
                       required id="startPointName"
                       name="startPointName" label="Start Point Name"
@@ -69,7 +74,7 @@ function StartCoordinates(props) {
                       onChange={(e) => props.setStartPointName(e.target.value)}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       id="startPointAdd"
                       name="startPointAdd" label="Start  Point Address"
@@ -78,7 +83,7 @@ function StartCoordinates(props) {
                       onChange={(e) => props.setStartPointAdd(e.target.value)}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       required
                       name="startPointLat"
@@ -90,7 +95,7 @@ function StartCoordinates(props) {
                       onChange={(e) => props.setStartPointLat(e.target.value)}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       required
                       name="startPointLon"
@@ -116,7 +121,7 @@ function StartHut(props) {
             props.setStartPointLat(null);
             props.setStartPointLon(null);
             var loh = []
-        let radiusPoint= {lon: parseFloat(props.positionsState[0][1]), lat: parseFloat(props.positionsState[0][0]), radiusKms:100}
+        let radiusPoint= {lon: parseFloat(props.positionsState[0][1]), lat: parseFloat(props.positionsState[0][0]), radiusKms:5}
         const getHutsPlot = async () => {
             loh = await API.getListOfHutsAndParkingLots(radiusPoint);
         }
@@ -132,7 +137,7 @@ function StartHut(props) {
     }, [])
 
     useEffect(() => {
-      if(props.hutId !== null || props.hutId !== ''){
+      if(props.hutId !== null && props.hutId !== ''){
           let element = listHuts.filter((el)=> el.id === props.hutId);
           console.log(element);
           console.log(element[0]?.point.address);
@@ -154,7 +159,7 @@ function StartHut(props) {
           name="hutId"
           variant="standard"
           label="Hut"
-          onChange={ev => props.setHutId(ev.target.value)}
+          onChange={ev => {props.setHutId(ev.target.value); props.setParkingId(null)}}
         >
             {
                 
@@ -163,32 +168,32 @@ function StartHut(props) {
                     return(
                         
             <MenuItem value={el.id} >
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={12}>
                     <TextField
                       name="hutName"
                       label="Hut name"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el.title}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       name="coordinates"
                       label="Coordinates"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el.point.position.coordinates}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       name="address"
                       label="Address"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el.point.address}
 
@@ -215,7 +220,7 @@ function StartParking(props) {
             props.setStartPointLat(null);
             props.setStartPointLon(null);
             var loh = []
-        let radiusPoint= {lon: parseFloat(props.positionsState[0][1]), lat: parseFloat(props.positionsState[0][0]), radiusKms:400}
+        let radiusPoint= {lon: parseFloat(props.positionsState[0][1]), lat: parseFloat(props.positionsState[0][0]), radiusKms:5}
         const getHutsPlot = async () => {
             loh = await API.getListOfHutsAndParkingLots(radiusPoint);
         }
@@ -229,14 +234,12 @@ function StartParking(props) {
     }, [])
 
     useEffect(() => {
-      if(props.parkingId !== null || props.parkingId!== ''){
+      if(props.parkingId !== null && props.parkingId!== ''){
           let element = listParking.filter((el)=> el.id === props.parkingId);
           console.log(element);
-          console.log(element[0]?.point?.address);
-          props.setStartPointAdd(element[0]?.point?.address);
-          props.setStartPointLat(element[0]?.point?.position.coordinates[0]);
-          props.setStartPointLon(element[0]?.point?.position.coordinates[1]);
-
+          console.log(element[0]?.point.address);
+          props.setStartPointAdd(element[0]?.point.address);
+          
       }
       
   }, [props.parkingId])
@@ -254,7 +257,7 @@ function StartParking(props) {
           name="parkingId"
           variant="standard"
           label="Parking"
-          onChange={ev => props.setParkingId(ev.target.value)}
+          onChange={ev => {props.setParkingId(ev.target.value); props.setHutId(null)}}
         >
             {
                 
@@ -262,33 +265,33 @@ function StartParking(props) {
                     return(
                         
             <MenuItem value={el?.id} >
-            <Grid item xs={12} sm={3}>
+            <Grid item xs={12} sm={12}>
                     <TextField
                       name="parkingName"
                       label="Parking name"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el?.point.name}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={3}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       name="spots"
                       label="Spots"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el?.maxCars}
                     />
                   </Grid>
 
-                  <Grid item xs={12} sm={3}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       name="address"
                       label="Address"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el.point.address}
 

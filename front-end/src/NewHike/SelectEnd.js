@@ -2,14 +2,13 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-import { Button, Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import {  FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import API from '../API/API.js';
 
 function EndPointSelect(props) {
 
     return <>
       <FormControl fullWidth required>
-        <InputLabel id="demo-simple-select-label">End Point</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-seimple-select"
@@ -50,16 +49,26 @@ function EndPointSelect(props) {
 function EndCoordinates(props) {
     console.log(props.endPointType)
 
-    if(props.endPointType===0){
+    if(props.endPointType===0 && props.positionsState.length!==0){
         props.setHutIdEnd(null);
         props.setParkingIdEnd(null);
         props.setEndPointLat(props.positionsState[props.positionsState.length - 1][0]);
+        console.log("set end point lat")
+        console.log(props.positionsState[props.positionsState.length - 1][0])
+        
         props.setEndPointLon(props.positionsState[props.positionsState.length - 1][1]);
+
+        console.log("set end point lon")
+        console.log(props.positionsState[props.positionsState.length - 1][1])
+
         props.setEndPointAdd(props.informationEnd.display_name);
+
+        console.log("set end point lat")
+        console.log(props.informationEnd.display_name)
 
     }
     return <>
-  <Grid item xs={12} sm={6}>
+  <Grid item xs={12} sm={12}>
                     <TextField
                       required id="endPointName"
                       name="endPointName" label="End Point Name"
@@ -69,7 +78,7 @@ function EndCoordinates(props) {
                       onChange={(e) => props.setEndPointName(e.target.value)}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       id="endPointAdd"
                       name="endPointAdd" label="End  Point Address"
@@ -78,7 +87,7 @@ function EndCoordinates(props) {
                       onChange={(e) => props.setEndPointAdd(e.target.value)}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       required
                       name="endPointLat"
@@ -90,7 +99,7 @@ function EndCoordinates(props) {
                       onChange={(e) => props.setEndPointLat(e.target.value)}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       required
                       name="endPointLon"
@@ -112,11 +121,11 @@ function EndHut(props) {
     const [listHuts, setListHuts] = useState([]);
 
     useEffect(() => {
-        if(props.startPointType===2){
+        if(props.endPointType===2){
             props.setEndPointLat(null);
             props.setEndPointLon(null);
             var loh = []
-        let radiusPoint= {lon: parseFloat(props.positionsState[props.positionsState.length - 1][1]), lat: (props.positionsState[props.positionsState.length - 1][0]), radiusKms:400}
+        let radiusPoint= {lon: parseFloat(props.positionsState[props.positionsState.length - 1][1]), lat: (props.positionsState[props.positionsState.length - 1][0]), radiusKms:5}
         const getHutsPlot = async () => {
             loh = await API.getListOfHutsAndParkingLots(radiusPoint);
         }
@@ -131,7 +140,7 @@ function EndHut(props) {
 
 
     useEffect(() => {
-        if(props.hutIdEnd !== null || props.hutIdEnd!== ''){
+        if(props.hutIdEnd !== null && props.hutIdEnd!== ''){
             let element = listHuts.filter((el)=> el.id === props.hutIdEnd);
             console.log(element);
             console.log(element[0]?.point.address);
@@ -153,7 +162,7 @@ function EndHut(props) {
           name="hutIdEnd"
           variant="standard"
           label="Hut"
-          onChange={ev => {props.setHutIdEnd(ev.target.value)}}
+          onChange={ev => {props.setHutIdEnd(ev.target.value); props.setParkingIdEnd(null)}}
         >
             {
                 listHuts.map((el) => { 
@@ -161,32 +170,32 @@ function EndHut(props) {
                     return(
                         
             <MenuItem value={el.id} >
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={12}>
                     <TextField
                       name="hutName"
                       label="Hut name"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el.title}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       name="coordinates"
                       label="Coordinates"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el.point.position.coordinates}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       name="address"
                       label="Address"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el.point.address}
                     />
@@ -207,12 +216,11 @@ function EndParking(props) {
     const [listParking, setListParking] = useState([]);
 
     useEffect(() => {
-        if(props.startPointType===1){
-            props.setEndPointAdd('');
+        if(props.endPointType===1){
             props.setEndPointLat(null);
             props.setEndPointLon(null);
             var loh = []
-        let radiusPoint= {lon: parseFloat(props.positionsState[props.positionsState.length - 1][1]), lat: parseFloat(props.positionsState[props.positionsState.length - 1][0]), radiusKms:400}
+        let radiusPoint= {lon: parseFloat(props.positionsState[props.positionsState.length - 1][1]), lat: parseFloat(props.positionsState[props.positionsState.length - 1][0]), radiusKms:5}
         const getHutsPlot = async () => {
             loh = await API.getListOfHutsAndParkingLots(radiusPoint);
         }
@@ -227,16 +235,14 @@ function EndParking(props) {
 
 
     useEffect(() => {
-        if(props.parkingIdEnd !== null || props.parkingIdEnd!== ''){
+        if(props.parkingIdEnd !== null && props.parkingIdEnd!== ''){
             let element = listParking.filter((el)=> el.id === props.parkingIdEnd);
             console.log(element);
-            console.log(element[0]?.point?.address);
-            props.setEndPointAdd(element[0]?.point?.address);
-            props.setEndPointLat(element[0]?.point?.position.coordinates[0]);
-            props.setEndPointLon(element[0]?.point?.position.coordinates[1]);
+            console.log(element[0]?.point.address);
+            props.setEndPointAdd(element[0]?.point.address);
 
         }
-    }, [props.parkingId])
+    }, [props.parkingIdEnd])
     
   
   return <>
@@ -248,44 +254,44 @@ function EndParking(props) {
           id="demo-seimple-select"
           value={props.parkingIdEnd}
           fullWidth
-          name="parkingId"
+          name="parkingIdEnd"
           variant="standard"
           label="Parking"
-          onChange={ev => props.setParkingIdEnd(ev.target.value)}
+          onChange={ev => {props.setParkingIdEnd(ev.target.value); props.setHutIdEnd(null)}}
         >
             {
                 listParking.map((el) => { 
                     return(
                         
             <MenuItem value={el.id} >
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={12}>
                     <TextField
                       name="parkingName"
                       label="Parking name"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el?.point.name}
                     />
                   </Grid>
 
-                  <Grid item xs={12} sm={3}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       name="spots"
                       label="Spots"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el?.maxCars}
                     />
                   </Grid>
 
-                  <Grid item xs={12} sm={3}>
+                  <Grid item xs={12} sm={12}>
                     <TextField
                       name="address"
                       label="Address"
                       fullWidth
-                      disabled
+                      //disabled
                       variant="standard"
                       value={el.point.address}
 

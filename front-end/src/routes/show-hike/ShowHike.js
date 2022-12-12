@@ -1,14 +1,18 @@
-import { Chip, Divider, Grid, Paper, Typography } from "@mui/material";
+import { Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Fab, Grid, Paper, Slide, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router";
 import { useMatch } from "react-router-dom";
 import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import touristIcon from '../../Assets/tourist-icon.png'
 import hikerIcon from '../../Assets/hiker-icon.png'
 import proIcon from '../../Assets/pro-icon.png'
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import API from '../../API/API.js';
 import { Skeleton } from "@mui/material";
 import {fromMinutesToHours} from '../../lib/common/FromMinutesToHours'
+import NavigationIcon from '@mui/icons-material/Navigation';
+import { UserHikeState } from "../../lib/common/Hike";
+import { Button } from "react-bootstrap";
+import { UserRoles } from "../../lib/common/UserRoles";
 
 const Difficulty = (props) => {
     if (!props.loading) {
@@ -58,6 +62,10 @@ const ShowHike = (props) => {
     const [hike, setHike] = useState({ title: "", description: "", region: "", province: "", length: "", expectedTime: "", ascent: "", difficulty: "" })
     const [loading, setLoading] = useState(true)
 
+    //Vars for Hike Tracking
+    const [showStartTrackError, setShowStartTrackError] = useState(false);
+    const [errorStartTrack, setErrorStartTrack] = useState(null);
+
     useEffect(() => {
         let tmpHike = { title: "", description: "", region: "", province: "", length: "", expectedTime: "", ascent: "", difficulty: -1 }
         const getHike = async () => {
@@ -74,11 +82,34 @@ const ShowHike = (props) => {
         navigate("/login", { replace: false })
     }
 
+    const handleStartTrackHiking = () => {
+        API.getAllUserTrackingHikes(UserHikeState.ACTIVE)
+            .then((activeHikeList) => {
+                //If the user doesn't have any active hike tracking, he can start a new one.
+                //Else we should show that which hike is active 
+                if (activeHikeList.length === 0) {
+                    navigate("/trackhike/" + hikeid)
+                } else {
+                    setErrorStartTrack("You have another active tracking, you should finish it before starting a new one.")
+                    setShowStartTrackError(true)
+                }
+            })
+            .catch((error) => {
+                setErrorStartTrack("Failed to get your active tracks, please try again.")
+                setShowStartTrackError(true)
+            })
+    }
+
+    const closeStartTrackErrorAction = () => {
+        setErrorStartTrack(null)
+        setShowStartTrackError(false)
+    }
+
     return (
-        <Grid container style={{ minHeight: "100vh", height: "100%" }}>
+        <Grid container flex style={{ minHeight: "100vh", height: "100%" }}>
             <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
             <Grid style={{ marginTop: "105px", marginLeft: "auto", marginRight: "auto", marginBottom: "25px", height: "40vh" }} item lg={3}>
-                <Paper style={{ padding: "30px", height: "50vh" }}>
+                <Paper style={{ padding: "30px" }}>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         <Typography variant="h4">General information</Typography>
                     </Grid>
@@ -122,6 +153,28 @@ const ShowHike = (props) => {
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
+
+                    <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
+                        <Chip label="Actions" />
+                    </Divider>
+
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        {
+                            (props.user?.role === UserRoles.HIKER) &&
+                            <Fab 
+                                variant="extended" 
+                                size="medium" 
+                                color="primary" 
+                                aria-label="start-navigaion"
+                                onClick={() => {
+                                    handleStartTrackHiking() 
+                                }}>
+                                <NavigationIcon />
+                                Start This Hike
+                            </Fab>
+                        }
+                    </Grid>
+
                 </Paper>
             </Grid>
             <Grid style={{ marginTop: "105px", marginLeft: "auto", marginRight: "auto", marginBottom: "25px", height: "80vh", paddingLeft: "25px", paddingRight: "25px" }} item lg={6}>
@@ -154,8 +207,44 @@ const ShowHike = (props) => {
                     }
                 </Grid>
             </Grid>
+            {
+                <ErrorDialog 
+                    message={errorStartTrack} 
+                    isOpen={showStartTrackError}
+                    closeAction={closeStartTrackErrorAction}/>
+            }
         </Grid>
     );
+}
+
+function ErrorDialog(props) {
+    const Transition = React.forwardRef(function Transition(props, ref) {
+        return <Slide direction="up" ref={ref} {...props} />;
+    });
+
+    return (
+        <Dialog
+            open={props.isOpen}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={props.closeAction}
+            aria-describedby="alert-dialog-slide-description">
+            {   
+                props.message !== null && 
+                <>
+                    <DialogTitle>{"Opppps!"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-slide-description">
+                            {props.message}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={props.closeAction}>OK!</Button>
+                    </DialogActions>
+                </>
+            }
+        </Dialog>
+    )
 }
 
 export default ShowHike;
