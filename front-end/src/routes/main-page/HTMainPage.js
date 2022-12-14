@@ -293,17 +293,39 @@ const HTMainPage = (props) => {
                                     className="unselectable"
                                     sx={{
                                         justifyContent: "center",
-                                        fontFamily: "Crimson Text, serif",
+                                        fontFamily: "Unbounded",
+                                        backgroundImage: "linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab)",
                                         fontWeight: 700,
                                         textAlign: "center",
-                                        color: '#EBC824',
+                                        color: 'transparent',
+                                        backgroundClip: "text",
+                                        backgroundSize: "400% 400%",
                                         textDecoration: 'none',
                                         marginTop: { xs: "-350px", sm: "-350px", md: "-300px", lg: "-300px", xl: "-300px" },
-                                        textShadow: "0 0 0.75rem black"
+                                        "@keyframes whereText": {
+                                            '0%': {
+                                                backgroundPosition: "0% 50%"
+                                            },
+                                            '25%': {
+                                                backgroundPosition: "30% 50%"
+                                            },
+                                            '50%': {
+                                                backgroundPosition: "100% 50%"
+                                            },
+                                            '75%': {
+                                                backgroundPosition: "30% 50%"
+                                            },
+                                            '100%': {
+                                                backgroundPosition: "0% 50%"
+                                            }
+                                        },
+                                        animationIterationCount: "infinite",
+                                        animationDuration: "15s",
+                                        animationName: "whereText"
                                     }}
                                     fontSize={{ xs: "60px", sm: "70px", md: "75px", lg: "60px", xl: "60px" }}
                                 >
-                                    where will your next adventure be?
+                                    Where will your next adventure be?
                                 </Typography>
                             </Grid>
                             <Grid item xs={2} sm={2} md={2} lg={2} xl={2} />
@@ -474,7 +496,7 @@ const HTMainPage = (props) => {
                 </Typography>
 
             </Grid>
-        </div>
+        </div >
     );
 }
 
