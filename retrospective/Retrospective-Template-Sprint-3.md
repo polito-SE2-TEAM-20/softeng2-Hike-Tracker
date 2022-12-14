@@ -34,33 +34,41 @@ sections:
 
 | Story  | # Tasks | Points | Hours est. | Hours actual |
 |--------|---------|--------|------------|--------------|
-| _#0_   |   8     |        |   12h30m   |   14h30m     |
+| _#0_   |   10    |        |   11h      |   10h30m     |
 | from issues                                           |
-|  #1    |   2     |   3    |    2h 15m  |   2h 15m     |
-|  #2    |   3     |   3    |     7h     |   8h         |
-|  #3    |   3     |   5    |     5h15m  |   5h 10m     |
+|  #2    |   2     |   3    |    25m     |   25m        |
 | Stories Done                                          |
-|  #4    |   2     |   5    |     4h     |   4h 20m     |
-|  #5    |   2     |   3    |     5h     |   11h 30m    |
-|  #6    |   3     |   5    |  6h 30m    |   11h        |
-|  #7    |   2     |   8    |     4h     |   4h 15m     |
+|  #8    |   1     |   8    |    1h15m   |   2h15m      |
+|  #9    |   2     |   8    |    2h30m   |   4h         |
+|  #33   |   1     |   8    |    2h      |   2h         |
+|  #10   |   2     |   8    |    4h30m   |   4h30m      |
+|  #11   |   2     |   5    |    2h30m   |   2h30m      |
+|  #31   |   2     |   3    |    30m     |   30m        |
+|  #32   |   4     |   5    |    5h      |   5h         |
+|  #12   |   2     |   3    |    30m     |   30m        |
+|  #13   |   4     |   5    |    4h      |   4h         |
+|  #14   |   4     |   5    |    6h30m   |   6h40m      |
+|  #30   |   3     |   3    |    6h      |   6h         |
+|  #15   |   5     |   3    |    6h5m    |   6h20m      |
+|  #16   |   2     |   5    |    4h15m   |   5h30m      |
+|  #17   |   2     |   13   |    5h      |   5h         |
+|  #18   |   2     |   5    |    5h      |   5h         |
 | stories committed but not done                        |
-|  #8    |   6     |   8    |     10h    |   9h 45m     |
-|  #9    |   3     |   8    |     4h     |   2h         |
-|  #33   |   4     |   8    |    7h30m   |   6h         |
-|  #10   |   2     |   8    |    4h30m   |   0h         |
+|  #19   |   2     |   5    |    4h30m   |   2h45m      |
    
+<!--90,30,60,60,45,90,15,10,60,45,90,90,75,90,60,120,120,150,60,90,15,15,120,30,60,90,15,15,60,30,60,90,150,60,120,60,150,60,150,80,120,45,150,30,135,120,150,150,150,150,150
+90,30,60,60,45,60,15,10,60,45,90,90,135,135,105,120,120,150,60,90,15,15,120,30,60,90,15,15,60,30,60,90,160,60,120,60,150,60,150,80,120,60,150,30,210,120,150,150,150,150,165 -->
 
 > place technical tasks corresponding to story `#0` and leave out story points (not applicable in this case)
 
 - Hours per task average, standard deviation (estimate and actual)
 
-    - hours estimated per task average: 2h 20m
-    - hours spent per task average: 2h 40m
-    - estimate standard deviation: 54m 
-    - average standard deviation: 1h 38m
+    - hours estimated per task average: 1h 24m
+    - hours spent per task average: 1h 27m
+    - estimate standard deviation: 45m 
+    - average standard deviation: 50m
 - Total task estimation error ratio: sum of total hours estimation / sum of total hours spent - 1
-    - 0.0155
+    - 0.0192
 
   
 ## QUALITY MEASURES 
@@ -77,6 +85,20 @@ sections:
 - Code review 
   - Total hours estimated: 2h
   - Total hours spent: 2h
+- Technical Debt management:
+  - Total hours estimated : 4h 30m
+  - Total hours spent: 4h
+  - Hours estimated for remediation by SonarQube: 6h 15m
+  - Hours estimated for remediation by SonarQube only for the selected and planned issues: 1h 15m
+  - Hours spent on remediation: 1h 15m
+  - debt ratio (as reported by SonarQube under "Measures-Maintainability"): 0.2% (Grade A)
+  - rating for each quality characteristic reported in SonarQube under "Measures" (namely reliability, security, maintainability )
+    - Reliability: A
+    - Security: A
+    - Security Review: A, 81.8% reviewed
+    - Maintainability: A, 0.2%
+    - Coverage: 84.4%
+    - Deplicates: 0.2% density 
 
 
 ## ASSESSMENT
