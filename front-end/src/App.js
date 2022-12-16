@@ -32,6 +32,7 @@ import HikerDashboard from './routes/hiker-dashboard/HikerDashboard';
 import AdminDashboard from './routes/admin-dashboard/AdminDashboard';
 import { TrackingHikePage } from './routes/TrackHike/TrackHikePage';
 import HTNavbar from './components/HTNavbar/HTNavbar';
+import { HikerHikesPage } from './routes/HikerHikes/HikerHikesPage';
 
 function App() {
   return (
@@ -139,6 +140,7 @@ function App2() {
         <Route path="/hutWorkerHuts/linkedHikes" element={<HikesLinked user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/trackhike/:hikeid" element={<TrackingHikePage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/modifyHikeCondition/:hikeid" element={<HikeCondition user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} updateHikeCondition={API.updateHikeCondition} />} />
+        <Route path="/hikerhikes" element={<HikerHikesPage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut}/>} />
 
 
       </Routes>
