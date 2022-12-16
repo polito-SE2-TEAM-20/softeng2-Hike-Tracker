@@ -1,4 +1,4 @@
-import { Grid, Switch, Typography, CircularProgress, Divider, FormControlLabel } from "@mui/material";
+import { Grid, Switch, Typography, CircularProgress, Divider, FormControlLabel, Chip } from "@mui/material";
 import { displayTypeFlex } from "../../extra/DisplayType";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import './admin-dashboard-style.css'
@@ -11,16 +11,17 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import GroupsIcon from '@mui/icons-material/Groups';
 import HTButton from "../../components/buttons/Button";
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
+import WeatherCard from "../../components/weather-card/WeatherCard";
 
 export const AdminDashboardPC = (props) => {
     return (
-        <Grid container columns={12} display={displayTypeFlex.pc} justifyContent="center" style={{ marginTop: "105px" }}>
+        <Grid container sx={{marginTop: "20px"}} columns={12} display={displayTypeFlex.pc} justifyContent="center">
             <Grid container item lg={2} xl={2} height="fit-content">
                 <Grid item lg={12} xl={12}>
                     <AccountCircleIcon sx={{ fontSize: 300 }} />
                 </Grid>
                 <Grid item lg={12} xl={12}>
-                    <Typography fontSize={32}>
+                    <Typography sx={{ fontFamily: "Unbounded" }} fontSize={32}>
                         <b>
                             {props?.user?.firstName + " " + props?.user?.lastName}
                         </b>
@@ -36,7 +37,7 @@ export const AdminDashboardPC = (props) => {
                         backgroundColor: "white", color: "purple", borderColor: "purple",
                         borderStyle: "solid", borderWidth: "1px",
                         borderRadius: "18px", width: "fit-content",
-                        padding: "4px 12px 4px 12px", fontFamily: "Bakbak One, display",
+                        padding: "4px 12px 4px 12px", fontFamily: "Unbounded",
                         fontWeight: "50"
                     }}>
                         <b>
@@ -48,6 +49,13 @@ export const AdminDashboardPC = (props) => {
                             {props?.user?.role === 5 ? "Emergency operator" : ""}
                         </b>
                     </Typography>
+                    <Divider sx={{ marginTop: "18px", marginBottom: "18px" }}>
+                        <Chip label="Add new weather condition" />
+                    </Divider>
+                    <Grid container item lg={12} xl={12} height="fit-content" sx={{ justifyContent: "left" }}>
+                        <WeatherCard type="map" text="Create weather alert for a location" />
+                        <WeatherCard type="hike" text="Create weather alert for a hike" />
+                    </Grid>
                 </Grid>
             </Grid>
             <Grid container item lg={8} xl={6} justifyContent="center" height="fit-content" sx={{ marginLeft: "25px", marginBottom: "35px" }}>
@@ -192,13 +200,13 @@ export const AdminDashboardPC = (props) => {
 
 export const AdminDashboardTABLET = (props) => {
     return (
-        <Grid container columns={12} display={displayTypeFlex.tablet} justifyContent="center" style={{ marginTop: "105px" }}>
+        <Grid container sx={{marginTop: "20px"}} columns={12} display={displayTypeFlex.tablet} justifyContent="center">
             <Grid container item md={12} height="fit-content" display="flex" justifyContent="center">
                 <Grid item md={12} display="flex" justifyContent="center">
                     <AccountCircleIcon sx={{ fontSize: 120 }} />
                 </Grid>
                 <Grid item md={12} display="flex" justifyContent="center">
-                    <Typography fontSize={32} display="flex" justifyContent="center">
+                    <Typography sx={{ fontFamily: "Unbounded" }} fontSize={32} display="flex" justifyContent="center">
                         <b>
                             {props?.user?.firstName + " " + props?.user?.lastName}
                         </b>
@@ -214,7 +222,7 @@ export const AdminDashboardTABLET = (props) => {
                         backgroundColor: "white", color: "purple", borderColor: "purple",
                         borderStyle: "solid", borderWidth: "1px",
                         borderRadius: "18px", width: "fit-content",
-                        padding: "4px 12px 4px 12px", fontFamily: "Bakbak One, display",
+                        padding: "4px 12px 4px 12px", fontFamily: "Unbounded",
                         fontWeight: "50"
                     }}>
                         <b>
@@ -226,6 +234,13 @@ export const AdminDashboardTABLET = (props) => {
                             {props?.user?.role === 5 ? "Emergency operator" : ""}
                         </b>
                     </Typography>
+                </Grid>
+                <Divider sx={{ marginTop: "18px", marginBottom: "18px" }}>
+                    <Chip label="Add new weather condition" />
+                </Divider>
+                <Grid container item md={10} height="fit-content" sx={{ justifyContent: "center" }}>
+                    <WeatherCard type="map" text="Create weather alert for a location" />
+                    <WeatherCard type="hike" text="Create weather alert for a hike" />
                 </Grid>
             </Grid>
             <Grid container item md={9} justifyContent="center" height="fit-content" sx={{ marginLeft: "auto", marginRight: "auto", marginBottom: "35px", marginTop: "25px" }}>
@@ -348,10 +363,7 @@ export const AdminDashboardTABLET = (props) => {
                                                         <Typography><b>Email</b>: {request.email}</Typography>
                                                     </Grid>
                                                     <Grid item md={12} sx={{ display: "flex", justifyContent: "right" }}>
-                                                        {/* <div style={{ marginRight: "24px" }}> */}
                                                         <HTButton navigate={() => { props.acceptUser(request.id) }} text="Accept" textSize="18px" textColor="white" color="#33aa33" />
-                                                        {/* </div> */}
-                                                        {/* <HTButton text="Reject" textSize="18px" textColor="white" color="#aa3333" /> */}
                                                     </Grid>
                                                 </Grid>
                                             </AccordionDetails>
@@ -370,13 +382,13 @@ export const AdminDashboardTABLET = (props) => {
 
 export const AdminDashboardMOBILE = (props) => {
     return (
-        <Grid container columns={12} display={displayTypeFlex.mobile} justifyContent="center" style={{ marginTop: "75px" }}>
+        <Grid container sx={{marginTop: "20px"}} columns={12} display={displayTypeFlex.mobile} justifyContent="center">
             <Grid container item xs={12} sm={12} height="fit-content" display="flex" justifyContent="center">
                 <Grid item xs={12} sm={12} display="flex" justifyContent="center">
                     <AccountCircleIcon sx={{ fontSize: 120 }} />
                 </Grid>
                 <Grid item xs={12} sm={12} display="flex" justifyContent="center">
-                    <Typography fontSize={32} display="flex" justifyContent="center">
+                    <Typography sx={{ fontFamily: "Unbounded" }} fontSize={32} display="flex" justifyContent="center">
                         <b>
                             {props?.user?.firstName + " " + props?.user?.lastName}
                         </b>
@@ -392,7 +404,7 @@ export const AdminDashboardMOBILE = (props) => {
                         backgroundColor: "white", color: "purple", borderColor: "purple",
                         borderStyle: "solid", borderWidth: "1px",
                         borderRadius: "18px", width: "fit-content",
-                        padding: "4px 12px 4px 12px", fontFamily: "Bakbak One, display",
+                        padding: "4px 12px 4px 12px", fontFamily: "Unbounded",
                         fontWeight: "50"
                     }}>
                         <b>
@@ -404,6 +416,13 @@ export const AdminDashboardMOBILE = (props) => {
                             {props?.user?.role === 5 ? "Emergency operator" : ""}
                         </b>
                     </Typography>
+                </Grid>
+                <Divider sx={{ marginTop: "18px", marginBottom: "18px" }}>
+                    <Chip label="Add new weather condition" />
+                </Divider>
+                <Grid container item xs={10} sm={10} height="fit-content" sx={{ justifyContent: "center" }}>
+                    <WeatherCard type="map" text="Create weather alert for a location" />
+                    <WeatherCard type="hike" text="Create weather alert for a hike" />
                 </Grid>
             </Grid>
             <Grid container item xs={10} justifyContent="center" height="fit-content" sx={{ marginBottom: "35px", marginTop: "18px" }}>

@@ -165,9 +165,7 @@ const EditHut = (props) => {
     return (
         <>
             <Grid container style={{ minHeight: "100vh", height: "100%" }}>
-                <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
-
-                <Grid style={{ marginTop: "105px", marginLeft: "auto", marginRight: "auto", marginBottom: "400px", height: "40vh" }} item lg={3}>
+                <Grid style={{ marginLeft: "auto", marginRight: "auto", marginBottom: "400px", height: "40vh" }} item lg={3}>
                     {
                         op &&
                         <PopupModifyHut id={hutid} err={err} open={op} setOpen={setOp} />
@@ -308,10 +306,10 @@ const EditHut = (props) => {
                     </Paper>
                 </Grid>
 
-                <Grid style={{ marginTop: "105px", marginLeft: "auto", marginRight: "auto", marginBottom: "25px", height: "80vh", paddingLeft: "25px", paddingRight: "25px" }} item lg={6}>
+                <Grid style={{ marginLeft: "auto", marginRight: "auto", marginBottom: "25px", height: "80vh", paddingLeft: "25px", paddingRight: "25px" }} item lg={6}>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
                         {
-                            !loading ? <Typography variant="h2">{hut.title}</Typography> :
+                            !loading ? <Typography variant="h2" sx={{fontFamily: "Unbounded"}}>{hut.title}</Typography> :
                                 <Skeleton variant='rectangular' height={50} width={600} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>

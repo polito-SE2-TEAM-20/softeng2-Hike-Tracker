@@ -671,7 +671,6 @@ function EditHikePage(props) {
 
     return (
         <React.Fragment>
-            <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} />
             {
                 <PopupEditHike id={hikeId} err={err} open={open} setOpen={setOpen} />
             }

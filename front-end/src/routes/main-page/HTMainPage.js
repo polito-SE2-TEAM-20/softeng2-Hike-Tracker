@@ -13,6 +13,7 @@ import API from "../../API/API";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@mui/material";
 import HikeCard from "../../components/hike-card/HikeCard";
+import { UserRoles } from '../../lib/common/UserRoles'
 
 const HikeLoading = () => {
     return (
@@ -57,15 +58,14 @@ const HTMainPage = (props) => {
     return (
         <div style={{ backgroundColor: "#1a1a1a", height: "100%", minHeight: "100vh", paddingBottom: "5px" }}>
             <Grid columns={12} container spacing={0} style={{ height: "fit-content" }}>
-                <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} navigate={props.navigate} />
                 {
-                    props.isLoggedIn && props?.user?.role === 0 ?
+                    props.isLoggedIn && props?.user?.role === UserRoles.HIKER ?
                         <>
                             <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} columns={12} >
                                 <Grid container item xs={0} sm={0} md={4} lg={4} xl={4} width="fit-content">
                                     <Grid item display={{ xs: "none", sm: "none", md: "flex", lg: "flex", xl: "flex" }}>
                                         <CardMedia component="img"
-                                            style={{ objectFit: "cover", height: "100vh", marginTop: "25px" }}
+                                            style={{ objectFit: "cover", height: "100vh"     }}
                                             image={asidePicture}
                                             alt="Paella dish">
                                         </CardMedia>
@@ -293,17 +293,39 @@ const HTMainPage = (props) => {
                                     className="unselectable"
                                     sx={{
                                         justifyContent: "center",
-                                        fontFamily: "Crimson Text, serif",
+                                        fontFamily: "Unbounded",
+                                        backgroundImage: "linear-gradient(-45deg, yellow, pink, orange, blue)",
                                         fontWeight: 700,
                                         textAlign: "center",
-                                        color: '#EBC824',
+                                        color: 'transparent',
+                                        backgroundClip: "text",
+                                        backgroundSize: "400% 400%",
                                         textDecoration: 'none',
                                         marginTop: { xs: "-350px", sm: "-350px", md: "-300px", lg: "-300px", xl: "-300px" },
-                                        textShadow: "0 0 0.75rem black"
+                                        "@keyframes whereText": {
+                                            '0%': {
+                                                backgroundPosition: "0% 50%"
+                                            },
+                                            '25%': {
+                                                backgroundPosition: "30% 50%"
+                                            },
+                                            '50%': {
+                                                backgroundPosition: "100% 50%"
+                                            },
+                                            '75%': {
+                                                backgroundPosition: "30% 50%"
+                                            },
+                                            '100%': {
+                                                backgroundPosition: "0% 50%"
+                                            }
+                                        },
+                                        animationIterationCount: "infinite",
+                                        animationDuration: "15s",
+                                        animationName: "whereText"
                                     }}
                                     fontSize={{ xs: "60px", sm: "70px", md: "75px", lg: "60px", xl: "60px" }}
                                 >
-                                    where will your next adventure be?
+                                    Where will your next adventure be?
                                 </Typography>
                             </Grid>
                             <Grid item xs={2} sm={2} md={2} lg={2} xl={2} />
@@ -474,7 +496,7 @@ const HTMainPage = (props) => {
                 </Typography>
 
             </Grid>
-        </div>
+        </div >
     );
 }
 
