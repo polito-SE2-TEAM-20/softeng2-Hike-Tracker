@@ -15,6 +15,16 @@ function TrackingHikePage(props) {
     const match = useMatch('/trackhike/:hikeid')
     const hikeId = match.params.hikeid ? match.params.hikeid : -1;
 
+
+    const [hikeDetails, setHikeDetails] = useState(null)
+    const [hikeGpx, setHikeGpx] = useState(null)
+    const [hikePositions, setHikePositions] = useState(null)
+
+    const [isLoading, setLoading] = useState(false);
+    const [hasErrorOnLoad, setHasErrorOnLoad] = useState(false);
+    const [errorOnLoad, setErrorOnLoad] = useState(null);
+
+
     const [currentLocation, setCurrentLocation] = useState(null);
     const [trackingState, setTrackingState] = useState(TrackingState.NOT_STARTED);
     const [trackHasBeenStarted, setTrackHasBeenStarted] = useState(false);
@@ -50,8 +60,38 @@ function TrackingHikePage(props) {
     }
 
     useEffect(() => {
-        checkLocationAccess()
+
+        const getHikeDetails = async () => {
+            const details = await API.getSingleHikeByID(hikeId);
+            if (details) {
+                const gpxFile = await API.getPathByID(details.gpxPath)
+    
+                if (gpxFile) {
+                    setHikeDetails(details)
+                    setHikeGpx(gpxFile)
+                    setLoading(false);
+                    checkLocationAccess();
+                } else {
+                    setLoading(false)
+                    setHasErrorOnLoad(true);
+                    setErrorOnLoad("Failed to get hike details. Please try again.")
+                }
+            } else {
+                setLoading(false)
+                setHasErrorOnLoad(true);
+                setErrorOnLoad("Failed to get hike details. Please try again.")
+            }
+        
+        }
+
+        getHikeDetails()
     }, [])
+
+    useEffect(() => {
+        if(hikeGpx, hikeDetails) {
+            parseGpxFile()
+        }
+    }, [hikeGpx, hikeDetails])
 
     useEffect(() => {
 
@@ -87,6 +127,17 @@ function TrackingHikePage(props) {
         }
         
     }, [trackingState])
+
+    const parseGpxFile = () => {
+        //#region GPX parsing
+        let gpxParser = require('gpxparser');
+        var gpx = new gpxParser();
+        gpx.parse(hikeGpx);
+        const positions = gpx.tracks[0].points.map(p => [p.lat, p.lon]);
+
+        setHikePositions(positions);
+        //#endregion
+    }
 
     const startTrackingAction = () => {
         if (!trackHasBeenStarted) {
@@ -136,19 +187,18 @@ function TrackingHikePage(props) {
                         style={{ height: "60vh" }}
                         flex
                         center={
-                            currentLocation ? [currentLocation.coords.latitude,
-                                currentLocation.coords.longitude] :
-                                [45.4408474, 12.3155151]
+                            (hikePositions !== null && hikePositions.length > 0) ? hikePositions[0] :[45.4408474, 12.3155151]
                         }
                         zoom={13}
                         scrollWheelZoom={{ xs: false, sm: false, md: false, lg: true, xl: true }} zoomControl={true}>
                         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                        <Polyline
-                            pathOptions={{ fillColor: 'red', color: 'blue' }}
-                            // positions={recordedGpsLocations.map((location) => {
-                            //     return [location.coords.latitude, location.coords.longitude]
-                            // })}
-                        />
+                        {
+                            (hikePositions !== null && hikePositions.length > 0) &&
+                            <Polyline
+                                pathOptions={{ fillColor: 'red', color: 'blue' }}
+                                positions={hikePositions}
+                            />
+                        }
                         {
                             //Current location
                             (trackHasBeenStarted && !trackHasBeenFinished && currentLocation) &&
@@ -166,9 +216,9 @@ function TrackingHikePage(props) {
                         }
 
                         {
-                            currentLocation !== null &&
+                            (hikePositions !== null && hikePositions.length > 0)  &&
                             <MapFlyTracker
-                                location={currentLocation}>
+                                location={hikePositions[0]}>
 
                             </MapFlyTracker>
                         }
@@ -206,8 +256,10 @@ function TrackingHikePage(props) {
 function MapFlyTracker(props) {
     const map = useMap()
     useEffect(() => {
-        map.flyTo([props.location.coords.latitude,
-            props.location.coords.longitude], 17)
+        
+        // map.flyTo([props.location.coords.latitude,
+        //     props.location.coords.longitude], 17)
+        map.flyTo(props.location, 17)
     }, [props.location])
 }
 
