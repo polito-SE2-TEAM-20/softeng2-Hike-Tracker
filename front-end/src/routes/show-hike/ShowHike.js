@@ -1,7 +1,6 @@
 import { Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Fab, Grid, Paper, Slide, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router";
 import { useMatch } from "react-router-dom";
-import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import touristIcon from '../../Assets/tourist-icon.png'
 import hikerIcon from '../../Assets/hiker-icon.png'
 import proIcon from '../../Assets/pro-icon.png'
@@ -107,8 +106,7 @@ const ShowHike = (props) => {
 
     return (
         <Grid container flex style={{ minHeight: "100vh", height: "100%" }}>
-            <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
-            <Grid style={{ marginTop: "105px", marginLeft: "auto", marginRight: "auto", marginBottom: "25px", height: "40vh" }} item lg={3}>
+            <Grid style={{ marginTop: "50px", marginLeft: "auto", marginRight: "auto", marginBottom: "25px", height: "55vh" }} item lg={3}>
                 <Paper style={{ padding: "30px" }}>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         <Typography variant="h4">General information</Typography>
@@ -179,7 +177,7 @@ const ShowHike = (props) => {
 
                 </Paper>
             </Grid>
-            <Grid style={{ marginTop: "105px", marginLeft: "auto", marginRight: "auto", marginBottom: "25px", height: "80vh", paddingLeft: "25px", paddingRight: "25px" }} item lg={6}>
+            <Grid style={{ marginTop: "50px", marginLeft: "auto", marginRight: "auto", marginBottom: "25px", height: "80vh", paddingLeft: "25px", paddingRight: "25px" }} item lg={6}>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
                     {
                         !loading ? <Typography variant="h2" sx={{ fontFamily: "Unbounded" }}>{hike.title}</Typography> :

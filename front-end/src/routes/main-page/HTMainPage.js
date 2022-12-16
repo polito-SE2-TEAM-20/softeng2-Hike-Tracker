@@ -13,6 +13,7 @@ import API from "../../API/API";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@mui/material";
 import HikeCard from "../../components/hike-card/HikeCard";
+import { UserRoles } from '../../lib/common/UserRoles'
 
 const HikeLoading = () => {
     return (
@@ -57,15 +58,14 @@ const HTMainPage = (props) => {
     return (
         <div style={{ backgroundColor: "#1a1a1a", height: "100%", minHeight: "100vh", paddingBottom: "5px" }}>
             <Grid columns={12} container spacing={0} style={{ height: "fit-content" }}>
-                <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} navigate={props.navigate} />
                 {
-                    props.isLoggedIn && props?.user?.role === 0 ?
+                    props.isLoggedIn && props?.user?.role === UserRoles.HIKER ?
                         <>
                             <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} columns={12} >
                                 <Grid container item xs={0} sm={0} md={4} lg={4} xl={4} width="fit-content">
                                     <Grid item display={{ xs: "none", sm: "none", md: "flex", lg: "flex", xl: "flex" }}>
                                         <CardMedia component="img"
-                                            style={{ objectFit: "cover", height: "100vh", marginTop: "25px" }}
+                                            style={{ objectFit: "cover", height: "100vh"     }}
                                             image={asidePicture}
                                             alt="Paella dish">
                                         </CardMedia>

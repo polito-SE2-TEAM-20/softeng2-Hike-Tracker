@@ -79,8 +79,6 @@ const navigate = useNavigate();
     }
     return (
         <Grid container style={{ minHeight: "100vh", height: "100%" }}>
-
-            <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
             {
                 <PopupEditCondition id={hikeId} err={err} open={open} setOpen={setOpen} />
             }

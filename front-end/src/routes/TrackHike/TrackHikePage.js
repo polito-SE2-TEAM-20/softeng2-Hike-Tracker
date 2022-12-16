@@ -127,8 +127,6 @@ function TrackingHikePage(props) {
 
     return (
         <>
-            <HTNavbar item user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} />
-
             <Grid
                 container
                 display="column"

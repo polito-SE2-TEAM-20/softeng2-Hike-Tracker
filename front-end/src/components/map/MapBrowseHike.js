@@ -67,10 +67,10 @@ export const MapBrowseHike = (props) => {
     }
 
     return (
-        <div style={{ marginTop: "0px" }}>
+        <div>
             <MapContainer center={clickedCenter} zoom={9}
                 scrollWheelZoom={{ xs: false, sm: false, md: false, lg: true, xl: true }} zoomControl={false}
-                style={{ width: "auto", minHeight: "100vh", height: "100%" }}>
+                style={{ width: "auto", minHeight: "85vh", height: "85%" }}>
                 <FeatureGroup>
                     <EditControl position="bottomright" draw={{
                         rectangle: false,

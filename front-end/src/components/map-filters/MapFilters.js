@@ -90,7 +90,7 @@ const MapFilters = (props) => {
             {/**
             * PC
             */}
-            <Paper elevation={5} sx={{ display: displayTypeFlex.pc }} style={{ width: "300px", height: "fit-content", borderRadius: "25px", backgroundColor: "#ffffff", marginTop: "105px", marginLeft: "15px", padding: "25px", zIndex: "15", position: "fixed" }}>
+            <Paper elevation={5} sx={{ display: displayTypeFlex.pc }} style={{ width: "300px", height: "fit-content", borderRadius: "25px", backgroundColor: "#ffffff", marginLeft: "15px", padding: "25px", zIndex: "15", position: "fixed" }}>
                 <Grid zeroMinWidth columns={12} container spacing={1} >
                     <Grid item sx={{display: "flex", justifyContent: "left"}} md={6} lg={6} xl={6}>
                         <Chip variant={region === "" ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenRegion(true) }} label="Region" clickable />
@@ -144,7 +144,7 @@ const MapFilters = (props) => {
             {/**
             * TABLET
             */}
-            <Paper elevation={5} sx={{ display: displayTypeFlex.tablet }} style={{ width: "300px", height: "fit-content", borderRadius: "25px", backgroundColor: "#ffffff", marginTop: "105px", marginLeft: "15px", padding: "25px", zIndex: "15", position: "fixed" }}>
+            <Paper elevation={5} sx={{ display: displayTypeFlex.tablet }} style={{ width: "300px", height: "fit-content", borderRadius: "25px", backgroundColor: "#ffffff", marginLeft: "15px", padding: "25px", zIndex: "15", position: "fixed" }}>
                 <Grid zeroMinWidth columns={12} container spacing={1}>
                     <Grid item sx={{display: "flex", justifyContent: "left"}} md={6} lg={6} xl={6}>
                         <Chip variant={region === "" ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenRegion(true) }} label="Region" clickable />
@@ -198,7 +198,7 @@ const MapFilters = (props) => {
             {/**
             * MOBILE
             */}
-            <Paper elevation={5} sx={{ display: displayTypeFlex.mobile }} style={{ width: "100%", height: "200px", backgroundColor: "#ffffff", marginTop: "55px", marginLeft: "auto", marginRight: "auto", padding: "25px", zIndex: "15", position: "fixed" }}>
+            <Paper elevation={5} sx={{ display: displayTypeFlex.mobile }} style={{ width: "100%", height: "200px", backgroundColor: "#ffffff", marginLeft: "auto", marginRight: "auto", padding: "25px", zIndex: "15", position: "fixed" }}>
                 <Grid zeroMinWidth container spacing={1} direction="row">
                     <Grid item xs={3}>
                         <Chip variant={region === "" ? chipVariants[0] : chipVariants[1]} onClick={() => { setOpenRegion(true) }} label="Region" clickable />

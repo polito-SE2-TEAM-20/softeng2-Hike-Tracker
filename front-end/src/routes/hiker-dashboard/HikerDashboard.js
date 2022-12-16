@@ -53,7 +53,7 @@ const HikerDashboard = (props) => {
                 setSuggestionType(tmpPref.suggestionType)
             }
         })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const handlePreferencesUpdate = () => {
@@ -102,8 +102,7 @@ const HikerDashboard = (props) => {
 
     return (
         <>
-            <HTNavbar user={props?.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
-            <Grid container columns={12} display={displayTypeFlex.pc} style={{ marginTop: "105px", marginBottom: "50px", justifyContent: "center" }}>
+            <Grid sx={{ marginTop: "20px" }} container columns={12} display={displayTypeFlex.pc} style={{ marginBottom: "50px", justifyContent: "center" }}>
                 <Grid container item xl={2} lg={3} height="fit-content">
                     <Grid item lg={12} xl={12}>
                         <AccountCircleIcon sx={{ fontSize: 300 }} />
@@ -315,24 +314,24 @@ const HikerDashboard = (props) => {
                 </Grid>
             </Grid>
 
-            <Grid container columns={12} display={displayTypeFlex.tablet} style={{ marginTop: "105px", marginBottom: "50px" }}>
+            <Grid container sx={{ marginTop: "20px" }} columns={12} display={displayTypeFlex.tablet} style={{ marginBottom: "50px" }}>
                 <Grid container item md={12} height="fit-content">
-                    <Grid item md={12} sx={{display: "flex", justifyContent: "center"}}>
+                    <Grid item md={12} sx={{ display: "flex", justifyContent: "center" }}>
                         <AccountCircleIcon sx={{ fontSize: 300 }} />
                     </Grid>
-                    <Grid item md={12} sx={{display: "flex", justifyContent: "center"}}>
+                    <Grid item md={12} sx={{ display: "flex", justifyContent: "center" }}>
                         <Typography fontSize={32}>
                             <b>
                                 {props?.user?.firstName + " " + props?.user?.lastName}
                             </b>
                         </Typography>
                     </Grid>
-                    <Grid item md={12} sx={{display: "flex", justifyContent: "center"}}>
+                    <Grid item md={12} sx={{ display: "flex", justifyContent: "center" }}>
                         <Typography fontSize={20} color="#666666">
                             {props?.user?.email}
                         </Typography>
                     </Grid>
-                    <Grid item md={12} sx={{ marginTop: "12px", display: "flex", justifyContent: "center"}}>
+                    <Grid item md={12} sx={{ marginTop: "12px", display: "flex", justifyContent: "center" }}>
                         <Typography className="unselectable" fontSize={18} sx={{
                             backgroundColor: "white", color: "purple", borderStyle: "solid",
                             borderWidth: "1px", borderRadius: "18px", width: "fit-content", padding: "4px 12px 4px 12px",
@@ -349,8 +348,8 @@ const HikerDashboard = (props) => {
                         </Typography>
                     </Grid>
                 </Grid>
-                <Grid container item md={12} height="fit-content" justifyContent="center" sx={{ marginLeft: "25px",marginRight: "25px", marginTop: "25px" }}>
-                    <Grid md={12} sx={{display: "flex", justifyContent: "center"}}>
+                <Grid container item md={12} height="fit-content" justifyContent="center" sx={{ marginLeft: "25px", marginRight: "25px", marginTop: "25px" }}>
+                    <Grid md={12} sx={{ display: "flex", justifyContent: "center" }}>
                         <Typography className="unselectable" fontSize={32}>
                             <b>Preferences</b>
                         </Typography>
@@ -527,24 +526,24 @@ const HikerDashboard = (props) => {
                 </Grid>
             </Grid>
 
-            <Grid container columns={12} display={displayTypeFlex.mobile} style={{ marginTop: "105px", marginBottom: "50px" }}>
+            <Grid container sx={{ marginTop: "20px" }} columns={12} display={displayTypeFlex.mobile} style={{ marginBottom: "50px" }}>
                 <Grid container item xs={12} sm={12} height="fit-content">
-                    <Grid item xs={12} sm={12} sx={{display: "flex", justifyContent: "center"}}>
+                    <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                         <AccountCircleIcon sx={{ fontSize: 300 }} />
                     </Grid>
-                    <Grid item xs={12} sm={12} sx={{display: "flex", justifyContent: "center"}}>
+                    <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                         <Typography fontSize={32}>
                             <b>
                                 {props?.user?.firstName + " " + props?.user?.lastName}
                             </b>
                         </Typography>
                     </Grid>
-                    <Grid item xs={12} sm={12} sx={{display: "flex", justifyContent: "center"}}>
+                    <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                         <Typography fontSize={20} color="#666666">
                             {props?.user?.email}
                         </Typography>
                     </Grid>
-                    <Grid item xs={12} sm={12} sx={{ marginTop: "12px", display: "flex", justifyContent: "center"}}>
+                    <Grid item xs={12} sm={12} sx={{ marginTop: "12px", display: "flex", justifyContent: "center" }}>
                         <Typography className="unselectable" fontSize={18} sx={{
                             backgroundColor: "white", color: "purple", borderStyle: "solid",
                             borderWidth: "1px", borderRadius: "18px", width: "fit-content", padding: "4px 12px 4px 12px",
@@ -561,8 +560,8 @@ const HikerDashboard = (props) => {
                         </Typography>
                     </Grid>
                 </Grid>
-                <Grid container item xs={12} sm={12} height="fit-content" justifyContent="center" sx={{ marginLeft: "25px",marginRight: "25px", marginTop: "25px" }}>
-                    <Grid xs={12} sm={12} sx={{display: "flex", justifyContent: "center"}}>
+                <Grid container item xs={12} sm={12} height="fit-content" justifyContent="center" sx={{ marginLeft: "25px", marginRight: "25px", marginTop: "25px" }}>
+                    <Grid xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                         <Typography className="unselectable" fontSize={32}>
                             <b>Preferences</b>
                         </Typography>
@@ -800,7 +799,7 @@ const FetchServiceManagement = (props) => {
     const map = useMap()
     useEffect(() => {
         map.flyTo([props.position.lat, props.position.lon], 11)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.position])
 }
 

@@ -14,7 +14,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import pages from '../../extra/pages.json'
 import { useNavigate } from 'react-router';
 import './navbar-style.css'
-import { Divider } from '@mui/material';
+import { Chip, Divider } from '@mui/material';
 import { displayTypeFlex, displayTypeBlock } from '../../extra/DisplayType';
 
 function HTNavbar(props) {
@@ -39,16 +39,16 @@ function HTNavbar(props) {
     };
 
     return (
-        <AppBar position="fixed" style={{
-            backgroundColor: "#202020f0", marginBottom: "auto", paddingLeft: 10,
-            paddingRight: 10, borderRadius: 0
+        <AppBar position="sticky" style={{
+            backgroundColor: "#202020f0", paddingLeft: 10,
+            paddingRight: 10, borderRadius: 0, zIndex: "15"
         }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Typography
                         key="titlePC"
                         className="unselectable"
-                        variant="h3"
+                        variant="h5"
                         noWrap
                         onClick={() => { navigate("/") }}
                         sx={{
@@ -61,9 +61,8 @@ function HTNavbar(props) {
                             "&:hover": { borderColor: "#EBC824", color: "#EBC824" }
                         }}
                     >
-                        HackTheHike
+                        HackTheHike.com
                     </Typography>
-
                     <Box sx={{ flexGrow: 1, display: displayTypeFlex.mobile }}>
                         <IconButton
                             size="large"
@@ -130,7 +129,7 @@ function HTNavbar(props) {
                             textDecoration: 'none',
                         }}
                     >
-                        HackTheHike
+                        HackTheHike.com
                     </Typography>
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
