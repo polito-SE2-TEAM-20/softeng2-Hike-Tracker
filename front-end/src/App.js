@@ -18,6 +18,8 @@ import { SignUpForm } from './routes/sign-up/SignUp';
 import { HutWorkerHuts } from './routes/my-huts/HutWorkerHuts';
 import { HikesLinked } from './routes/my-huts/HikesLinked';
 import { HikeCondition } from './routes/my-huts/HikeConditionC';
+import WeatherAlertHike from './routes/new-weather-alert-hike/WeatherAlertHike';
+import WeatherAlertMap from './routes/new-weather-alert-map/WeatherAlertMap';
 
 import API from './API/API';
 import {
@@ -139,8 +141,8 @@ function App2() {
         <Route path="/hutWorkerHuts/linkedHikes" element={<HikesLinked user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/trackhike/:hikeid" element={<TrackingHikePage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/modifyHikeCondition/:hikeid" element={<HikeCondition user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} updateHikeCondition={API.updateHikeCondition} />} />
-
-
+        <Route path="/new-weather-alert-hike" element={<WeatherAlertHike />} />
+        <Route path="/new-weather-alert-map" element={<WeatherAlertMap />} />
       </Routes>
     </>
   );
