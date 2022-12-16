@@ -17,7 +17,7 @@ const HutCard = (props) => {
                     <div style={{ backgroundColor: "#f2f250", display: "flex", justifyContent: "center", margin: "16px", padding: "18px", borderRadius: "32px" }}>
                         <img src={hutIcon} alt="hutIcon" width="75px" height="75px" />
                     </div>
-                    <Typography variant="h5" component="div" style={{ fontFamily: "Bakbak One, display", fontWeight: "100" }}>
+                    <Typography variant="h5" component="div" style={{ fontFamily: "Unbounded", fontWeight: "100" }}>
                         {props.hut.title}
                     </Typography>
                     <Typography sx={{ mb: 1.5 }} color="text.secondary">

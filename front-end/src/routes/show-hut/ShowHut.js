@@ -172,7 +172,7 @@ const ShowHut = (props) => {
             <Grid style={{ marginTop: "105px", marginLeft: "auto", marginRight: "auto", marginBottom: "25px", height: "80vh", paddingLeft: "25px", paddingRight: "25px" }} item lg={6}>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
                     {
-                        !loading ? <Typography variant="h2">{hut.title}</Typography> :
+                        !loading ? <Typography variant="h2" sx={{fontFamily: "Unbounded"}}>{hut.title}</Typography> :
                             <Skeleton variant='rectangular' height={50} width={600} style={{ marginBottom: "10px" }} />
                     }
                 </Grid>

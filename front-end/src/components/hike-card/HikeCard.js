@@ -33,7 +33,7 @@ const HikeCard = (props) => {
 
                     {HikeItemImage(props.hike.difficulty)}
 
-                    <Typography variant="h5" component="div" style={{ fontFamily: "Bakbak One, display", fontWeight: "100" }}>
+                    <Typography variant="h5" component="div" style={{ fontFamily: "Unbounded", fontWeight: "100" }}>
                         {props.hike.title}
                     </Typography>
                     <Typography color="text.secondary">
@@ -94,7 +94,7 @@ function HikeItemImage(difficulty) {
         <div style={{ backgroundColor: bgColor, display: "flex", justifyContent: "center", margin: 4, padding: 24, borderRadius: 12 }}>
             <img src={icon} alt={text} width="75px" height="75px" />
         </div>
-        <Typography style={{ fontFamily: "Bakbak One, display", fontWeight: "600", fontSize: 14, textAlign: "center" }} color="text.secondary" gutterBottom>
+        <Typography style={{ fontFamily: "Unbounded", fontWeight: "600", fontSize: 14, textAlign: "center" }} color="text.secondary" gutterBottom>
             <div style={{ display: "inline-block" }}>Difficulty level: <div style={{ backgroundColor: bgColor, color: "white", borderRadius: 8, paddingLeft: 12, paddingTop: 4, paddingBottom: 4, paddingRight: 12, width: "fit-content", display: "inline-block", marginLeft: 8 }}><b>{text}</b></div></div>
         </Typography>
     </>)

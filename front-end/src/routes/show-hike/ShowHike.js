@@ -8,7 +8,7 @@ import proIcon from '../../Assets/pro-icon.png'
 import React, { useEffect, useState } from "react";
 import API from '../../API/API.js';
 import { Skeleton } from "@mui/material";
-import {fromMinutesToHours} from '../../lib/common/FromMinutesToHours'
+import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours'
 import NavigationIcon from '@mui/icons-material/Navigation';
 import { UserHikeState } from "../../lib/common/Hike";
 import { Button } from "react-bootstrap";
@@ -154,20 +154,22 @@ const ShowHike = (props) => {
                         }
                     </Grid>
 
-                    <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
-                        <Chip label="Actions" />
-                    </Divider>
-
+                    {
+                        props.user?.role === UserRoles.HIKER ?
+                            <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
+                                <Chip label="Actions" />
+                            </Divider> : <></>
+                    }
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
                             (props.user?.role === UserRoles.HIKER) &&
-                            <Fab 
-                                variant="extended" 
-                                size="medium" 
-                                color="primary" 
+                            <Fab
+                                variant="extended"
+                                size="medium"
+                                color="primary"
                                 aria-label="start-navigaion"
                                 onClick={() => {
-                                    handleStartTrackHiking() 
+                                    handleStartTrackHiking()
                                 }}>
                                 <NavigationIcon />
                                 Start This Hike
@@ -180,7 +182,7 @@ const ShowHike = (props) => {
             <Grid style={{ marginTop: "105px", marginLeft: "auto", marginRight: "auto", marginBottom: "25px", height: "80vh", paddingLeft: "25px", paddingRight: "25px" }} item lg={6}>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
                     {
-                        !loading ? <Typography variant="h2">{hike.title}</Typography> :
+                        !loading ? <Typography variant="h2" sx={{ fontFamily: "Unbounded" }}>{hike.title}</Typography> :
                             <Skeleton variant='rectangular' height={50} width={600} style={{ marginBottom: "10px" }} />
                     }
                 </Grid>
@@ -208,10 +210,10 @@ const ShowHike = (props) => {
                 </Grid>
             </Grid>
             {
-                <ErrorDialog 
-                    message={errorStartTrack} 
+                <ErrorDialog
+                    message={errorStartTrack}
                     isOpen={showStartTrackError}
-                    closeAction={closeStartTrackErrorAction}/>
+                    closeAction={closeStartTrackErrorAction} />
             }
         </Grid>
     );
@@ -229,8 +231,8 @@ function ErrorDialog(props) {
             keepMounted
             onClose={props.closeAction}
             aria-describedby="alert-dialog-slide-description">
-            {   
-                props.message !== null && 
+            {
+                props.message !== null &&
                 <>
                     <DialogTitle>{"Opppps!"}</DialogTitle>
                     <DialogContent>

@@ -294,7 +294,7 @@ const HTMainPage = (props) => {
                                     sx={{
                                         justifyContent: "center",
                                         fontFamily: "Unbounded",
-                                        backgroundImage: "linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab)",
+                                        backgroundImage: "linear-gradient(-45deg, yellow, pink, orange, blue)",
                                         fontWeight: 700,
                                         textAlign: "center",
                                         color: 'transparent',
