@@ -15,7 +15,7 @@ function TrackingHikePage(props) {
     const match = useMatch('/trackhike/:hikeid')
     const hikeId = match.params.hikeid ? match.params.hikeid : -1;
 
-    const [recordedGpsLocations, setRecordedGpsLocations] = useState([]);
+    const [currentLocation, setCurrentLocation] = useState(null);
     const [trackingState, setTrackingState] = useState(TrackingState.NOT_STARTED);
     const [trackHasBeenStarted, setTrackHasBeenStarted] = useState(false);
     const [trackHasBeenRecorded, setTrackHasBeenRecorded] = useState(false);
@@ -60,8 +60,8 @@ function TrackingHikePage(props) {
                 if (!trackHasBeenRecorded) {
                     setTrackHasBeenRecorded(true);
                     setTrackRecordId(navigator.geolocation.watchPosition((position) => {
-                        setRecordedGpsLocations((oldList) => {
-                            return oldList.concat(position)
+                        setCurrentLocation((olLocation) => {
+                            return position
                         })
                         API.addPointToTracingkHike(
                             trackHikeId, 
@@ -89,23 +89,19 @@ function TrackingHikePage(props) {
     }, [trackingState])
 
     const startTrackingAction = () => {
-        if (isLocationAccessable) {
-            if (!trackHasBeenStarted) {
-                API.startTracingkHike(hikeId)
-                    .then((result) => {
-                        setTrackHikeId(result.id);
-                        setTrackHasBeenStarted(true)
-                        setTrackHasBeenFinished(false)
-                        setTrackingState(TrackingState.STARTED)
-                    })
-                    .catch((error) => {
+        if (!trackHasBeenStarted) {
+            API.startTracingkHike(hikeId)
+                .then((result) => {
+                    setTrackHikeId(result.id);
+                    setTrackHasBeenStarted(true)
+                    setTrackHasBeenFinished(false)
+                    setTrackingState(TrackingState.STARTED)
+                })
+                .catch((error) => {
 
-                    })
-            } else {
-                //Tracking is already started
-            }
+                })
         } else {
-            checkLocationAccess();
+            //Tracking is already started
         }
     }
 
@@ -142,8 +138,8 @@ function TrackingHikePage(props) {
                         style={{ height: "60vh" }}
                         flex
                         center={
-                            recordedGpsLocations.length > 0 ? [recordedGpsLocations[recordedGpsLocations.length - 1].coords.latitude,
-                            recordedGpsLocations[recordedGpsLocations.length - 1].coords.longitude] :
+                            currentLocation ? [currentLocation.coords.latitude,
+                                currentLocation.coords.longitude] :
                                 [45.4408474, 12.3155151]
                         }
                         zoom={13}
@@ -151,52 +147,30 @@ function TrackingHikePage(props) {
                         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                         <Polyline
                             pathOptions={{ fillColor: 'red', color: 'blue' }}
-                            positions={recordedGpsLocations.map((location) => {
-                                return [location.coords.latitude, location.coords.longitude]
-                            })}
+                            // positions={recordedGpsLocations.map((location) => {
+                            //     return [location.coords.latitude, location.coords.longitude]
+                            // })}
                         />
                         {
                             //Current location
-                            (trackHasBeenStarted && !trackHasBeenFinished && recordedGpsLocations.length > 0) &&
+                            (trackHasBeenStarted && !trackHasBeenFinished && currentLocation) &&
                             <Marker
                                 icon={icon({
                                     iconUrl: currentLocationIcon,
                                     iconSize: [36, 36]
                                 })}
-                                key={[recordedGpsLocations[recordedGpsLocations.length - 1].coords.latitude,
-                                recordedGpsLocations[recordedGpsLocations.length - 1].coords.longitude]}
-                                position={[recordedGpsLocations[recordedGpsLocations.length - 1].coords.latitude,
-                                recordedGpsLocations[recordedGpsLocations.length - 1].coords.longitude]}>
+                                key={[currentLocation.coords.latitude,
+                                    currentLocation.coords.longitude]}
+                                position={[currentLocation.coords.latitude,
+                                    currentLocation.coords.longitude]}>
 
                             </Marker>
                         }
 
                         {
-                            //Starting point
-                            (trackHasBeenStarted && recordedGpsLocations.length > 0) &&
-                            <Marker
-                                key={"start"}
-                                position={[recordedGpsLocations[0].coords.latitude,
-                                recordedGpsLocations[0].coords.longitude]}>
-
-                            </Marker>
-                        }
-
-                        {
-                            //ending point
-                            (trackHasBeenFinished && recordedGpsLocations.length > 0) &&
-                            <Marker
-                                key={"end"}
-                                position={[recordedGpsLocations[recordedGpsLocations.length - 1].coords.latitude,
-                                recordedGpsLocations[recordedGpsLocations.length - 1].coords.longitude]}>
-
-                            </Marker>
-                        }
-
-                        {
-                            recordedGpsLocations.length > 0 &&
+                            currentLocation !== null &&
                             <MapFlyTracker
-                                locations={recordedGpsLocations}>
+                                location={currentLocation}>
 
                             </MapFlyTracker>
                         }
@@ -234,9 +208,9 @@ function TrackingHikePage(props) {
 function MapFlyTracker(props) {
     const map = useMap()
     useEffect(() => {
-        map.flyTo([props.locations[props.locations.length - 1].coords.latitude,
-            props.locations[props.locations.length - 1].coords.longitude], 17)
-    }, [props.locations])
+        map.flyTo([props.location.coords.latitude,
+            props.location.coords.longitude], 17)
+    }, [props.location])
 }
 
 function TrackingActionsView(props) {
@@ -296,26 +270,15 @@ function TurnOnLocationDialog(props) {
                     <DialogTitle>{"Attention!"}</DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-slide-description">
-                            You need to allow location access in your browser settings before start tracking.
+                            For a better expirience you can turn on your location and see your real location on the map while tracking.
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={props.closeAction}>OK!</Button>
+                        <Button onClick={props.closeAction}>COOL!</Button>
                     </DialogActions>
                 </>
             }
         </Dialog>
-    )
-}
-
-function GpsItemView(props) {
-    const date = new Date(props.gpsItem.timestamp).toISOString()
-    return (
-        <Grid>
-            <Typography variant="h6">
-                {date}, [{props.gpsItem.coords.latitude}, {props.gpsItem.coords.longitude}]
-            </Typography>
-        </Grid>
     )
 }
 
