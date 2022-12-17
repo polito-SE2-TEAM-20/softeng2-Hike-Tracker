@@ -13,41 +13,22 @@ import { DataSource, IsNull } from 'typeorm';
 
 import {
   CurrentUser,
+  HikePoint,
   HikerOnly,
   ID,
-  latLonToGisPoint,
   ParseIdPipe,
+  PointType,
   RolesOnly,
   UserContext,
   UserRole,
 } from '@app/common';
 import { HikesService } from '@core/hikes/hikes.service';
+import { PointsService } from '@core/points/points.service';
 
 import { UserHikeTrackPointsService } from './user-hike-track-points.service';
 import { StartHikeDto, TrackPointDto } from './user-hikes.dto';
 import { UserHikeFull } from './user-hikes.interface';
 import { UserHikesService } from './user-hikes.service';
-
-// class MyQueryDtoInner {
-//   @IsString()
-//   @MinLength(1)
-//   id!: string;
-// }
-
-// class MyQueryDto {
-//   @IsString()
-//   @MinLength(1)
-//   test!: string;
-
-//   @ValidateNested()
-//   @Type(() => MyQueryDtoInner)
-//   @Transform(({ value, key, obj }) => {
-//     if (typeof value !== 'string') return value;
-//     console.log({ key, value, obj });
-//     return transformToClass(MyQueryDtoInner, JSON.parse(value));
-//   })
-//   obj!: MyQueryDtoInner;
-// }
 
 @Controller('user-hikes')
 export class UserHikesController {
@@ -55,13 +36,9 @@ export class UserHikesController {
     @InjectDataSource() private dataSource: DataSource,
     private service: UserHikesService,
     private hikesService: HikesService,
+    private pointsService: PointsService,
     private userHikeTrackPointsService: UserHikeTrackPointsService,
   ) {}
-
-  // @Get('test/error')
-  // async error() {
-  //   await this.dataSource.getRepository(Hike).update({ id: 100 }, {});
-  // }
 
   @RolesOnly(
     UserRole.hiker,
@@ -108,7 +85,7 @@ export class UserHikesController {
   @Post(':id/track-point')
   @HttpCode(HttpStatus.OK)
   async trackHikePoint(
-    @Body() { position }: TrackPointDto,
+    @Body() { pointId, datetime }: TrackPointDto,
     @CurrentUser() user: UserContext,
     @Param('id', ParseIdPipe()) id: ID,
   ): Promise<UserHikeFull> {
@@ -119,6 +96,26 @@ export class UserHikesController {
 
     if (!!userHike.finishedAt) {
       throw new BadRequestException('Hike is finished');
+    }
+
+    const point = await this.pointsService.findByIdOrThrow(pointId);
+    // ensure such reference point exists
+    const referenceCount = await this.pointsService
+      .getRepository()
+      .createQueryBuilder('p')
+      .innerJoin(
+        HikePoint,
+        'hp',
+        '(hp.pointId = p.id and hp.type = :type and hp.hikeId = :hikeId)',
+        { type: PointType.referencePoint, hikeId: userHike.hikeId },
+      )
+      .andWhere('p.id = :pointId', { pointId })
+      .getCount();
+
+    if (!referenceCount) {
+      throw new BadRequestException(
+        'This point is not a reference point for this hike',
+      );
     }
 
     // insert new point into db
@@ -132,7 +129,8 @@ export class UserHikesController {
         {
           index,
           userHikeId: userHike.id,
-          position: latLonToGisPoint(position),
+          pointId: point.id,
+          datetime: new Date(datetime),
         },
         entityManager,
       );

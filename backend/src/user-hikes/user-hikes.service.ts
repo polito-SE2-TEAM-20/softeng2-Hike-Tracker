@@ -10,6 +10,7 @@ import { EntityManager, Repository, SelectQueryBuilder } from 'typeorm';
 import {
   BaseService,
   ID,
+  Point,
   UserContext,
   UserHike,
   UserHikeTrackPoint,
@@ -60,6 +61,9 @@ export class UserHikesService extends BaseService<UserHike> {
         .andWhere('uh.id = :id', { id }),
     ).getOne()) as UserHikeFull | null;
 
+    // console.log(userHike);
+    // console.log(userHike?.trackPoints[0]);
+
     if (!userHike) {
       throw new NotFoundException(this.errorMessage);
     }
@@ -74,12 +78,16 @@ export class UserHikesService extends BaseService<UserHike> {
    * Left join with user hike track points
    */
   buildFullUserHikesQuery(query: SelectQueryBuilder<UserHike>): typeof query {
-    query.leftJoinAndMapMany(
-      'uh.trackPoints',
-      UserHikeTrackPoint,
-      'uhtp',
-      `uhtp.userHikeId = ${query.alias}.id`,
-    );
+    query
+      .leftJoinAndMapMany(
+        'uh.trackPoints',
+        UserHikeTrackPoint,
+        'uhtp',
+        `uhtp.userHikeId = ${query.alias}.id`,
+      )
+      .leftJoinAndMapOne('uhtp.point', Point, 'p', 'p.id = uhtp.pointId')
+      .orderBy('uhtp.index', 'ASC');
+
     return query;
   }
 }

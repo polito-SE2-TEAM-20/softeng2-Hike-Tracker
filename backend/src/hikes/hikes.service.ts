@@ -44,6 +44,28 @@ export class HikesService extends BaseService<Hike> {
     }
   }
 
+  async getReferencePoints(
+    hikeId: ID,
+    entityManager?: EntityManager,
+  ): Promise<Point[]> {
+    const points = await this.pointsService
+      .getRepository(entityManager)
+      .createQueryBuilder('p')
+      .where('hike.id = :hikeId', { hikeId })
+      .innerJoin(
+        HikePoint,
+        'hp',
+        '(hp.hikeId = :hikeId and hp.type = :type and hp.pointId = p.id)',
+        {
+          type: PointType.referencePoint,
+          hikeId,
+        },
+      )
+      .getMany();
+
+    return points;
+  }
+
   async getFullHike(
     hikeId: ID,
     entityManager?: EntityManager,
@@ -128,7 +150,7 @@ export class HikesService extends BaseService<Hike> {
       endPoint,
     };
 
-    console.log('final hike with all stuff', finalHike);
+    // console.log('final hike with all stuff', finalHike);
 
     return finalHike;
   }
