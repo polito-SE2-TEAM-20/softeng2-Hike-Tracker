@@ -14,7 +14,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import pages from '../../extra/pages.json'
 import { useNavigate } from 'react-router';
 import './navbar-style.css'
-import { Chip, Divider } from '@mui/material';
+import { Grid, Divider } from '@mui/material';
 import { displayTypeFlex, displayTypeBlock } from '../../extra/DisplayType';
 
 function HTNavbar(props) {
@@ -45,24 +45,47 @@ function HTNavbar(props) {
         }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <Typography
-                        key="titlePC"
-                        className="unselectable"
-                        variant="h5"
-                        noWrap
-                        onClick={() => { navigate("/") }}
-                        sx={{
-                            mr: 5,
-                            display: displayTypeFlex.pc,
-                            fontFamily: "Unbounded",
-                            fontWeight: 700,
-                            color: 'inherit',
-                            textDecoration: 'none', transition: "0.2s",
-                            "&:hover": { borderColor: "#EBC824", color: "#EBC824" }
-                        }}
-                    >
-                        HackTheHike.com
-                    </Typography>
+                    <Grid container sx={{ width: "min-content" }}>
+                        <Grid xs={12} sm={12} md={12} lg={12} xl={12} item>
+                            <Typography
+                                key="titlePC"
+                                className="unselectable"
+                                variant="h5"
+                                noWrap
+                                onClick={() => { navigate("/") }}
+                                sx={{
+                                    mr: 5,
+                                    display: displayTypeFlex.pc,
+                                    fontFamily: "Unbounded",
+                                    fontWeight: 700,
+                                    color: 'inherit',
+                                    textDecoration: 'none', transition: "0.2s",
+                                    "&:hover": { borderColor: "#EBC824", color: "#EBC824" }
+                                }}
+                            >
+                                HackTheHike.com
+                            </Typography>
+                        </Grid>
+                        <Grid xs={12} sm={12} md={12} lg={12} xl={12} item>
+                            <Typography
+                                key="titlePC"
+                                className="unselectable"
+                                variant="h5"
+                                noWrap
+                                sx={{
+                                    mr: 5,
+                                    display: displayTypeFlex.pc,
+                                    fontFamily: "Unbounded",
+                                    fontWeight: 700,
+                                    color: 'inherit',
+                                    fontSize: "12px",
+                                    textDecoration: 'none', transition: "0.2s"
+                                }}
+                            >
+                                Best solutions for best adventures.
+                            </Typography>
+                        </Grid>
+                    </Grid>
                     <Box sx={{ flexGrow: 1, display: displayTypeFlex.mobile }}>
                         <IconButton
                             size="large"
@@ -113,24 +136,51 @@ function HTNavbar(props) {
                             }
                         </Menu>
                     </Box>
-                    <Typography
-                        key="titleMobile"
-                        className="unselectable"
-                        style={{ fontFamily: "Unbounded", fontSize: "18px" }}
-                        variant="h5"
-                        noWrap
-                        onClick={() => { navigate("/") }}
-                        sx={{
-                            mr: 4,
-                            display: displayTypeFlex.mobile,
-                            fontFamily: "Unbounded",
-                            fontWeight: 700,
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}
-                    >
-                        HackTheHike.com
-                    </Typography>
+                    <Grid container sx={{ width: "min-content" }}>
+                        <Grid xs={12} sm={12} md={12} lg={12} xl={12} item sx={{ display: "flex", justifyContent: "center" }}>
+                            <Typography
+                                key="titleMobile"
+                                className="unselectable"
+                                style={{ fontFamily: "Unbounded", fontSize: "18px" }}
+                                variant="h5"
+                                noWrap
+                                onClick={() => { navigate("/") }}
+                                sx={{
+                                    mr: 4,
+                                    display: displayTypeFlex.mobile,
+                                    fontFamily: "Unbounded",
+                                    fontWeight: 700,
+                                    color: 'inherit',
+                                    textDecoration: 'none',
+                                }}
+                            >
+                                HackTheHike.com
+                            </Typography>
+                        </Grid>
+                        <Grid xs={12} sm={12} md={12} lg={12} xl={12} item sx={{ display: "flex", justifyContent: "center" }}>
+                            <Typography
+                                key="titlePC"
+                                className="unselectable"
+                                variant="h5"
+                                noWrap
+                                onClick={() => { navigate("/") }}
+                                sx={{
+                                    mr: 5,
+                                    display: displayTypeFlex.mobile,
+                                    fontFamily: "Unbounded",
+                                    fontWeight: 700,
+                                    color: 'inherit',
+                                    fontSize: "12px",
+                                    textDecoration: 'none', transition: "0.2s",
+                                    "&:hover": { borderColor: "#EBC824", color: "#EBC824" }
+                                }}
+                            >
+                                Best solutions for best adventures.
+                            </Typography>
+                        </Grid>
+                    </Grid>
+
+
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         {pages.map((page) => {
