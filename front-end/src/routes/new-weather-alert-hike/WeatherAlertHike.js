@@ -7,7 +7,8 @@ import PlaceIcon from '@mui/icons-material/Place';
 import { useState, useEffect } from "react";
 import API from "../../API/API";
 import { HikeWeatherByCode, HikeWeatherByName } from '../../lib/common/WeatherConditions'
-import {CircularProgress} from "@mui/material";
+import { CircularProgress } from "@mui/material";
+import WeatherButton from "../../components/weather-card/WeatherButton";
 
 const WeatherAlertHike = (props) => {
     const [listOfHikes, setListOfHikes] = useState([])
@@ -54,10 +55,10 @@ const WeatherAlertHike = (props) => {
                     <Grid container item spacing={1} sx={{ width: { xs: "300px", sm: "500px", md: "500px", lg: "1200px", xl: "1200px" }, marginTop: "10px", marginBottom: "50px" }}>
                         {
                             listOfHikes.map(hike => {
-                                console.log(hike)
                                 return (
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                        <Accordion expanded={accordionExpanded === hike.id} onChange={handleAccordionExpansion(hike.id)}>
+                                        {/* <Accordion expanded={accordionExpanded === hike.id} onChange={handleAccordionExpansion(hike.id)}> */}
+                                        <Accordion>
                                             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                                                 <Typography sx={{ fontSize: "18px", width: '33%', flexShrink: 0 }}>
                                                     {hike.title}
@@ -67,7 +68,36 @@ const WeatherAlertHike = (props) => {
                                             <AccordionDetails>
                                                 <Grid container>
                                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                                        <Typography><b>Current weather</b>: Sunny <SvgIcon component={HikeWeatherByCode[1].image} /></Typography>
+                                                        <Typography><b>Current weather</b>: {HikeWeatherByCode[1].name} <SvgIcon component={HikeWeatherByCode[1].image} /></Typography>
+                                                    </Grid>
+                                                    <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} sx={{
+                                                        display: "flex",
+                                                        justifyContent: "left"
+                                                    }}>
+                                                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{marginBottom: "8px"}}>
+                                                            <Typography><b>Set new weather clicking on the following buttons</b></Typography>
+                                                        </Grid>
+                                                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{marginBottom: "8px"}}>
+                                                            <WeatherButton image={HikeWeatherByCode[0].image} text={HikeWeatherByCode[0].name} />
+                                                        </Grid>
+                                                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{marginBottom: "8px"}}>
+                                                            <WeatherButton image={HikeWeatherByCode[1].image} text={HikeWeatherByCode[1].name} />
+                                                        </Grid>
+                                                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{marginBottom: "8px"}}>
+                                                            <WeatherButton image={HikeWeatherByCode[2].image} text={HikeWeatherByCode[2].name} />
+                                                        </Grid>
+                                                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{marginBottom: "8px"}}>
+                                                            <WeatherButton image={HikeWeatherByCode[3].image} text={HikeWeatherByCode[3].name} />
+                                                        </Grid>
+                                                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{marginBottom: "8px"}}>
+                                                            <WeatherButton image={HikeWeatherByCode[4].image} text={HikeWeatherByCode[4].name} />
+                                                        </Grid>
+                                                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{marginBottom: "8px"}}>
+                                                            <WeatherButton image={HikeWeatherByCode[5].image} text={HikeWeatherByCode[5].name} />
+                                                        </Grid>
+                                                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{marginBottom: "8px"}}>
+                                                            <WeatherButton image={HikeWeatherByCode[6].image} text={HikeWeatherByCode[6].name} />
+                                                        </Grid>
                                                     </Grid>
                                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "right" }}>
                                                         <Button variant="outlined" sx={{ borderRadius: "60px", textTransform: "none" }}>Update weather conditions</Button>
