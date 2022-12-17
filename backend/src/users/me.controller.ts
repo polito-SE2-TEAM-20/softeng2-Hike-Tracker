@@ -6,6 +6,8 @@ import {
   HttpStatus,
   Post,
 } from '@nestjs/common';
+import { find, map, prop, propEq } from 'ramda';
+import { In } from 'typeorm';
 
 import {
   AuthenticatedOnly,
@@ -18,12 +20,10 @@ import { HikerOnly } from '@app/common';
 import { HikesService } from '@core/hikes/hikes.service';
 import { UserHikeFull } from '@core/user-hikes/user-hikes.interface';
 import { UserHikesService } from '@core/user-hikes/user-hikes.service';
-import { HikesController } from '@core/hikes/hikes.controller';
 
 import { MyTrackedHikesDto } from './me.dto';
 import { PreferencesDto } from './preferences.dto';
 import { UsersService } from './users.service';
-import { FilteredHikesDto } from '@core/hikes/hikes.dto';
 
 @Controller('me')
 @AuthenticatedOnly()
@@ -68,12 +68,26 @@ export class MeController {
 
     const userHikesFull = (await query.getMany()) as UserHikeFull[];
 
+    // join with hikes
+    const hikes = await this.hikesService.getRepository().findBy({
+      id: In(map(prop('hikeId'), userHikesFull)),
+    });
+
+    userHikesFull.forEach((entry) => {
+      const hike = find(propEq('id', entry.hikeId), hikes);
+      if (!hike) return;
+
+      entry.hike = hike;
+    });
+
     return userHikesFull;
   }
   @HikerOnly()
   @HttpCode(200)
   @Get('preferences')
-  async getPreferences(@CurrentUser() user: UserContext): Promise<PreferencesDto> {
+  async getPreferences(
+    @CurrentUser() user: UserContext,
+  ): Promise<PreferencesDto> {
     return await this.usersService.getPreferences(user.id);
   }
 
@@ -93,6 +107,13 @@ export class MeController {
   async applyPreferences(@CurrentUser() user: UserContext): Promise<Hike[]> {
     const preferences = await this.usersService.getPreferences(user.id);
 
-    return await this.hikesService.getFilteredHikes({...preferences, inPointRadius: {lat: preferences.lat, lon: preferences.lon, radiusKms: preferences.radiusKms}});
+    return await this.hikesService.getFilteredHikes({
+      ...preferences,
+      inPointRadius: {
+        lat: preferences.lat,
+        lon: preferences.lon,
+        radiusKms: preferences.radiusKms,
+      },
+    });
   }
 }

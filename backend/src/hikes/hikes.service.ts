@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { pick, isNil, propEq, } from 'ramda';
+import { pick, isNil, propEq } from 'ramda';
 import { DataSource, EntityManager, Repository, In } from 'typeorm';
 
 import {
@@ -21,6 +21,7 @@ import {
   orderEntities,
 } from '@app/common';
 import { PointsService } from '@core/points/points.service';
+
 import { hikeFilters } from './hikes.constants';
 import { FilteredHikesDto, StartEndPointDto } from './hikes.dto';
 
@@ -337,13 +338,9 @@ export class HikesService extends BaseService<Hike> {
       order by h.id asc
     `;
 
-    const rawHikes: Hike[] = await this
-      .hikesRepository
-      .query(queryRaw, params);
+    const rawHikes: Hike[] = await this.hikesRepository.query(queryRaw, params);
     const hikeIds = mapToId(rawHikes);
-    const hikes = await this
-      .hikesRepository
-      .findBy({ id: In(hikeIds) });
+    const hikes = await this.hikesRepository.findBy({ id: In(hikeIds) });
     const orderedHikes = orderEntities(hikes, hikeIds, propEq('id'));
 
     return orderedHikes;

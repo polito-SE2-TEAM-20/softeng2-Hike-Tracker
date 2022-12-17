@@ -15,6 +15,7 @@ import {
   UserHikeTrackPoint,
   UserRole,
 } from '@app/common';
+import { HikesService } from '@core/hikes/hikes.service';
 
 import { UserHikeFull } from './user-hikes.interface';
 
@@ -23,6 +24,7 @@ export class UserHikesService extends BaseService<UserHike> {
   constructor(
     @InjectRepository(UserHike)
     private userHikesRepository: Repository<UserHike>,
+    private hikesService: HikesService,
   ) {
     super(UserHike, {
       repository: userHikesRepository,
@@ -63,6 +65,7 @@ export class UserHikesService extends BaseService<UserHike> {
     }
 
     userHike.trackPoints = sort(ascend(prop('index')), userHike.trackPoints);
+    userHike.hike = await this.hikesService.getFullHike(userHike.hikeId);
 
     return userHike;
   }
