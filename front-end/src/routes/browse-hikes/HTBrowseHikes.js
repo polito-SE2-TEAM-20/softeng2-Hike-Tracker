@@ -5,16 +5,13 @@ import 'leaflet/dist/leaflet.css'
 import './browse-hikes-style.css'
 
 import { MapBrowseHike } from '../../components/map/MapBrowseHike';
-import { useNavigate } from 'react-router';
 import { Grid } from '@mui/material';
-import HTNavbar from '../../components/HTNavbar/HTNavbar';
 import MapLoading from '../../components/map/MapLoading';
 import MapFilters from '../../components/map-filters/MapFilters';
 import API from '../../API/API.js';
 
 const HTBrowseHikes = (props) => {
     const [loading, setLoading] = useState(false)
-    const navigate = useNavigate()
     const [listOfHikes, setListOfHikes] = useState([])
     const [hike2Positions, setHike2Positions] = useState([])
     const [isRadiusProcedureActive, setIsRadioProcedureActive] = useState(false)
@@ -68,10 +65,6 @@ const HTBrowseHikes = (props) => {
         });
     }, [filter])
 
-    const gotoLogin = () => {
-        navigate("/login", { replace: false })
-    }
-
     useEffect(() => {
         var tmpListOfHikes = []
         const getHikes = async () => {
@@ -95,7 +88,7 @@ const HTBrowseHikes = (props) => {
             let gpxParser = require('gpxparser');
             const tmpOutput = []
             for (let hike of fillingList.map(x => x)) {
-                if (hike.positions == undefined || hike.positions == "")
+                if (hike.positions === undefined || hike.positions === "")
                     continue
                 const gpx = new gpxParser();
                 gpx.parse(hike.positions);
