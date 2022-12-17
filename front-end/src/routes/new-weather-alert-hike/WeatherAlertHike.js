@@ -29,7 +29,7 @@ const WeatherAlertHike = (props) => {
     return (
         <Grid sx={{ marginTop: "20px", display: "flex", justifyContent: "center" }} container item xs={12} sm={12} md={12} lg={12} xl={12}>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                <Typography sx={{ fontFamily: "Unbounded" }} fontSize={{ xs: 20, sm: 20, md: 28, lg: 32, xl: 32 }} display="flex" justifyContent="center">
+                <Typography className="unselectable" sx={{ fontFamily: "Unbounded" }} fontSize={{ xs: 20, sm: 20, md: 28, lg: 32, xl: 32 }} display="flex" justifyContent="center">
                     <b>
                         Weather alert for hikes
                     </b>
