@@ -13,6 +13,7 @@ import {
 } from '../constants';
 import { HikeDifficulty } from '../enums';
 import { HikeCondition } from '../enums/hike-condition.enum';
+import { HikeWeather } from '../enums/weatherStatus.enum';
 
 import { User } from './user.entity';
 
@@ -78,6 +79,21 @@ export class Hike {
     default: HikeCondition.open,
   })
   condition!: HikeCondition;
+
+  @Column({
+    type: 'smallint',
+    nullable: true,
+    default: HikeWeather.unknown,
+  })
+  weatherStatus?: HikeWeather;
+
+  @Column({
+    type: 'varchar',
+    length: HikeLimits.description,
+    nullable: true,
+    default: '',
+  })
+  weatherDescription?: string;
 
   @Column({
     type: 'varchar',

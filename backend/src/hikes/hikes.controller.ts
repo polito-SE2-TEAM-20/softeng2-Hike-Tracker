@@ -16,7 +16,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs-extra';
 import { isEmpty, isNil, keys } from 'ramda';
-import { DataSource, In } from 'typeorm';
+import { DataSource, In, IsNull, Not } from 'typeorm';
 
 import {
   CurrentUser,
@@ -26,6 +26,7 @@ import {
   Hike,
   HikeFull,
   HikePoint,
+  HikerOnly,
   Hut,
   HutWorker,
   HutWorkerOnly,
@@ -34,9 +35,12 @@ import {
   LocalGuideOnly,
   ParkingLot,
   ParseIdPipe,
+  PlatformManagerOnly,
   Point,
   PointType,
   UserContext,
+  UserHike,
+  UserRole,
 } from '@app/common';
 import { HikeCondition } from '@app/common/enums/hike-condition.enum';
 import { GpxService } from '@app/gpx';
@@ -47,6 +51,7 @@ import {
   FilteredHikesDto,
   HikeDto,
   LinkHutToHikeDto,
+  PointWithRadius,
   UpdateHikeDto,
 } from './hikes.dto';
 import { HikesService } from './hikes.service';
@@ -468,6 +473,123 @@ export class HikesController {
     // });
 
     return { rowsAffected: isNil(deletion.affected) ? 0 : deletion.affected };
+  }
+
+  //Update an existing hike at weather fields (if no hike found or user !== platformManager -> exception)
+  @Put('updateWeather/:id')
+  @PlatformManagerOnly()
+  @HttpCode(200)
+  async updateHikeWeather(
+    @Param('id', ParseIdPipe()) id: ID,
+    @CurrentUser() user: UserContext,
+    @Body()
+    { weatherStatus, weatherDescription },
+  ): Promise<Hike> {
+
+    await this.service.ensureExistsOrThrow(id);
+
+    if(user.role !== UserRole.platformManager)
+      throw new BadRequestException("You are not a platform manager. You are not authorized to do this.");
+
+    await this.service.getRepository().save({
+      id,
+      weatherStatus,
+      weatherDescription
+    });
+
+    const update = await this.dataSource.getRepository(UserHike).findBy({
+      hikeId: id,
+      finishedAt: IsNull()
+    });
+
+
+    console.log(update)
+
+    if(!isNil(update)){
+      await this.dataSource.getRepository(UserHike).update({
+        hikeId: In(update.map(userHike => userHike.hikeId))        
+      }, {
+        weatherNotified: false
+      });
+    }
+
+    return await this.service.getFullHike(id);
+  }
+
+  //Function to update all the hikes at weather fields within a range
+  @Put('updateWeatherInRange')
+  @PlatformManagerOnly()
+  @HttpCode(200)
+  async updateHikeWeatherInRange(
+    @Param('id', ParseIdPipe()) id: ID,
+    @CurrentUser() user: UserContext,
+    @Body()
+    {
+      PointWithRadius :inPointRadius,
+      weatherStatus,
+      weatherDescription
+    },
+  ): Promise<Hike[]> {
+
+    if(user.role !== UserRole.platformManager)
+      throw new BadRequestException("You are not a platform manager. You are not authorized to do this.");
+
+    const query = this.service.getRepository().createQueryBuilder('h');
+    
+    query.andWhere(
+      `ST_DWithin(ST_MakePoint(${inPointRadius.lon}, ${inPointRadius.lat}), p."position", ${inPointRadius.radiusKms*1000})`,
+    );
+    
+    query
+    .innerJoinAndMapOne('h.point', Point, 'p', 'p.id = h."pointId"')
+    .orderBy('h.id', 'DESC');
+
+    const hikesToUpdate = await query.getMany();
+    const hikesToUpdateIds = hikesToUpdate.map(hike => hike.id);
+
+    await this.service.getRepository().save(hikesToUpdateIds.map(id => ({
+      id,
+      weatherStatus,
+      weatherDescription
+    })));
+
+    //HERE MUST BE CHANGED IN UPDATE
+    await this.dataSource.getRepository(UserHike).save(hikesToUpdateIds.map(id => ({
+      hikeId: id,
+      weatherNotified: false,
+    })));
+
+    return await this.service.getRepository().findBy({
+      id: In(hikesToUpdateIds)
+    });
+  }
+
+  //Function which set the notification status to true after that the user sees the popup
+  @Get('popupSeen/:id')
+  @HikerOnly()
+  @HttpCode(200)
+  async popupSeen(
+    @Param('id', ParseIdPipe()) id: ID,
+    @CurrentUser() user: UserContext,
+  ) {
+
+    if(user.role !== UserRole.hiker)
+      throw new BadRequestException("You are not a platform manager. You are not authorized to do this.");
+
+    const update = await this.dataSource.getRepository(UserHike).findOneBy({
+      hikeId: id,
+      userId: user.id,
+      finishedAt: IsNull()
+    });
+
+    if(!isNil(update)){
+      await this.dataSource.getRepository(UserHike).save({
+        id: update.id,
+        weatherNotified: true,
+      });
+    }
+
+
   }
 
   @Get(':id')

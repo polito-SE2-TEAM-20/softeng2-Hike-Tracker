@@ -14,6 +14,7 @@ import {
   PointType,
   ROOT,
   UPLOAD_PATH,
+  UserHike,
   UserRole,
 } from '@app/common';
 import { HikeCondition } from '@app/common/enums/hike-condition.enum';
@@ -27,6 +28,7 @@ import {
 } from '@test/base';
 
 import { hikeBasic } from './constants';
+import { HikeWeather } from '@app/common/enums/weatherStatus.enum';
 
 const withoutCompositeFields = omit([
   'referencePoints',
@@ -62,7 +64,22 @@ describe('Hikes (e2e)', () => {
       role: UserRole.hutWorker,
     });
 
+    const platformManager = await testService.createUser({
+      role: UserRole.platformManager,
+    });
+
     const hike = await testService.createHike({ userId: localGuide.id });
+
+    const hiker = await testService.createUser({
+      role: UserRole.hiker
+    });
+    
+    const userHike = await testService.createUserHike({
+      userId: hiker.id,
+      hikeId: hike.id,
+      weatherNotified: null
+    });
+
     const huts = await mapArray(10, (i) =>
       testService.createHut({
         userId: localGuide.id,
@@ -84,6 +101,9 @@ describe('Hikes (e2e)', () => {
       hike,
       huts,
       parkingLots,
+      platformManager,
+      hiker,
+      userHike
     };
   };
 
@@ -238,6 +258,8 @@ describe('Hikes (e2e)', () => {
     const hike = await testService.createHike({
       ...hikeBasic,
       userId: localGuide.id,
+      weatherStatus: HikeWeather.dangerRain,
+      weatherDescription: "Heavy rains which can cause ground disruption"
     });
 
     await restService
@@ -252,6 +274,8 @@ describe('Hikes (e2e)', () => {
           referencePoints: [],
           startPoint: null,
           endPoint: null,
+          weatherStatus: HikeWeather.dangerRain,
+          weatherDescription: "Heavy rains which can cause ground disruption"
         });
       });
   });
@@ -603,4 +627,64 @@ describe('Hikes (e2e)', () => {
         expect(body.cause).toBe('Christmas Holidays!');
       });
   });
+
+  it("Should update weather condition of a selected hike and its flag in the user-hike table", async () => {
+      const {hike, platformManager, hiker} = await setup();
+
+      const hiker2 = await testService.createUser({
+        role: UserRole.hiker
+      });
+
+      await testService.createUserHike({
+        hikeId: hike.id,
+        userId: hiker2.id,
+        weatherNotified: null
+      });
+
+      const updateWeather = {
+        weatherStatus: HikeWeather.dangerRain,
+        weatherDescription: "Heavy rains which can cause ground disruption"
+      };
+
+
+      await restService
+        .build(app, platformManager)
+        .request()
+        .put(`/hikes/updateWeather/${hike.id}`)
+        .send(updateWeather)
+        .expect(({ body }) => {
+          expect(body.weatherStatus).toBe(HikeWeather.dangerRain);
+          expect(body.weatherDescription).toBe("Heavy rains which can cause ground disruption");
+        });
+
+      //From here is about notification flag
+      const newUserHikesBefore = (await testService.repo(UserHike).findBy({
+        hikeId: hike.id
+      })).map(userHike => (userHike.weatherNotified));
+
+      newUserHikesBefore.forEach((notification) => {
+        expect(notification).toBe(false)
+      });
+
+      await restService
+        .build(app, hiker)
+        .request()
+        .get(`/hikes/popupSeen/${hike.id}`);
+
+      await restService
+        .build(app, hiker2)
+        .request()
+        .get(`/hikes/popupSeen/${hike.id}`);
+      
+      const newUserHikesAfter = (await testService.repo(UserHike).findBy({
+        hikeId: hike.id,
+      })).map(userHike => (userHike.weatherNotified));
+      
+      newUserHikesAfter.forEach((notification) => {
+        expect(notification).toBe(true)
+      });
+      
+      
+  });
+
 });

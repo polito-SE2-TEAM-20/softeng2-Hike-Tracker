@@ -39,15 +39,22 @@ export class UserHike {
     nullable: true,
     default: null,
   })
-  updatedAt!: Date;
+  updatedAt?: Date;
 
   @Column({
     type: 'timestamp with time zone',
     nullable: true,
     default: null,
   })
-  finishedAt!: Date | null;
+  finishedAt?: Date | null;
 
+  @Column({
+    type: 'boolean',
+    nullable: true,
+    default: false,
+  })
+  weatherNotified?: boolean | null;
+  
   /**
    * TypeORM sql-gen only
    * @deprecated
