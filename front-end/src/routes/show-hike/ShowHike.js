@@ -12,6 +12,8 @@ import NavigationIcon from '@mui/icons-material/Navigation';
 import { UserHikeState } from "../../lib/common/Hike";
 import { Button } from "react-bootstrap";
 import { UserRoles } from "../../lib/common/UserRoles";
+import { HikeWeatherByCode } from '../../lib/common/WeatherConditions'
+import { SvgIcon } from "@mui/material";
 
 const Difficulty = (props) => {
     if (!props.loading) {
@@ -148,6 +150,26 @@ const ShowHike = (props) => {
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
                             !loading ? <Typography>Ascent: {hike.ascent == "" ? "N/A" : hike.ascent}m</Typography> :
+                                <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
+                        }
+                    </Grid>
+
+                    <Divider textAlign="left" style={{ marginTop: "25px", marginBottom: "10px" }}>
+                        <Chip label="Weather conditions" />
+                    </Divider>
+
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        {
+                            !loading ? <Typography>Weather status:&nbsp;
+                                {HikeWeatherByCode[0].name}
+                                <SvgIcon component={HikeWeatherByCode[0].image} />
+                            </Typography> :
+                                <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
+                        }
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        {
+                            !loading ? <Typography>Description of weather: Not provided</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>

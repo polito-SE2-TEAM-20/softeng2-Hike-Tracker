@@ -1,7 +1,7 @@
 import { HutDescription } from "./HutDescription";
 import { AddressInformation } from './AddressInformation';
 import { ReviewHutForm } from "./ReviewHutForm";
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import * as React from 'react';
 import { Grid } from '@mui/material'
 import CssBaseline from '@mui/material/CssBaseline';
@@ -16,20 +16,12 @@ import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
-import HTNavbar from '../components/HTNavbar/HTNavbar';
 
 import Alert from '@mui/material/Alert';
-import { MapHut } from './MapHut.js';
 
 
 import login from '../Assets//login.jpg'; // Import using relative path
 import { useNavigate } from "react-router";
-
-const styles = {
-  paperContainer: {
-    backgroundImage: `url(${login})`
-  }
-};
 
 function Copyright() {
   return (
@@ -188,16 +180,12 @@ function NewHutForm(props) {
         throw new Error('Unknown step');
     }
   }
-  const gotoLogin = () => {
-    navigate("/login", { replace: false })
-  }
 
   return (
     <ThemeProvider theme={theme} >
       <CssBaseline />
-      <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
       <Grid container spacing={0} sx={{ backgroundImage: `url(${login})`, minHeight: "100vh", height: "100%", minWidth: "100vw", width: "100%" }}>
-        <Container component="main" maxWidth="sm" sx={{ mb: 4, mt: 9 }} >
+        <Container component="main" maxWidth="sm" sx={{ mb: 4, mt: 1 }} >
 
           <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }} >
             <Typography component="h1" variant="h4" align="center">

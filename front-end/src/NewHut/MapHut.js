@@ -1,7 +1,6 @@
 import 'leaflet/dist/leaflet.css'
 import { useEffect } from 'react';
 import '../NewHike/map.css';
-import { useState } from 'react';
 import 'leaflet/dist/leaflet.css'
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, ZoomControl, Polyline, useMap } from 'react-leaflet'
 import L from 'leaflet';
