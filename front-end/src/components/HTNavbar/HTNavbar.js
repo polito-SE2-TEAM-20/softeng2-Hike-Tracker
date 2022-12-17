@@ -246,10 +246,10 @@ function HTNavbar(props) {
                         {
                             props.isLoggedIn ? <Tooltip>
                                 <div style={{ marginRight: "15px" }}>
-                                    <Typography color="white" className='unselectable' fontFamily={"Unbounded"} fontSize="24px">
+                                    <Typography color="white" className='unselectable' fontFamily={"Unbounded"} fontSize="18px">
                                         {props.user?.firstName} {props.user?.lastName}
                                     </Typography>
-                                    <Typography color="white" className='unselectable' fontFamily={"Unbounded"} fontSize="14px">
+                                    <Typography color="white" className='unselectable' fontFamily={"Unbounded"} fontSize="12px">
                                         {props.user?.role === 0 ? "Hiker" : ""}
                                         {props.user?.role === 1 ? "Friend" : ""}
                                         {props.user?.role === 2 ? "Local guide" : ""}
