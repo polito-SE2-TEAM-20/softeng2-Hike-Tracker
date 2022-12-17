@@ -11,7 +11,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Stack from "@mui/material/Stack";
 import { Paper } from '@mui/material';
 import Alert from '@mui/material/Alert';
-import HTNavbar from '../components/HTNavbar/HTNavbar'
 import { StartPointSelect } from './SelectStart'
 import { EndPointSelect } from './SelectEnd'
 import { PopupAddHike } from './PopupAddHike.js';
@@ -380,19 +379,14 @@ function NewHikeStEnd(props) {
     }
 
   }
-  const gotoLogin = () => {
-    navigate("/login", { replace: false })
-  }
-
 
   return (
     <React.Fragment>
       <Grid >
-        <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin}/>
         {
           <PopupAddHike id={hikeId} err={err} open={open} setOpen={setOpen} />
         }
-        <Typography fontFamily="Bakbak One, display" fontWeight="700" variant="h4" gutterBottom sx={{ p: 2, mr:5, ml:5 }} mt={14}>
+        <Typography fontFamily="Bakbak One, display" fontWeight="700" variant="h4" gutterBottom sx={{ p: 2, mr:5, ml:5 }} mt={1}>
           INSERT A NEW HIKE
         </Typography>
         <Grid container spacing={3} sx={{ p: 2, ml:2, mr:2}}>
