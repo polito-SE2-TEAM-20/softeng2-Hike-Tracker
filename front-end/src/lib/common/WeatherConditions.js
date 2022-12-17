@@ -59,7 +59,7 @@ export const HikeWeatherByCode = {
         'image': ThunderstormIcon
     },
     5: {
-        'name': "Dangerous Snow",
+        'name': "Dangerous snow",
         'image': SevereColdIcon
     },
     6: {
