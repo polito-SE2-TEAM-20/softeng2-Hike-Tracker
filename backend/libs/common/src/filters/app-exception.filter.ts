@@ -18,7 +18,9 @@ export class AppExceptionFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    console.log('got exception', exception);
+    if (!process.env.DISABLE_EXCEPTION_LOG) {
+      console.log('got exception', exception);
+    }
 
     if (exception instanceof BadRequestException) {
       let finalMessage = '';

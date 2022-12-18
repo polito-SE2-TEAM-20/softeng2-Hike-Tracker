@@ -1,3 +1,5 @@
+import { extname } from 'path';
+
 import { omit } from 'ramda';
 
 import { TypeID } from '@app/common';
@@ -15,3 +17,14 @@ export const withoutLatLon = <T>(value: T): Omit<T, 'lat' | 'lon'> =>
   omit(['lat', 'lon'], value);
 
 export const strDate = (d: Date) => d.toISOString();
+
+export const validatePictures = (
+  actualPictures: string[],
+  expectedFiles: string[],
+) => {
+  actualPictures.forEach((picture: string, i: number) => {
+    expect(picture).toMatch(
+      new RegExp(`^\\/static\\/images\\/.+\\${extname(expectedFiles[i])}$`),
+    );
+  });
+};

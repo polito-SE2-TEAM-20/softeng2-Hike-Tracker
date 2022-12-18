@@ -9,6 +9,7 @@ import {
 import {
   FOREIGN_OPTIONS_CASCADE,
   HikeLimits,
+  makePgJsonbArray,
   numericOptionsConfig,
 } from '../constants';
 import { HikeDifficulty } from '../enums';
@@ -138,6 +139,9 @@ export class Hike {
     default: '',
   })
   country!: string;
+
+  @Column(makePgJsonbArray(false))
+  pictures!: string[];
 
   /**
    * TypeORM sql-gen only

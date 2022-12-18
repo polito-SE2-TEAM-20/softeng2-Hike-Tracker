@@ -170,14 +170,16 @@ export class UserHikesController {
     const updateData: Partial<UserHike> = { finishedAt: new Date() };
     await this.service.getRepository().update({ id }, updateData);
 
-    const statsRaw: {
-      totalDistanceKms: number;
-      totalTimeMinutes: number;
-      psHighestAltitude: number;
-      psAltitudeRange: number;
-      psAverageSpeedKmsMin: number;
-      averageAscentSpeedMetresPerHour: number;
-    } = await this.dataSource.query(
+    const [statsRaw]: [
+      {
+        totalDistanceKms: number;
+        totalTimeMinutes: number;
+        psHighestAltitude: number;
+        psAltitudeRange: number;
+        psAverageSpeedKmsMin: number;
+        averageAscentSpeedMetresPerHour: number;
+      },
+    ] = await this.dataSource.query(
       `
       with totals as (
         select
@@ -204,7 +206,7 @@ export class UserHikesController {
           from ${tableNameSchemed('user_hike_track_points')} uhtp
           inner join ${tableNameSchemed('user_hikes')} uh on (uh.id = $1)
           inner join ${tableNameSchemed('points')} p on p.id = uhtp."pointId"
-          where uhtp."userHikeId" = 1
+          where uhtp."userHikeId" = $1
           window w as (order by uhtp.index asc)
           order by uhtp.index asc
         ) sq
@@ -229,17 +231,20 @@ export class UserHikesController {
       [userHike.id],
     );
 
-    await this.service.getRepository().update(
-      { id },
-      {
-        psTotalKms: statsRaw.totalDistanceKms,
-        psAltitudeRange: statsRaw.psAltitudeRange,
-        psTotalTimeMinutes: statsRaw.totalTimeMinutes,
-        psAverageSpeed: statsRaw.psAverageSpeedKmsMin,
-        psAverageVerticalAscentSpeed: statsRaw.averageAscentSpeedMetresPerHour,
-        psHighestAltitude: statsRaw.psHighestAltitude,
-      },
-    );
+    if (statsRaw) {
+      await this.service.getRepository().update(
+        { id },
+        {
+          psTotalKms: statsRaw.totalDistanceKms,
+          psAltitudeRange: statsRaw.psAltitudeRange,
+          psTotalTimeMinutes: statsRaw.totalTimeMinutes,
+          psAverageSpeed: statsRaw.psAverageSpeedKmsMin,
+          psAverageVerticalAscentSpeed:
+            statsRaw.averageAscentSpeedMetresPerHour,
+          psHighestAltitude: statsRaw.psHighestAltitude,
+        },
+      );
+    }
 
     return await this.service.getFullUserHike(id);
   }

@@ -279,6 +279,11 @@ export class UpdateHikeDto extends OmitType(PartialType(HikeDto), [
   'startPoint',
   'endPoint',
 ] as const) {
+  @IsString({ each: true })
+  @MaxLength(HikeLimits.picture, { each: true })
+  @IsOptional()
+  pictures?: string[];
+
   @IsArray()
   @IsOptional()
   @ValidateNested({ each: true })

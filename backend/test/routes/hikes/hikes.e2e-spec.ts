@@ -1,6 +1,6 @@
 import { randomInt } from 'node:crypto';
 import { constants } from 'node:fs';
-import path, { resolve } from 'node:path';
+import path from 'node:path';
 
 import * as fs from 'fs-extra';
 import { omit } from 'ramda';
@@ -9,6 +9,7 @@ import {
   HikeDifficulty,
   HikePoint,
   HutWorker,
+  IMAGES_UPLOAD_PATH,
   latLonToGisPoint,
   mapToId,
   PointType,
@@ -23,6 +24,7 @@ import {
   mapArray,
   prepareTestApp,
   prepareVars,
+  validatePictures,
   withoutLatLon,
 } from '@test/base';
 
@@ -139,7 +141,7 @@ describe('Hikes (e2e)', () => {
       });
   });
 
-  it('should import gpx file, save reference points, start and end points to db', async () => {
+  it('should import gpx file, pictures, save reference points, start and end points to db', async () => {
     const { localGuide } = await setup();
 
     const hikeData = {
@@ -161,17 +163,23 @@ describe('Hikes (e2e)', () => {
         lon: 7.083,
       },
     };
+    const pictures = ['img2.jpeg'];
 
-    const { body: hike } = await restService
+    const req = restService
       .build(app, localGuide)
       .request()
       .post('/hikes/import')
-      .attach('gpxFile', resolve(ROOT, './test-data/4.gpx'))
+      .attach('gpxFile', path.resolve(ROOT, './test-data/4.gpx'))
       .field(withoutCompositeFields(hikeData))
       .field('referencePoints', JSON.stringify(hikeData.referencePoints))
       .field('startPoint', JSON.stringify(hikeData.startPoint))
-      .field('endPoint', JSON.stringify(hikeData.endPoint))
-      .expect(201);
+      .field('endPoint', JSON.stringify(hikeData.endPoint));
+
+    pictures.forEach((file) =>
+      req.attach('pictures', path.join(ROOT, './test-data', file)),
+    );
+
+    const { body: hike } = await req.expect(201);
 
     expect(hike).toMatchObject({
       id: anyId(),
@@ -196,10 +204,12 @@ describe('Hikes (e2e)', () => {
       },
     });
     expect(hike.gpxPath).toMatch(/^\/static\/gpx\/.+\.gpx$/);
+    expect(hike.pictures).toHaveLength(pictures.length);
+    validatePictures(hike.pictures, pictures);
 
     expect(
       fs.access(
-        resolve(UPLOAD_PATH, path.basename(hike.gpxPath)),
+        path.resolve(UPLOAD_PATH, path.basename(hike.gpxPath)),
         constants.F_OK,
       ),
     ).not.toReject();
@@ -219,7 +229,7 @@ describe('Hikes (e2e)', () => {
       .build(app, localGuide)
       .request()
       .post('/hikes/import')
-      .attach('gpxFile', resolve(ROOT, './test-data/empty.gpx'))
+      .attach('gpxFile', path.resolve(ROOT, './test-data/empty.gpx'))
       .field(withoutCompositeFields(hikeData))
       .field('referencePoints', JSON.stringify([]))
       .field('startPoint', JSON.stringify([]))
@@ -293,7 +303,7 @@ describe('Hikes (e2e)', () => {
       .build(app, localGuide)
       .request()
       .post('/hikes/import')
-      .attach('gpxFile', resolve(ROOT, './test-data/4.gpx'))
+      .attach('gpxFile', path.resolve(ROOT, './test-data/4.gpx'))
       .field(withoutCompositeFields(hikeData))
       .field('referencePoints', JSON.stringify(hikeData.referencePoints))
       .field('startPoint', JSON.stringify(hikeData.startPoint))
@@ -495,7 +505,7 @@ describe('Hikes (e2e)', () => {
       .build(app, localGuide)
       .request()
       .post('/hikes/import')
-      .attach('gpxFile', resolve(ROOT, './test-data/4.gpx'))
+      .attach('gpxFile', path.resolve(ROOT, './test-data/4.gpx'))
       .field(withoutCompositeFields(hikeData))
       .field('referencePoints', JSON.stringify(hikeData.referencePoints))
       .field('startPoint', JSON.stringify(hikeData.startPoint))
@@ -506,7 +516,7 @@ describe('Hikes (e2e)', () => {
       .build(app, localGuide)
       .request()
       .post('/hikes/import')
-      .attach('gpxFile', resolve(ROOT, './test-data/1.gpx'))
+      .attach('gpxFile', path.resolve(ROOT, './test-data/1.gpx'))
       .field(withoutCompositeFields(hikeData2))
       .field('referencePoints', JSON.stringify(hikeData2.referencePoints))
       .field('startPoint', JSON.stringify(hikeData2.startPoint))
@@ -529,9 +539,6 @@ describe('Hikes (e2e)', () => {
     expect(
       await testService.repo(HikePoint).findBy({ hikeId: hike.id }),
     ).toBeEmpty();
-    // expect(
-    //   await testService.repo(Point).findBy({ id: In(points) }),
-    // ).toBeEmpty();
 
     await restService
       .build(app, localGuide)
@@ -602,5 +609,105 @@ describe('Hikes (e2e)', () => {
         expect(body.condition).toBe(HikeCondition.closed);
         expect(body.cause).toBe('Christmas Holidays!');
       });
+  });
+
+  it('should upload hike pictures', async () => {
+    const { localGuide } = await setup();
+
+    const hike = await testService.createHike({
+      ...hikeBasic,
+      userId: localGuide.id,
+      pictures: ['test1.png'],
+    });
+
+    const testPics = ['img2.jpeg', 'img3.jpeg', 'img1.png'];
+    const req = restService
+      .build(app, localGuide)
+      .request()
+      .post(`/hike-pictures/${hike.id}`);
+
+    testPics.forEach((file) =>
+      req.attach('pictures', path.join(ROOT, './test-data', file)),
+    );
+
+    await req.expect(200).expect(({ body }) => {
+      expect(body).toMatchObject({
+        id: hike.id,
+        pictures: expect.any(Array),
+      });
+
+      expect(body.pictures).toHaveLength(testPics.length + 1);
+      expect(body.pictures[0]).toEqual('test1.png');
+      validatePictures(body.pictures.slice(1), testPics);
+    });
+  });
+
+  it('should reorder hike pictures', async () => {
+    const { localGuide } = await setup();
+
+    const hike = await testService.createHike({
+      ...hikeBasic,
+      userId: localGuide.id,
+      pictures: ['test1.png', 'test2.jpeg', 'test3.png'],
+    });
+
+    const reorderedPictures = ['test3.jpeg', 'test1.png', 'test2.png'];
+
+    await restService
+      .build(app, localGuide)
+      .request()
+      .put(`/hikes/${hike.id}`)
+      .send({ pictures: reorderedPictures })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toMatchObject({
+          id: hike.id,
+          pictures: reorderedPictures,
+        });
+      });
+  });
+
+  it('should delete removed hike pictures from disk', async () => {
+    const { localGuide, hike } = await setup();
+
+    const testPics = ['img2.jpeg', 'img1.png'];
+    const req = restService
+      .build(app, localGuide)
+      .request()
+      .post(`/hike-pictures/${hike.id}`);
+
+    testPics.forEach((file) =>
+      req.attach('pictures', path.join(ROOT, './test-data', file)),
+    );
+
+    const { body: updatedHike } = await req.expect(200);
+    const firstImage = path.basename(updatedHike.pictures[0]);
+
+    await restService
+      .build(app, localGuide)
+      .request()
+      .put(`/hikes/${updatedHike.id}`)
+      .send({ pictures: updatedHike.pictures.slice(1) })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.pictures).toHaveLength(1);
+        expect(body.pictures[0]).toEqual(updatedHike.pictures[1]);
+      });
+
+    expect(
+      fs.access(
+        path.resolve(IMAGES_UPLOAD_PATH, path.basename(firstImage)),
+        constants.F_OK,
+      ),
+    ).toReject();
+    expect(
+      fs.access(
+        path.resolve(
+          IMAGES_UPLOAD_PATH,
+          path.basename(updatedHike.pictures[1]),
+        ),
+        constants.F_OK,
+      ),
+    ).not.toReject();
   });
 });

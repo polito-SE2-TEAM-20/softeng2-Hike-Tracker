@@ -19,7 +19,7 @@ import {
 } from '@test/base';
 import { testMapPoint } from '@test/base/test.mappers';
 
-const isoDateNow = () => new Date().toISOString();
+const isoDateNow = () => strDate(new Date());
 const pickCommon = (el: any) => ({
   ...pick(['id', 'userId']),
   startedAt: el.startedAt ? strDate(el.startedAt) : null,
