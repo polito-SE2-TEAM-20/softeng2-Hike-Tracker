@@ -687,7 +687,6 @@ describe('Hikes (e2e)', () => {
       })).map(userHike => ({notification: userHike.weatherNotified, userHikeId: userHike.id}));
       
       newUserHikesAfter.forEach((notification) => {
-        console.log("Notification #"+notification.userHikeId+":" + notification.notification)
         if(notification.userHikeId === userHike2.id) 
           expect(notification.notification).toBe(false);
         else 
