@@ -280,7 +280,11 @@ export class HikesController {
       });
 
       //Creation of proper ref points
-      const refPointsForDB = hikeReferencePoints.map((refPoint) => {
+      const refPointsForDB = hikeReferencePoints.map<
+        Partial<Pick<Point, 'name' | 'address' | 'altitude'>> & {
+          point: GPoint;
+        }
+      >((refPoint) => {
         const pointObject: GPoint = {
           type: 'Point',
           coordinates: [refPoint.lon, refPoint.lat],
@@ -290,6 +294,7 @@ export class HikesController {
           name: refPoint.name,
           address: refPoint.address,
           point: pointObject,
+          altitude: refPoint.altitude,
         };
         return refPointForDB;
       });
@@ -301,6 +306,7 @@ export class HikesController {
           position: point.point,
           address: point.address,
           name: point.name,
+          altitude: point.altitude,
         })),
       );
 

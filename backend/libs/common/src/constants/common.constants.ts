@@ -3,6 +3,8 @@ import { resolve } from 'path';
 import { applyDecorators } from '@nestjs/common';
 import { IsInt, Min, ValidationOptions } from 'class-validator';
 
+import { PerformanceStat } from '../enums';
+
 export const ROOT = resolve(process.cwd());
 
 export const SERVE_FOLDER = resolve(process.cwd(), './uploads');
@@ -22,3 +24,17 @@ export const FRONTEND_HOST = 'hiking.germangorodnev.com';
 
 export const IsIdentifier = (options?: ValidationOptions) =>
   applyDecorators(IsInt(options), Min(1, options));
+
+export const PerformanceStatUnits: Record<PerformanceStat, string> = {
+  averagePace: 'min/km',
+  averageVerticalAscentSpeed: 'm/hour',
+  fastestPace: 'min/km',
+  highestAltitudeReached: 'm',
+  largestAltitudeRange: 'm',
+  longestHikeDistanceKms: 'km',
+  longestHikeTimeHours: 'h',
+  shortestHikeDistanceKms: 'km',
+  shortestHikeTimeHours: 'h',
+  totalHikesFinished: 'hike',
+  totalKmsWalked: 'km',
+};

@@ -121,6 +121,11 @@ export class ReferencePointDto {
   @IsLongitude()
   @Transform(({ value }) => valToNumber(value))
   lon!: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Transform(({ value }) => valToNumber(value))
+  altitude?: number | null;
 }
 
 export class StartEndPointDto extends DtoWithGroups {

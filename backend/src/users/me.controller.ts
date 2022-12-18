@@ -23,6 +23,8 @@ import { UserHikesService } from '@core/user-hikes/user-hikes.service';
 
 import { MyTrackedHikesDto } from './me.dto';
 import { PreferencesDto } from './preferences.dto';
+import { UsersStatsService } from './users-stats.service';
+import { UserPerformance } from './users.schema';
 import { UsersService } from './users.service';
 
 @Controller('me')
@@ -31,6 +33,7 @@ export class MeController {
   constructor(
     private hikesService: HikesService,
     private usersService: UsersService,
+    private usersStatsService: UsersStatsService,
     private userHikesService: UserHikesService,
   ) {}
 
@@ -42,6 +45,12 @@ export class MeController {
       .andWhere('h.userId = :userId', { userId: user.id })
       .orderBy('h.id', 'DESC')
       .getMany();
+  }
+
+  @Get('performance-stats')
+  @HikerOnly()
+  myPerformance(@CurrentUser() user: UserContext): Promise<UserPerformance> {
+    return this.usersStatsService.calculateUserStats(user);
   }
 
   @Post('tracked-hikes')

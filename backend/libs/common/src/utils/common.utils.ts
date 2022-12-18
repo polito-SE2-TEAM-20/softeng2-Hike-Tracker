@@ -72,3 +72,6 @@ export const getEnvVariable = (name: string): string => {
 
   return value;
 };
+
+export const tableNameSchemed = (tableName: string): string =>
+  `"public".${escapeIdentifier(tableName)}`;

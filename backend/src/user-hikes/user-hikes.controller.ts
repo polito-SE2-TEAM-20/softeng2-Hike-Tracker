@@ -19,7 +19,9 @@ import {
   ParseIdPipe,
   PointType,
   RolesOnly,
+  tableNameSchemed,
   UserContext,
+  UserHike,
   UserRole,
 } from '@app/common';
 import { HikesService } from '@core/hikes/hikes.service';
@@ -33,10 +35,10 @@ import { UserHikesService } from './user-hikes.service';
 @Controller('user-hikes')
 export class UserHikesController {
   constructor(
-    @InjectDataSource() private dataSource: DataSource,
     private service: UserHikesService,
     private hikesService: HikesService,
     private pointsService: PointsService,
+    @InjectDataSource() private dataSource: DataSource,
     private userHikeTrackPointsService: UserHikeTrackPointsService,
   ) {}
 
@@ -151,11 +153,93 @@ export class UserHikesController {
     @CurrentUser() user: UserContext,
     @Param('id', ParseIdPipe()) id: ID,
   ): Promise<UserHikeFull> {
-    await this.service.findByIdAndValidatePermissions(id, user);
+    const userHike = await this.service.findByIdAndValidatePermissions(
+      id,
+      user,
+    );
 
-    await this.service
-      .getRepository()
-      .update({ id }, { finishedAt: new Date() });
+    // prepare final data to store hike stats
+    // total kms walked - distance(TrackPoint.point.position)
+    // highest altitude - max(TrackPoint.point.altitude)
+    // altitude range - abs(max(TrackPoint.point.altitude) - min(TrackPoint.point.altitude))
+    // total time - (finishedAt - startedAt), store as duration?
+    // average speed (sum(kms walked) / total time)
+    // average vertical ascent speed - avg(distance(curr, prev) / (time - prev.time))
+    // ** only on points where altitude > prev.altitude (lag 1)
+
+    const updateData: Partial<UserHike> = { finishedAt: new Date() };
+    await this.service.getRepository().update({ id }, updateData);
+
+    const statsRaw: {
+      totalDistanceKms: number;
+      totalTimeMinutes: number;
+      psHighestAltitude: number;
+      psAltitudeRange: number;
+      psAverageSpeedKmsMin: number;
+      averageAscentSpeedMetresPerHour: number;
+    } = await this.dataSource.query(
+      `
+      with totals as (
+        select
+          (sum(ST_Distance(sq.position, sq.prev_pos)) over ()) / 1000 as "totalDistanceKms",
+          (sum(ST_Distance(sq.position, sq.prev_pos)) over ()) as "totalDistanceMeters",
+          sq.total_time_minutes as "totalTimeMinutes",
+          max(sq.altitude) over () as "psHighestAltitude",
+          abs(sq.max_altitude - sq.min_altitude) as "psAltitudeRange",
+          sq.*
+        from (
+          select
+            p.*,
+            uhtp.index,
+            uhtp.datetime as datetime,
+            lag(p.position, 1) over w as prev_pos,
+            lag(p.altitude, 1) over w as prev_altitude,
+            p.altitude as curr_altitude,
+            p.altitude - lag(p.altitude) over w as altitude_diff,
+            lag(uhtp.datetime, 1) over w as prev_datetime,
+            extract(epoch from uhtp.datetime - lag(uhtp.datetime) over w) / 60 as duration_minutes,
+            max(p.altitude) over () as max_altitude,
+            min(p.altitude) over () as min_altitude,
+            (extract(epoch from (uh."finishedAt" - uh."startedAt")) / 60) as total_time_minutes
+          from ${tableNameSchemed('user_hike_track_points')} uhtp
+          inner join ${tableNameSchemed('user_hikes')} uh on (uh.id = $1)
+          inner join ${tableNameSchemed('points')} p on p.id = uhtp."pointId"
+          where uhtp."userHikeId" = 1
+          window w as (order by uhtp.index asc)
+          order by uhtp.index asc
+        ) sq
+      ),
+      speeds as (
+        select
+          totals.*,
+          ("totalDistanceKms") / (total_time_minutes) as "psAverageSpeedKmsMin",
+          1 / ("totalDistanceKms" / total_time_minutes) as "psAverageSpeedMinPerKm"
+        from totals
+      )
+      select
+        speeds.*,
+        (select
+            (sum(altitude_diff) over () / sum(duration_minutes) over ()) / 60 as "averageAscentSpeedMetresPerHour"
+          from speeds
+          where altitude_diff > 0
+          limit 1
+        ) as "averageAscentSpeedMetresPerHour"
+      from speeds
+      `,
+      [userHike.id],
+    );
+
+    await this.service.getRepository().update(
+      { id },
+      {
+        psTotalKms: statsRaw.totalDistanceKms,
+        psAltitudeRange: statsRaw.psAltitudeRange,
+        psTotalTimeMinutes: statsRaw.totalTimeMinutes,
+        psAverageSpeed: statsRaw.psAverageSpeedKmsMin,
+        psAverageVerticalAscentSpeed: statsRaw.averageAscentSpeedMetresPerHour,
+        psHighestAltitude: statsRaw.psHighestAltitude,
+      },
+    );
 
     return await this.service.getFullUserHike(id);
   }
