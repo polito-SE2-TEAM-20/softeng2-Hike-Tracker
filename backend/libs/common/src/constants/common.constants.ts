@@ -27,7 +27,7 @@ export const IsIdentifier = (options?: ValidationOptions) =>
 
 export const PerformanceStatUnits: Record<PerformanceStat, string> = {
   averagePace: 'min/km',
-  averageVerticalAscentSpeed: 'm/hour',
+  averageVerticalAscentSpeed: 'm/h',
   fastestPace: 'min/km',
   highestAltitudeReached: 'm',
   largestAltitudeRange: 'm',
