@@ -78,11 +78,6 @@ const ShowHike = (props) => {
         })
     }, [])
 
-
-    const gotoLogin = () => {
-        navigate("/login", { replace: false })
-    }
-
     const handleStartTrackHiking = () => {
         API.getAllUserTrackingHikes(UserHikeState.ACTIVE)
             .then((activeHikeList) => {
