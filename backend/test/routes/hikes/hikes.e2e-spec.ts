@@ -628,14 +628,14 @@ describe('Hikes (e2e)', () => {
       });
   });
 
-  it("Should update weather condition of a selected hike and its flag in the user-hike table", async () => {
+  it.only("Should update weather condition of a selected hike and its flag in the user-hike table", async () => {
       const {hike, platformManager, hiker} = await setup();
 
       const hiker2 = await testService.createUser({
         role: UserRole.hiker
       });
 
-      await testService.createUserHike({
+      const userHike2 = await testService.createUserHike({
         hikeId: hike.id,
         userId: hiker2.id,
         weatherNotified: null
@@ -666,6 +666,12 @@ describe('Hikes (e2e)', () => {
         expect(notification).toBe(false)
       });
 
+      //This is used to finish an hike and see that it popup is not shown anymore to that user
+      await testService.repo(UserHike).save({
+        id: userHike2.id,
+        finishedAt: new Date()
+      })
+
       await restService
         .build(app, hiker)
         .request()
@@ -678,10 +684,14 @@ describe('Hikes (e2e)', () => {
       
       const newUserHikesAfter = (await testService.repo(UserHike).findBy({
         hikeId: hike.id,
-      })).map(userHike => (userHike.weatherNotified));
+      })).map(userHike => ({notification: userHike.weatherNotified, userHikeId: userHike.id}));
       
       newUserHikesAfter.forEach((notification) => {
-        expect(notification).toBe(true)
+        console.log("Notification #"+notification.userHikeId+":" + notification.notification)
+        if(notification.userHikeId === userHike2.id) 
+          expect(notification.notification).toBe(false);
+        else 
+          expect(notification.notification).toBe(true)
       });
       
       

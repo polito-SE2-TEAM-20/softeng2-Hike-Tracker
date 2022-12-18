@@ -502,9 +502,6 @@ export class HikesController {
       finishedAt: IsNull()
     });
 
-
-    console.log(update)
-
     if(!isNil(update)){
       await this.dataSource.getRepository(UserHike).update({
         hikeId: In(update.map(userHike => userHike.hikeId))        
