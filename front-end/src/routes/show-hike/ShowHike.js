@@ -1,5 +1,5 @@
 import { Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Fab, Grid, Paper, Slide, Typography } from "@mui/material";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { useMatch } from "react-router-dom";
 import touristIcon from '../../Assets/tourist-icon.png'
 import hikerIcon from '../../Assets/hiker-icon.png'
@@ -14,13 +14,14 @@ import { Button } from "react-bootstrap";
 import { UserRoles } from "../../lib/common/UserRoles";
 import { HikeWeatherByCode } from '../../lib/common/WeatherConditions'
 import { SvgIcon } from "@mui/material";
+import { MapContainer, TileLayer, Marker, ZoomControl, Polyline } from 'react-leaflet'
 
 const Difficulty = (props) => {
     if (!props.loading) {
         return (
             <>
                 {
-                    props.diff == 0 ?
+                    props.diff === 0 ?
                         <>
                             <img src={touristIcon} alt="tourist" width="30px" height="30px" />
                             <div style={{ backgroundColor: "#55B657", color: "white", borderRadius: "8px", paddingLeft: "12px", paddingTop: "3px", paddingBottom: "3px", paddingRight: "12px", width: "fit-content", display: "inline-block", marginLeft: "8px" }}><b>Tourist</b></div>
@@ -28,7 +29,7 @@ const Difficulty = (props) => {
                         : <></>
                 }
                 {
-                    props.diff == 1 ?
+                    props.diff === 1 ?
                         <>
                             <img src={hikerIcon} alt="tourist" width="30px" height="30px" />
                             <div style={{ backgroundColor: "#1a79aa", color: "white", borderRadius: "8px", paddingLeft: "12px", paddingTop: "3px", paddingBottom: "3px", paddingRight: "12px", width: "fit-content", display: "inline-block", marginLeft: "8px" }}><b>Hiker</b></div>
@@ -37,7 +38,7 @@ const Difficulty = (props) => {
 
                 }
                 {
-                    props.diff == 2 ?
+                    props.diff === 2 ?
                         <>
                             <img src={proIcon} alt="tourist" width="30px" height="30px" />
                             <div style={{ backgroundColor: "#FA6952", color: "white", borderRadius: "8px", paddingLeft: "12px", paddingTop: "3px", paddingBottom: "3px", paddingRight: "12px", width: "fit-content", display: "inline-block", marginLeft: "8px" }}><b>Pro</b></div>
@@ -69,12 +70,22 @@ const ShowHike = (props) => {
 
     useEffect(() => {
         let tmpHike = { title: "", description: "", region: "", province: "", length: "", expectedTime: "", ascent: "", difficulty: -1 }
+
         const getHike = async () => {
             tmpHike = await API.getSingleHikeByID(hikeid)
         }
+        const fetchGPXFile = async () => {
+            tmpHike = await API.getHikePathByHike(tmpHike)
+        }
         getHike().then(() => {
-            setHike(tmpHike)
-            setLoading(false)
+            fetchGPXFile().then(() => {
+                let gpxParser = require('gpxparser');
+                const gpx = new gpxParser();
+                gpx.parse(tmpHike.positions);
+                tmpHike.positions = gpx.tracks[0].points.map(p => [p.lat, p.lon])
+                setHike(tmpHike)
+                setLoading(false)
+            })
         })
     }, [])
 
@@ -115,13 +126,13 @@ const ShowHike = (props) => {
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
                             !loading ?
-                                <Typography>Region: {hike.region == "" ? "N/A" : hike.region}</Typography> :
+                                <Typography>Region: {hike.region === "" ? "N/A" : hike.region}</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
-                            !loading ? <Typography>Province: {hike.province == "" ? "N/A" : hike.province}</Typography> :
+                            !loading ? <Typography>Province: {hike.province === "" ? "N/A" : hike.province}</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
@@ -132,19 +143,19 @@ const ShowHike = (props) => {
 
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
-                            !loading ? <Typography>Length: {hike.length == "" ? "N/A" : (Math.round(hike.length * 10) / 10000).toFixed(2)}km</Typography> :
+                            !loading ? <Typography>Length: {hike.length === "" ? "N/A" : (Math.round(hike.length * 10) / 10000).toFixed(2)}km</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
-                            !loading ? <Typography>Expected time: {hike.expectedTime == "" ? "N/A" : fromMinutesToHours(hike.expectedTime)}</Typography> :
+                            !loading ? <Typography>Expected time: {hike.expectedTime === "" ? "N/A" : fromMinutesToHours(hike.expectedTime)}</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
-                            !loading ? <Typography>Ascent: {hike.ascent == "" ? "N/A" : hike.ascent}m</Typography> :
+                            !loading ? <Typography>Ascent: {hike.ascent === "" ? "N/A" : hike.ascent}m</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
@@ -220,6 +231,31 @@ const ShowHike = (props) => {
                                 <Skeleton variant='rectangular' height={20} width={400} style={{ marginBottom: "10px" }} />
                                 <Skeleton variant='rectangular' height={20} width={400} style={{ marginBottom: "10px" }} />
                                 <Skeleton variant='rectangular' height={20} width={150} style={{ marginBottom: "10px" }} />
+                            </>
+                    }
+                </Grid>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                    {
+                        !loading ?
+                            <MapContainer center={[hike?.positions[0][0], hike?.positions[0][1]]} zoom={14}
+                                scrollWheelZoom={{ xs: false, sm: false, md: false, lg: false, xl: false }} zoomControl={false}
+                                style={{ width: "auto", minHeight: "20vh", height: "40vh" }}>
+                                <TileLayer
+                                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                    url={"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}
+                                />
+                                <Marker
+                                        key={hike.id}
+                                        position={[hike?.positions[0][0], hike?.positions[0][1]]}>
+                                    </Marker>
+                                    <Polyline
+                                        pathOptions={{ fillColor: 'red', color: 'blue' }}
+                                        positions={hike?.positions}
+                                    />
+                                <ZoomControl position='bottomright' />
+                            </MapContainer> :
+                            <>
+                                <Skeleton variant='rectangular' height={400} width={900} style={{ marginBottom: "10px" }} />
                             </>
                     }
                 </Grid>
