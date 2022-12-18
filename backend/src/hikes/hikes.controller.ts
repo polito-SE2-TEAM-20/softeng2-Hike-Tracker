@@ -550,11 +550,18 @@ export class HikesController {
       weatherDescription
     })));
 
-    //HERE MUST BE CHANGED IN UPDATE
-    await this.dataSource.getRepository(UserHike).save(hikesToUpdateIds.map(id => ({
-      hikeId: id,
-      weatherNotified: false,
-    })));
+    // //HERE MUST BE CHANGED IN UPDATE
+    // await this.dataSource.getRepository(UserHike).save(hikesToUpdateIds.map(id => ({
+    //   hikeId: id,
+    //   weatherNotified: false,
+    // })));
+
+    await this.dataSource.getRepository(UserHike).update({
+      hikeId: In(hikesToUpdateIds),
+      finishedAt: IsNull()        
+    }, {
+      weatherNotified: false
+    });
 
     return await this.service.getRepository().findBy({
       id: In(hikesToUpdateIds)

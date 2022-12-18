@@ -628,7 +628,7 @@ describe('Hikes (e2e)', () => {
       });
   });
 
-  it.only("Should update weather condition of a selected hike and its flag in the user-hike table", async () => {
+  it("Should update weather condition of a selected hike and its flag in the user-hike table", async () => {
       const {hike, platformManager, hiker} = await setup();
 
       const hiker2 = await testService.createUser({
@@ -691,9 +691,11 @@ describe('Hikes (e2e)', () => {
           expect(notification.notification).toBe(false);
         else 
           expect(notification.notification).toBe(true)
-      });
-      
-      
+      });      
+  });
+
+  it("Should update weather condition of hikes in a specified area and their flags in the user-hike table", async () => {
+    //updateWeatherInRange
   });
 
 });
