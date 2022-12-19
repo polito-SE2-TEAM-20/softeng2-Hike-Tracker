@@ -18,6 +18,10 @@ export class GroupValidationPipe implements PipeTransform {
 
     const instance = plainToInstance(metatype, value);
 
+    if (!instance) {
+      return value;
+    }
+
     let groups: string[] = [];
     if (typeof instance.generateGroups === 'function') {
       groups = instance.generateGroups();

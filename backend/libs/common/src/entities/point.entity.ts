@@ -1,6 +1,6 @@
 import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
-import { PointLimits } from '../constants';
+import { numericOptionsConfig, PointLimits } from '../constants';
 import { PointType } from '../enums';
 import { GPoint } from '../types';
 
@@ -39,6 +39,15 @@ export class Point {
     nullable: true,
   })
   name!: string | null;
+
+  /**
+   * meters
+   */
+  @Column({
+    ...numericOptionsConfig(null),
+    nullable: true,
+  })
+  altitude!: number | null;
 
   /**
    * For TypeORM metadata only

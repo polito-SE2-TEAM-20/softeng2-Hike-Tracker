@@ -1,7 +1,6 @@
-import { Type } from 'class-transformer';
-import { ValidateNested } from 'class-validator';
+import { IsDateString } from 'class-validator';
 
-import { ID, IsIdentifier, LatLonDto } from '@app/common';
+import { ID, IsIdentifier } from '@app/common';
 
 export class StartHikeDto {
   @IsIdentifier()
@@ -9,7 +8,9 @@ export class StartHikeDto {
 }
 
 export class TrackPointDto {
-  @ValidateNested()
-  @Type(() => LatLonDto)
-  position!: LatLonDto;
+  @IsIdentifier()
+  pointId!: ID;
+
+  @IsDateString()
+  datetime!: string;
 }

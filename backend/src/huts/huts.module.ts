@@ -9,6 +9,7 @@ import {
   Point,
   UploadPathModule,
 } from '@app/common';
+import { PicturesModule } from '@core/pictures/pictures.module';
 
 import { HutPicturesController } from './hut-pictures.controller';
 import { HutsController } from './huts.controller';
@@ -30,8 +31,8 @@ import { HutsService } from './huts.service';
       imports: [UploadPathModule],
     }),
     TypeOrmModule.forFeature([Hut, Point]),
+    PicturesModule,
   ],
-
   providers: [HutsService],
   controllers: [HutsController, HutPicturesController],
   exports: [HutsService],

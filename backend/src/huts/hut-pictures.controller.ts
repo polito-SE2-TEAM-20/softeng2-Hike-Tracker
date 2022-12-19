@@ -1,5 +1,3 @@
-import * as path from 'path';
-
 import {
   Body,
   Controller,
@@ -12,8 +10,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { remove } from 'fs-extra';
-import { difference } from 'ramda';
 
 import {
   LocalGuideAndHutWorkerOnly,
@@ -21,16 +17,18 @@ import {
   CurrentUser,
   UserContext,
   Hut,
-  IMAGES_URI,
-  IMAGES_UPLOAD_PATH,
 } from '@app/common';
+import { PicturesService } from '@core/pictures/pictures.service';
 
 import { HutPicturesReorderDto } from './huts.dto';
 import { HutsService } from './huts.service';
 
 @Controller('hut-pictures')
 export class HutPicturesController {
-  constructor(private hutsService: HutsService) {}
+  constructor(
+    private hutsService: HutsService,
+    private picturesService: PicturesService,
+  ) {}
 
   @Post(':id')
   @HttpCode(HttpStatus.OK)
@@ -44,9 +42,7 @@ export class HutPicturesController {
   ): Promise<Hut> {
     const hut = await this.hutsService.findByIdOrThrow(id);
 
-    const newPictures = files.map(({ filename }) =>
-      [IMAGES_URI, filename].join('/'),
-    );
+    const newPictures = this.picturesService.prepareFilePaths(files);
 
     return await this.hutsService
       .getRepository()
@@ -63,18 +59,15 @@ export class HutPicturesController {
     const { pictures: existingPictures } =
       await this.hutsService.findByIdOrThrow(id);
 
-    // maybe delete some
-    const deletedPictures = difference(existingPictures, pictures);
+    const newPictures =
+      await this.picturesService.getPicturesListAndDeleteRemoved(
+        pictures,
+        existingPictures,
+      );
 
-    // delete them
-    for (const picture of deletedPictures) {
-      const fileName = path.basename(picture);
-
-      // delete
-      await remove(path.join(IMAGES_UPLOAD_PATH, fileName));
-    }
-
-    await this.hutsService.getRepository().update({ id }, { pictures });
+    await this.hutsService
+      .getRepository()
+      .update({ id }, { pictures: newPictures });
 
     return await this.hutsService.findByIdOrThrow(id);
   }

@@ -6,11 +6,12 @@ import { HikesModule } from '@core/hikes/hikes.module';
 import { UserHikesModule } from '@core/user-hikes/user-hikes.module';
 
 import { MeController } from './me.controller';
+import { UsersStatsService } from './users-stats.service';
 import { UsersService } from './users.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User]), HikesModule, UserHikesModule],
-  providers: [UsersService],
+  providers: [UsersService, UsersStatsService],
   controllers: [MeController],
   exports: [UsersService],
 })

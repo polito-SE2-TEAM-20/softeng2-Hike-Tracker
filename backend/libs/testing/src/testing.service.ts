@@ -17,8 +17,10 @@ import {
   HikePointPrimaryKey,
   Hut,
   ID,
+  isNotNil,
   ParkingLot,
   Point,
+  PointType,
   User,
   UserHike,
   UserHikeTrackPoint,
@@ -148,7 +150,9 @@ export class TestingService {
   }
 
   async createPoint(data: DeepPartial<Point> = {}): Promise<Point> {
-    return await this.createBase<Point>(Point, data);
+    const entity = await this.createBase<Point>(Point, data);
+
+    return await this.repo(Point).findOneByOrFail({ id: entity.id });
   }
 
   async createHike(data: DeepPartial<Hike> = {}): Promise<Hike> {
@@ -157,6 +161,65 @@ export class TestingService {
 
   async createUserHike(data: DeepPartial<UserHike> = {}): Promise<UserHike> {
     return await this.createBase<UserHike>(UserHike, data);
+  }
+
+  async createUserHikeTrackPointWithPosition(
+    data: Pick<UserHikeTrackPoint, 'userHikeId'> &
+      DeepPartial<UserHikeTrackPoint>,
+    _point?: Pick<Point, 'position'> & DeepPartial<Point>,
+  ): Promise<UserHikeTrackPoint> {
+    const insertAndReturn = async (data: DeepPartial<UserHikeTrackPoint>) => {
+      const entry = await this.createBase<UserHikeTrackPoint>(
+        UserHikeTrackPoint,
+        data,
+      );
+
+      return this.repo(UserHikeTrackPoint).findOneByOrFail({
+        index: entry.index,
+        userHikeId: entry.userHikeId,
+      });
+    };
+
+    if (!_point) {
+      return await insertAndReturn(data);
+    }
+
+    const point = await this.createPoint({
+      type: PointType.point,
+      ..._point,
+    });
+    const userHike = await this.repo(UserHike).findOneByOrFail({
+      id: data.userHikeId,
+    });
+    let index: number;
+
+    if (isNotNil(data.index)) {
+      index = data.index;
+    } else {
+      const lastRefPoint = await this.repo(HikePoint)
+        .createQueryBuilder('hp')
+        .innerJoin(
+          UserHike,
+          'uh',
+          '(uh.hikeId = hp.hikeId and uh.id = :userHikeId)',
+          { userHikeId: userHike.id },
+        )
+        .andWhere('hp.type = :type', { type: PointType.referencePoint })
+        .orderBy('hp.index', 'DESC')
+        .getOne();
+
+      index = lastRefPoint ? lastRefPoint.index + 1 : 0;
+    }
+
+    // bind as to a hike reference point
+    await this.createHikePoint({
+      pointId: point.id,
+      hikeId: userHike.hikeId,
+      type: PointType.referencePoint,
+      index,
+    });
+
+    return await insertAndReturn({ ...data, pointId: point.id });
   }
 
   async createUserHikeTrackPoint(

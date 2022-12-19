@@ -7,4 +7,6 @@ export enum HikeLimits {
   city = 512,
   country = 256,
   cause = 256,
+  picture = 512,
+  maxPictures = 5,
 }

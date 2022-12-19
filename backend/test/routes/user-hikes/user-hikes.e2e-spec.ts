@@ -1,8 +1,10 @@
 import { omit, pick } from 'ramda';
 
 import {
+  HikePoint,
   latLonToGisPoint,
   mapToId,
+  PointType,
   UserHikeState,
   UserHikeTrackPoint,
   UserRole,
@@ -15,20 +17,23 @@ import {
   prepareVars,
   strDate,
 } from '@test/base';
+import { testMapPoint } from '@test/base/test.mappers';
 
+const isoDateNow = () => strDate(new Date());
 const pickCommon = (el: any) => ({
   ...pick(['id', 'userId']),
   startedAt: el.startedAt ? strDate(el.startedAt) : null,
+  hike: expect.objectContaining({ id: el.hikeId }),
 });
 
 const convertTrackPoints = (trackPoints: UserHikeTrackPoint[]) =>
   trackPoints.map((el) => ({
-    ...omit(['createdAt'], el),
-    createdAt: strDate(el.createdAt),
-    position: {
-      type: 'Point',
-      coordinates: el.position?.coordinates,
-    },
+    ...omit(['datetime'], el),
+    datetime: strDate(el.datetime),
+    point: expect.objectContaining({
+      id: anyId(),
+      position: expect.any(Object),
+    }),
   }));
 
 describe('User Hikes (e2e)', () => {
@@ -58,6 +63,37 @@ describe('User Hikes (e2e)', () => {
     });
     const hike = await testService.createHike({ userId: localGuide.id });
     const hikeTwo = await testService.createHike({ userId: localGuide.id });
+    const points = await mapArray(10, (i) =>
+      testService.createPoint({
+        address: `${i}th street`,
+        position: latLonToGisPoint({
+          lat: 49 + 1 * Math.sin(i),
+          lon: 128 - 1 * Math.cos(i),
+        }),
+        type: PointType.point,
+      }),
+    );
+
+    // add as reference points
+    await testService.repo(HikePoint).save(
+      points.map<HikePoint>((p, index) => ({
+        pointId: p.id,
+        hikeId: hike.id,
+        type: PointType.referencePoint,
+        index,
+      })),
+    );
+
+    const randomPoints = await mapArray(10, (i) =>
+      testService.createPoint({
+        address: `Berkley, ${i + 1}/${Math.floor((i + 1) ** 2 / 3)}`,
+        position: latLonToGisPoint({
+          lat: 49 + 1.5 * Math.sin(i),
+          lon: 128 - 1.5 * Math.cos(i),
+        }),
+        type: PointType.point,
+      }),
+    );
 
     const userHike = await testService.createUserHike({
       userId: hiker.id,
@@ -69,6 +105,8 @@ describe('User Hikes (e2e)', () => {
       emergencyOperator,
       hiker,
       hike,
+      points,
+      randomPoints,
       hikeTwo,
       userHike,
       userTwo,
@@ -112,16 +150,14 @@ describe('User Hikes (e2e)', () => {
   });
 
   it('should return full user hike with all points', async () => {
-    const { hiker, userHike } = await setup();
+    const { hiker, userHike, points } = await setup();
 
     const trackPoints = await mapArray(10, (i) =>
       testService.createUserHikeTrackPoint({
         userHikeId: userHike.id,
         index: i + 1,
-        position: latLonToGisPoint({
-          lat: 49 + 1 * Math.sin(i),
-          lon: 128 - 1 * Math.cos(i),
-        }),
+        pointId: points[i].id,
+        datetime: new Date(),
       }),
     );
 
@@ -154,31 +190,70 @@ describe('User Hikes (e2e)', () => {
       });
   });
 
-  it('should add point to hike', async () => {
-    const { hiker, userHike, hikeTwo } = await setup();
-
-    const existingTrackPoints = await mapArray(2, (i) =>
-      testService.createUserHikeTrackPoint({
-        userHikeId: userHike.id,
-        index: i + 1,
-        position: latLonToGisPoint({
-          lat: 49 + 1 * Math.sin(i),
-          lon: 128 - 1 * Math.cos(i),
-        }),
-      }),
-    );
-
-    const position = {
-      lat: 49.53,
-      lon: 127.77,
-    };
+  it('should not allow to track non-existing point', async () => {
+    const { hiker, userHike } = await setup();
 
     await restService
       .build(app, hiker)
       .request()
       .post(`/user-hikes/${userHike.id}/track-point`)
       .send({
-        position,
+        pointId: 10322,
+        datetime: isoDateNow(),
+      })
+      .expect(500)
+      .expect(({ body }) => {
+        expect(body).toMatchObject({ message: 'Point not found' });
+      });
+  });
+
+  it('should not allow to track point that is not a reference point of a hike', async () => {
+    const { hiker, userHike, randomPoints } = await setup();
+
+    await restService
+      .build(app, hiker)
+      .request()
+      .post(`/user-hikes/${userHike.id}/track-point`)
+      .send({
+        pointId: randomPoints[3].id,
+        datetime: isoDateNow(),
+      })
+      .expect(400)
+      .expect(({ body }) => {
+        expect(body).toMatchObject({
+          message: 'This point is not a reference point for this hike',
+        });
+      });
+  });
+
+  it('should add point to hike', async () => {
+    const { hiker, userHike, hikeTwo, points, randomPoints } = await setup();
+
+    const existingTrackPoints = await mapArray(2, (i) =>
+      testService.createUserHikeTrackPointWithPosition(
+        {
+          userHikeId: userHike.id,
+          index: i + 1,
+        },
+        {
+          position: latLonToGisPoint({
+            lat: 49 + 1 * Math.sin(i),
+            lon: 128 - 1 * Math.cos(i),
+          }),
+        },
+      ),
+    );
+
+    const referencePoint = points[2];
+    const datetime = isoDateNow();
+
+    await restService
+      .build(app, hiker)
+      .request()
+      .post(`/user-hikes/${userHike.id}/track-point`)
+      .send({
+        pointId: referencePoint.id,
+        datetime,
       })
       .expect(200)
       .expect(({ body }) => {
@@ -191,12 +266,10 @@ describe('User Hikes (e2e)', () => {
           ...convertTrackPoints(existingTrackPoints),
           {
             index: 3,
+            datetime,
+            pointId: referencePoint.id,
+            point: testMapPoint(referencePoint),
             userHikeId: userHike.id,
-            position: {
-              type: 'Point',
-              coordinates: [position.lon, position.lat],
-            },
-            createdAt: expect.any(String),
           },
         ]);
       });
@@ -206,25 +279,38 @@ describe('User Hikes (e2e)', () => {
       hikeId: hikeTwo.id,
     });
 
+    // prepare some reference points for hike two
+    // add as reference points
+    await Promise.all(
+      randomPoints.slice(0, 3).map((point, index) =>
+        testService.createHikePoint({
+          hikeId: hikeTwo.id,
+          pointId: point.id,
+          type: PointType.referencePoint,
+          index,
+        }),
+      ),
+    );
+
+    const newDatetime = isoDateNow();
     await restService
       .build(app, hiker)
       .request()
       .post(`/user-hikes/${userHikeTwo.id}/track-point`)
       .send({
-        position,
+        pointId: randomPoints[0].id,
+        datetime: newDatetime,
       })
       .expect(200)
       .expect(({ body }) => {
         expect(body.trackPoints).toHaveLength(1);
         expect(body.trackPoints).toIncludeAllMembers([
           {
+            datetime: newDatetime,
             index: 1,
+            pointId: randomPoints[0].id,
+            point: testMapPoint(randomPoints[0]),
             userHikeId: userHikeTwo.id,
-            position: {
-              type: 'Point',
-              coordinates: [position.lon, position.lat],
-            },
-            createdAt: expect.any(String),
           },
         ]);
       });
@@ -295,12 +381,12 @@ describe('User Hikes (e2e)', () => {
   });
 
   it('should filter my tracked hikes', async () => {
-    const { hikeTwo, hiker } = await setup();
+    const { hikeTwo, hike, hiker } = await setup();
 
     // create finished hikes
     const userHikeTwo = await testService.createUserHike({
       userId: hiker.id,
-      hikeId: hikeTwo.id,
+      hikeId: hike.id,
       startedAt: new Date(Date.now() - 1000 * 3600 * 138),
       finishedAt: new Date(Date.now() - 1000 * 3600 * 130),
     });

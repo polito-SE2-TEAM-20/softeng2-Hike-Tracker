@@ -9,10 +9,12 @@ import {
   UPLOAD_PATH_VALUE,
 } from '@app/common';
 import { GpxModule } from '@app/gpx';
+import { PicturesModule } from '@core/pictures/pictures.module';
 
 import { PointsModule } from '../points/points.module';
 
-import { HikeModificationController } from './hikeModification.controller';
+import { HikeModificationController } from './hike-modification.controller';
+import { HikePicturesController } from './hike-pictures.controller';
 import { HikesController } from './hikes.controller';
 import { HikesService } from './hikes.service';
 
@@ -34,8 +36,13 @@ import { HikesService } from './hikes.service';
     TypeOrmModule.forFeature([Hike]),
     GpxModule,
     PointsModule,
+    PicturesModule,
   ],
-  controllers: [HikesController, HikeModificationController],
+  controllers: [
+    HikesController,
+    HikeModificationController,
+    HikePicturesController,
+  ],
   providers: [HikesService],
   exports: [HikesService],
 })

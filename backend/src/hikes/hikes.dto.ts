@@ -122,6 +122,11 @@ export class ReferencePointDto {
   @IsLongitude()
   @Transform(({ value }) => valToNumber(value))
   lon!: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Transform(({ value }) => valToNumber(value))
+  altitude?: number | null;
 }
 
 export class StartEndPointDto extends DtoWithGroups {
@@ -275,6 +280,11 @@ export class UpdateHikeDto extends OmitType(PartialType(HikeDto), [
   'startPoint',
   'endPoint',
 ] as const) {
+  @IsString({ each: true })
+  @MaxLength(HikeLimits.picture, { each: true })
+  @IsOptional()
+  pictures?: string[];
+
   @IsArray()
   @IsOptional()
   @ValidateNested({ each: true })

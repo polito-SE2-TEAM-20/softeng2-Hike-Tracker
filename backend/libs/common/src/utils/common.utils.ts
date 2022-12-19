@@ -2,6 +2,7 @@ import { Type } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { complement, isNil, map, prop } from 'ramda';
 
+import { IMAGES_URI } from '../constants';
 import { GPoint } from '../types';
 
 export const mapToId = map(prop('id'));
@@ -72,3 +73,9 @@ export const getEnvVariable = (name: string): string => {
 
   return value;
 };
+
+export const tableNameSchemed = (tableName: string): string =>
+  `"public".${escapeIdentifier(tableName)}`;
+
+export const getImagePath = (filename: string): string =>
+  [IMAGES_URI, filename].join('/');

@@ -1,6 +1,6 @@
 import { randomInt } from 'node:crypto';
 import { constants } from 'node:fs';
-import path, { resolve } from 'node:path';
+import path from 'node:path';
 
 import * as fs from 'fs-extra';
 import { omit } from 'ramda';
@@ -9,6 +9,7 @@ import {
   HikeDifficulty,
   HikePoint,
   HutWorker,
+  IMAGES_UPLOAD_PATH,
   latLonToGisPoint,
   mapToId,
   Point,
@@ -25,11 +26,13 @@ import {
   mapArray,
   prepareTestApp,
   prepareVars,
+  validatePictures,
   withoutLatLon,
 } from '@test/base';
 
 import { hikeBasic } from './constants';
 import { HikeWeather } from '@app/common/enums/weatherStatus.enum';
+import { In } from 'typeorm';
 
 const withoutCompositeFields = omit([
   'referencePoints',
@@ -75,12 +78,6 @@ describe('Hikes (e2e)', () => {
       role: UserRole.hiker
     });
     
-    const userHike = await testService.createUserHike({
-      userId: hiker.id,
-      hikeId: hike.id,
-      weatherNotified: null
-    });
-
     const huts = await mapArray(10, (i) =>
       testService.createHut({
         userId: localGuide.id,
@@ -89,6 +86,7 @@ describe('Hikes (e2e)', () => {
         title: `Hut ${i}`,
       }),
     );
+
     const parkingLots = await mapArray(10, (i) =>
       testService.createParkingLot({
         userId: localGuide.id,
@@ -104,7 +102,6 @@ describe('Hikes (e2e)', () => {
       parkingLots,
       platformManager,
       hiker,
-      userHike
     };
   };
 
@@ -160,7 +157,7 @@ describe('Hikes (e2e)', () => {
       });
   });
 
-  it('should import gpx file, save reference points, start and end points to db', async () => {
+  it('should import gpx file, pictures, save reference points, start and end points to db', async () => {
     const { localGuide } = await setup();
 
     const hikeData = {
@@ -182,17 +179,23 @@ describe('Hikes (e2e)', () => {
         lon: 7.083,
       },
     };
+    const pictures = ['img2.jpeg'];
 
-    const { body: hike } = await restService
+    const req = restService
       .build(app, localGuide)
       .request()
       .post('/hikes/import')
-      .attach('gpxFile', resolve(ROOT, './test-data/4.gpx'))
+      .attach('gpxFile', path.resolve(ROOT, './test-data/4.gpx'))
       .field(withoutCompositeFields(hikeData))
       .field('referencePoints', JSON.stringify(hikeData.referencePoints))
       .field('startPoint', JSON.stringify(hikeData.startPoint))
-      .field('endPoint', JSON.stringify(hikeData.endPoint))
-      .expect(201);
+      .field('endPoint', JSON.stringify(hikeData.endPoint));
+
+    pictures.forEach((file) =>
+      req.attach('pictures', path.join(ROOT, './test-data', file)),
+    );
+
+    const { body: hike } = await req.expect(201);
 
     expect(hike).toMatchObject({
       id: anyId(),
@@ -217,10 +220,12 @@ describe('Hikes (e2e)', () => {
       },
     });
     expect(hike.gpxPath).toMatch(/^\/static\/gpx\/.+\.gpx$/);
+    expect(hike.pictures).toHaveLength(pictures.length);
+    validatePictures(hike.pictures, pictures);
 
     expect(
       fs.access(
-        resolve(UPLOAD_PATH, path.basename(hike.gpxPath)),
+        path.resolve(UPLOAD_PATH, path.basename(hike.gpxPath)),
         constants.F_OK,
       ),
     ).not.toReject();
@@ -240,7 +245,7 @@ describe('Hikes (e2e)', () => {
       .build(app, localGuide)
       .request()
       .post('/hikes/import')
-      .attach('gpxFile', resolve(ROOT, './test-data/empty.gpx'))
+      .attach('gpxFile', path.resolve(ROOT, './test-data/empty.gpx'))
       .field(withoutCompositeFields(hikeData))
       .field('referencePoints', JSON.stringify([]))
       .field('startPoint', JSON.stringify([]))
@@ -318,7 +323,7 @@ describe('Hikes (e2e)', () => {
       .build(app, localGuide)
       .request()
       .post('/hikes/import')
-      .attach('gpxFile', resolve(ROOT, './test-data/4.gpx'))
+      .attach('gpxFile', path.resolve(ROOT, './test-data/4.gpx'))
       .field(withoutCompositeFields(hikeData))
       .field('referencePoints', JSON.stringify(hikeData.referencePoints))
       .field('startPoint', JSON.stringify(hikeData.startPoint))
@@ -520,7 +525,7 @@ describe('Hikes (e2e)', () => {
       .build(app, localGuide)
       .request()
       .post('/hikes/import')
-      .attach('gpxFile', resolve(ROOT, './test-data/4.gpx'))
+      .attach('gpxFile', path.resolve(ROOT, './test-data/4.gpx'))
       .field(withoutCompositeFields(hikeData))
       .field('referencePoints', JSON.stringify(hikeData.referencePoints))
       .field('startPoint', JSON.stringify(hikeData.startPoint))
@@ -531,7 +536,7 @@ describe('Hikes (e2e)', () => {
       .build(app, localGuide)
       .request()
       .post('/hikes/import')
-      .attach('gpxFile', resolve(ROOT, './test-data/1.gpx'))
+      .attach('gpxFile', path.resolve(ROOT, './test-data/1.gpx'))
       .field(withoutCompositeFields(hikeData2))
       .field('referencePoints', JSON.stringify(hikeData2.referencePoints))
       .field('startPoint', JSON.stringify(hikeData2.startPoint))
@@ -554,9 +559,6 @@ describe('Hikes (e2e)', () => {
     expect(
       await testService.repo(HikePoint).findBy({ hikeId: hike.id }),
     ).toBeEmpty();
-    // expect(
-    //   await testService.repo(Point).findBy({ id: In(points) }),
-    // ).toBeEmpty();
 
     await restService
       .build(app, localGuide)
@@ -632,6 +634,12 @@ describe('Hikes (e2e)', () => {
   it("Should update weather condition of a selected hike and its flag in the user-hike table", async () => {
       const {hike, platformManager, hiker} = await setup();
 
+      await testService.createUserHike({
+        userId: hiker.id,
+        hikeId: hike.id,
+        weatherNotified: null
+      });
+
       const hiker2 = await testService.createUser({
         role: UserRole.hiker
       });
@@ -695,15 +703,14 @@ describe('Hikes (e2e)', () => {
       });      
   });
 
-  it.only("Should update weather condition of hikes in a specified area and their flags in the user-hike table", async () => {
-    //updateWeatherInRange
-
-    const {hike, platformManager, localGuide} = await setup();
+  it("Should update weather condition of hikes in a specified area and their flags in the user-hike table", async () => {
+  
+    const {hike, platformManager, localGuide, hiker} = await setup();
 
     //POINT CREATION
     const point1 = await testService.createPoint({
       type: PointType.startPoint,
-      position: { type: 'Point', coordinates: [10, 20] },
+      position: { type: 'Point', coordinates: [7, 47.9] },
     });
 
     const point2 = await testService.createPoint({
@@ -713,7 +720,7 @@ describe('Hikes (e2e)', () => {
 
     const point3 = await testService.createPoint({
       type: PointType.startPoint,
-      position: { type: 'Point', coordinates: [7, 47] },
+      position: { type: 'Point', coordinates: [7, 47.8] },
     });
 
     // ================================================
@@ -757,13 +764,42 @@ describe('Hikes (e2e)', () => {
       role: UserRole.hiker
     });
 
+    const hiker3 = await testService.createUser({
+      role: UserRole.hiker
+    });
+
+    const hiker4 = await testService.createUser({
+      role: UserRole.hiker
+    });
     // ===============================================
 
     //USERHIKES CREATION
-    //const userHike2 = 
-    await testService.createUserHike({
+    
+    //Hiker 1 started hike 1 (TO BE NOT NOTIFIED FOR DISTANCE)
+    const userHike = await testService.createUserHike({
+      userId: hiker.id,
       hikeId: hike.id,
+      weatherNotified: null
+    });
+
+    //Hiker 2 started hike 2 (TO BE NOT NOTIFIED BECAUSE FINISHED)
+    const userHike2 = await testService.createUserHike({
+      hikeId: hike2.id,
       userId: hiker2.id,
+      weatherNotified: null
+    });
+
+    //Hiker 3 started hike 2
+    await testService.createUserHike({
+      hikeId: hike2.id,
+      userId: hiker3.id,
+      weatherNotified: null
+    });
+
+    //Hiker 3 started hike 3 
+    const userHike4 = await testService.createUserHike({
+      hikeId: hike3.id,
+      userId: hiker4.id,
       weatherNotified: null
     });
 
@@ -773,7 +809,7 @@ describe('Hikes (e2e)', () => {
       inPointRadius: {
         lat: 47,
         lon: 7,
-        radiusKms: 88,
+        radiusKms: 90,
       },
       weatherStatus: HikeWeather.dangerRain,
       weatherDescription: "Heavy rains which can cause ground disruption"
@@ -785,13 +821,158 @@ describe('Hikes (e2e)', () => {
       .put(`/hikes/range/updateWeatherInRange`)
       .send(updateWeather)
       .expect(({ body }) => {
-        console.log(body)
         expect(body.length).toBe(2);
         for (const h of body){
           expect(h.weatherStatus).toBe(HikeWeather.dangerRain);
           expect(h.weatherDescription).toBe("Heavy rains which can cause ground disruption");
         }
       });
+
+      // =============================================
+
+      //From here is about notification flag
+      const newUserHikesBefore = (await testService.repo(UserHike).findBy({
+        hikeId: In([hike.id, hike2.id, hike3.id])
+      })).map(userHike => ({weatherNotified: userHike.weatherNotified, id: userHike.id}));
+
+      expect(newUserHikesBefore.length).toBe(4);
+
+      newUserHikesBefore.forEach((notification) => {
+        if(notification.id !== userHike.id)
+          expect(notification.weatherNotified).toBe(false)
+      });
+
+      //This is used to finish an hike and see that it popup is not shown anymore to that user
+      await testService.repo(UserHike).save({
+        id: userHike2.id,
+        finishedAt: new Date()
+      })
+
+      await restService
+        .build(app, hiker)
+        .request()
+        .get(`/hikes/popupSeen/${hike.id}`)
+        .expect(({body}) =>{
+          expect(body.message).toBe("You can't close a popup because there is not one related to: " + hike.id)
+        });
+
+      await restService
+        .build(app, hiker3)
+        .request()
+        .get(`/hikes/popupSeen/${hike2.id}`);
+      
+      const newUserHikesAfter = (await testService.repo(UserHike).findBy({
+        hikeId:  In([hike.id, hike2.id, hike3.id]),
+      })).map(userHike => ({notification: userHike.weatherNotified, userHikeId: userHike.id}));
+      
+      newUserHikesAfter.forEach((notification) => {
+        if(notification.userHikeId === userHike2.id || notification.userHikeId === userHike4.id) 
+          expect(notification.notification).toBe(false);
+        else if(notification.userHikeId === userHike.id)
+          expect(notification.notification).toBe(null);
+        else 
+          expect(notification.notification).toBe(true)
+      });
   });
 
+
+  it('should upload hike pictures', async () => {
+    const { localGuide } = await setup();
+
+    const hike = await testService.createHike({
+      ...hikeBasic,
+      userId: localGuide.id,
+      pictures: ['test1.png'],
+    });
+
+    const testPics = ['img2.jpeg', 'img3.jpeg', 'img1.png'];
+    const req = restService
+      .build(app, localGuide)
+      .request()
+      .post(`/hike-pictures/${hike.id}`);
+
+    testPics.forEach((file) =>
+      req.attach('pictures', path.join(ROOT, './test-data', file)),
+    );
+
+    await req.expect(200).expect(({ body }) => {
+      expect(body).toMatchObject({
+        id: hike.id,
+        pictures: expect.any(Array),
+      });
+
+      expect(body.pictures).toHaveLength(testPics.length + 1);
+      expect(body.pictures[0]).toEqual('test1.png');
+      validatePictures(body.pictures.slice(1), testPics);
+    });
+  });
+
+  it('should reorder hike pictures', async () => {
+    const { localGuide } = await setup();
+
+    const hike = await testService.createHike({
+      ...hikeBasic,
+      userId: localGuide.id,
+      pictures: ['test1.png', 'test2.jpeg', 'test3.png'],
+    });
+
+    const reorderedPictures = ['test3.jpeg', 'test1.png', 'test2.png'];
+
+    await restService
+      .build(app, localGuide)
+      .request()
+      .put(`/hikes/${hike.id}`)
+      .send({ pictures: reorderedPictures })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toMatchObject({
+          id: hike.id,
+          pictures: reorderedPictures,
+        });
+      });
+  });
+
+  it('should delete removed hike pictures from disk', async () => {
+    const { localGuide, hike } = await setup();
+
+    const testPics = ['img2.jpeg', 'img1.png'];
+    const req = restService
+      .build(app, localGuide)
+      .request()
+      .post(`/hike-pictures/${hike.id}`);
+
+    testPics.forEach((file) =>
+      req.attach('pictures', path.join(ROOT, './test-data', file)),
+    );
+
+    const { body: updatedHike } = await req.expect(200);
+    const firstImage = path.basename(updatedHike.pictures[0]);
+
+    await restService
+      .build(app, localGuide)
+      .request()
+      .put(`/hikes/${updatedHike.id}`)
+      .send({ pictures: updatedHike.pictures.slice(1) })
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.pictures).toHaveLength(1);
+        expect(body.pictures[0]).toEqual(updatedHike.pictures[1]);
+      });
+
+    expect(
+      fs.access(
+        path.resolve(IMAGES_UPLOAD_PATH, path.basename(firstImage)),
+        constants.F_OK,
+      ),
+    ).toReject();
+    expect(
+      fs.access(
+        path.resolve(
+          IMAGES_UPLOAD_PATH,
+          path.basename(updatedHike.pictures[1]),
+        ),
+        constants.F_OK,
+      ),
+    ).not.toReject();
+  });
 });

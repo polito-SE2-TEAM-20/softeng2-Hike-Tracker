@@ -3,17 +3,16 @@ import {
   Get,
   Body,
   Post,
-  UploadedFile,
   UseInterceptors,
   Put,
   Param,
-  ParseFilePipeBuilder,
   HttpStatus,
   HttpCode,
   Delete,
   BadRequestException,
+  UploadedFiles,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs-extra';
 import { isEmpty, isNil, keys } from 'ramda';
 import { DataSource, In, IsNull, Not } from 'typeorm';
@@ -25,6 +24,7 @@ import {
   GroupValidationPipe,
   Hike,
   HikeFull,
+  HikeLimits,
   HikePoint,
   HikerOnly,
   Hut,
@@ -44,6 +44,7 @@ import {
 } from '@app/common';
 import { HikeCondition } from '@app/common/enums/hike-condition.enum';
 import { GpxService } from '@app/gpx';
+import { PicturesService } from '@core/pictures/pictures.service';
 
 import { PointsService } from '../points/points.service';
 
@@ -63,6 +64,7 @@ export class HikesController {
     private dataSource: DataSource,
     private gpxService: GpxService,
     private service: HikesService,
+    private picturesService: PicturesService,
     private pointsService: PointsService,
   ) {}
 
@@ -82,14 +84,15 @@ export class HikesController {
 
   @Post('import')
   @LocalGuideOnly()
-  @UseInterceptors(FileInterceptor('gpxFile'))
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'pictures', maxCount: HikeLimits.maxPictures },
+      { name: 'gpxFile', maxCount: 1 },
+    ]),
+  )
   async import(
-    @UploadedFile(
-      new ParseFilePipeBuilder().build({
-        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-      }),
-    )
-    file: Express.Multer.File,
+    @UploadedFiles()
+    files: Record<'gpxFile' | 'pictures', Express.Multer.File[]>,
     @Body()
     {
       referencePoints: referencePointsArray,
@@ -99,13 +102,20 @@ export class HikesController {
     }: HikeDto,
     @CurrentUser() user: UserContext,
   ): Promise<HikeFull | null> {
-    const gpx = await fs.readFile(file.path);
+    console.log('files are', files);
+    const gpxFile = files.gpxFile[0];
+    const gpx = await fs.readFile(gpxFile.path);
     const gpxText = gpx.toString('utf8');
     const [parsedHike] = await this.gpxService.parseHikes(gpxText);
 
     if (!parsedHike) {
       throw new BadRequestException('Unable to find hikes in gpx file');
     }
+
+    // prepare images
+    const pictures = files.pictures?.length
+      ? this.picturesService.prepareFilePaths(files.pictures)
+      : [];
 
     // insert hike into database
     const { hike } = await this.dataSource.transaction<{
@@ -117,7 +127,8 @@ export class HikesController {
 
       const hike = await this.service.getRepository(entityManager).save({
         userId: user.id,
-        gpxPath: [GPX_FILE_URI, file.filename].join('/'),
+        gpxPath: [GPX_FILE_URI, gpxFile.filename].join('/'),
+        pictures,
         ...parsedHike.hike,
         ...body,
       });
@@ -225,7 +236,7 @@ export class HikesController {
       points.push(...parkingLotPoints);
     }
 
-    console.log('linked points', points);
+    // console.log('linked points', points);
 
     await this.dataSource.transaction(async (entityManager) => {
       // remove all existing links
@@ -247,7 +258,6 @@ export class HikesController {
       }
     });
 
-    console.log('after tx');
     return await this.service.getFullHike(hikeId);
   }
 
@@ -263,7 +273,7 @@ export class HikesController {
       ...data
     }: UpdateHikeDto,
   ): Promise<Hike> {
-    await this.service.ensureExistsOrThrow(id);
+    const hike = await this.service.findByIdOrThrow(id);
 
     //Antonio's code on Ref Points Update starts here
     /*
@@ -286,7 +296,11 @@ export class HikesController {
       });
 
       //Creation of proper ref points
-      const refPointsForDB = hikeReferencePoints.map((refPoint) => {
+      const refPointsForDB = hikeReferencePoints.map<
+        Partial<Pick<Point, 'name' | 'address' | 'altitude'>> & {
+          point: GPoint;
+        }
+      >((refPoint) => {
         const pointObject: GPoint = {
           type: 'Point',
           coordinates: [refPoint.lon, refPoint.lat],
@@ -296,6 +310,7 @@ export class HikesController {
           name: refPoint.name,
           address: refPoint.address,
           point: pointObject,
+          altitude: refPoint.altitude,
         };
         return refPointForDB;
       });
@@ -307,6 +322,7 @@ export class HikesController {
           position: point.point,
           address: point.address,
           name: point.name,
+          altitude: point.altitude,
         })),
       );
 
@@ -325,8 +341,19 @@ export class HikesController {
     // update start and end point
     await this.service.upsertStartEndPoints({ id, startPoint, endPoint });
 
-    if (!isEmpty(keys(data))) {
-      await this.service.getRepository().update({ id }, data);
+    // update direct hike fields
+    const updateData: Partial<Hike> = { ...data };
+
+    if (data.pictures) {
+      updateData.pictures =
+        await this.picturesService.getPicturesListAndDeleteRemoved(
+          data.pictures,
+          hike.pictures,
+        );
+    }
+
+    if (!isEmpty(keys(updateData))) {
+      await this.service.getRepository().update({ id }, updateData);
     }
 
     return await this.service.getFullHike(id);
@@ -489,9 +516,6 @@ export class HikesController {
 
     await this.service.ensureExistsOrThrow(id);
 
-    if(user.role !== UserRole.platformManager)
-      throw new BadRequestException("You are not a platform manager. You are not authorized to do this.");
-
     await this.service.getRepository().save({
       id,
       weatherStatus,
@@ -519,7 +543,6 @@ export class HikesController {
   @PlatformManagerOnly()
   @HttpCode(200)
   async updateHikeWeatherInRange(
-    @Param('id', ParseIdPipe()) id: ID,
     @CurrentUser() user: UserContext,
     @Body()
     {
@@ -529,9 +552,6 @@ export class HikesController {
     }: WeatherInRangeDto,
   ): Promise<Hike[]> {
 
-    if(user.role !== UserRole.platformManager)
-      throw new BadRequestException("You are not a platform manager. You are not authorized to do this.");
-
     const query = this.dataSource.getRepository(HikePoint).createQueryBuilder('h');
     
     query.andWhere(
@@ -540,15 +560,11 @@ export class HikesController {
     
     query
     .innerJoinAndMapOne('h.point', Point, 'p', 'p.id = h."pointId"')
-    .orderBy('h.id', 'DESC');
+    .orderBy('h.hikeId', 'DESC');
 
     const hikesToUpdate = await query.getMany();
     const hikesToUpdateIds = hikesToUpdate.map(hike => hike.hikeId);
 
-    ///
-    console.log("This are the Hike IDs: ")
-    console.log(hikesToUpdateIds);
-    ///
     await this.service.getRepository().save(hikesToUpdateIds.map(id => ({
       id,
       weatherStatus,
@@ -582,13 +598,11 @@ export class HikesController {
     @CurrentUser() user: UserContext,
   ) {
 
-    if(user.role !== UserRole.hiker)
-      throw new BadRequestException("You are not a platform manager. You are not authorized to do this.");
-
     const update = await this.dataSource.getRepository(UserHike).findOneBy({
       hikeId: id,
       userId: user.id,
-      finishedAt: IsNull()
+      finishedAt: IsNull(),
+      weatherNotified: false
     });
 
     if(!isNil(update)){
@@ -596,6 +610,8 @@ export class HikesController {
         id: update.id,
         weatherNotified: true,
       });
+    }else{
+      throw new BadRequestException("You can't close a popup because there is not one related to: " + id)
     }
 
 
