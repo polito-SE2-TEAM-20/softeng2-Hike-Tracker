@@ -11,6 +11,7 @@ import {
   HutWorker,
   latLonToGisPoint,
   mapToId,
+  Point,
   PointType,
   ROOT,
   UPLOAD_PATH,
@@ -694,8 +695,103 @@ describe('Hikes (e2e)', () => {
       });      
   });
 
-  it("Should update weather condition of hikes in a specified area and their flags in the user-hike table", async () => {
+  it.only("Should update weather condition of hikes in a specified area and their flags in the user-hike table", async () => {
     //updateWeatherInRange
+
+    const {hike, platformManager, localGuide} = await setup();
+
+    //POINT CREATION
+    const point1 = await testService.createPoint({
+      type: PointType.startPoint,
+      position: { type: 'Point', coordinates: [10, 20] },
+    });
+
+    const point2 = await testService.createPoint({
+      type: PointType.startPoint,
+      position: { type: 'Point', coordinates: [7, 47] },
+    });
+
+    const point3 = await testService.createPoint({
+      type: PointType.startPoint,
+      position: { type: 'Point', coordinates: [7, 47] },
+    });
+
+    // ================================================
+    
+    //HIKE CREATION
+    const hike2 = await testService.createHike({
+       userId: localGuide.id
+    });
+
+    const hike3 = await testService.createHike({
+      userId: localGuide.id
+    });
+
+    // ===============================================
+
+    //HIKEPOINT LINKING
+    //Point1 Belongs to hike constant
+    await testService.createHikePoint({
+        hikeId: hike.id,
+        pointId: point1.id,
+        index: 0
+    });
+
+    //Point2 Belongs to hike2 constant
+    await testService.createHikePoint({
+        hikeId: hike2.id,
+        pointId: point2.id,
+        index: 0
+    });
+
+    //Point3 Belongs to hike3 constant
+    await testService.createHikePoint({
+        hikeId: hike3.id,
+        pointId: point3.id,
+        index: 0
+    });
+    // ===============================================
+
+    //HIKER CREATION
+    const hiker2 = await testService.createUser({
+      role: UserRole.hiker
+    });
+
+    // ===============================================
+
+    //USERHIKES CREATION
+    //const userHike2 = 
+    await testService.createUserHike({
+      hikeId: hike.id,
+      userId: hiker2.id,
+      weatherNotified: null
+    });
+
+    // ===============================================
+
+    const updateWeather = {
+      inPointRadius: {
+        lat: 47,
+        lon: 7,
+        radiusKms: 88,
+      },
+      weatherStatus: HikeWeather.dangerRain,
+      weatherDescription: "Heavy rains which can cause ground disruption"
+    };
+
+    await restService
+      .build(app, platformManager)
+      .request()
+      .put(`/hikes/range/updateWeatherInRange`)
+      .send(updateWeather)
+      .expect(({ body }) => {
+        console.log(body)
+        expect(body.length).toBe(2);
+        for (const h of body){
+          expect(h.weatherStatus).toBe(HikeWeather.dangerRain);
+          expect(h.weatherDescription).toBe("Heavy rains which can cause ground disruption");
+        }
+      });
   });
 
 });

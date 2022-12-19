@@ -29,6 +29,7 @@ import {
 import { HikeCondition } from '@app/common/enums/hike-condition.enum';
 
 import { StartEndPointTransformer } from './hikes.utils';
+import { HikeWeather } from '@app/common/enums/weatherStatus.enum';
 
 export class PointWithRadius {
   @IsLatitude()
@@ -309,4 +310,19 @@ export class LinkHutToHikeDto {
   @IsArray()
   @Type(() => LinkedPointDto)
   linkedPoints!: LinkedPointDto[];
+}
+
+export class WeatherInRangeDto{  
+  
+  @ValidateNested()
+  @Type(() => PointWithRadius)
+  inPointRadius!: PointWithRadius;
+
+  @IsEnum(HikeWeather)
+  weatherStatus!: HikeWeather;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(HikeLimits.description)
+  weatherDescription?: string | null;
 }

@@ -53,6 +53,7 @@ import {
   LinkHutToHikeDto,
   PointWithRadius,
   UpdateHikeDto,
+  WeatherInRangeDto,
 } from './hikes.dto';
 import { HikesService } from './hikes.service';
 
@@ -514,7 +515,7 @@ export class HikesController {
   }
 
   //Function to update all the hikes at weather fields within a range
-  @Put('updateWeatherInRange')
+  @Put('range/updateWeatherInRange')
   @PlatformManagerOnly()
   @HttpCode(200)
   async updateHikeWeatherInRange(
@@ -522,16 +523,16 @@ export class HikesController {
     @CurrentUser() user: UserContext,
     @Body()
     {
-      PointWithRadius :inPointRadius,
+      inPointRadius,
       weatherStatus,
       weatherDescription
-    },
+    }: WeatherInRangeDto,
   ): Promise<Hike[]> {
 
     if(user.role !== UserRole.platformManager)
       throw new BadRequestException("You are not a platform manager. You are not authorized to do this.");
 
-    const query = this.service.getRepository().createQueryBuilder('h');
+    const query = this.dataSource.getRepository(HikePoint).createQueryBuilder('h');
     
     query.andWhere(
       `ST_DWithin(ST_MakePoint(${inPointRadius.lon}, ${inPointRadius.lat}), p."position", ${inPointRadius.radiusKms*1000})`,
@@ -542,8 +543,12 @@ export class HikesController {
     .orderBy('h.id', 'DESC');
 
     const hikesToUpdate = await query.getMany();
-    const hikesToUpdateIds = hikesToUpdate.map(hike => hike.id);
+    const hikesToUpdateIds = hikesToUpdate.map(hike => hike.hikeId);
 
+    ///
+    console.log("This are the Hike IDs: ")
+    console.log(hikesToUpdateIds);
+    ///
     await this.service.getRepository().save(hikesToUpdateIds.map(id => ({
       id,
       weatherStatus,
