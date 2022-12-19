@@ -509,7 +509,6 @@ export class HikesController {
   @HttpCode(200)
   async updateHikeWeather(
     @Param('id', ParseIdPipe()) id: ID,
-    @CurrentUser() user: UserContext,
     @Body()
     { weatherStatus, weatherDescription },
   ): Promise<Hike> {
