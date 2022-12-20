@@ -873,6 +873,17 @@ describe('Hikes (e2e)', () => {
         else 
           expect(notification.notification).toBe(true)
       });
+
+      await restService
+        .build(app, hiker4)
+        .request()
+        .get("/hikes/weather/flags")
+        .expect(({body}) => {
+          expect(body.length).toBe(1);
+          expect(body[0].hikeId).toBe(userHike4.hikeId);
+          expect(body[0].weatherStatus).toBe(HikeWeather.dangerRain);
+          expect(body[0].weatherDescription).toBe("Heavy rains which can cause ground disruption");
+        });
   });
 
 

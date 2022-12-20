@@ -2,6 +2,7 @@ import { OmitType, PartialType } from '@nestjs/mapped-types';
 import { Type, Transform } from 'class-transformer';
 import {
   IsArray,
+  IsBoolean,
   IsEnum,
   IsInt,
   IsLatitude,
@@ -327,6 +328,20 @@ export class WeatherInRangeDto{
   @ValidateNested()
   @Type(() => PointWithRadius)
   inPointRadius!: PointWithRadius;
+
+  @IsEnum(HikeWeather)
+  weatherStatus!: HikeWeather;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(HikeLimits.description)
+  weatherDescription?: string | null;
+}
+
+export class WeatherFlagsDto{  
+
+  @IsIdentifier()
+  hikeId!: ID;
 
   @IsEnum(HikeWeather)
   weatherStatus!: HikeWeather;
