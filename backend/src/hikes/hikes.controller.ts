@@ -54,6 +54,7 @@ import {
   LinkHutToHikeDto,
   PointWithRadius,
   UpdateHikeDto,
+  WeatherFlagsDto,
   WeatherInRangeDto,
 } from './hikes.dto';
 import { HikesService } from './hikes.service';
@@ -537,12 +538,11 @@ export class HikesController {
     return await this.service.getFullHike(id);
   }
 
-  //Function to update all the hikes at weather fields within a range
+  //Function to update all the hikes at weather fields within a range -- all the notifications are sent, not only those of danger type
   @Put('range/updateWeatherInRange')
   @PlatformManagerOnly()
   @HttpCode(200)
   async updateHikeWeatherInRange(
-    @CurrentUser() user: UserContext,
     @Body()
     {
       inPointRadius,
@@ -569,12 +569,6 @@ export class HikesController {
       weatherStatus,
       weatherDescription
     })));
-
-    // //HERE MUST BE CHANGED IN UPDATE
-    // await this.dataSource.getRepository(UserHike).save(hikesToUpdateIds.map(id => ({
-    //   hikeId: id,
-    //   weatherNotified: false,
-    // })));
 
     await this.dataSource.getRepository(UserHike).update({
       hikeId: In(hikesToUpdateIds),
@@ -612,9 +606,43 @@ export class HikesController {
     }else{
       throw new BadRequestException("You can't close a popup because there is not one related to: " + id)
     }
-
-
   }
+
+  //Function to retrieve the weatherFlags of a user and the weather Condition
+  @Get('weather/flags')
+  @HikerOnly()
+  @HttpCode(200)
+  async userWeatherFlags(
+    @CurrentUser() user: UserContext,
+  ): Promise<WeatherFlagsDto[] | void[]>{
+
+    const userHikesUnfinishedWithAlert = await this.dataSource.getRepository(UserHike).findBy({
+      userId: user.id,
+      weatherNotified: false,
+      finishedAt: IsNull()
+    });
+
+    const hikeIds = userHikesUnfinishedWithAlert.map(uh => uh.hikeId);
+
+    const hikes = await this.service.getRepository().findBy({
+      id: In(hikeIds)
+    });
+
+    const arrayOfWFlags:WeatherFlagsDto[] = [];
+    
+    hikes.forEach(hike => {
+      if(!isNil(hike.weatherStatus))  
+      {
+          arrayOfWFlags.push({
+            hikeId: hike.id,
+            weatherStatus: hike.weatherStatus,
+            weatherDescription: hike.weatherDescription
+          });
+      }
+    });
+    return arrayOfWFlags;
+  } 
+
 
   @Get(':id')
   async getHike(@Param('id', ParseIdPipe()) id: ID): Promise<HikeFull> {
