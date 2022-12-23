@@ -643,6 +643,145 @@ export class HikesController {
     return arrayOfWFlags;
   } 
 
+  //Calculate time after which a notification must be sent to a user
+  @Get('maxElapsedTime/:id')
+  @HikerOnly()
+  @HttpCode(200)
+  async getMaxElapsedTime(
+    @Param('id', ParseIdPipe()) id: ID,
+    @CurrentUser() user: UserContext
+  ){
+
+    //Count how many completed hikes has the user
+    const userHikes = await this.dataSource.getRepository(UserHike).findBy({
+      userId: user.id,
+      finishedAt: Not(IsNull())
+    });
+
+    const userHikeId = await this.dataSource.getRepository(UserHike).findOneBy({
+      userId: user.id,
+      hikeId: id,
+      finishedAt: IsNull(),
+    });
+
+    if(userHikes.length >= 30){
+      const completionTimes = userHikes.map(userHike => { 
+        if(!isNil(userHike.finishedAt)){
+          const endingTime = new Date(userHike.finishedAt);
+          const startingTime = new Date(userHike.startedAt);
+          const completionTime = endingTime.getTime() - startingTime.getTime();
+          return completionTime;
+        }
+      });
+
+      completionTimes.sort();
+      const ninentyPerc = completionTimes[Math.floor(completionTimes.length*0.9)];
+      if(ninentyPerc){
+        const days = Math.floor(ninentyPerc / (24*60*60*1000));
+        const newMillis = ninentyPerc%(24*60*60*1000);
+        const hours = Math.floor( newMillis / (60*60*1000));
+        const newMillis2 = newMillis % (60*60*1000);
+        const minutes = Math.floor(newMillis2 / (60*1000));
+        const newMillis3 = newMillis2 % (60*1000);
+        const seconds = Math.floor(newMillis3 / (1000));
+
+        const dhms = days.toString() + " " + hours.toString() + ":" + (minutes<10 ? "0" : "") + minutes.toString() + ":" + 
+                     (seconds<10 ? "0" : "") + seconds.toString();
+      
+        await this.dataSource.getRepository(UserHike).save({
+          id: userHikeId?.id,
+          maxElapsedTime: dhms
+        });
+      }
+    }else{
+      const expectedTime = (await this.service.getRepository().findOneBy({
+        id
+      }))?.expectedTime;
+
+      if(expectedTime){
+        const maxElapsedTime = expectedTime * 2 * 60 * 1000;
+
+        const days = Math.floor(maxElapsedTime / (24*60*60*1000));
+        const newMillis = maxElapsedTime%(24*60*60*1000);
+        const hours = Math.floor( newMillis / (60*60*1000));
+        const newMillis2 = newMillis % (60*60*1000);
+        const minutes = Math.floor(newMillis2 / (60*1000));
+        const newMillis3 = newMillis2 % (60*1000);
+        const seconds = Math.floor(newMillis3 / (1000));
+
+        const dhms = days.toString() + " " + hours.toString() + ":" + (minutes<10 ? "0" : "") + minutes.toString() + ":" + 
+                     (seconds<10 ? "0" : "") + seconds.toString();
+
+        await this.dataSource.getRepository(UserHike).save({
+          id: userHikeId?.id,
+          maxElapsedTime: dhms
+        });
+      }
+
+    }
+  }
+
+  //Evaluate which popups should be shown and update the flag
+  @Get('unfinished/popupsList')
+  @HikerOnly()
+  @HttpCode(200)
+  async getPopupsList(
+    @CurrentUser() user: UserContext
+  ): Promise<ID[]>{
+    const userHikesUnfinished = await this.dataSource.getRepository(UserHike).findBy({
+      userId: user.id,
+      finishedAt: IsNull(),
+      unfinishedNotified: IsNull() //Not notified yet 
+    });
+
+    //Check if there are some to be updated
+    if(userHikesUnfinished.length > 0){
+      userHikesUnfinished.forEach(async (userHike) =>{
+        const upperBound = userHike.maxElapsedTime.getTime() + userHike.startedAt.getTime();
+        if(upperBound < Date.now()) //Means that the elapsed time is ovr the upperBound
+        {
+          await this.dataSource.getRepository(UserHike).save({
+            id: userHike.id,
+            unfinishedNotified: false,
+          })
+        }
+      })
+    }
+
+    const userHikesUnfinishedIds = (await this.dataSource.getRepository(UserHike).findBy({
+      userId: user.id,
+      finishedAt: IsNull(),
+      unfinishedNotified: false //Not seen yet 
+    })).map((userHike) => userHike.hikeId);
+   
+    return userHikesUnfinishedIds;
+  }
+
+   //Function which set the notification status OF UNFINISHED HIKE to true after that the user sees the popup
+   @Get('unfinished/popupSeen/:id')
+   @HikerOnly()
+   @HttpCode(200)
+   async unfinishedPopupSeen(
+     @Param('id', ParseIdPipe()) id: ID,
+     @CurrentUser() user: UserContext,
+   ) {
+ 
+     const update = await this.dataSource.getRepository(UserHike).findOneBy({
+       hikeId: id,
+       userId: user.id,
+       finishedAt: IsNull(),
+       unfinishedNotified: false
+     });
+ 
+     if(!isNil(update)){
+       await this.dataSource.getRepository(UserHike).save({
+         id: update.id,
+         unfinishedNotified: true,
+       });
+     }else{
+       throw new BadRequestException("You can't close a popup because there is not one related to unfinished hike: " + id)
+     }
+   }
 
   @Get(':id')
   async getHike(@Param('id', ParseIdPipe()) id: ID): Promise<HikeFull> {
