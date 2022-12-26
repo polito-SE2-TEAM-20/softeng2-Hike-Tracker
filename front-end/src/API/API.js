@@ -856,6 +856,25 @@ const getHikesBasedOnPreferences = async () => {
     }
 }
 
+// picture for the hike
+const setHikePictures = async (request) => {
+    const response = await fetch((APIURL + '/hike-pictures/' + request.hikeID), {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+        body: request.pictures
+    })
+
+    if (response.ok) {
+        return true
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
 const API = {
     getListOfHikes, getListOfGPXFiles, getPathByID,
     getHikeByListOfPaths, getFilteredListOfHikes, getHikePathByHike,
@@ -867,6 +886,7 @@ const API = {
     getHutsHutWorker, modifyHutInformation, editHikeStartEndPoint, getHikesUpdatableHutWorker,
     linkPointsToHike,
     updateHikeCondition,
+    setHikePictures,
     //#region Export HikeTraking APIs
     startTracingkHike, addPointToTracingkHike, stopTrackingHike,
     getUserHikeTrackingDetails, getAllUserTrackingHikes,
