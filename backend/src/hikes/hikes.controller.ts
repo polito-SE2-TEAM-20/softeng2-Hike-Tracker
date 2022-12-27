@@ -672,11 +672,15 @@ export class HikesController {
           const startingTime = new Date(userHike.startedAt);
           const completionTime = endingTime.getTime() - startingTime.getTime();
           return completionTime;
+        }else{
+          throw new BadRequestException()
         }
       });
 
-      completionTimes.sort();
+      completionTimes.sort((a, b) => a - b);
+
       const ninentyPerc = completionTimes[Math.floor(completionTimes.length*0.9)];
+
       if(ninentyPerc){
         const days = Math.floor(ninentyPerc / (24*60*60*1000));
         const newMillis = ninentyPerc%(24*60*60*1000);
