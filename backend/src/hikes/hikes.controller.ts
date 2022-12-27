@@ -663,6 +663,7 @@ export class HikesController {
       hikeId: id,
       finishedAt: IsNull(),
     });
+    
 
     if(userHikes.length >= 30){
       const completionTimes = userHikes.map(userHike => { 
@@ -694,11 +695,12 @@ export class HikesController {
         });
       }
     }else{
+      
       const expectedTime = (await this.service.getRepository().findOneBy({
         id
       }))?.expectedTime;
 
-      if(expectedTime){
+      if(!isNil(expectedTime)){
         const maxElapsedTime = expectedTime * 2 * 60 * 1000;
 
         const days = Math.floor(maxElapsedTime / (24*60*60*1000));
@@ -728,6 +730,7 @@ export class HikesController {
   async getPopupsList(
     @CurrentUser() user: UserContext
   ): Promise<ID[]>{
+
     const userHikesUnfinished = await this.dataSource.getRepository(UserHike).findBy({
       userId: user.id,
       finishedAt: IsNull(),
@@ -736,16 +739,36 @@ export class HikesController {
 
     //Check if there are some to be updated
     if(userHikesUnfinished.length > 0){
-      userHikesUnfinished.forEach(async (userHike) =>{
-        const upperBound = userHike.maxElapsedTime.getTime() + userHike.startedAt.getTime();
-        if(upperBound < Date.now()) //Means that the elapsed time is ovr the upperBound
-        {
-          await this.dataSource.getRepository(UserHike).save({
-            id: userHike.id,
-            unfinishedNotified: false,
-          })
+      await Promise.all(userHikesUnfinished.map(
+        async (userHike) =>{
+          if(!isNil(userHike.maxElapsedTime)){
+            const intervalISO = (userHike.maxElapsedTime).toISOString();
+            let intervalMillis = 0;
+            for (let i = 0; i < intervalISO.length; i++) {
+             if(intervalISO[i] === 'D')
+              intervalMillis += parseInt(intervalISO[i-1]) * 24 * 60 * 60 * 1000;
+             if(intervalISO[i] === 'H')
+              intervalMillis += parseInt(intervalISO[i-1]) * 60 * 60 * 1000;
+             if(intervalISO[i] === 'M')
+              intervalMillis += parseInt(intervalISO[i-1]) * 60 * 1000;
+             if(intervalISO[i] === 'S')
+              intervalMillis += parseInt(intervalISO[i-1]) * 1000;
+            }
+  
+            const upperBound = intervalMillis + userHike.startedAt.getTime();
+            
+            if(upperBound < Date.now()) //Means that the elapsed time is over the upperBound
+            {
+              await this.dataSource.getRepository(UserHike).update({
+                id: userHike.id,
+              },
+              {
+                unfinishedNotified: false,
+              })
+            }
+          }
         }
-      })
+      ))
     }
 
     const userHikesUnfinishedIds = (await this.dataSource.getRepository(UserHike).findBy({
@@ -778,6 +801,14 @@ export class HikesController {
          id: update.id,
          unfinishedNotified: true,
        });
+
+       const userHikesUnfinishedIds = (await this.dataSource.getRepository(UserHike).findBy({
+        userId: user.id,
+        finishedAt: IsNull(),
+        unfinishedNotified: false //Not seen yet 
+      })).map((userHike) => userHike.hikeId);
+     
+      return userHikesUnfinishedIds;
      }else{
        throw new BadRequestException("You can't close a popup because there is not one related to unfinished hike: " + id)
      }

@@ -42,9 +42,10 @@ export class UserHike {
   updatedAt?: Date;
 
   @Column({
-    type: 'interval day to second',
+    type: 'interval',
+    nullable: true, //This should be changed, it's just for testing
   })
-  maxElapsedTime!: Date;
+  maxElapsedTime?: Date;
 
   @Column({
     type: 'timestamp with time zone',

@@ -32,7 +32,7 @@ import {
 
 import { hikeBasic } from './constants';
 import { HikeWeather } from '@app/common/enums/weatherStatus.enum';
-import { In } from 'typeorm';
+import { In, IsNull } from 'typeorm';
 
 const withoutCompositeFields = omit([
   'referencePoints',
@@ -72,7 +72,7 @@ describe('Hikes (e2e)', () => {
       role: UserRole.platformManager,
     });
 
-    const hike = await testService.createHike({ userId: localGuide.id });
+    const hike = await testService.createHike({ userId: localGuide.id, expectedTime: 0 });
 
     const hiker = await testService.createUser({
       role: UserRole.hiker
@@ -886,6 +886,95 @@ describe('Hikes (e2e)', () => {
         });
   });
 
+  it("Should test notification sending for unfinished hikes", async () => {
+  
+    const {hike, localGuide, hiker} = await setup();
+    
+    //HIKE CREATION
+    const hike2 = await testService.createHike({
+       userId: localGuide.id,
+       expectedTime: 836
+    });
+
+    // ===============================================
+
+    //USERHIKES CREATION
+    
+    //Hiker 1 started hike 1
+    await testService.createUserHike({
+      userId: hiker.id,
+      hikeId: hike.id,
+      weatherNotified: null,
+      unfinishedNotified: null
+    });
+
+    //Hiker 1 started hike 2
+    await testService.createUserHike({
+      hikeId: hike2.id,
+      userId: hiker.id,
+      weatherNotified: null,
+      unfinishedNotified: null
+    });
+
+    // ===============================================
+
+    //Test to compute the maximum time elapsed
+    await restService
+    .build(app, hiker)
+    .request()
+    .get(`/hikes/maxElapsedTime/${hike.id}`)
+    .expect(200);
+
+    await restService
+    .build(app, hiker)
+    .request()
+    .get(`/hikes/maxElapsedTime/${hike2.id}`)
+    .expect(200);
+
+    const maxElapsedTimeDouble = (await testService.repo(UserHike).findBy({
+      hikeId: hike.id,
+      finishedAt: IsNull(),
+      userId: hiker.id
+    }))[0].maxElapsedTime;
+
+    const maxElapsedTimeDoubleHike2 = (await testService.repo(UserHike).findBy({
+      hikeId: hike2.id,
+      finishedAt: IsNull(),
+      userId: hiker.id
+    }))[0].maxElapsedTime;
+
+    expect(maxElapsedTimeDouble?.toISOString()).toBe("P0Y0M0DT0H0M0S")    
+    expect(maxElapsedTimeDoubleHike2?.toISOString()).toBe("P0Y0M1DT3H52M0S")
+
+    // ==============================================
+    //Test to see if the list is giving the correct hikeIds of unfinished Hikes
+    await restService
+    .build(app, hiker)
+    .request()
+    .get(`/hikes/unfinished/popupsList`)
+    .expect(200)
+    .expect(({body}) => {
+      expect(body).toEqual([1])
+    })
+
+    // =============================================
+    //Test to see if closing the popup affect previous list
+
+    await restService
+    .build(app, hiker)
+    .request()
+    .get(`/hikes/unfinished/popupSeen/${hike.id}`)
+    .expect(200)
+    .expect(({body}) => {
+      expect(body).toEqual([])
+    })
+
+    await restService
+    .build(app, hiker)
+    .request()
+    .get(`/hikes/unfinished/popupSeen/${hike2.id}`)
+    .expect(400)
+  });
 
   it('should upload hike pictures', async () => {
     const { localGuide } = await setup();
