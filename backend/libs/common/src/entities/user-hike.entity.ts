@@ -42,6 +42,12 @@ export class UserHike {
   updatedAt?: Date;
 
   @Column({
+    type: 'interval',
+    nullable: true, //This should be changed, it's just for testing
+  })
+  maxElapsedTime?: Date;
+
+  @Column({
     type: 'timestamp with time zone',
     nullable: true,
     default: null,
@@ -54,6 +60,13 @@ export class UserHike {
     default: false,
   })
   weatherNotified?: boolean | null;
+
+  @Column({
+    type: 'boolean',
+    nullable: true,
+    default: false,
+  })
+  unfinishedNotified?: boolean | null;
   
   // performance stats ahead //
   @Column({
