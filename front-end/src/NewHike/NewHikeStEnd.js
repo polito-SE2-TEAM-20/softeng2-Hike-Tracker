@@ -16,7 +16,6 @@ import { EndPointSelect } from './SelectEnd'
 import { PopupAddHike } from './PopupAddHike.js';
 import { InformationOnHike } from './InformationOnHike.js';
 import EditIcon from '@mui/icons-material/Edit';
-import { AddPictureCard, PictureCard } from "../routes/edit-hut/PictureCard";
 import { Input } from "@mui/material"
 import { Fab } from "@mui/material"
 import AddIcon from '@mui/icons-material/Add';
@@ -79,18 +78,15 @@ function NewHikeStEnd(props) {
   const [referencePointAdd, setReferencePointAdd] = useState('');
   const [pictures, setPictures] = useState([]);
   const [picData, setPicData] = useState([]);
-  const [dirty, setDirty] = useState(false);
 
 
   // states for the popup after adding a new hike
   const [open, setOpen] = useState(false);
   const [hikeId, setHikeId] = useState(null);
   const [err, setErr] = useState(null);
-  const [pictureUploaded, setPictureUploaded] = useState(false);
 
   const handleUpload = event => {
     const fileUploaded = event.target.files[0];
-    setPictureUploaded(true);
     setPictures(fileUploaded);
     console.log(event.target.files[0])
     const reader = new FileReader();
@@ -102,25 +98,8 @@ function NewHikeStEnd(props) {
     if (event.target.files[0] && event.target.files) {
       reader.readAsDataURL(fileUploaded);
     }
-
   }
 
-
-  {/*}
-useEffect(() => {
-
-  const reader = new FileReader()
-reader.onload = (e) => {
-  const {result} = e.target;
-  if(result){
-    setPicData({'img': result})
-  }
-}
-  reader.onloadend = () => setDirty(!dirty)
-  reader.readAsDataURL(pictures);
-
-
-}, [pictures])*/}
 
   const handleDeleteLocal = () => {
     setPicData([])
@@ -512,208 +491,208 @@ reader.onload = (e) => {
                     ></EndPointSelect>
                   </Grid>
                   <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} columns={4} sx={{ display: "flex", justifyContent: "left", marginTop: "24px", padding: "0px 64px 64px 64px" }}>
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} columns={4} sx={{ display: "flex", justifyContent: "center", marginTop: "18px", marginBottom: "24px" }}>
-                            <Typography variant="h1" fontSize={52} className="unselectable">
-                                A significant picture for the hike
-                            </Typography>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} columns={4} sx={{ display: "flex", justifyContent: "center", marginTop: "18px", marginBottom: "24px" }}>
+                      <Typography variant="h1" fontSize={52} className="unselectable">
+                        A significant picture for the hike
+                      </Typography>
+                    </Grid>
+                    {
+                      pictures.length === 0 ? (
+                        <Grid item xs={3} sm={3} md={3} lg={3} xl={3} sx={{ display: "flex", justifyContent: "center" }}>
+                          <Grid item sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                            <label>
+                              <Input type="file" accept="image/*"
+                                sx={{ display: "none" }} onChange={event => { event.preventDefault(); event.stopPropagation(); handleUpload(event) }} />
+                              <Fab
+                                sx={{
+                                  backgroundColor: "#1a1a1aff", color: "white",
+                                  width: "80px", height: "80px",
+                                  borderRadius: "60px", "&:hover": {
+                                    backgroundColor: "#1a1a1ada"
+                                  }
+                                }}
+                                component="span"
+                                aria-label="add"
+                                variant="extended">
+                                <AddIcon sx={{ fontSize: "64px" }} />
+                              </Fab>
+                            </label>
+                          </Grid>
                         </Grid>
-                  {
-                    pictures.length===0? (
-                      <Grid item xs={3} sm={3} md={3} lg={3} xl={3} sx={{ display: "flex", justifyContent: "center" }}>
-            <Grid item sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                <label>
-                    <Input type="file" accept="image/*"
-                        sx={{ display: "none" }} onChange={event => { event.preventDefault(); event.stopPropagation(); handleUpload(event) }} />
-                    <Fab
-                        sx={{
-                            backgroundColor: "#1a1a1aff", color: "white",
-                            width: "80px", height: "80px",
-                            borderRadius: "60px", "&:hover": {
-                                backgroundColor: "#1a1a1ada"
-                            }
-                        }}
-                        component="span"
-                        aria-label="add"
-                        variant="extended">
-                        <AddIcon sx={{ fontSize: "64px" }} />
-                    </Fab>
-                </label>
-            </Grid>
-        </Grid>
-                    ):(
-                          <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "center" }}>
-                            <Grid container item xs={4} sm={4} md={4} lg={4} xl={4} sx={{ display: "flex", justifyContent: "center" }}>
+                      ) : (
+                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "center" }}>
+                          <Grid container item xs={4} sm={4} md={4} lg={4} xl={4} sx={{ display: "flex", justifyContent: "center" }}>
 
-                              <Grid container item sx={{ backgroundColor: "red", width: "200px", height: "250px", marginLeft: "5px", marginRight: "5px", marginTop: "5px", marginBottom: "35px", borderRadius: "8px", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                                <Grid sx={{ display: "flex" }} item onClick={() => { handleDeleteLocal(pictures) }}>
-                                  <Typography
-                                    className="unselectable"
-                                    variant="h1"
-                                    fontSize={24}
-                                  >
-                                    <b>Remove</b>
-                                  </Typography>
-                                </Grid>
-                                <Grid item>
-                                  <img src={picData.img} style={{ width: "200px", height: "250px", borderRadius: "8px", objectFit: "cover" }} alt="not found" />
-                                </Grid>
+                            <Grid container item sx={{ backgroundColor: "red", width: "200px", height: "250px", marginLeft: "5px", marginRight: "5px", marginTop: "5px", marginBottom: "35px", borderRadius: "8px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                              <Grid sx={{ display: "flex" }} item onClick={() => { handleDeleteLocal(pictures) }}>
+                                <Typography
+                                  className="unselectable"
+                                  variant="h1"
+                                  fontSize={24}
+                                >
+                                  <b>Remove</b>
+                                </Typography>
+                              </Grid>
+                              <Grid item>
+                                <img src={picData.img} style={{ width: "200px", height: "250px", borderRadius: "8px", objectFit: "cover" }} alt="not found" />
                               </Grid>
                             </Grid>
                           </Grid>
-                    )
-                  }
-                  </Grid>
-                  
-                  
-
-
-                {
-                  listReferencePoint.length ?
-                    (<>
-                      <Grid item xs={12} sm={12}><Typography variant="h8" gutterBottom>REFERENCE POINTS</Typography></Grid>
-                      {listReferencePoint.map((reference) => {
-                        return (
-                          <>
-                            <>
-                              <Grid item xs={12} sm={2}>
-                                <TextField id="referencename" name="referencename"
-                                  label="Reference Point Name" fullWidth
-                                  autoComplete="referencename" variant="standard"
-                                  value={reference.name}
-                                />
-                              </Grid>
-                              <Grid item xs={12} sm={3.5}>
-                                <TextField
-                                  name="referencePointAdd"
-                                  label="Reference Point Address"
-                                  fullWidth
-                                  autoComplete="referencePointAdd"
-                                  variant="standard"
-                                  //disabled
-                                  value={reference.address}
-                                />
-                              </Grid>
-                              <Grid item xs={12} sm={2}>
-                                <TextField name="referencelat"
-                                  label="Reference Point Latitude" fullWidth
-                                  autoComplete="referencelat" variant="standard"
-                                  id="outlined-disabled"
-                                  value={reference.lat}
-                                />
-                              </Grid>
-                              <Grid item xs={12} sm={2}>
-                                <TextField
-                                  name="referencePointLon"
-                                  label="Reference Point Longitude"
-                                  fullWidth
-                                  autoComplete="referencePointLon"
-                                  variant="standard"
-                                  id="outlined-disabled"
-                                  value={reference.lon}
-                                />
-                              </Grid>
-                              <Grid item xs={12} sm={1} mt={2}>
-                                <Button edge="end" onClick={() => handleEditReferencePoint(reference.name)} >
-                                  <EditIcon />
-                                </Button>
-                              </Grid>
-
-                              <Grid item xs={12} sm={1} mt={2}>
-                                <Button edge="end" onClick={() => handleDeleteReferencePoint(reference.name)} >
-                                  <DeleteIcon />
-                                </Button>
-                              </Grid>
-
-                            </>
-                          </>
-                        )
-                      })}
-
-                    </>
-                    ) : (<h2> </h2>)
-                }
-                {
-                  !newReferencePoint ?
-                    (
-                      <>
-                        <Grid item xs={12} sm={12}>
-                          <Button onClick={handleNewReferencePoint}>ADD A NEW REFERENCE POINT</Button><h6 >Or click on the map</h6>
                         </Grid>
-                      </>
-                    )
-                    :
-                    (<>
-                      <Grid item xs={12} sm={3.5}>
-                        <TextField
-                          required
-                          id="referencePointName" name="referencePointName"
-                          label="Reference Point Name" fullWidth
-                          autoComplete="referencePointName" variant="standard"
-                          value={referencePointName}
-                          onChange={(e) => setReferencePointName(e.target.value)}
-                        />
-                      </Grid>
+                      )
+                    }
+                  </Grid>
 
-                      <Grid item xs={12} sm={3.5}>
-                        <TextField
-                          id="referencePointAdd"
-                          name="referencePointAdd" label="Reference Point Address"
-                          fullWidth autoComplete="referencePointAdd" variant="standard"
-                          //disabled
-                          value={referencePointAdd}
-                          onChange={(e) => setReferencePointAdd(e.target.value)}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={2}>
-                        <TextField
-                          required
-                          id="referencePointLat" name="referencePointLat"
-                          label="Reference Point Latitude" fullWidth
-                          placeholder='41.43'
-                          autoComplete="referencePointLat" variant="standard"
-                          value={referencePointLat}
-                          onChange={(e) => setReferencePointLat(e.target.value)}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={2}>
-                        <TextField
-                          required id="referencePointLon"
-                          name="referencePointLon" label="Reference Point Longitude"
-                          fullWidth autoComplete="referencePointLon" variant="standard"
-                          value={referencePointLon} placeholder='-71.15'
-                          onChange={(e) => { setReferencePointLon(e.target.value); }}
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={1} mt={2}><Button onClick={handleListreferencePoints}>ADD</Button></Grid>
-                    </>)
-                }
-              </Grid>
+
+
+
+                  {
+                    listReferencePoint.length ?
+                      (<>
+                        <Grid item xs={12} sm={12}><Typography variant="h8" gutterBottom>REFERENCE POINTS</Typography></Grid>
+                        {listReferencePoint.map((reference) => {
+                          return (
+                            <>
+                              <>
+                                <Grid item xs={12} sm={2}>
+                                  <TextField id="referencename" name="referencename"
+                                    label="Reference Point Name" fullWidth
+                                    autoComplete="referencename" variant="standard"
+                                    value={reference.name}
+                                  />
+                                </Grid>
+                                <Grid item xs={12} sm={3.5}>
+                                  <TextField
+                                    name="referencePointAdd"
+                                    label="Reference Point Address"
+                                    fullWidth
+                                    autoComplete="referencePointAdd"
+                                    variant="standard"
+                                    //disabled
+                                    value={reference.address}
+                                  />
+                                </Grid>
+                                <Grid item xs={12} sm={2}>
+                                  <TextField name="referencelat"
+                                    label="Reference Point Latitude" fullWidth
+                                    autoComplete="referencelat" variant="standard"
+                                    id="outlined-disabled"
+                                    value={reference.lat}
+                                  />
+                                </Grid>
+                                <Grid item xs={12} sm={2}>
+                                  <TextField
+                                    name="referencePointLon"
+                                    label="Reference Point Longitude"
+                                    fullWidth
+                                    autoComplete="referencePointLon"
+                                    variant="standard"
+                                    id="outlined-disabled"
+                                    value={reference.lon}
+                                  />
+                                </Grid>
+                                <Grid item xs={12} sm={1} mt={2}>
+                                  <Button edge="end" onClick={() => handleEditReferencePoint(reference.name)} >
+                                    <EditIcon />
+                                  </Button>
+                                </Grid>
+
+                                <Grid item xs={12} sm={1} mt={2}>
+                                  <Button edge="end" onClick={() => handleDeleteReferencePoint(reference.name)} >
+                                    <DeleteIcon />
+                                  </Button>
+                                </Grid>
+
+                              </>
+                            </>
+                          )
+                        })}
+
+                      </>
+                      ) : (<h2> </h2>)
+                  }
+                  {
+                    !newReferencePoint ?
+                      (
+                        <>
+                          <Grid item xs={12} sm={12}>
+                            <Button onClick={handleNewReferencePoint}>ADD A NEW REFERENCE POINT</Button><h6 >Or click on the map</h6>
+                          </Grid>
+                        </>
+                      )
+                      :
+                      (<>
+                        <Grid item xs={12} sm={3.5}>
+                          <TextField
+                            required
+                            id="referencePointName" name="referencePointName"
+                            label="Reference Point Name" fullWidth
+                            autoComplete="referencePointName" variant="standard"
+                            value={referencePointName}
+                            onChange={(e) => setReferencePointName(e.target.value)}
+                          />
+                        </Grid>
+
+                        <Grid item xs={12} sm={3.5}>
+                          <TextField
+                            id="referencePointAdd"
+                            name="referencePointAdd" label="Reference Point Address"
+                            fullWidth autoComplete="referencePointAdd" variant="standard"
+                            //disabled
+                            value={referencePointAdd}
+                            onChange={(e) => setReferencePointAdd(e.target.value)}
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={2}>
+                          <TextField
+                            required
+                            id="referencePointLat" name="referencePointLat"
+                            label="Reference Point Latitude" fullWidth
+                            placeholder='41.43'
+                            autoComplete="referencePointLat" variant="standard"
+                            value={referencePointLat}
+                            onChange={(e) => setReferencePointLat(e.target.value)}
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={2}>
+                          <TextField
+                            required id="referencePointLon"
+                            name="referencePointLon" label="Reference Point Longitude"
+                            fullWidth autoComplete="referencePointLon" variant="standard"
+                            value={referencePointLon} placeholder='-71.15'
+                            onChange={(e) => { setReferencePointLon(e.target.value); }}
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={1} mt={2}><Button onClick={handleListreferencePoints}>ADD</Button></Grid>
+                      </>)
+                  }
+                </Grid>
               </>
-        ) : (<h1> </h1>)
+            ) : (<h1> </h1>)
           }
-        {
-          show ?
-            <Alert variant="outlined" severity="error" onClose={() => { setErrorMessage(''); setShow(false) }}>{errorMessage}</Alert> : <></>
-        }
-        {
-          selectedFile ? (
-            <Stack direction="row" justifyContent="end" sx={{ p: 2 }}>
-              <Button variant="contained" color="success" onClick={handleSubmit}>SUBMIT FORM</Button>
-            </Stack>
-          ) : (<h1> </h1>)
-        }
-        <Grid sx={{ p: 2 }}>
-          <Paper elevation={5}>
-            <Map startPointLat={startPointLat} startPointLon={startPointLon} endPointLat={endPointLat} endPointLon={endPointLon} positionsState={positionsState} setPuntiDaTrack={setPuntiDaTrack} puntiDaTrack={puntiDaTrack} referencePoint={referencePoint} setReferencePoint={setReferencePoint} listReferencePoint={listReferencePoint} />
-          </Paper>
+          {
+            show ?
+              <Alert variant="outlined" severity="error" onClose={() => { setErrorMessage(''); setShow(false) }}>{errorMessage}</Alert> : <></>
+          }
+          {
+            selectedFile ? (
+              <Stack direction="row" justifyContent="end" sx={{ p: 2 }}>
+                <Button variant="contained" color="success" onClick={handleSubmit}>SUBMIT FORM</Button>
+              </Stack>
+            ) : (<h1> </h1>)
+          }
+          <Grid sx={{ p: 2 }}>
+            <Paper elevation={5}>
+              <Map startPointLat={startPointLat} startPointLon={startPointLon} endPointLat={endPointLat} endPointLon={endPointLon} positionsState={positionsState} setPuntiDaTrack={setPuntiDaTrack} puntiDaTrack={puntiDaTrack} referencePoint={referencePoint} setReferencePoint={setReferencePoint} listReferencePoint={listReferencePoint} />
+            </Paper>
+          </Grid>
         </Grid>
       </Grid>
-    </Grid>
     </React.Fragment >
   );
 }
 
-export {NewHikeStEnd}
+export { NewHikeStEnd }
 
 
 
