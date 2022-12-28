@@ -875,6 +875,26 @@ const setHikePictures = async (request) => {
     }
 }
 
+//get performance stats only for hiker 
+// returns {stats: [{stat:'stat name', value: number, unit:string}]}
+const getPerformanceStats = async () => {
+    const response = await fetch((APIURL + "/me/performance-stats"), {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+    })
+
+    if (response.ok) {
+        const performanceStats = response.json()
+        return performanceStats;
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
 const API = {
     getListOfHikes, getListOfGPXFiles, getPathByID,
     getHikeByListOfPaths, getFilteredListOfHikes, getHikePathByHike,
@@ -886,7 +906,7 @@ const API = {
     getHutsHutWorker, modifyHutInformation, editHikeStartEndPoint, getHikesUpdatableHutWorker,
     linkPointsToHike,
     updateHikeCondition,
-    setHikePictures,
+    setHikePictures, getPerformanceStats,
     //#region Export HikeTraking APIs
     startTracingkHike, addPointToTracingkHike, stopTrackingHike,
     getUserHikeTrackingDetails, getAllUserTrackingHikes,
