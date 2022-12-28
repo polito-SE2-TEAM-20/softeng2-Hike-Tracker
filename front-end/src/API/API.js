@@ -895,6 +895,60 @@ const getPerformanceStats = async () => {
     }
 }
 
+// called every minute
+const getUnfinishedHikes = async () => {
+    const response = await fetch((APIURL + "/hikes/unfinished/popupsList"), {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+    })
+
+    if (response.ok) {
+        const hikeIDs = response.json()
+        return hikeIDs;
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const getHikesMaximumElapsedTime = async (hikeId) => {
+    const response = await fetch((APIURL + "/hikes/maxElapsedTime/" + hikeId), {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+    })
+
+    if (response.ok) {
+        return await response.json()
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const getUnfinishedHikesPopupSeen = async (hikeId) => {
+    const response = await fetch((APIURL + "/hikes/unfinished/popupsSeen/"  + hikeId), {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+    })
+
+    if (response.ok) {
+        const hikeIDs = response.json()
+        return hikeIDs;
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
 const API = {
     getListOfHikes, getListOfGPXFiles, getPathByID,
     getHikeByListOfPaths, getFilteredListOfHikes, getHikePathByHike,
@@ -906,7 +960,8 @@ const API = {
     getHutsHutWorker, modifyHutInformation, editHikeStartEndPoint, getHikesUpdatableHutWorker,
     linkPointsToHike,
     updateHikeCondition,
-    setHikePictures, getPerformanceStats,
+    setHikePictures, getPerformanceStats, getUnfinishedHikes, getHikesMaximumElapsedTime,
+    getUnfinishedHikesPopupSeen,
     //#region Export HikeTraking APIs
     startTracingkHike, addPointToTracingkHike, stopTrackingHike,
     getUserHikeTrackingDetails, getAllUserTrackingHikes,

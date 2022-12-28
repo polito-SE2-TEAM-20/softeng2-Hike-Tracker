@@ -49,6 +49,7 @@ function App2() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState({});
   const [rowsAffected, setRowsAffected] = useState(false);
+  const [hikeIDs, setHikeIDs] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -117,6 +118,16 @@ function App2() {
   
   const gotoLogin = () => {
     navigate("/login", { replace: false })
+  }
+
+
+  const getUnfinishedHikes = () => {
+    API.getUnfinishedHikes()
+      .then((HikeIDs) => {
+        console.log(HikeIDs)
+        setHikeIDs(HikeIDs)
+      })
+      .catch((err) => { console.log(err) })
   }
 
   return (
