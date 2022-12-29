@@ -12,7 +12,7 @@ export class FriendsController {
   @Post('share')
   @HikerOnly()
   @HttpCode(201)
-  async shareLink(@CurrentUser() user: UserContext): Promise<string> {
+  async shareLink(@CurrentUser() user: UserContext): Promise<Object> {
     return await this.friends.shareLink(user.id);
   }
 

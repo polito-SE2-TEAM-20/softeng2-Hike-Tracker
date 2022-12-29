@@ -19,7 +19,7 @@ export class FriendsService {
     private userHikeService: UserHikesService
   ) {}
 
-  async shareLink(userId: number): Promise<string> {
+  async shareLink(userId: number): Promise<Object> {
 
     const userHike = await this.userHikeRepositoty
     .createQueryBuilder('uh')
@@ -50,7 +50,7 @@ export class FriendsService {
         userHikeId: userHike?.id
     })
 
-    return randomCode
+    return {Code: randomCode}
   }
 
   async getFriendHike(code: string): Promise<UserHikeFull> {
