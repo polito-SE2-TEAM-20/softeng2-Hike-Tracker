@@ -21,7 +21,6 @@ export class FriendsService {
 
   async shareLink(userId: number): Promise<string> {
 
-    const randomCode = randomBytes(2).toString('hex');
     const userHike = await this.userHikeRepositoty
     .createQueryBuilder('uh')
     .where('uh.userId = :userId', {userId})
@@ -30,9 +29,21 @@ export class FriendsService {
 
     if(userHike === null) throw new HttpException("Hike not found",422);
 
-    const existingCode = await this.codeHikeRepository.findOneBy({userHikeId: userHike.id})
-    if(existingCode !== null) 
-        return existingCode.code
+    const existingHike = await this.codeHikeRepository.findOneBy({userHikeId: userHike.id})
+    if(existingHike !== null) 
+        return existingHike.code
+
+    const randomCode = randomBytes(2).toString('hex');
+    const existingCode = await this.codeHikeRepository.findOneBy({code: randomCode})
+    if(existingCode !== null) {
+        const newCode = async () => {
+            const randomCode = randomBytes(2).toString('hex');
+            const existingCode = await this.codeHikeRepository.findOneBy({code: randomCode})
+            if(existingCode !== null)
+                newCode();
+        }
+        newCode();
+    }
 
     await this.codeHikeRepository.save({
         code: randomCode,
