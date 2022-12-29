@@ -25,13 +25,6 @@ import {
     })
     userHikeId!: number;
 
-    @Column({
-      type: 'varchar',
-      length: 256,
-      nullable: false,
-    })
-    link!: string;
-
     /**
     * TypeORM sql-gen only
     * @deprecated
