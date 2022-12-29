@@ -36,6 +36,9 @@ import HikerDashboard from './routes/hiker-dashboard/HikerDashboard';
 import AdminDashboard from './routes/admin-dashboard/AdminDashboard';
 import { TrackingHikePage } from './routes/TrackHike/TrackHikePage';
 import HTNavbar from './components/HTNavbar/HTNavbar';
+import TestPage from './routes/test-page/TestPage';
+import WeatherAlertHikeEditStatus from './routes/new-weather-alert-hike/WeatherAlertHikeEditStatus';
+import FriendTracking from './routes/friend-tracking/FriendTracking';
 
 function App() {
   return (
@@ -157,8 +160,9 @@ function App2() {
         <Route path="/new-weather-alert-hike" element={<WeatherAlertHike />} />
         <Route path="/new-weather-alert-map" element={<WeatherAlertMap />} />
         <Route path="/hikerPerformance" element={<HikerPerformance user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
-
-
+        <Route path="/test-page" element={<TestPage />} />
+        <Route path="/weather-status-edit/:hikeID" element={<WeatherAlertHikeEditStatus />} />
+        <Route path="/friend-tracking/:hikeID" element={<FriendTracking />} />
       </Routes>
     </>
   );

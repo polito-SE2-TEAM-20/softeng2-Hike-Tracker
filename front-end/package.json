@@ -17,6 +17,7 @@
     "country-code-lookup": "^0.0.20",
     "gpx-parse": "^0.10.4",
     "gpxparser": "^3.0.8",
+    "js-sha1": "^0.6.0",
     "leaflet": "^1.9.2",
     "leaflet-draw": "^1.0.4",
     "material-ui-popup-state": "^5.0.4",

@@ -1,6 +1,7 @@
 import { UserHikeState } from "../lib/common/Hike";
 
 export const APIURL = process.env.REACT_APP_API_BASE || 'https://hiking-backend.germangorodnev.com';
+export const WEBSITEURL = "https://hiking.germangorodnev.com"
 
 async function getListOfHikes() {
     let response = await fetch((APIURL + '/hikes'), {
@@ -827,7 +828,7 @@ const modifyHutPictures = async (request) => {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
             'Accept': '*/*'
         },
-        body: JSON.stringify({'pictures': request.params})
+        body: JSON.stringify({ 'pictures': request.params })
     })
 
     if (response.ok) {
@@ -949,6 +950,27 @@ const getUnfinishedHikesPopupSeen = async (hikeId) => {
     }
 }
 
+const updateWeatherSingleHike = async (request) => {
+    const response = await fetch((APIURL + "/hikes/updateWeather/" + request.hikeID), {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+        body: JSON.stringify({
+            weatherStatus: request.weatherInfo.weatherStatus,
+            weatherDescription: request.weatherInfo.weatherDescription
+        })
+    })
+
+    if (response.ok) return true
+    else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
 const API = {
     getListOfHikes, getListOfGPXFiles, getPathByID,
     getHikeByListOfPaths, getFilteredListOfHikes, getHikePathByHike,
@@ -966,6 +988,6 @@ const API = {
     startTracingkHike, addPointToTracingkHike, stopTrackingHike,
     getUserHikeTrackingDetails, getAllUserTrackingHikes,
     //#endregion
-    setHutPictures, modifyHutPictures, getHikesBasedOnPreferences
+    setHutPictures, modifyHutPictures, getHikesBasedOnPreferences, updateWeatherSingleHike
 }
 export default API

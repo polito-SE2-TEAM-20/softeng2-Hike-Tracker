@@ -1,5 +1,5 @@
 import { Button, Grid, Tooltip, Typography } from "@mui/material"
-import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, useMapEvents, ZoomControl, Polyline, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, ZoomControl, Polyline, useMap } from 'react-leaflet'
 import { useState, useEffect } from "react"
 import L from 'leaflet';
 import HikePopup from '../../components/hike-popup/HikePopup';
