@@ -22,6 +22,7 @@ import { ParkingLotModule } from './parking-lot/parking-lot.module';
 import { PointsModule } from './points/points.module';
 import { UserHikesModule } from './user-hikes/user-hikes.module';
 import { UsersModule } from './users/users.module';
+import { FriendsModule } from './friends/friends.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     HutsModule,
     UserHikesModule,
+    FriendsModule
   ],
   controllers: [],
   providers: [
