@@ -31,7 +31,7 @@ export class FriendsService {
 
     const existingHike = await this.codeHikeRepository.findOneBy({userHikeId: userHike.id})
     if(existingHike !== null) 
-        return existingHike.code
+        return {Code: existingHike.code}
 
     const randomCode = randomBytes(2).toString('hex');
     const existingCode = await this.codeHikeRepository.findOneBy({code: randomCode})
@@ -41,13 +41,20 @@ export class FriendsService {
             const existingCode = await this.codeHikeRepository.findOneBy({code: randomCode})
             if(existingCode !== null)
                 newCode();
+            else {
+              await this.codeHikeRepository.save({
+                code: randomCode,
+                userHikeId: userHike?.id
+            })
+            return {Code: randomCode}
+            }
         }
         newCode();
     }
-
+    
     await this.codeHikeRepository.save({
-        code: randomCode,
-        userHikeId: userHike?.id
+      code: randomCode,
+      userHikeId: userHike?.id
     })
 
     return {Code: randomCode}
