@@ -933,7 +933,7 @@ const getHikesMaximumElapsedTime = async (hikeId) => {
 }
 
 const getUnfinishedHikesPopupSeen = async (hikeId) => {
-    const response = await fetch((APIURL + "/hikes/unfinished/popupsSeen/"  + hikeId), {
+    const response = await fetch((APIURL + "/hikes/unfinished/popupsSeen/" + hikeId), {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -971,6 +971,37 @@ const updateWeatherSingleHike = async (request) => {
     }
 }
 
+const requestNewCode = async (request) => {
+    const response = await fetch((APIURL + "/friends/share"), {
+        method: "POST",
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        }
+    })
+
+    if (response.ok) {
+        return await response.json()
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const getHikeByCode = async (code) => {
+    const response = await fetch((APIURL + "/friends/track/" + code), {
+        method: "GET"
+    })
+
+    if (response.ok) {
+        return await response.json()
+    }
+    else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
 const API = {
     getListOfHikes, getListOfGPXFiles, getPathByID,
     getHikeByListOfPaths, getFilteredListOfHikes, getHikePathByHike,
@@ -988,6 +1019,7 @@ const API = {
     startTracingkHike, addPointToTracingkHike, stopTrackingHike,
     getUserHikeTrackingDetails, getAllUserTrackingHikes,
     //#endregion
-    setHutPictures, modifyHutPictures, getHikesBasedOnPreferences, updateWeatherSingleHike
+    setHutPictures, modifyHutPictures, getHikesBasedOnPreferences, updateWeatherSingleHike,
+    requestNewCode, getHikeByCode
 }
 export default API
