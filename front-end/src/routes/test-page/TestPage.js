@@ -4,11 +4,11 @@ import VerifyKey from "../../components/share-hike/VerifyKey"
 
 const TestPage = () => {
     return(
-        <VerifyKey />
+        // <VerifyKey />
 
-        // <Grid container sx={{display: "flex", justifyContent: "center", alignItems: "center", height: "100vh"}}>
-        //     <ShareHike />
-        // </Grid>
+        <Grid container sx={{display: "flex", justifyContent: "center", alignItems: "center", height: "100vh"}}>
+            <ShareHike />
+        </Grid>
     )
 }
 

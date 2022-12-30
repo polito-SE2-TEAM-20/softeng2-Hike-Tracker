@@ -1,8 +1,8 @@
 import { Button, Grid, Input, SvgIcon, Typography } from "@mui/material"
 import LockIcon from '@mui/icons-material/Lock';
 import { useState } from "react";
-import { verifyKey } from "../../lib/common/HikeKeygen";
 import { useNavigate } from "react-router";
+import API from "../../API/API";
 
 const VerifyKey = (props) => {
     const [code1, setCode1] = useState("")
@@ -18,34 +18,44 @@ const VerifyKey = (props) => {
     const [sending, setSending] = useState(false)
     const [ready, setReady] = useState(false)
 
+    const submitCode = (friendCode) => {
+        let response = {}
+        const apiSubmitCode = async () => {
+            response = await API.getHikeByFriendCode(friendCode)
+        }
+
+        apiSubmitCode()
+            .then(() => {
+                setTimeout(() => {
+                    setMessage({ color: "green", message: "Access granted: " + response.hike.title })
+                }, 50);
+                setTimeout(() => {
+                    navigate("/friend-tracking/" + response.hikeId)
+                }, 2000);
+            })
+            .catch(() => {
+                setSending(true)
+                setMessage({ color: "red", message: "Access denied" })
+                setTimeout(() => {
+                    setMessage({ color: "", message: "" })
+                }, 2000);
+                setTimeout(() => {
+                    setSending(false)
+                    setters.forEach(setter => setter(""))
+                    setIndex(0)
+                }, 50);
+            })
+    }
+
     /**
      * Submission phase
      */
     const submit = () => {
-        // hikeID = 1 <--> da39
-        let code = ""
-        codes.forEach(c => code = code + c)
-        if (verifyKey(code, 1)) {
-            setTimeout(() => {
-                setMessage({ color: "green", message: "Access granted" })
-            }, 50);
-            setTimeout(() => {
-                navigate("/")
-            }, 2000);
-        } else {
-            setSending(true)
-            setMessage({ color: "red", message: "Access denied" })
-            setTimeout(() => {
-                setMessage({ color: "", message: "" })
-            }, 2000);
-            setTimeout(() => {
-                setSending(false)
-                setters.forEach(setter => setter(""))
-                setIndex(0)
-            }, 50);
-        }
-
+        let friendCode = ""
+        codes.forEach(c => friendCode = friendCode + c)
+        submitCode(friendCode)
     }
+
     const isDigitValid = digit => digit !== undefined && digit !== "" && digit.length !== 0
     if (isDigitValid(code1) && isDigitValid(code2) && isDigitValid(code3) && isDigitValid(code4) && !sending) {
         setSending(true)
@@ -113,7 +123,7 @@ const VerifyKey = (props) => {
         width: { xs: "60px", sm: "60px", md: "90px", lg: "90px", xl: "90px" },
         backgroundColor: "#000046",
         borderColor: "#0000ff66",
-        borderRadius: "30px",
+        borderRadius: { xs: "20px", md: "30px" },
         borderWidth: "3px",
         borderStyle: "solid",
         textAlign: "center",
@@ -122,8 +132,11 @@ const VerifyKey = (props) => {
         alignItems: "center",
         padding: "10px",
         color: "white",
-        fontSize: "72px",
-        textTransform: "uppercase"
+        fontSize: { xs: "42px", md: "72px" },
+        textTransform: "uppercase",
+        "&.Mui-focused": {
+            backgroundColor: "#000070"
+        }
     }
 
     const submitButtonStyle = {
@@ -144,7 +157,7 @@ const VerifyKey = (props) => {
 
     return (
         <Grid container sx={{
-            backgroundImage: "linear-gradient(90deg, rgba(103,138,168,1) 0%, rgba(83,147,202,1) 25%, rgba(70,153,225,1) 50%, rgba(31,76,116,1) 75%, rgba(59,79,97,1) 100%)",
+            backgroundImage: "linear-gradient(90deg, #EBD342, #FF7C48)",
             backgroundSize: "400% 400%",
             width: "100vw", height: "100vh", display: "flex",
             justifyContent: "center", alignItems: "center",
@@ -170,7 +183,7 @@ const VerifyKey = (props) => {
                 </Grid>
 
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "center", marginBottom: "24px" }}>
-                    <Typography className="unselectable" sx={{ color: "white", fontFamily: "Unbounded", fontSize: "32px" }}>
+                    <Typography className="unselectable" sx={{ color: "white", fontFamily: "Unbounded", fontSize: "32px", textAlign: "center" }}>
                         Enter your secret code
                     </Typography>
                 </Grid>
