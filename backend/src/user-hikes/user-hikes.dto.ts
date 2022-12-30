@@ -14,3 +14,10 @@ export class TrackPointDto {
   @IsDateString()
   datetime!: string;
 }
+
+export class UserHikeReferenceDto {
+
+  @IsIdentifier()
+  pointId!: ID;
+  
+}

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { UserHike, UserHikeTrackPoint } from '@app/common';
+import { UserHike, UserHikeReference, UserHikeTrackPoint } from '@app/common';
 import { HikesModule } from '@core/hikes/hikes.module';
 import { PointsModule } from '@core/points/points.module';
 
@@ -11,7 +11,7 @@ import { UserHikesService } from './user-hikes.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserHike, UserHikeTrackPoint]),
+    TypeOrmModule.forFeature([UserHike, UserHikeTrackPoint, UserHikeReference]),
     HikesModule,
     PointsModule,
   ],

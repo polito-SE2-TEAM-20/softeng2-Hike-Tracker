@@ -2,19 +2,24 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  HttpException,
+  BadRequestException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ascend, prop, sort } from 'ramda';
 import { EntityManager, Repository, SelectQueryBuilder } from 'typeorm';
-
+import { PointsService } from '@core/points/points.service';
 import {
   BaseService,
   ID,
   Point,
   UserContext,
   UserHike,
+  UserHikeReference,
   UserHikeTrackPoint,
   UserRole,
+  HikePoint,
+  PointType
 } from '@app/common';
 import { HikesService } from '@core/hikes/hikes.service';
 
@@ -26,6 +31,9 @@ export class UserHikesService extends BaseService<UserHike> {
     @InjectRepository(UserHike)
     private userHikesRepository: Repository<UserHike>,
     private hikesService: HikesService,
+    @InjectRepository(UserHikeReference)
+    private userHikeReference: Repository<UserHikeReference>,
+    private pointsService: PointsService,
   ) {
     super(UserHike, {
       repository: userHikesRepository,
@@ -89,5 +97,72 @@ export class UserHikesService extends BaseService<UserHike> {
       .orderBy('uhtp.index', 'ASC');
 
     return query;
+  }
+
+  async reachReferencePoint(userId: number, pointId: number): Promise<Point> {
+
+    const userHike = await this.userHikesRepository
+    .createQueryBuilder('uh')
+    .where('uh.userId = :userId', {userId})
+    .andWhere('uh.finishedAt IS NULL')
+    .getOne()
+
+    if(userHike === null) throw new HttpException("Hike not found",422);
+
+    //const hike = await this.hikesService.getFullHike(userHike.hikeId);
+
+    if (!!userHike.finishedAt) {
+      throw new BadRequestException('Hike is finished');
+    }
+
+    const point = await this.pointsService.findByIdOrThrow(pointId);
+    // ensure such reference point exists
+    const referenceCount = await this.pointsService
+      .getRepository()
+      .createQueryBuilder('p')
+      .innerJoin(
+        HikePoint,
+        'hp',
+        '(hp.pointId = p.id and hp.type != 0 and hp.hikeId = :hikeId)',
+        { hikeId: userHike.hikeId },
+      )
+      .andWhere('p.id = :pointId', { pointId })
+      .getCount();
+
+    if (!referenceCount) {
+      throw new BadRequestException(
+        'This point is not a reference point for this hike',
+      );
+    }
+
+    await this.userHikeReference.save({
+      userHikeId: userHike.id,
+      pointId: pointId
+    })
+
+    return point
+  }
+
+  async getReachenReferencePoints(userId: number): Promise<UserHikeReference[]> {
+    
+    const userHike = await this.userHikesRepository
+    .createQueryBuilder('uh')
+    .where('uh.userId = :userId', {userId})
+    .andWhere('uh.finishedAt IS NULL')
+    .getOne()
+
+    if(userHike === null) throw new HttpException("Hike not found",422);
+
+    if (!!userHike.finishedAt) {
+      throw new BadRequestException('Hike is finished');
+    }
+
+    const reachedPoints = await this.userHikeReference
+    .createQueryBuilder('uf')
+    .where('uf.userHikeId = :id', {id: userHike.id})
+    .innerJoinAndMapOne('uf.pointId', Point, 'p', 'p.id = uf."pointId"')
+    .getMany()
+
+    return reachedPoints;
   }
 }
