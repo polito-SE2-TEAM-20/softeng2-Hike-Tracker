@@ -99,7 +99,7 @@ export class UserHikesService extends BaseService<UserHike> {
     return query;
   }
 
-  async reachReferencePoint(userId: number, pointId: number) {
+  async reachReferencePoint(userId: number, pointId: number): Promise<Point> {
 
     const userHike = await this.userHikesRepository
     .createQueryBuilder('uh')
@@ -117,23 +117,23 @@ export class UserHikesService extends BaseService<UserHike> {
 
     const point = await this.pointsService.findByIdOrThrow(pointId);
     // ensure such reference point exists
-    // const referenceCount = await this.pointsService
-    //   .getRepository()
-    //   .createQueryBuilder('p')
-    //   .innerJoin(
-    //     HikePoint,
-    //     'hp',
-    //     '(hp.pointId = p.id and hp.type = :type and hp.hikeId = :hikeId)',
-    //     { type: PointType.referencePoint, hikeId: userHike.hikeId },
-    //   )
-    //   .andWhere('p.id = :pointId', { pointId })
-    //   .getCount();
+    const referenceCount = await this.pointsService
+      .getRepository()
+      .createQueryBuilder('p')
+      .innerJoin(
+        HikePoint,
+        'hp',
+        '(hp.pointId = p.id and hp.type != 0 and hp.hikeId = :hikeId)',
+        { hikeId: userHike.hikeId },
+      )
+      .andWhere('p.id = :pointId', { pointId })
+      .getCount();
 
-    // if (!referenceCount) {
-    //   throw new BadRequestException(
-    //     'This point is not a reference point for this hike',
-    //   );
-    // }
+    if (!referenceCount) {
+      throw new BadRequestException(
+        'This point is not a reference point for this hike',
+      );
+    }
 
     await this.userHikeReference.save({
       userHikeId: userHike.id,
@@ -143,7 +143,7 @@ export class UserHikesService extends BaseService<UserHike> {
     return point
   }
 
-  async getReachenReferencePoints(userId: number) {
+  async getReachenReferencePoints(userId: number): Promise<UserHikeReference[]> {
     
     const userHike = await this.userHikesRepository
     .createQueryBuilder('uh')
@@ -157,15 +157,12 @@ export class UserHikesService extends BaseService<UserHike> {
       throw new BadRequestException('Hike is finished');
     }
 
-    const rawReachenPoints = await this.userHikeReference.findBy({userHikeId: userHike.id});
+    const reachedPoints = await this.userHikeReference
+    .createQueryBuilder('uf')
+    .where('uf.userHikeId = :id', {id: userHike.id})
+    .innerJoinAndMapOne('uf.pointId', Point, 'p', 'p.id = uf."pointId"')
+    .getMany()
 
-    const reachenPoints: Promise<Point>[] =  rawReachenPoints.map(async (p) => {
-      console.log(p)
-      const np = await this.pointsService.findByIdOrThrow(p.pointId)
-      console.log(np)
-      return np
-    }) 
-
-    return reachenPoints;
+    return reachedPoints;
   }
 }
