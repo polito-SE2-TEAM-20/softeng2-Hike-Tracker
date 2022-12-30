@@ -971,7 +971,33 @@ const updateWeatherSingleHike = async (request) => {
     }
 }
 
-const requestNewCode = async (request) => {
+const updateWeatherMap = async (request) => {
+    const response = await fetch((APIURL + "/hikes/range/updateWeatherInRange"), {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+        body: JSON.stringify({
+            inPointRadius: {
+                lat: request.weatherInfo.lat,
+                lon: request.weatherInfo.lon,
+                radiusKms: request.weatherInfo.radiusKms
+            },
+            weatherStatus: request.weatherInfo.weatherStatus,
+            weatherDescription: request.weatherInfo.weatherDescription
+        })
+    })
+
+    if (response.ok) return true
+    else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const requestNewCode = async () => {
     const response = await fetch((APIURL + "/friends/share"), {
         method: "POST",
         headers: {
@@ -988,7 +1014,7 @@ const requestNewCode = async (request) => {
     }
 }
 
-const getHikeByCode = async (code) => {
+const getHikeByFriendCode = async (code) => {
     const response = await fetch((APIURL + "/friends/track/" + code), {
         method: "GET"
     })
@@ -1019,7 +1045,7 @@ const API = {
     startTracingkHike, addPointToTracingkHike, stopTrackingHike,
     getUserHikeTrackingDetails, getAllUserTrackingHikes,
     //#endregion
-    setHutPictures, modifyHutPictures, getHikesBasedOnPreferences, updateWeatherSingleHike,
-    requestNewCode, getHikeByCode
+    setHutPictures, modifyHutPictures, getHikesBasedOnPreferences, updateWeatherSingleHike, updateWeatherMap,
+    requestNewCode, getHikeByFriendCode
 }
 export default API
