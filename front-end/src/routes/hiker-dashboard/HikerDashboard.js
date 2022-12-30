@@ -535,7 +535,7 @@ const HikerDashboard = (props) => {
                     <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                         <AccountCircleIcon sx={{ fontSize: 300 }} />
                     </Grid>
-                    <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
+                    <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center", textAlign: "center" }}>
                         <Typography fontSize={32}>
                             <b>
                                 {props?.user?.firstName + " " + props?.user?.lastName}
