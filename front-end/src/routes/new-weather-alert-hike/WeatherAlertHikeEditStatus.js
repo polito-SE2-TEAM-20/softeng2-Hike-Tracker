@@ -73,25 +73,25 @@ const WeatherAlertHikeEditStatus = () => {
                         <Typography><b>Set new weather clicking on the following buttons</b></Typography>
                     </Grid>
                     <Grid item xs={12} sm={6} md={6} lg={6} xl={6} sx={{ marginBottom: "8px" }}>
-                        <WeatherButton selected={status === 0} hikeID={hike.id} setStatus={setStatus} buttonType={0} />
+                        <WeatherButton selected={status === 0} setStatus={setStatus} buttonType={0} />
                     </Grid>
                     <Grid item xs={12} sm={6} md={6} lg={6} xl={6} sx={{ marginBottom: "8px" }}>
-                        <WeatherButton selected={status === 1} hikeID={hike.id} setStatus={setStatus} buttonType={1} />
+                        <WeatherButton selected={status === 1} setStatus={setStatus} buttonType={1} />
                     </Grid>
                     <Grid item xs={12} sm={6} md={6} lg={6} xl={6} sx={{ marginBottom: "8px" }}>
-                        <WeatherButton selected={status === 2} hikeID={hike.id} setStatus={setStatus} buttonType={2} />
+                        <WeatherButton selected={status === 2} setStatus={setStatus} buttonType={2} />
                     </Grid>
                     <Grid item xs={12} sm={6} md={6} lg={6} xl={6} sx={{ marginBottom: "8px" }}>
-                        <WeatherButton selected={status === 3} hikeID={hike.id} setStatus={setStatus} buttonType={3} />
+                        <WeatherButton selected={status === 3} setStatus={setStatus} buttonType={3} />
                     </Grid>
                     <Grid item xs={12} sm={6} md={6} lg={6} xl={6} sx={{ marginBottom: "8px" }}>
-                        <WeatherButton selected={status === 4} hikeID={hike.id} setStatus={setStatus} buttonType={4} />
+                        <WeatherButton selected={status === 4} setStatus={setStatus} buttonType={4} />
                     </Grid>
                     <Grid item xs={12} sm={6} md={6} lg={6} xl={6} sx={{ marginBottom: "8px" }}>
-                        <WeatherButton selected={status === 5} hikeID={hike.id} setStatus={setStatus} buttonType={5} />
+                        <WeatherButton selected={status === 5} setStatus={setStatus} buttonType={5} />
                     </Grid>
                     <Grid item xs={12} sm={6} md={6} lg={6} xl={6} sx={{ marginBottom: "8px" }}>
-                        <WeatherButton selected={status === 6} hikeID={hike.id} setStatus={setStatus} buttonType={6} />
+                        <WeatherButton selected={status === 6} setStatus={setStatus} buttonType={6} />
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ marginBottom: "8px", marginTop: "24px" }}>
                         <Typography><b>Set a new description for the weather status (optional)</b></Typography>

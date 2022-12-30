@@ -167,15 +167,15 @@ const ShowHike = (props) => {
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
                             !loading ? <Typography>Weather status:&nbsp;
-                                {HikeWeatherByCode[0].name}
-                                <SvgIcon component={HikeWeatherByCode[0].image} />
+                                {HikeWeatherByCode[hike.weatherStatus].name}
+                                <SvgIcon component={HikeWeatherByCode[hike.weatherStatus].image} />
                             </Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
-                            !loading ? <Typography>Description of weather: Not provided</Typography> :
+                            !loading ? <Typography>Description of weather: {hike.weatherDescription}</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>

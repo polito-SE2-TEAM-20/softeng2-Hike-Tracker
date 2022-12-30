@@ -7,7 +7,7 @@ const WeatherDescription = (props) => {
         }}>
             <TextField
                 value={props.description}
-                onChange={e => {props.setDescription(e.target.value); console.log(props.description)}}
+                onChange={e => props.setDescription(e.target.value)}
                 multiline
                 sx={{ width: "100%" }}
                 variant="standard"
