@@ -15,13 +15,13 @@ export class FriendsService {
     @InjectRepository(CodeHike)
     private codeHikeRepository: Repository<CodeHike>,
     @InjectRepository(UserHike)
-    private userHikeRepositoty: Repository<UserHike>,
+    private userHikeRepository: Repository<UserHike>,
     private userHikeService: UserHikesService
   ) {}
 
   async shareLink(userId: number): Promise<Object> {
 
-    const userHike = await this.userHikeRepositoty
+    const userHike = await this.userHikeRepository
     .createQueryBuilder('uh')
     .where('uh.userId = :userId', {userId})
     .andWhere('uh.finishedAt IS NULL')
