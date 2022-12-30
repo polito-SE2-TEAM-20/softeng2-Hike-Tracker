@@ -379,6 +379,25 @@ function HTNavbar(props) {
                                                 {props.user?.role === 5 ? " Emergency operator" : ""}
                                             </Typography>
                                         </div>
+
+                                        <div hidden={props.user?.role !== 0}>
+                                            <Divider />
+                                            <MenuItem key={"hikerdashboard"} onClick={() => navigate("/hikerdashboard")}>
+                                                <Typography onClick={props.doLogOut} textAlign="center">
+                                                    Dashboard
+                                                </Typography>
+                                            </MenuItem>
+                                        </div>
+
+                                        <div hidden={props.user?.role !== 3}>
+                                            <Divider />
+                                            <MenuItem key={"admindashboard"} onClick={() => navigate("/admindashboard")}>
+                                                <Typography onClick={props.doLogOut} textAlign="center">
+                                                    Dashboard
+                                                </Typography>
+                                            </MenuItem>
+                                        </div>
+
                                         <Divider />
                                         <MenuItem key={settings[1]} onClick={handleCloseUserMenu}>
                                             <Typography onClick={props.doLogOut} textAlign="center">
