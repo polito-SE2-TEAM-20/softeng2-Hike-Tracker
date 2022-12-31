@@ -1,6 +1,7 @@
 import { UserHikeState } from "../lib/common/Hike";
 
 export const APIURL = process.env.REACT_APP_API_BASE || 'https://hiking-backend.germangorodnev.com';
+export const WEBSITEURL = "https://hiking.germangorodnev.com"
 
 async function getListOfHikes() {
     let response = await fetch((APIURL + '/hikes'), {
@@ -827,7 +828,7 @@ const modifyHutPictures = async (request) => {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
             'Accept': '*/*'
         },
-        body: JSON.stringify({'pictures': request.params})
+        body: JSON.stringify({ 'pictures': request.params })
     })
 
     if (response.ok) {
@@ -856,6 +857,177 @@ const getHikesBasedOnPreferences = async () => {
     }
 }
 
+// picture for the hike
+const setHikePictures = async (request) => {
+    const response = await fetch((APIURL + '/hike-pictures/' + request.hikeID), {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+        body: request.pictures
+    })
+
+    if (response.ok) {
+        return true
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+//get performance stats only for hiker 
+// returns {stats: [{stat:'stat name', value: number, unit:string}]}
+const getPerformanceStats = async () => {
+    const response = await fetch((APIURL + "/me/performance-stats"), {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+    })
+
+    if (response.ok) {
+        const performanceStats = response.json()
+        return performanceStats;
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+// called every minute
+const getUnfinishedHikes = async () => {
+    const response = await fetch((APIURL + "/hikes/unfinished/popupsList"), {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+    })
+
+    if (response.ok) {
+        const hikeIDs = response.json()
+        return hikeIDs;
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const getHikesMaximumElapsedTime = async (hikeId) => {
+    const response = await fetch((APIURL + "/hikes/maxElapsedTime/" + hikeId), {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+    })
+
+    if (response.ok) {
+        return await response.json()
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const getUnfinishedHikesPopupSeen = async (hikeId) => {
+    const response = await fetch((APIURL + "/hikes/unfinished/popupsSeen/" + hikeId), {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+    })
+
+    if (response.ok) {
+        const hikeIDs = response.json()
+        return hikeIDs;
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const updateWeatherSingleHike = async (request) => {
+    const response = await fetch((APIURL + "/hikes/updateWeather/" + request.hikeID), {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+        body: JSON.stringify({
+            weatherStatus: request.weatherInfo.weatherStatus,
+            weatherDescription: request.weatherInfo.weatherDescription
+        })
+    })
+
+    if (response.ok) return true
+    else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const updateWeatherMap = async (request) => {
+    const response = await fetch((APIURL + "/hikes/range/updateWeatherInRange"), {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+        body: JSON.stringify({
+            inPointRadius: {
+                lat: request.weatherInfo.lat,
+                lon: request.weatherInfo.lon,
+                radiusKms: request.weatherInfo.radiusKms
+            },
+            weatherStatus: request.weatherInfo.weatherStatus,
+            weatherDescription: request.weatherInfo.weatherDescription
+        })
+    })
+
+    if (response.ok) return true
+    else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const requestNewCode = async () => {
+    const response = await fetch((APIURL + "/friends/share"), {
+        method: "POST",
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        }
+    })
+
+    if (response.ok) {
+        return await response.json()
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const getHikeByFriendCode = async (code) => {
+    const response = await fetch((APIURL + "/friends/track/" + code), {
+        method: "GET"
+    })
+
+    if (response.ok) {
+        return await response.json()
+    }
+    else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
 const API = {
     getListOfHikes, getListOfGPXFiles, getPathByID,
     getHikeByListOfPaths, getFilteredListOfHikes, getHikePathByHike,
@@ -867,10 +1039,13 @@ const API = {
     getHutsHutWorker, modifyHutInformation, editHikeStartEndPoint, getHikesUpdatableHutWorker,
     linkPointsToHike,
     updateHikeCondition,
+    setHikePictures, getPerformanceStats, getUnfinishedHikes, getHikesMaximumElapsedTime,
+    getUnfinishedHikesPopupSeen,
     //#region Export HikeTraking APIs
     startTracingkHike, addPointToTracingkHike, stopTrackingHike,
     getUserHikeTrackingDetails, getAllUserTrackingHikes,
     //#endregion
-    setHutPictures, modifyHutPictures, getHikesBasedOnPreferences
+    setHutPictures, modifyHutPictures, getHikesBasedOnPreferences, updateWeatherSingleHike, updateWeatherMap,
+    requestNewCode, getHikeByFriendCode
 }
 export default API

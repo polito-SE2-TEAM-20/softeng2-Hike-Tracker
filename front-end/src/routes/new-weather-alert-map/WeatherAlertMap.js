@@ -1,5 +1,5 @@
 import { Button, Grid, Tooltip, Typography } from "@mui/material"
-import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, useMapEvents, ZoomControl, Polyline, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, ZoomControl, Polyline, useMap } from 'react-leaflet'
 import { useState, useEffect } from "react"
 import L from 'leaflet';
 import HikePopup from '../../components/hike-popup/HikePopup';
@@ -8,7 +8,7 @@ import API from '../../API/API'
 import MapLoading from "../../components/map/MapLoading";
 import WeatherButton from "../../components/weather-card/WeatherButton";
 import WeatherDescription from "../../components/weather-card/WeatherDescription";
-import { HikeWeatherByCode } from "../../lib/common/WeatherConditions";
+import { WeatherPopupMap } from "./WeatherPopupMap";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -23,6 +23,27 @@ const WeatherAlertMap = (props) => {
     const [listOfHikes, setListOfHikes] = useState([])
     const [hike2Positions, setHike2Positions] = useState([])
     const [geospacialData, setGeospacialData] = useState([[-1.0, -1.0], -1.0])
+    const [status, setStatus] = useState(0)
+    const [description, setDescription] = useState("")
+
+    // states for the popup after adding a new hike
+    const [open, setOpen] = useState(false);
+
+    const handleSubmit = () => {
+        const apiWeatherUpdate = async () => {
+            await API.updateWeatherMap({
+                weatherInfo: {
+                    lat: geospacialData[0][0],
+                    lon: geospacialData[0][1],
+                    radiusKms: geospacialData[1],
+                    weatherStatus: status,
+                    weatherDescription: description
+                }
+            })
+        }
+
+        apiWeatherUpdate().then(() => { setOpen(true) })
+    }
 
     useEffect(() => {
         var loh = []
@@ -35,7 +56,7 @@ const WeatherAlertMap = (props) => {
     }, [])
 
     useEffect(() => {
-        if(geospacialData[0][0] === -1.0 && geospacialData[0][1] === -1.0 && geospacialData[1] === -1.0)
+        if (geospacialData[0][0] === -1.0 && geospacialData[0][1] === -1.0 && geospacialData[1] === -1.0)
             return
         console.log('lat: ' + geospacialData[0][0] + ' - lon: ' + geospacialData[0][1] + ' - radius: ' + geospacialData[1])
     }, [geospacialData])
@@ -92,6 +113,7 @@ const WeatherAlertMap = (props) => {
 
     return (
         <Grid sx={{ marginTop: "20px", display: "flex", justifyContent: "center", paddingLeft: { xs: "10px", md: "200px" }, paddingRight: { xs: "10px", md: "200px" }, marginBottom: "50px" }} container item xs={12} sm={12} md={12} lg={12} xl={12}>
+            <WeatherPopupMap open={open} setOpen={setOpen} />
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                 <Typography className="unselectable" sx={{ fontFamily: "Unbounded" }} fontSize={32} display="flex" justifyContent="center">
                     <b>
@@ -107,33 +129,33 @@ const WeatherAlertMap = (props) => {
             </Grid>
             <Grid container item xs={12} sm={8} md={8} lg={8} xl={8} sx={{ display: "flex", justifyContent: "center" }}>
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6} sx={{ marginBottom: "8px" }}>
-                    <WeatherButton image={HikeWeatherByCode[0].image} text={HikeWeatherByCode[0].name} />
+                    <WeatherButton selected={status === 0} setStatus={setStatus} buttonType={0} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6} sx={{ marginBottom: "8px" }}>
-                    <WeatherButton image={HikeWeatherByCode[1].image} text={HikeWeatherByCode[1].name} />
+                    <WeatherButton selected={status === 1} setStatus={setStatus} buttonType={1} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6} sx={{ marginBottom: "8px" }}>
-                    <WeatherButton image={HikeWeatherByCode[2].image} text={HikeWeatherByCode[2].name} />
+                    <WeatherButton selected={status === 2} setStatus={setStatus} buttonType={2} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6} sx={{ marginBottom: "8px" }}>
-                    <WeatherButton image={HikeWeatherByCode[3].image} text={HikeWeatherByCode[3].name} />
+                    <WeatherButton selected={status === 3} setStatus={setStatus} buttonType={3} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6} sx={{ marginBottom: "8px" }}>
-                    <WeatherButton image={HikeWeatherByCode[4].image} text={HikeWeatherByCode[4].name} />
+                    <WeatherButton selected={status === 4} setStatus={setStatus} buttonType={4} />
                 </Grid>
                 <Grid item xs={12} sm={6} md={6} lg={6} xl={6} sx={{ marginBottom: "8px" }}>
-                    <WeatherButton image={HikeWeatherByCode[5].image} text={HikeWeatherByCode[5].name} />
+                    <WeatherButton selected={status === 5} setStatus={setStatus} buttonType={5} />
                 </Grid>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ marginBottom: "8px" }}>
-                    <WeatherButton image={HikeWeatherByCode[6].image} text={HikeWeatherByCode[6].name} />
+                    <WeatherButton selected={status === 6} setStatus={setStatus} buttonType={6} />
                 </Grid>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ marginBottom: "8px" }}>
-                    <WeatherDescription image={HikeWeatherByCode[6].image} text={HikeWeatherByCode[6].name} />
+                    <WeatherDescription description={description} setDescription={setDescription} />
                 </Grid>
             </Grid>
             <Grid item xs={6} sm={6} md={6} lg={6} xl={6} sx={{ display: "flex", justifyContent: "center", marginTop: "25px" }}>
                 <Tooltip title="You need to select an area on the map before" arrow>
-                    <Button variant="outlined" sx={{ textTransform: "none", borderRadius: "160px" }}>Update weather condition for the selected zone</Button>
+                    <Button onClick={handleSubmit} variant="outlined" sx={{ textTransform: "none", borderRadius: "160px" }}>Update weather condition for the selected zone</Button>
                 </Tooltip>
             </Grid>
         </Grid>

@@ -16,6 +16,12 @@ import { EndPointSelect } from './SelectEnd'
 import { PopupAddHike } from './PopupAddHike.js';
 import { InformationOnHike } from './InformationOnHike.js';
 import EditIcon from '@mui/icons-material/Edit';
+import { Input } from "@mui/material"
+import { Fab } from "@mui/material"
+import AddIcon from '@mui/icons-material/Add';
+import '../routes/edit-hut/edit-hut-style.css'
+import API from '../API/API.js';
+
 
 
 
@@ -70,12 +76,36 @@ function NewHikeStEnd(props) {
   const [referencePointLon, setReferencePointLon] = useState('');
   const [referencePointName, setReferencePointName] = useState('');
   const [referencePointAdd, setReferencePointAdd] = useState('');
+  const [pictures, setPictures] = useState([]);
+  const [picData, setPicData] = useState([]);
 
 
   // states for the popup after adding a new hike
   const [open, setOpen] = useState(false);
   const [hikeId, setHikeId] = useState(null);
   const [err, setErr] = useState(null);
+
+  const handleUpload = event => {
+    const fileUploaded = event.target.files[0];
+    setPictures(fileUploaded);
+    console.log(event.target.files[0])
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      console.log(e);
+      setPicData({ 'img': reader.result })
+      console.log(reader.result);
+    };
+    if (event.target.files[0] && event.target.files) {
+      reader.readAsDataURL(fileUploaded);
+    }
+  }
+
+
+  const handleDeleteLocal = () => {
+    setPicData([])
+    setPictures([])
+  }
+
 
   async function getInformation(lat, lon) {
     let response = await fetch((`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&addressdetails=1`), {
@@ -215,11 +245,11 @@ function NewHikeStEnd(props) {
   }
 
   useEffect(() => {
-    if (referencePointLat=== '' && referencePointLon !== '' && referencePointLat !== null && referencePointLon !== null && referencePoint !== undefined) {
+    if (referencePointLat === '' && referencePointLon !== '' && referencePointLat !== null && referencePointLon !== null && referencePoint !== undefined) {
       setNewReferencePoint(true);
       setReferencePointLat(referencePoint.lat);
       setReferencePointLon(referencePoint.lon);
-      
+
     }
   }, [referencePoint])
 
@@ -302,6 +332,9 @@ function NewHikeStEnd(props) {
     } else if (province.trim().length === 0) {
       setErrorMessage('The province for the hike cannot be empty');
       setShow(true);
+    } else if (pictures.length === 0) {
+      setErrorMessage('Select a picture for the hike');
+      setShow(true);
     } else if ((hutId === null || hutId === undefined || hutId === '') && ((parkingId === null || parkingId === undefined || parkingId === '') && ((startPointLat === null || startPointLat === undefined || startPointLat === '') && (startPointLon === null || startPointLon === undefined || startPointLon === '')))) {
       setErrorMessage('Insert a starting point');
       setShow(true);
@@ -349,12 +382,16 @@ function NewHikeStEnd(props) {
       formData.append('country', country);
       formData.append('city', city);
       formData.append('condition', 0);
+
       props.addNewGpx(formData)
         .then(newHike => {
           console.log(newHike);
           setOpen(true);
           setHikeId(newHike.id);
           setErr(null)
+          const formData = new FormData();
+          formData.append("pictures", pictures);
+          API.setHikePictures({ 'hikeID': newHike.id, 'pictures': formData })
         })
         .catch((err) => {
           setOpen(true);
@@ -375,6 +412,8 @@ function NewHikeStEnd(props) {
       setNewReferencePoint(false);
       setListReferencePoint([]); setReferencePoint([]); setReferencePointLat(' '); setReferencePointLon(' ');
       setReferencePointName(''); setReferencePointAdd('');
+      setPicData([]);
+      setPictures([]);
 
     }
 
@@ -386,10 +425,10 @@ function NewHikeStEnd(props) {
         {
           <PopupAddHike id={hikeId} err={err} open={open} setOpen={setOpen} />
         }
-        <Typography fontFamily="Bakbak One, display" fontWeight="700" variant="h4" gutterBottom sx={{ p: 2, mr:5, ml:5 }} mt={1}>
+        <Typography fontFamily="Bakbak One, display" fontWeight="700" variant="h4" gutterBottom sx={{ p: 2, mr: 5, ml: 5 }} mt={1}>
           INSERT A NEW HIKE
         </Typography>
-        <Grid container spacing={3} sx={{ p: 2, ml:2, mr:2}}>
+        <Grid container spacing={3} sx={{ p: 2, ml: 2, mr: 2 }}>
           <Grid item xs={12} sm={3}>
             <Button
               component="label"
@@ -411,7 +450,7 @@ function NewHikeStEnd(props) {
             }
           </Grid>
         </Grid>
-        <Grid sx={{ml:5, mr:5}}>
+        <Grid sx={{ ml: 5, mr: 5 }}>
           {
             selectedFile ? (
               <>
@@ -451,6 +490,60 @@ function NewHikeStEnd(props) {
                       positionsState={positionsState}
                     ></EndPointSelect>
                   </Grid>
+                  <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} columns={4} sx={{ display: "flex", justifyContent: "left", marginTop: "24px", padding: "0px 64px 64px 64px" }}>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} columns={4} sx={{ display: "flex", justifyContent: "center", marginTop: "18px", marginBottom: "24px" }}>
+                      <Typography variant="h1" fontSize={52} className="unselectable">
+                        A significant picture for the hike
+                      </Typography>
+                    </Grid>
+                    {
+                      pictures.length === 0 ? (
+                        <Grid item xs={3} sm={3} md={3} lg={3} xl={3} sx={{ display: "flex", justifyContent: "center" }}>
+                          <Grid item sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                            <label>
+                              <Input type="file" accept="image/*"
+                                sx={{ display: "none" }} onChange={event => { event.preventDefault(); event.stopPropagation(); handleUpload(event) }} />
+                              <Fab
+                                sx={{
+                                  backgroundColor: "#1a1a1aff", color: "white",
+                                  width: "80px", height: "80px",
+                                  borderRadius: "60px", "&:hover": {
+                                    backgroundColor: "#1a1a1ada"
+                                  }
+                                }}
+                                component="span"
+                                aria-label="add"
+                                variant="extended">
+                                <AddIcon sx={{ fontSize: "64px" }} />
+                              </Fab>
+                            </label>
+                          </Grid>
+                        </Grid>
+                      ) : (
+                        <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "center" }}>
+                          <Grid container item xs={4} sm={4} md={4} lg={4} xl={4} sx={{ display: "flex", justifyContent: "center" }}>
+
+                            <Grid container item sx={{ backgroundColor: "red", width: "200px", height: "250px", marginLeft: "5px", marginRight: "5px", marginTop: "5px", marginBottom: "35px", borderRadius: "8px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                              <Grid sx={{ display: "flex" }} item onClick={() => { handleDeleteLocal(pictures) }}>
+                                <Typography
+                                  className="unselectable"
+                                  variant="h1"
+                                  fontSize={24}
+                                >
+                                  <b>Remove</b>
+                                </Typography>
+                              </Grid>
+                              <Grid item>
+                                <img src={picData.img} style={{ width: "200px", height: "250px", borderRadius: "8px", objectFit: "cover" }} alt="not found" />
+                              </Grid>
+                            </Grid>
+                          </Grid>
+                        </Grid>
+                      )
+                    }
+                  </Grid>
+
+
 
 
                   {
@@ -595,10 +688,9 @@ function NewHikeStEnd(props) {
           </Grid>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </React.Fragment >
   );
 }
-
 
 export { NewHikeStEnd }
 

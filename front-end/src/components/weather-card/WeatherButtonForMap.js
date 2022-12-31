@@ -1,7 +1,7 @@
 import { Grid, SvgIcon, Typography } from "@mui/material"
 import { HikeWeatherByCode } from '../../lib/common/WeatherConditions'
 
-const WeatherButton = (props) => {
+const WeatherButtonForMap = (props) => {
     return (
         <Grid container item sx={{
             width: "fit-content", borderStyle: "solid", borderRadius: "24px",
@@ -19,4 +19,4 @@ const WeatherButton = (props) => {
     )
 }
 
-export default WeatherButton
+export default WeatherButtonForMap

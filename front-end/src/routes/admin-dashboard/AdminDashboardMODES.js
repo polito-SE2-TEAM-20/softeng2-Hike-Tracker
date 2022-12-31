@@ -388,7 +388,7 @@ export const AdminDashboardMOBILE = (props) => {
                     <AccountCircleIcon sx={{ fontSize: 120 }} />
                 </Grid>
                 <Grid item xs={12} sm={12} display="flex" justifyContent="center">
-                    <Typography sx={{ fontFamily: "Unbounded" }} fontSize={32} display="flex" justifyContent="center">
+                    <Typography sx={{ fontFamily: "Unbounded", textAlign: "center" }} fontSize={32} display="flex" justifyContent="center">
                         <b>
                             {props?.user?.firstName + " " + props?.user?.lastName}
                         </b>

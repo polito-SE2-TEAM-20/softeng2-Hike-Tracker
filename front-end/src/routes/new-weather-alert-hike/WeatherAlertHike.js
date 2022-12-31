@@ -1,4 +1,4 @@
-import { Grid, SvgIcon, Typography, Button } from "@mui/material"
+import { Grid, SvgIcon, Typography, Button, TextField } from "@mui/material"
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -8,12 +8,12 @@ import { useState, useEffect } from "react";
 import API from "../../API/API";
 import { HikeWeatherByCode } from '../../lib/common/WeatherConditions'
 import { CircularProgress } from "@mui/material";
-import WeatherButton from "../../components/weather-card/WeatherButton";
-import WeatherDescription from "../../components/weather-card/WeatherDescription";
+import { useNavigate } from "react-router";
 
 const WeatherAlertHike = (props) => {
     const [listOfHikes, setListOfHikes] = useState([])
     const [loaded, setLoaded] = useState(false)
+    const navigate = useNavigate()
 
     useEffect(() => {
         var loh = []
@@ -23,6 +23,7 @@ const WeatherAlertHike = (props) => {
         getHikes().then(() => {
             setListOfHikes(loh)
             setLoaded(true)
+            console.log(listOfHikes)
         });
     }, [])
 
@@ -64,42 +65,18 @@ const WeatherAlertHike = (props) => {
                                             <AccordionDetails>
                                                 <Grid container>
                                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                                                        <Typography><b>Current weather</b>: {HikeWeatherByCode[1].name} <SvgIcon component={HikeWeatherByCode[1].image} /></Typography>
+                                                        <Typography><b>Current weather</b>: {HikeWeatherByCode[hike.weatherStatus].name} <SvgIcon component={HikeWeatherByCode[hike.weatherStatus].image} /></Typography>
+                                                    </Grid>
+                                                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                                                        <Typography><b>Current description</b>: {hike.weatherDescription === "" ? "not provided" : hike.weatherDescription}</Typography>
                                                     </Grid>
                                                     <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} sx={{
                                                         display: "flex",
                                                         justifyContent: "left"
                                                     }}>
-                                                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ marginBottom: "8px" }}>
-                                                            <Typography><b>Set new weather clicking on the following buttons</b></Typography>
-                                                        </Grid>
-                                                        <Grid item xs={12} sm={6} md={6} lg={6} xl={6} sx={{ marginBottom: "8px" }}>
-                                                            <WeatherButton image={HikeWeatherByCode[0].image} text={HikeWeatherByCode[0].name} />
-                                                        </Grid>
-                                                        <Grid item xs={12} sm={6} md={6} lg={6} xl={6} sx={{ marginBottom: "8px" }}>
-                                                            <WeatherButton image={HikeWeatherByCode[1].image} text={HikeWeatherByCode[1].name} />
-                                                        </Grid>
-                                                        <Grid item xs={12} sm={6} md={6} lg={6} xl={6} sx={{ marginBottom: "8px" }}>
-                                                            <WeatherButton image={HikeWeatherByCode[2].image} text={HikeWeatherByCode[2].name} />
-                                                        </Grid>
-                                                        <Grid item xs={12} sm={6} md={6} lg={6} xl={6} sx={{ marginBottom: "8px" }}>
-                                                            <WeatherButton image={HikeWeatherByCode[3].image} text={HikeWeatherByCode[3].name} />
-                                                        </Grid>
-                                                        <Grid item xs={12} sm={6} md={6} lg={6} xl={6} sx={{ marginBottom: "8px" }}>
-                                                            <WeatherButton image={HikeWeatherByCode[4].image} text={HikeWeatherByCode[4].name} />
-                                                        </Grid>
-                                                        <Grid item xs={12} sm={6} md={6} lg={6} xl={6} sx={{ marginBottom: "8px" }}>
-                                                            <WeatherButton image={HikeWeatherByCode[5].image} text={HikeWeatherByCode[5].name} />
-                                                        </Grid>
-                                                        <Grid item xs={12} sm={6} md={6} lg={6} xl={6} sx={{ marginBottom: "8px" }}>
-                                                            <WeatherButton image={HikeWeatherByCode[6].image} text={HikeWeatherByCode[6].name} />
-                                                        </Grid>
-                                                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ marginBottom: "8px" }}>
-                                                            <WeatherDescription image={HikeWeatherByCode[6].image} text={HikeWeatherByCode[6].name} />
-                                                        </Grid>
                                                     </Grid>
-                                                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "right" }}>
-                                                        <Button variant="outlined" sx={{ borderRadius: "60px", textTransform: "none" }}>Update weather conditions</Button>
+                                                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+                                                        <Button onClick={() => { navigate("/weather-status-edit/" + hike.id) }} variant="filled" sx={{ borderRadius: "60px", textTransform: "none", backgroundColor: "#1a1a1a", color: "white", "&:hover": { backgroundColor: "#3f3f3f" } }}>Go to update conditions page</Button>
                                                     </Grid>
                                                 </Grid>
                                             </AccordionDetails>

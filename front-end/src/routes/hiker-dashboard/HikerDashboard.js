@@ -121,9 +121,11 @@ const HikerDashboard = (props) => {
                     </Grid>
                     <Grid item lg={12} xl={12} sx={{ marginTop: "12px" }}>
                         <Typography className="unselectable" fontSize={18} sx={{
-                            backgroundColor: "white", color: "purple", borderStyle: "solid",
-                            borderWidth: "1px", borderRadius: "18px", width: "fit-content", padding: "4px 12px 4px 12px",
-                            fontFamily: "Bakbak One, display", fontWeight: "50", borderColor: "purple"
+                            backgroundColor: "white", color: "purple", borderColor: "purple",
+                            borderStyle: "solid", borderWidth: "1px",
+                            borderRadius: "18px", width: "fit-content",
+                            padding: "4px 12px 4px 12px", fontFamily: "Unbounded",
+                            fontWeight: "50"
                         }}>
                             <b>
                                 {props?.user?.role === 0 ? "Hiker" : ""}
@@ -333,9 +335,11 @@ const HikerDashboard = (props) => {
                     </Grid>
                     <Grid item md={12} sx={{ marginTop: "12px", display: "flex", justifyContent: "center" }}>
                         <Typography className="unselectable" fontSize={18} sx={{
-                            backgroundColor: "white", color: "purple", borderStyle: "solid",
-                            borderWidth: "1px", borderRadius: "18px", width: "fit-content", padding: "4px 12px 4px 12px",
-                            fontFamily: "Bakbak One, display", fontWeight: "50", borderColor: "purple"
+                            backgroundColor: "white", color: "purple", borderColor: "purple",
+                            borderStyle: "solid", borderWidth: "1px",
+                            borderRadius: "18px", width: "fit-content",
+                            padding: "4px 12px 4px 12px", fontFamily: "Unbounded",
+                            fontWeight: "50"
                         }}>
                             <b>
                                 {props?.user?.role === 0 ? "Hiker" : ""}
@@ -531,7 +535,7 @@ const HikerDashboard = (props) => {
                     <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                         <AccountCircleIcon sx={{ fontSize: 300 }} />
                     </Grid>
-                    <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
+                    <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center", textAlign: "center" }}>
                         <Typography fontSize={32}>
                             <b>
                                 {props?.user?.firstName + " " + props?.user?.lastName}
@@ -545,9 +549,11 @@ const HikerDashboard = (props) => {
                     </Grid>
                     <Grid item xs={12} sm={12} sx={{ marginTop: "12px", display: "flex", justifyContent: "center" }}>
                         <Typography className="unselectable" fontSize={18} sx={{
-                            backgroundColor: "white", color: "purple", borderStyle: "solid",
-                            borderWidth: "1px", borderRadius: "18px", width: "fit-content", padding: "4px 12px 4px 12px",
-                            fontFamily: "Bakbak One, display", fontWeight: "50", borderColor: "purple"
+                            backgroundColor: "white", color: "purple", borderColor: "purple",
+                            borderStyle: "solid", borderWidth: "1px",
+                            borderRadius: "18px", width: "fit-content",
+                            padding: "4px 12px 4px 12px", fontFamily: "Unbounded",
+                            fontWeight: "50"
                         }}>
                             <b>
                                 {props?.user?.role === 0 ? "Hiker" : ""}

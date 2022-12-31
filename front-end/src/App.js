@@ -20,6 +20,8 @@ import { HikesLinked } from './routes/my-huts/HikesLinked';
 import { HikeCondition } from './routes/my-huts/HikeConditionC';
 import WeatherAlertHike from './routes/new-weather-alert-hike/WeatherAlertHike';
 import WeatherAlertMap from './routes/new-weather-alert-map/WeatherAlertMap';
+import HikerPerformance from './routes/hiker-performance/HikerPerformance';
+
 
 import API from './API/API';
 import {
@@ -35,6 +37,9 @@ import AdminDashboard from './routes/admin-dashboard/AdminDashboard';
 import { TrackingHikePage } from './routes/TrackHike/TrackHikePage';
 import HTNavbar from './components/HTNavbar/HTNavbar';
 import { HikerHikesPage } from './routes/HikerHikes/HikerHikesPage';
+import TestPage from './routes/test-page/TestPage';
+import WeatherAlertHikeEditStatus from './routes/new-weather-alert-hike/WeatherAlertHikeEditStatus';
+import FriendTracking from './routes/friend-tracking/FriendTracking';
 
 function App() {
   return (
@@ -48,6 +53,7 @@ function App2() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState({});
   const [rowsAffected, setRowsAffected] = useState(false);
+  const [hikeIDs, setHikeIDs] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -118,6 +124,16 @@ function App2() {
     navigate("/login", { replace: false })
   }
 
+
+  const getUnfinishedHikes = () => {
+    API.getUnfinishedHikes()
+      .then((HikeIDs) => {
+        console.log(HikeIDs)
+        setHikeIDs(HikeIDs)
+      })
+      .catch((err) => { console.log(err) })
+  }
+
   return (
     <>
       <HTNavbar user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} gotoLogin={gotoLogin} />
@@ -147,6 +163,10 @@ function App2() {
 
         <Route path="/new-weather-alert-hike" element={<WeatherAlertHike />} />
         <Route path="/new-weather-alert-map" element={<WeatherAlertMap />} />
+        <Route path="/hikerPerformance" element={<HikerPerformance user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
+        <Route path="/test-page" element={<TestPage />} />
+        <Route path="/weather-status-edit/:hikeID" element={<WeatherAlertHikeEditStatus />} />
+        <Route path="/friend-tracking/:hikeID" element={<FriendTracking />} />
       </Routes>
     </>
   );
