@@ -1,7 +1,8 @@
-import { Card, CardContent, Grid, Typography } from "@mui/material"
+import { CircularProgress, Grid, Typography } from "@mui/material"
 import { useEffect, useState } from "react"
 import API from "../../API/API"
 import { UserHikeState } from "../../lib/common/Hike"
+import HikeItem from "./HikeItem"
 
 function HikerHikesPage(props) {
 
@@ -12,10 +13,12 @@ function HikerHikesPage(props) {
 
     useEffect(() => {
 
-        const getHikes = async() => {
-            const allHikes = API.getAllUserTrackingHikes(UserHikeState.ALL);
+        const getHikes = async () => {
+            setLoading(true)
+            const allHikes = await API.getAllUserTrackingHikes(UserHikeState.ALL);
             setFinishedHikes(allHikes.filter((item => item.finishedAt !== null)))
             setUnFinishedHikes(allHikes.filter((item => item.finishedAt === null)))
+            setLoading(false)
         }
 
         getHikes()
@@ -24,77 +27,76 @@ function HikerHikesPage(props) {
 
 
     return (
-        <Grid container>
-
+        <>
             {
-                (unfinishedHikes !== null && unfinishedHikes.length > 0) &&
-                <>
-                    <Grid
-                        item>
-                        <Typography variant="h6" gutterBottom>
-                            Unfinished Hikes
-                        </Typography>
+                isLoading &&
+                <Grid
+                    container
+                    direction="column"
+                    justifyContent="center"
+                    alignItems="center">
+                    <Grid item>
+                        <CircularProgress />
                     </Grid>
-                    <Grid container>
-                        {
-                            unfinishedHikes.map((hike) => {
-                                return (
-                                    <Grid item >
-                                        <HikeItem hike={hike}/>
-                                    </Grid>
-                                )
-                            })
-                        }
-                    </Grid>
-                </>
+                </Grid>
             }
-
             {
-                (finishedHikes !== null && finishedHikes.length > 0) &&
-                <>
-                    <Grid
-                        item
-                        style={{ marginTop: 32 }}>
-                        <Typography variant="h6" gutterBottom>
-                            Finished Hikes
-                        </Typography>
-                    </Grid>
-                    <Grid
-                        container>
-                        {
-                            finishedHikes.map((hike) => {
-                                return (
-                                    <Grid item >
-                                        <HikeItem hike={hike}/>
-                                    </Grid>
-                                )
-                            })
-                        }
-                    </Grid>
-                </>
-            }
+                !isLoading &&
+                <Grid 
+                    container
+                    style={{marginRight: 32, marginLeft: 32, marginTop: 24, margin: 24}}>
+                    {
+                        (unfinishedHikes !== null && unfinishedHikes.length > 0) &&
+                        <>
+                            <Grid
+                                item>
+                                <Typography variant="h6" gutterBottom>
+                                    Unfinished Hikes
+                                </Typography>
+                            </Grid>
+                            <Grid container>
+                                {
+                                    unfinishedHikes.map((hike) => {
+                                        return (
+                                            <Grid item >
+                                                <HikeItem hike={hike} />
+                                            </Grid>
+                                        )
+                                    })
+                                }
+                            </Grid>
+                        </>
+                    }
 
-        </Grid>
+                    {
+                        (finishedHikes !== null && finishedHikes.length > 0) &&
+                        <>
+                            <Grid
+                                item
+                                style={{ marginTop: 32 }}>
+                                <Typography variant="h6" gutterBottom>
+                                    Finished Hikes
+                                </Typography>
+                            </Grid>
+                            <Grid
+                                container>
+                                {
+                                    finishedHikes.map((hike) => {
+                                        return (
+                                            <Grid item >
+                                                <HikeItem hike={hike} />
+                                            </Grid>
+                                        )
+                                    })
+                                }
+                            </Grid>
+                        </>
+                    }
+
+                </Grid>
+            }
+        </>
     )
 }
 
-function HikeItem(props) {
-    return (
-        <Card
-            style={{
-                marginTop: 12, marginBotom: 12, marginRight: 8, marginLeft: 8,
-                width: 320
-            }}>
-            <CardContent>
-                <Typography variant="h6">
-                    {props.hike.title}
-                </Typography>
-                <Typography variant="subtitle1">
-                    {props.hut.point.address}
-                </Typography>
-            </CardContent>
-        </Card>
-    )
-}
-
-export {HikerHikesPage}
+export { HikerHikesPage }

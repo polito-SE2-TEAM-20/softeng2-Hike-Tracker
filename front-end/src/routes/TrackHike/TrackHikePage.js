@@ -1,13 +1,12 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Slide, Stack, Typography } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, Slide, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { MapContainer, Marker, Polyline, TileLayer, useMap } from "react-leaflet";
+import { MapContainer, Marker, Polyline, Popup, TileLayer, useMap } from "react-leaflet";
 import { useMatch } from "react-router";
 import API from "../../API/API";
-import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import { TrackingState } from "../../lib/common/Hike";
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
-import { icon, Icon } from "leaflet";
+import { icon } from "leaflet";
 import currentLocationIcon from '../../Assets/current-location.png'
 
 function TrackingHikePage(props) {
@@ -214,6 +213,22 @@ function TrackingHikePage(props) {
 
                             </Marker>
                         }
+                        {
+                            (hikeDetails.referencePoints !== null && hikeDetails.referencePoints.length > 0 ) &&
+                            hikeDetails.referencePoints.map((refPoint) => {
+                                return(
+                                    <>
+                                        <Marker
+                                            key={refPoint.id}
+                                            position={[refPoint.position.coordinates[1], refPoint.position.coordinates[0]]}>
+                                            <Popup position={[refPoint.position.coordinates[1], refPoint.position.coordinates[0]]}>
+                                                <RefPointPopUp refPoint={refPoint}/>
+                                            </Popup>
+                                        </Marker>
+                                    </>
+                                )
+                            })
+                        }
 
                         {
                             (hikePositions !== null && hikePositions.length > 0)  &&
@@ -330,6 +345,27 @@ function TurnOnLocationDialog(props) {
             }
         </Dialog>
     )
+}
+
+function RefPointPopUp(props) {
+    return(
+        <div>
+            <div className='popup-line'><b>{props.refPoint.name}</b></div>
+
+            <Divider style={{marginTop: "2px", marginBottom: "2px"}} />
+
+            <div className='popup-line'>{props.refPoint.address} </div>
+
+            <Divider style={{marginTop: "2px", marginBottom: "2px"}} />
+
+            <div className='popup-line'>Latitude: {props.refPoint.position.coordinates[0]}</div>
+            <div className='popup-line'>Longitude: {props.refPoint.position.coordinates[0]}</div>
+
+            <Divider style={{marginTop: "2px", marginBottom: "2px"}} />
+
+            <Button text="I arrived HERE" color="black" textColor="white" fontSize="12px" />
+        </div>
+    );
 }
 
 export {TrackingHikePage}
