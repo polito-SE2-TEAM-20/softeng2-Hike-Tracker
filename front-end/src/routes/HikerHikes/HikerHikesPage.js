@@ -3,6 +3,8 @@ import { useEffect, useState } from "react"
 import API from "../../API/API"
 import { UserHikeState } from "../../lib/common/Hike"
 import HikeItem from "./HikeItem"
+import emptyStateImage from '../../Assets/empty-state.jpg'
+import HikeItemLoadingEffect from "../my-hikes/HikeItemLoadingEffect"
 
 function HikerHikesPage(props) {
 
@@ -32,12 +34,13 @@ function HikerHikesPage(props) {
                 isLoading &&
                 <Grid
                     container
-                    direction="column"
                     justifyContent="center"
                     alignItems="center">
-                    <Grid item>
-                        <CircularProgress />
-                    </Grid>
+                        {
+                            [1,1,1,1,1,1,1,1,1,1].map(item => {
+                                return <HikeItemLoadingEffect/>
+                            })
+                        }
                 </Grid>
             }
             {
@@ -59,7 +62,7 @@ function HikerHikesPage(props) {
                                     unfinishedHikes.map((hike) => {
                                         return (
                                             <Grid item >
-                                                <HikeItem hike={hike} />
+                                                <HikeItem trackHike={hike} />
                                             </Grid>
                                         )
                                     })
@@ -84,7 +87,7 @@ function HikerHikesPage(props) {
                                     finishedHikes.map((hike) => {
                                         return (
                                             <Grid item >
-                                                <HikeItem hike={hike} />
+                                                <HikeItem trackHike={hike} />
                                             </Grid>
                                         )
                                     })
@@ -93,10 +96,38 @@ function HikerHikesPage(props) {
                         </>
                     }
 
+                    {
+                        ((unfinishedHikes !== null && unfinishedHikes.length === 0) &&
+                        (finishedHikes !== null && finishedHikes.length === 0)) &&
+                        <NoItemView/>
+                    }
+
                 </Grid>
             }
         </>
     )
 }
+
+function NoItemView(props) {
+    return (
+        <Grid 
+            container
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justifyContent="center">
+            <Grid item>
+                <img
+                    src={emptyStateImage}
+                    loading="lazy"
+                />
+            </Grid>
+            <Typography item fontFamily={"Bakbak One, display"} fontWeight="600">
+                You haven't started any hike.
+            </Typography>
+        </Grid>
+    )
+}
+
 
 export { HikerHikesPage }

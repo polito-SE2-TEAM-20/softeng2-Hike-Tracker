@@ -15,6 +15,7 @@
     "@testing-library/user-event": "^13.5.0",
     "bootstrap": "^5.2.2",
     "country-code-lookup": "^0.0.20",
+    "dayjs": "^1.11.7",
     "gpx-parse": "^0.10.4",
     "gpxparser": "^3.0.8",
     "js-sha1": "^0.6.0",
