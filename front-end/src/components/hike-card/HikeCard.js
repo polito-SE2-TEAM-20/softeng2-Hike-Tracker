@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import touristIcon from '../../Assets/tourist-icon.png'
 import hikerIcon from '../../Assets/hiker-icon.png'
 import proIcon from '../../Assets/pro-icon.png'
-import { Route, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { HikeDifficultyLevel } from '../../lib/common/Hike';
 import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -65,10 +65,6 @@ const HikeCard = (props) => {
     );
 }
 
-
-
-
-
 function HikeItemImage(difficulty, pictures) {
     let icon;
     let text;
@@ -93,10 +89,10 @@ function HikeItemImage(difficulty, pictures) {
     };
 
     return (<>
-        <div style={{ display: "flex", justifyContent: "center", margin: 1, padding: 1, borderRadius: 12 }}>
-            <img src={APIURL + pictures[0]} alt={text} width="180px" height="120px" />
+        <div style={{ display: "flex", justifyContent: "center", margin: 1, borderRadius: 12 }}>
+            <img src={APIURL + pictures[0]} alt={text} style={{objectFit: "cover", width: "100vw", height: "150px", borderRadius: "8px"}} />
         </div>
-        <Typography style={{ fontFamily: "Unbounded", fontWeight: "600", fontSize: 14, textAlign: "center" }} color="text.secondary" gutterBottom>
+        <Typography style={{ fontFamily: "Unbounded", fontWeight: "600", fontSize: 14, textAlign: "center", marginTop: "12px" }} color="text.secondary" gutterBottom>
             <div style={{ display: "inline-block" }}>Difficulty level: <div style={{ backgroundColor: bgColor, color: "white", borderRadius: 8, paddingLeft: 12, paddingTop: 4, paddingBottom: 4, paddingRight: 12, width: "fit-content", display: "inline-block", marginLeft: 8 }}><b>{text}</b></div></div>
         </Typography>
     </>)
