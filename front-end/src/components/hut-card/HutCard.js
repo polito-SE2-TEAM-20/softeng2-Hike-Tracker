@@ -16,8 +16,8 @@ const HutCard = (props) => {
         <div className="zoom">
             <Card sx={{ minWidth: 275, maxWidth: 275 }}>
                 <CardContent>
-                    <div style={{  display: "flex", justifyContent: "center", margin: "16px", padding: "18px", borderRadius: "32px" }}>
-                        <img src={APIURL + props.hut.pictures[0]} alt="hutIcon" width="160px" height="120px" />
+                    <div style={{  display: "flex", justifyContent: "center",  borderRadius: "32px" }}>
+                        <img src={APIURL + props.hut.pictures[0]} alt="hutIcon" style={{objectFit: "cover", width: "100vw", height: "150px", borderRadius: "8px"}} />
                     </div>
                     <Typography variant="h5" component="div" style={{ fontFamily: "Unbounded", fontWeight: "100" }}>
                         {props.hut.title}
