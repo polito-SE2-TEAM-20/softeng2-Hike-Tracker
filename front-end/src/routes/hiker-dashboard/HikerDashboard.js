@@ -1,6 +1,5 @@
-import { Button, Grid, TextField, Typography, Switch, FormControlLabel } from "@mui/material";
+import { Button, Grid, TextField, Typography, Switch, FormControlLabel, Divider, Chip } from "@mui/material";
 import { useNavigate } from "react-router";
-import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import { displayTypeFlex } from "../../extra/DisplayType";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import './hiker-dashboard-style.css'
@@ -14,6 +13,31 @@ import API from '../../API/API'
 import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours'
 import { styled } from '@mui/material/styles';
 import { BEGINNER, ADVANCED } from '../../lib/common/PreferencesConstants'
+import WeatherCard from "../../components/weather-card/WeatherCard";
+import QueryStatsIcon from '@mui/icons-material/QueryStats';
+
+const PerformacesButton = (props) => {
+    return (
+        <Grid container item xs={7} sm={7} md={7} lg={12} xl={12} sx={{
+            borderStyle: "solid", borderWidth: "1px", borderRadius: "24px 0px 12px 0px", borderColor: "#4c4c4c",
+            width: "fit-content", height: "fit-content", marginBottom: "8px", "&:hover": {
+                backgroundColor: "#f5f5f5", borderColor: "purple", color: "purple"
+            }
+        }}
+            onClick={props.handleNavigatePerformaces}
+        >
+            <Grid item sx={{ marginTop: "5px", marginBottom: "5px", marginLeft: "24px", marginRight: "24px" }}>
+                <Grid item sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <QueryStatsIcon />
+                    {/* <img src={QueryStatsIcon} alt="weatherMap" width="30px" height="auto" /> */}
+                    <Typography className="unselectable" sx={{ fontFamily: "Unbounded", marginLeft: "12px" }} fontSize={16} textAlign="left">
+                        Performances
+                    </Typography>
+                </Grid>
+            </Grid>
+        </Grid>
+    )
+}
 
 const HikerDashboard = (props) => {
     const navigate = useNavigate()
@@ -100,6 +124,10 @@ const HikerDashboard = (props) => {
         }, 3000);
     }, [updateError])
 
+    const handleNavigatePerformaces = () => {
+        navigate("/performances")
+    }
+
     return (
         <>
             <Grid sx={{ marginTop: "20px" }} container columns={12} display={displayTypeFlex.pc} style={{ marginBottom: "50px", justifyContent: "center" }}>
@@ -136,6 +164,9 @@ const HikerDashboard = (props) => {
                                 {props?.user?.role === 5 ? "Emergency operator" : ""}
                             </b>
                         </Typography>
+                    </Grid>
+                    <Grid container item md={10} height="fit-content" sx={{ justifyContent: "center", marginTop: "18px", marginBottom: "18px" }}>
+                        <PerformacesButton handleNavigatePerformaces={handleNavigatePerformaces} />
                     </Grid>
                 </Grid>
                 <Grid container item lg={6} xl={6} height="fit-content" justifyContent="center" sx={{ marginLeft: "25px" }}>
