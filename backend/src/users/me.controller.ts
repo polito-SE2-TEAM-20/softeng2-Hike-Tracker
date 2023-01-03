@@ -131,21 +131,21 @@ export class MeController {
   @HikerOnly()
   @HttpCode(201)
   @Post('set_planned_hikes')
-  async setPlannedHikes(@CurrentUser() user: UserContext, @Body() body: PlannedHikesDto) {
+  async setPlannedHikes(@CurrentUser() user: UserContext, @Body() body: PlannedHikesDto): Promise<Hike[]> {
     return await this.usersService.setPlannedHike(user.id, body);
   }
 
   @HikerOnly()
   @HttpCode(200)
   @Get('planned_hikes')
-  async getPlannedHikes(@CurrentUser() user: UserContext) {
+  async getPlannedHikes(@CurrentUser() user: UserContext): Promise<Hike[]> {
     return await this.usersService.getPlannedHikes(user.id);
   }
 
   @HikerOnly()
   @HttpCode(204)
   @Delete('planned_hikes')
-  async deletePlannedHike(@CurrentUser() user: UserContext, @Body() body: PlannedHikesDto) {
+  async deletePlannedHike(@CurrentUser() user: UserContext, @Body() body: PlannedHikesDto): Promise<void> {
     return await this.usersService.removePlannedHike(user.id,body)
   }
 }
