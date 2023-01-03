@@ -82,6 +82,14 @@ export class User {
   })
   preferences!: PreferencesDto;
 
+  @Column({
+    type: 'integer',
+    array: true,
+    nullable: true,
+    default: null,
+  })
+  plannedHikes!: number[];
+
   /**
    * For TypeORM metadata only
    * @deprecated

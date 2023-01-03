@@ -1,15 +1,19 @@
 import { HttpException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 
-import { BaseService, User } from '@app/common';
+import { BaseService, User, UserRole } from '@app/common';
 
 import { PreferencesDto } from './preferences.dto';
+import { PlannedHikesDto } from './me.dto';
+import { Hike } from '@app/common';
 
 export class UsersService extends BaseService<User> {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Hike)
+    private hikesRepository: Repository<Hike>,
   ) {
     super(User, {
       repository: usersRepository,
@@ -54,5 +58,70 @@ export class UsersService extends BaseService<User> {
       throw new HttpException('You still need to set your preferences', 404);
 
     return user.preferences;
+  }
+
+  async setPlannedHike(id: number, body: PlannedHikesDto){
+    var user = await this.usersRepository.findOneBy({ id });
+
+    if (user === null) throw new HttpException("User doesn't exists", 422);
+
+    if(body.plannedHikes) {
+      for(const ph of (body.plannedHikes)) {
+        const hike = await this.hikesRepository.findOneBy({id: ph})
+        if(hike === null) throw new HttpException("Hike with id "+ph+" doesn't exist", 422);
+      }
+    }
+
+    if(user.plannedHikes !== null) {
+      let plannedHikes = user.plannedHikes.concat(body.plannedHikes!)
+      const set = new Set(plannedHikes)
+      plannedHikes = Array.from(set)
+  
+      user = await this.usersRepository.save({
+        ...user,
+        plannedHikes: plannedHikes
+      })
+    }
+
+    else {
+      user = await this.usersRepository.save({
+        ...user,
+        plannedHikes: body.plannedHikes
+      })
+    }
+
+    return await this.hikesRepository.findBy({ id: In(user.plannedHikes) });
+    //return user.plannedHikes;
+  }
+
+  async getPlannedHikes(id: number) {
+    const user = await this.usersRepository.findOneBy({ id });
+
+    if (user === null) throw new HttpException("User doesn't exists", 422);
+
+    if (user.plannedHikes === null || user.plannedHikes.length === 0) throw new HttpException("You have still not planned any hike", 404)
+
+    return await this.hikesRepository.findBy({ id: In(user.plannedHikes) });
+  }
+
+  async removePlannedHike(id: number, body: PlannedHikesDto) {
+    var user = await this.usersRepository.findOneBy({ id });
+
+    if (user === null) throw new HttpException("User doesn't exists", 422);
+
+    const isPlannedHike = body.plannedHikes!.every((ph) => {
+      return user!.plannedHikes.includes(ph)
+    }) 
+    if(!isPlannedHike) throw new HttpException("An hike you want to delete was not planned by the user", 422); 
+
+    const newPlannedHikes = user.plannedHikes.filter((ph) => {
+      return body.plannedHikes!.every((uph) =>  {return ph !== uph} )
+    }) 
+
+    user = await this.usersRepository.save({
+      ...user,
+      plannedHikes: newPlannedHikes
+    })
+
   }
 }
