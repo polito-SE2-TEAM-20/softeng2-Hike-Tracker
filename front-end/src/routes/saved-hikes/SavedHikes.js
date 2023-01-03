@@ -48,7 +48,7 @@ const SavedHikes = (props) => {
                                     :
                                     listOfHikes.map(hike => {
                                         return (
-                                            <Grid item md={2} xl={1} style={{ marginLeft: "15px", marginRight: "15px", marginBottom: "15px", justifyContent:"center" }}>
+                                            <Grid item md={2} xl={2} style={{ marginLeft: "15px", marginRight: "15px", marginBottom: "15px", justifyContent:"center" }}>
                                                 <HikeCard hike={hike} editable={false} />
                                             </Grid>
                                         );
