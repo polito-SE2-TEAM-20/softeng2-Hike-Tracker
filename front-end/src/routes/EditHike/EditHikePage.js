@@ -83,6 +83,8 @@ function EditHikePage(props) {
     const [referencePointLon, setReferencePointLon] = useState('');
     const [referencePointName, setReferencePointName] = useState('');
     const [referencePointAdd, setReferencePointAdd] = useState('');
+    const [referencePointEle, setReferencePointEle] = useState('');
+
 
     // states for the popup after adding a new hike
     const [open, setOpen] = useState(false);
@@ -130,6 +132,8 @@ function EditHikePage(props) {
             setNewReferencePoint(true);
             setReferencePointLat(referencePoint.lat);
             setReferencePointLon(referencePoint.lon);
+            setReferencePointEle(referencePoint.altitude);
+
         }
     }, [referencePoint])
 
@@ -208,7 +212,7 @@ function EditHikePage(props) {
             let gpxParser = require('gpxparser');
             var gpx = new gpxParser();
             gpx.parse(fileContents);
-            const positions = gpx.tracks[0].points.map(p => [p.lat, p.lon]);
+            const positions = gpx.tracks[0].points.map(p => [p.lat, p.lon, p.ele]);
 
             setPositionsState(positions);
 
@@ -266,7 +270,7 @@ function EditHikePage(props) {
                 let list = []
                 hikeDetails.referencePoints.forEach((item) => {
                     console.log(item);
-                    list.push({ name: item.name, address: item.address, lat: item.position.coordinates[1], lon: item.position.coordinates[0] })
+                    list.push({ name: item.name, address: item.address, lat: item.position.coordinates[1], lon: item.position.coordinates[0], altitude: item.altitude })
                     console.log(listReferencePoint)
                 })
                 setListReferencePoint(list)
@@ -435,11 +439,22 @@ function EditHikePage(props) {
         setReferencePointLon(listReferencePoint.filter(el => el.name === elemento.name)[0].lon);
         setReferencePointName(listReferencePoint.filter(el => el.name === elemento.name)[0].name);
         setReferencePointAdd(listReferencePoint.filter(el => el.name === elemento.name)[0].address);
+        setReferencePointEle(listReferencePoint.filter(el => el.name === elemento.name)[0].altitude);
+
         setNewReferencePoint(true)
 
         const prova = listReferencePoint.splice(indexOfObject, 1);
         setListReferencePoint(listReferencePoint.filter(el => el.name !== prova.name));
     }
+    useEffect(() => {
+        if (referencePointLat !== '' && referencePointLon !== '' && referencePointLat !== null && referencePointLon !== null && referencePoint !== undefined) {
+          setNewReferencePoint(true);
+          setReferencePointLat(referencePoint.lat);
+          setReferencePointLon(referencePoint.lon);
+          setReferencePointEle(referencePoint.altitude);
+    
+        }
+      }, [referencePoint])
 
     //TODO
     const handleListreferencePoints = (event) => {
@@ -465,13 +480,15 @@ function EditHikePage(props) {
             setShow(true);
         } else {
             let stringaNome = referencePointName.toString();
-            setListReferencePoint([...listReferencePoint, { name: stringaNome, address: referencePointAdd, lat: referencePointLat, lon: referencePointLon }]);
+            setListReferencePoint([...listReferencePoint, { name: stringaNome, address: referencePointAdd, lat: referencePointLat, lon: referencePointLon, altitude: parseFloat(referencePointEle) }]);
             setNewReferencePoint(false);
             setReferencePoint([]);
             setReferencePointLat('');
             setReferencePointLon('');
             setReferencePointAdd('');
             setReferencePointName('');
+            setReferencePointEle('');
+
 
         }
     }
@@ -788,7 +805,7 @@ function EditHikePage(props) {
                                                                 value={reference.name}
                                                             />
                                                         </Grid>
-                                                        <Grid item xs={12} sm={3.5}>
+                                                        <Grid item xs={12} sm={2}>
                                                             <TextField
                                                                 name="referencePointAdd"
                                                                 label="Reference Point Address"
@@ -799,6 +816,18 @@ function EditHikePage(props) {
                                                             />
                                                         </Grid>
                                                         <Grid item xs={12} sm={2}>
+                                  <TextField
+                                    name="referencePointElevation"
+                                    label="Reference Point Elevation"
+                                    fullWidth
+                                    autoComplete="referencePointElevation"
+                                    variant="standard"
+                                    //disabled
+                                    value={reference.altitude}
+                                  />
+                                </Grid>
+                                                        <Grid item xs={12} sm={2}>
+
                                                             <TextField name="referencelat"
                                                                 label="Reference Point Latitude" fullWidth
                                                                 autoComplete="referencelat" variant="standard"
@@ -849,7 +878,7 @@ function EditHikePage(props) {
                                     )
                                     :
                                     (<>
-                                        <Grid item xs={12} sm={3.5}>
+                                        <Grid item xs={12} sm={2}>
                                             <TextField
                                                 required
                                                 id="referencePointName" name="referencePointName"
@@ -860,7 +889,7 @@ function EditHikePage(props) {
                                             />
                                         </Grid>
 
-                                        <Grid item xs={12} sm={3.5}>
+                                        <Grid item xs={12} sm={2}>
                                             <TextField
                                                 required id="referencePointAdd"
                                                 name="referencePointAdd" label="Reference Point Address"
@@ -869,6 +898,17 @@ function EditHikePage(props) {
                                                 onChange={(e) => setReferencePointAdd(e.target.value)}
                                             />
                                         </Grid>
+                                        <Grid item xs={12} sm={2}>
+                          <TextField
+                            id="referencePointEle"
+                            name="referencePointEle" label="Reference Point Ele"
+                            fullWidth autoComplete="referencePointEle" variant="standard"
+                            placeholder='1230'
+                            //disabled
+                            value={referencePointEle}
+                            //onChange={(e) => setReferencePointEle(e.target.value)}
+                          />
+                        </Grid>
                                         <Grid item xs={12} sm={2}>
                                             <TextField
                                                 required

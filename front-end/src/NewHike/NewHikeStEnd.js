@@ -76,6 +76,7 @@ function NewHikeStEnd(props) {
   const [referencePointLon, setReferencePointLon] = useState('');
   const [referencePointName, setReferencePointName] = useState('');
   const [referencePointAdd, setReferencePointAdd] = useState('');
+  const [referencePointEle, setReferencePointEle] = useState('');
   const [pictures, setPictures] = useState([]);
   const [picData, setPicData] = useState([]);
 
@@ -136,7 +137,7 @@ function NewHikeStEnd(props) {
     setNewReferencePoint(false);
     setListReferencePoint([]); setReferencePoint([]); setReferencePointLat(''); setReferencePointLon('');
     setReferencePointName(''); setReferencePointAdd('');
-    setStartPointType(''); setEndPointType('');
+    setStartPointType(''); setEndPointType(''); setReferencePointEle('');
   };
 
 
@@ -160,6 +161,7 @@ function NewHikeStEnd(props) {
       setNewReferencePoint(true);
       setReferencePointLat(referencePoint.lat);
       setReferencePointLon(referencePoint.lon);
+      setReferencePointEle(referencePoint.altitude);
     }
   }, [referencePoint])
 
@@ -168,10 +170,10 @@ function NewHikeStEnd(props) {
       let gpxParser = require('gpxparser');
       var gpx = new gpxParser();
       gpx.parse(fileContents);
-      const positions = gpx.tracks[0].points.map(p => [p.lat, p.lon]);
+      const positions = gpx.tracks[0].points.map(p => [p.lat, p.lon, p.ele]);
       console.log(gpx);
       // controllare perchè se non ci sono i punti da errore
-      const waypoints = gpx.waypoints.map(reference => [reference.name, reference.desc, reference.lat, reference.lon])
+      const waypoints = gpx.waypoints.map(reference => [reference.name, reference.desc, reference.lat, reference.lon, reference.altitude])
 
       // get all the waypoints from the gpx file, insert them if they are on the track
       // and give them a name if they don't have one in the gpx file
@@ -182,10 +184,10 @@ function NewHikeStEnd(props) {
         let indexOfObject = positionsState.filter(object => (object[0] === el[2] && object[1] === el[3]))
         if (indexOfObject.length !== 0) {
           if (el.name === '' || el.name === null || el.name === undefined) {
-            prova = [...prova, { name: i, address: el[1], lat: el[2], lon: el[3] }];
+            prova = [...prova, { name: i, address: el[1], lat: el[2], lon: el[3], altitude: el[4] }];
             i++;
           } else {
-            prova = [...prova, { name: el[0], address: el[1], lat: el[2], lon: el[3] }];
+            prova = [...prova, { name: el[0], address: el[1], lat: el[2], lon: el[3], altitude: el[4] }];
           }
         }
         // controllare che due waypoints non abbiano lo stesso nome
@@ -238,6 +240,8 @@ function NewHikeStEnd(props) {
     setReferencePointLon(listReferencePoint.filter(el => el.name === elemento.name)[0].lon);
     setReferencePointName(listReferencePoint.filter(el => el.name === elemento.name)[0].name);
     setReferencePointAdd(listReferencePoint.filter(el => el.name === elemento.name)[0].address);
+    setReferencePointEle(listReferencePoint.filter(el => el.name === elemento.name)[0].altitude);
+
     setNewReferencePoint(true)
 
     const prova = listReferencePoint.splice(indexOfObject, 1);
@@ -245,10 +249,11 @@ function NewHikeStEnd(props) {
   }
 
   useEffect(() => {
-    if (referencePointLat === '' && referencePointLon !== '' && referencePointLat !== null && referencePointLon !== null && referencePoint !== undefined) {
+    if (referencePointLat !== '' && referencePointLon !== '' && referencePointLat !== null && referencePointLon !== null && referencePoint !== undefined) {
       setNewReferencePoint(true);
       setReferencePointLat(referencePoint.lat);
       setReferencePointLon(referencePoint.lon);
+      setReferencePointEle(referencePoint.altitude);
 
     }
   }, [referencePoint])
@@ -275,14 +280,16 @@ function NewHikeStEnd(props) {
     } else {
       console.log(referencePointLat);
       console.log(referencePointLon);
+      console.log(referencePointEle);
       let stringaNome = referencePointName.toString();
-      setListReferencePoint([...listReferencePoint, { name: stringaNome, address: referencePointAdd, lat: referencePointLat, lon: referencePointLon }]);
+      setListReferencePoint([...listReferencePoint, { name: stringaNome, address: referencePointAdd, lat: referencePointLat, lon: referencePointLon, altitude: parseFloat(referencePointEle) }]);
       setNewReferencePoint(false);
       setReferencePoint([]);
       setReferencePointLat('');
       setReferencePointLon('');
       setReferencePointAdd('');
       setReferencePointName('');
+      setReferencePointEle('');
 
     }
   }
@@ -305,7 +312,7 @@ function NewHikeStEnd(props) {
     } else if (ascentStr === '' || ascentStr === null || ascentStr === undefined) {
       setErrorMessage('The ascent for the hike cannot be empty');
       setShow(true);
-    } else if (difficultyStr.toString() === '' || difficultyStr === null || difficultyStr === undefined) {
+    } else if (difficultyStr === '' || difficultyStr === null || difficultyStr === undefined) {
       setErrorMessage('Choose a difficulty for this hike');
       setShow(true);
     } else if (description === '' || description === null || description === undefined) {
@@ -376,6 +383,7 @@ function NewHikeStEnd(props) {
       formData.append('region', region);
       formData.append('province', province);
       formData.append('referencePoints', JSON.stringify(listReferencePoint));
+      console.log(listReferencePoint);
       formData.append('startPoint', JSON.stringify(start));
       formData.append('endPoint', JSON.stringify(end));
       //controllare che questi ultimi due funzionino 
@@ -411,7 +419,7 @@ function NewHikeStEnd(props) {
       setEndPointAdd('');
       setNewReferencePoint(false);
       setListReferencePoint([]); setReferencePoint([]); setReferencePointLat(' '); setReferencePointLon(' ');
-      setReferencePointName(''); setReferencePointAdd('');
+      setReferencePointName(''); setReferencePointAdd(''); setReferencePointEle(' ');
       setPicData([]);
       setPictures([]);
 
@@ -492,7 +500,7 @@ function NewHikeStEnd(props) {
                   </Grid>
                   <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} columns={4} sx={{ display: "flex", justifyContent: "left", marginTop: "24px", padding: "0px 64px 64px 64px" }}>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} columns={4} sx={{ display: "flex", justifyContent: "center", marginTop: "18px", marginBottom: "24px" }}>
-                      <Typography variant="h1" fontSize={52} className="unselectable">
+                      <Typography variant="h1" fontSize={30} className="unselectable">
                         A significant picture for the hike
                       </Typography>
                     </Grid>
@@ -506,7 +514,7 @@ function NewHikeStEnd(props) {
                               <Fab
                                 sx={{
                                   backgroundColor: "#1a1a1aff", color: "white",
-                                  width: "80px", height: "80px",
+                                  width: "60px", height: "60px",
                                   borderRadius: "60px", "&:hover": {
                                     backgroundColor: "#1a1a1ada"
                                   }
@@ -514,7 +522,7 @@ function NewHikeStEnd(props) {
                                 component="span"
                                 aria-label="add"
                                 variant="extended">
-                                <AddIcon sx={{ fontSize: "64px" }} />
+                                <AddIcon sx={{ fontSize: "48px" }} />
                               </Fab>
                             </label>
                           </Grid>
@@ -561,15 +569,25 @@ function NewHikeStEnd(props) {
                                     value={reference.name}
                                   />
                                 </Grid>
-                                <Grid item xs={12} sm={3.5}>
+                                <Grid item xs={12} sm={2}>
                                   <TextField
                                     name="referencePointAdd"
                                     label="Reference Point Address"
                                     fullWidth
                                     autoComplete="referencePointAdd"
                                     variant="standard"
-                                    //disabled
                                     value={reference.address}
+                                  />
+                                </Grid>
+                                <Grid item xs={12} sm={2}>
+                                  <TextField
+                                    name="referencePointElevation"
+                                    label="Reference Point Elevation"
+                                    fullWidth
+                                    autoComplete="referencePointElevation"
+                                    variant="standard"
+                                    //disabled
+                                    value={reference.altitude}
                                   />
                                 </Grid>
                                 <Grid item xs={12} sm={2}>
@@ -622,7 +640,7 @@ function NewHikeStEnd(props) {
                       )
                       :
                       (<>
-                        <Grid item xs={12} sm={3.5}>
+                        <Grid item xs={12} sm={2}>
                           <TextField
                             required
                             id="referencePointName" name="referencePointName"
@@ -633,7 +651,7 @@ function NewHikeStEnd(props) {
                           />
                         </Grid>
 
-                        <Grid item xs={12} sm={3.5}>
+                        <Grid item xs={12} sm={2}>
                           <TextField
                             id="referencePointAdd"
                             name="referencePointAdd" label="Reference Point Address"
@@ -641,6 +659,17 @@ function NewHikeStEnd(props) {
                             //disabled
                             value={referencePointAdd}
                             onChange={(e) => setReferencePointAdd(e.target.value)}
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={2}>
+                          <TextField
+                            id="referencePointEle"
+                            name="referencePointEle" label="Reference Point Ele"
+                            fullWidth autoComplete="referencePointEle" variant="standard"
+                            placeholder='1230'
+                            //disabled
+                            value={referencePointEle}
+                            //onChange={(e) => setReferencePointEle(e.target.value)}
                           />
                         </Grid>
                         <Grid item xs={12} sm={2}>

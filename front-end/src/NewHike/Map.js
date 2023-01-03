@@ -88,7 +88,8 @@ const Inner = ({ positionsState, setPuntiDaTrack, setReferencePoint, puntiDaTrac
       if (positionsState?.length) {
         getNearestPoint(positionsState, puntiDaTrack);
         let nearest = (getNearestPoint(positionsState, puntiDaTrack));
-        let object = { lat: nearest[0], lon: nearest[1] }
+        let point = positionsState.filter(el => (el[0]===nearest[0] && el[1]===nearest[1]));
+        let object = { lat: nearest[0], lon: nearest[1], altitude: point[0][2] }
         punti.lat = nearest[0];
         punti.lng = nearest[1];
         setReferencePoint(object);
