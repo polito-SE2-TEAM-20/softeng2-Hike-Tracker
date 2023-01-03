@@ -1,4 +1,4 @@
-import { Button, Grid, TextField, Typography, Switch, FormControlLabel, Divider, Chip } from "@mui/material";
+import { Button, Grid, TextField, Typography, Switch, FormControlLabel, FormGroup, Checkbox } from "@mui/material";
 import { useNavigate } from "react-router";
 import { displayTypeFlex } from "../../extra/DisplayType";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -50,6 +50,13 @@ const HikerDashboard = (props) => {
     const [ascent, setAscent] = useState(0.0)
     const [suggestionType, setSuggestionType] = useState(false)
 
+    const [isStartingPoint, setIsStartingPoint] = useState(false)
+    const [isRadius, setIsRadius] = useState(false)
+    const [isLength, setIsLength] = useState(false)
+    const [isExpectedTime, setIsExpectedTime] = useState(false)
+    const [isDifficulty, setIsDifficulty] = useState(false)
+    const [isAscent, setIsAscent] = useState(false)
+
     const positionStatic = position
     const radiusStatic = radius
     const lengthStatic = length
@@ -93,7 +100,35 @@ const HikerDashboard = (props) => {
             "ascentMax": ascent + (!suggestionType ? BEGINNER : ADVANCED).ascentOffset,
             'suggestionType': suggestionType
         }
+
+        const preFilter = () => {
+            if(!isStartingPoint) {
+                prefFilter.lat = null
+                prefFilter.lon = null
+            }
+            if(!isRadius) {
+                prefFilter.radiusKms = null
+            }
+            if(!isLength) {
+                prefFilter.minLength = null
+                prefFilter.maxLength = null
+            }
+            if(!isExpectedTime) {
+                prefFilter.expectedTimeMin = null
+                prefFilter.expectedTimeMax = null
+            }
+            if(!isDifficulty) {
+                prefFilter.difficultyMin = null
+                prefFilter.difficultyMax = null
+            }
+            if(!isAscent) {
+                prefFilter.ascentMin = null
+                prefFilter.ascentMax = null
+            }
+        }
+
         const setPreferences = async () => {
+            preFilter()
             await API.setPreferences(prefFilter)
         }
         setPreferences().then(() => {
@@ -317,6 +352,19 @@ const HikerDashboard = (props) => {
                             </AccordionDetails>
                         </Accordion>
                     </Grid>
+                    <Grid item sx={{marginTop: "24px"}}>
+                        <Typography sx={{fontSize: "20px"}}>
+                            <b>Select which parameters you want us to consider while suggesting you the best hikes based on your preferences.</b>
+                        </Typography>
+                        <FormGroup>
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsStartingPoint(!isStartingPoint)}} checked={isStartingPoint} />} label="Starting point" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsRadius(!isRadius)}} checked={isRadius} />} label="Radius" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsLength(!isLength)}} checked={isLength} />} label="Length" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsExpectedTime(!isExpectedTime)}} checked={isExpectedTime} />} label="Expected time" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsDifficulty(!isDifficulty)}} checked={isDifficulty} />} label="Difficulty" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsAscent(!isAscent)}} checked={isAscent} />} label="Ascent" />
+                        </FormGroup>
+                    </Grid>
                     <Grid item lg={12} xl={12} sx={{ marginTop: "28px", display: "flex", justifyContent: "right" }}>
                         {updateFinished ? <div style={{ marginRight: "25px" }}>
                             <Typography className="unselectable" sx={{ fontSize: "18px" }}>
@@ -328,9 +376,6 @@ const HikerDashboard = (props) => {
                                 <b>There's been an error with your preferences. Check fields value.</b>
                             </Typography>
                         </div> : <></>}
-                        {
-                            console.log(suggestionType)
-                        }
                         <FormControlLabel control={<MaterialUISwitch onChange={e => { setSuggestionType(!suggestionType) }} checked={suggestionType} />} label={!suggestionType ? "Beginner" : "Advanced"} />
                         <Button variant="filled"
                             onClick={handlePreferencesUpdate}
@@ -533,6 +578,19 @@ const HikerDashboard = (props) => {
                                 }} variant="outlined" label="Ascent" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
+                    </Grid>
+                    <Grid item sx={{marginTop: "24px"}}>
+                        <Typography sx={{fontSize: "20px"}}>
+                            <b>Select which parameters you want us to consider while suggesting you the best hikes based on your preferences.</b>
+                        </Typography>
+                        <FormGroup>
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsStartingPoint(!isStartingPoint)}} checked={isStartingPoint} />} label="Starting point" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsRadius(!isRadius)}} checked={isRadius} />} label="Radius" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsLength(!isLength)}} checked={isLength} />} label="Length" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsExpectedTime(!isExpectedTime)}} checked={isExpectedTime} />} label="Expected time" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsDifficulty(!isDifficulty)}} checked={isDifficulty} />} label="Difficulty" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsAscent(!isAscent)}} checked={isAscent} />} label="Ascent" />
+                        </FormGroup>
                     </Grid>
                     <Grid item xs={12} sx={{ marginTop: "28px", display: "flex", justifyContent: "right" }}>
                         {updateFinished ? <div style={{ marginRight: "25px" }}>
@@ -747,6 +805,19 @@ const HikerDashboard = (props) => {
                                 }} variant="outlined" label="Ascent" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
+                    </Grid>
+                    <Grid item sx={{marginTop: "24px"}}>
+                        <Typography sx={{fontSize: "20px"}}>
+                            <b>Select which parameters you want us to consider while suggesting you the best hikes based on your preferences.</b>
+                        </Typography>
+                        <FormGroup>
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsStartingPoint(!isStartingPoint)}} checked={isStartingPoint} />} label="Starting point" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsRadius(!isRadius)}} checked={isRadius} />} label="Radius" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsLength(!isLength)}} checked={isLength} />} label="Length" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsExpectedTime(!isExpectedTime)}} checked={isExpectedTime} />} label="Expected time" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsDifficulty(!isDifficulty)}} checked={isDifficulty} />} label="Difficulty" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsAscent(!isAscent)}} checked={isAscent} />} label="Ascent" />
+                        </FormGroup>
                     </Grid>
                     <Grid item xs={12} sm={12} sx={{ marginTop: "28px", display: "flex", justifyContent: "right" }}>
                         {updateFinished ? <div style={{ marginRight: "25px" }}>
