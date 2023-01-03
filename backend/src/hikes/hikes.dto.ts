@@ -2,7 +2,6 @@ import { OmitType, PartialType } from '@nestjs/mapped-types';
 import { Type, Transform } from 'class-transformer';
 import {
   IsArray,
-  IsBoolean,
   IsEnum,
   IsInt,
   IsLatitude,
@@ -28,9 +27,9 @@ import {
   valToNumber,
 } from '@app/common';
 import { HikeCondition } from '@app/common/enums/hike-condition.enum';
+import { HikeWeather } from '@app/common/enums/weatherStatus.enum';
 
 import { StartEndPointTransformer } from './hikes.utils';
-import { HikeWeather } from '@app/common/enums/weatherStatus.enum';
 
 export class PointWithRadius {
   @IsLatitude()
@@ -323,8 +322,7 @@ export class LinkHutToHikeDto {
   linkedPoints!: LinkedPointDto[];
 }
 
-export class WeatherInRangeDto{  
-  
+export class WeatherInRangeDto {
   @ValidateNested()
   @Type(() => PointWithRadius)
   inPointRadius!: PointWithRadius;
@@ -338,8 +336,7 @@ export class WeatherInRangeDto{
   weatherDescription?: string | null;
 }
 
-export class WeatherFlagsDto{  
-
+export class WeatherFlagsDto {
   @IsIdentifier()
   hikeId!: ID;
 

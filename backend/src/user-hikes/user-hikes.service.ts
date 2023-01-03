@@ -3,12 +3,12 @@ import {
   Injectable,
   NotFoundException,
   HttpException,
-  BadRequestException
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ascend, prop, sort } from 'ramda';
 import { EntityManager, Repository, SelectQueryBuilder } from 'typeorm';
-import { PointsService } from '@core/points/points.service';
+
 import {
   BaseService,
   ID,
@@ -19,9 +19,9 @@ import {
   UserHikeTrackPoint,
   UserRole,
   HikePoint,
-  PointType
 } from '@app/common';
 import { HikesService } from '@core/hikes/hikes.service';
+import { PointsService } from '@core/points/points.service';
 
 import { UserHikeFull } from './user-hikes.interface';
 
@@ -100,14 +100,13 @@ export class UserHikesService extends BaseService<UserHike> {
   }
 
   async reachReferencePoint(userId: number, pointId: number): Promise<Point> {
-
     const userHike = await this.userHikesRepository
-    .createQueryBuilder('uh')
-    .where('uh.userId = :userId', {userId})
-    .andWhere('uh.finishedAt IS NULL')
-    .getOne()
+      .createQueryBuilder('uh')
+      .where('uh.userId = :userId', { userId })
+      .andWhere('uh.finishedAt IS NULL')
+      .getOne();
 
-    if(userHike === null) throw new HttpException("Hike not found",422);
+    if (userHike === null) throw new HttpException('Hike not found', 422);
 
     //const hike = await this.hikesService.getFullHike(userHike.hikeId);
 
@@ -137,31 +136,32 @@ export class UserHikesService extends BaseService<UserHike> {
 
     await this.userHikeReference.save({
       userHikeId: userHike.id,
-      pointId: pointId
-    })
+      pointId,
+    });
 
-    return point
+    return point;
   }
 
-  async getReachenReferencePoints(userId: number): Promise<UserHikeReference[]> {
-    
+  async getReachenReferencePoints(
+    userId: number,
+  ): Promise<UserHikeReference[]> {
     const userHike = await this.userHikesRepository
-    .createQueryBuilder('uh')
-    .where('uh.userId = :userId', {userId})
-    .andWhere('uh.finishedAt IS NULL')
-    .getOne()
+      .createQueryBuilder('uh')
+      .where('uh.userId = :userId', { userId })
+      .andWhere('uh.finishedAt IS NULL')
+      .getOne();
 
-    if(userHike === null) throw new HttpException("Hike not found",422);
+    if (userHike === null) throw new HttpException('Hike not found', 422);
 
     if (!!userHike.finishedAt) {
       throw new BadRequestException('Hike is finished');
     }
 
     const reachedPoints = await this.userHikeReference
-    .createQueryBuilder('uf')
-    .where('uf.userHikeId = :id', {id: userHike.id})
-    .innerJoinAndMapOne('uf.pointId', Point, 'p', 'p.id = uf."pointId"')
-    .getMany()
+      .createQueryBuilder('uf')
+      .where('uf.userHikeId = :id', { id: userHike.id })
+      .innerJoinAndMapOne('uf.pointId', Point, 'p', 'p.id = uf."pointId"')
+      .getMany();
 
     return reachedPoints;
   }

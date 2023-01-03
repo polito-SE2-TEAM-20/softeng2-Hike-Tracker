@@ -6,7 +6,7 @@ import {
   IsEnum,
   IsInt,
   IsBoolean,
-  IsOptional
+  IsOptional,
 } from 'class-validator';
 
 import { HikeDifficulty } from '@app/common';
