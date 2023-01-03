@@ -202,7 +202,7 @@ const ShowHike = (props) => {
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         {
-                            !loading ? <Typography>Description of weather: {hike.weatherDescription}</Typography> :
+                            !loading ? <Typography>Description of weather: {hike.weatherDescription === "" || hike.weatherDescription === undefined ? "not provided" : hike.weatherDescription}</Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>
