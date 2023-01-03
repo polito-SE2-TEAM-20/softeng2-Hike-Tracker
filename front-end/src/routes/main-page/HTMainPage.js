@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button, Grid } from '@mui/material';
 import { Typography } from '@mui/material';
-import HTNavbar from '../../components/HTNavbar/HTNavbar'
 import './main-page-style.css'
 import { CardMedia } from "@mui/material";
 import mainPagePicture from '../../Assets/tmpmainpage.jpg'
@@ -65,7 +64,7 @@ const HTMainPage = (props) => {
                                 <Grid container item xs={0} sm={0} md={4} lg={4} xl={4} width="fit-content">
                                     <Grid item display={{ xs: "none", sm: "none", md: "flex", lg: "flex", xl: "flex" }}>
                                         <CardMedia component="img"
-                                            style={{ objectFit: "cover", height: "100vh"     }}
+                                            style={{ objectFit: "cover", height: "100vh"}}
                                             image={asidePicture}
                                             alt="Paella dish">
                                         </CardMedia>
