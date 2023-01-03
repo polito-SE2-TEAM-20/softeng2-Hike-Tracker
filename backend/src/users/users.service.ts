@@ -60,7 +60,7 @@ export class UsersService extends BaseService<User> {
     return user.preferences;
   }
 
-  async setPlannedHike(id: number, body: PlannedHikesDto){
+  async setPlannedHike(id: number, body: PlannedHikesDto): Promise<Hike[]>{
     var user = await this.usersRepository.findOneBy({ id });
 
     if (user === null) throw new HttpException("User doesn't exists", 422);
@@ -91,10 +91,9 @@ export class UsersService extends BaseService<User> {
     }
 
     return await this.hikesRepository.findBy({ id: In(user.plannedHikes) });
-    //return user.plannedHikes;
   }
 
-  async getPlannedHikes(id: number) {
+  async getPlannedHikes(id: number): Promise<Hike[]> {
     const user = await this.usersRepository.findOneBy({ id });
 
     if (user === null) throw new HttpException("User doesn't exists", 422);
@@ -104,7 +103,7 @@ export class UsersService extends BaseService<User> {
     return await this.hikesRepository.findBy({ id: In(user.plannedHikes) });
   }
 
-  async removePlannedHike(id: number, body: PlannedHikesDto) {
+  async removePlannedHike(id: number, body: PlannedHikesDto): Promise<void> {
     var user = await this.usersRepository.findOneBy({ id });
 
     if (user === null) throw new HttpException("User doesn't exists", 422);
