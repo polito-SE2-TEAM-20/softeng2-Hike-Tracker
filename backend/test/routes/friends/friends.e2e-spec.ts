@@ -8,9 +8,7 @@ import {
     prepareVars,
     strDate,
   } from '@test/base';
-import exp from 'constants';
-  import { any, pick } from 'ramda';
-import { timestamp } from 'rxjs';
+  import { pick } from 'ramda';
 
   const pickCommon = (el: any) => ({
     ...pick(['id', 'userId']),
