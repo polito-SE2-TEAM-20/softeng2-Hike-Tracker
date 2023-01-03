@@ -15,6 +15,7 @@ import {
 import { AppExceptionFilter } from '@app/common/filters/app-exception.filter';
 
 import { AuthModule } from './auth/auth.module';
+import { FriendsModule } from './friends/friends.module';
 import { HealthcheckModule } from './healthcheck/healthcheck.module';
 import { HikesModule } from './hikes/hikes.module';
 import { HutsModule } from './huts/huts.module';
@@ -22,7 +23,6 @@ import { ParkingLotModule } from './parking-lot/parking-lot.module';
 import { PointsModule } from './points/points.module';
 import { UserHikesModule } from './user-hikes/user-hikes.module';
 import { UsersModule } from './users/users.module';
-import { FriendsModule } from './friends/friends.module';
 
 @Module({
   imports: [
@@ -56,7 +56,7 @@ import { FriendsModule } from './friends/friends.module';
     UsersModule,
     HutsModule,
     UserHikesModule,
-    FriendsModule
+    FriendsModule,
   ],
   controllers: [],
   providers: [

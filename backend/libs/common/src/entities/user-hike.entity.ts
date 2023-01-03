@@ -67,7 +67,7 @@ export class UserHike {
     default: false,
   })
   unfinishedNotified?: boolean | null;
-  
+
   // performance stats ahead //
   @Column({
     ...numericOptionsConfig(0),

@@ -4,6 +4,7 @@ import path from 'node:path';
 
 import * as fs from 'fs-extra';
 import { omit } from 'ramda';
+import { In, IsNull } from 'typeorm';
 
 import {
   HikeDifficulty,
@@ -12,7 +13,6 @@ import {
   IMAGES_UPLOAD_PATH,
   latLonToGisPoint,
   mapToId,
-  Point,
   PointType,
   ROOT,
   UPLOAD_PATH,
@@ -20,6 +20,7 @@ import {
   UserRole,
 } from '@app/common';
 import { HikeCondition } from '@app/common/enums/hike-condition.enum';
+import { HikeWeather } from '@app/common/enums/weatherStatus.enum';
 import { finishTest } from '@app/testing';
 import {
   anyId,
@@ -31,8 +32,6 @@ import {
 } from '@test/base';
 
 import { hikeBasic } from './constants';
-import { HikeWeather } from '@app/common/enums/weatherStatus.enum';
-import { In, IsNull } from 'typeorm';
 
 const withoutCompositeFields = omit([
   'referencePoints',
@@ -72,12 +71,15 @@ describe('Hikes (e2e)', () => {
       role: UserRole.platformManager,
     });
 
-    const hike = await testService.createHike({ userId: localGuide.id, expectedTime: 0 });
+    const hike = await testService.createHike({
+      userId: localGuide.id,
+      expectedTime: 0,
+    });
 
     const hiker = await testService.createUser({
-      role: UserRole.hiker
+      role: UserRole.hiker,
     });
-    
+
     const huts = await mapArray(10, (i) =>
       testService.createHut({
         userId: localGuide.id,
@@ -265,7 +267,7 @@ describe('Hikes (e2e)', () => {
       ...hikeBasic,
       userId: localGuide.id,
       weatherStatus: HikeWeather.dangerRain,
-      weatherDescription: "Heavy rains which can cause ground disruption"
+      weatherDescription: 'Heavy rains which can cause ground disruption',
     });
 
     await restService
@@ -281,7 +283,7 @@ describe('Hikes (e2e)', () => {
           startPoint: null,
           endPoint: null,
           weatherStatus: HikeWeather.dangerRain,
-          weatherDescription: "Heavy rains which can cause ground disruption"
+          weatherDescription: 'Heavy rains which can cause ground disruption',
         });
       });
   });
@@ -631,81 +633,87 @@ describe('Hikes (e2e)', () => {
       });
   });
 
-  it("Should update weather condition of a selected hike and its flag in the user-hike table", async () => {
-      const {hike, platformManager, hiker} = await setup();
+  it('Should update weather condition of a selected hike and its flag in the user-hike table', async () => {
+    const { hike, platformManager, hiker } = await setup();
 
-      await testService.createUserHike({
-        userId: hiker.id,
+    await testService.createUserHike({
+      userId: hiker.id,
+      hikeId: hike.id,
+      weatherNotified: null,
+    });
+
+    const hiker2 = await testService.createUser({
+      role: UserRole.hiker,
+    });
+
+    const userHike2 = await testService.createUserHike({
+      hikeId: hike.id,
+      userId: hiker2.id,
+      weatherNotified: null,
+    });
+
+    const updateWeather = {
+      weatherStatus: HikeWeather.dangerRain,
+      weatherDescription: 'Heavy rains which can cause ground disruption',
+    };
+
+    await restService
+      .build(app, platformManager)
+      .request()
+      .put(`/hikes/updateWeather/${hike.id}`)
+      .send(updateWeather)
+      .expect(({ body }) => {
+        expect(body.weatherStatus).toBe(HikeWeather.dangerRain);
+        expect(body.weatherDescription).toBe(
+          'Heavy rains which can cause ground disruption',
+        );
+      });
+
+    //From here is about notification flag
+    const newUserHikesBefore = (
+      await testService.repo(UserHike).findBy({
         hikeId: hike.id,
-        weatherNotified: null
-      });
-
-      const hiker2 = await testService.createUser({
-        role: UserRole.hiker
-      });
-
-      const userHike2 = await testService.createUserHike({
-        hikeId: hike.id,
-        userId: hiker2.id,
-        weatherNotified: null
-      });
-
-      const updateWeather = {
-        weatherStatus: HikeWeather.dangerRain,
-        weatherDescription: "Heavy rains which can cause ground disruption"
-      };
-
-
-      await restService
-        .build(app, platformManager)
-        .request()
-        .put(`/hikes/updateWeather/${hike.id}`)
-        .send(updateWeather)
-        .expect(({ body }) => {
-          expect(body.weatherStatus).toBe(HikeWeather.dangerRain);
-          expect(body.weatherDescription).toBe("Heavy rains which can cause ground disruption");
-        });
-
-      //From here is about notification flag
-      const newUserHikesBefore = (await testService.repo(UserHike).findBy({
-        hikeId: hike.id
-      })).map(userHike => (userHike.weatherNotified));
-
-      newUserHikesBefore.forEach((notification) => {
-        expect(notification).toBe(false)
-      });
-
-      //This is used to finish an hike and see that it popup is not shown anymore to that user
-      await testService.repo(UserHike).save({
-        id: userHike2.id,
-        finishedAt: new Date()
       })
+    ).map((userHike) => userHike.weatherNotified);
 
-      await restService
-        .build(app, hiker)
-        .request()
-        .get(`/hikes/popupSeen/${hike.id}`);
+    newUserHikesBefore.forEach((notification) => {
+      expect(notification).toBe(false);
+    });
 
-      await restService
-        .build(app, hiker2)
-        .request()
-        .get(`/hikes/popupSeen/${hike.id}`);
-      
-      const newUserHikesAfter = (await testService.repo(UserHike).findBy({
+    //This is used to finish an hike and see that it popup is not shown anymore to that user
+    await testService.repo(UserHike).save({
+      id: userHike2.id,
+      finishedAt: new Date(),
+    });
+
+    await restService
+      .build(app, hiker)
+      .request()
+      .get(`/hikes/popupSeen/${hike.id}`);
+
+    await restService
+      .build(app, hiker2)
+      .request()
+      .get(`/hikes/popupSeen/${hike.id}`);
+
+    const newUserHikesAfter = (
+      await testService.repo(UserHike).findBy({
         hikeId: hike.id,
-      })).map(userHike => ({notification: userHike.weatherNotified, userHikeId: userHike.id}));
-      
-      newUserHikesAfter.forEach((notification) => {
-        if(notification.userHikeId === userHike2.id) 
-          expect(notification.notification).toBe(false);
-        else 
-          expect(notification.notification).toBe(true)
-      });      
+      })
+    ).map((userHike) => ({
+      notification: userHike.weatherNotified,
+      userHikeId: userHike.id,
+    }));
+
+    newUserHikesAfter.forEach((notification) => {
+      if (notification.userHikeId === userHike2.id)
+        expect(notification.notification).toBe(false);
+      else expect(notification.notification).toBe(true);
+    });
   });
 
-  it("Should update weather condition of hikes in a specified area and their flags in the user-hike table", async () => {
-  
-    const {hike, platformManager, localGuide, hiker} = await setup();
+  it('Should update weather condition of hikes in a specified area and their flags in the user-hike table', async () => {
+    const { hike, platformManager, localGuide, hiker } = await setup();
 
     //POINT CREATION
     const point1 = await testService.createPoint({
@@ -724,14 +732,14 @@ describe('Hikes (e2e)', () => {
     });
 
     // ================================================
-    
+
     //HIKE CREATION
     const hike2 = await testService.createHike({
-       userId: localGuide.id
+      userId: localGuide.id,
     });
 
     const hike3 = await testService.createHike({
-      userId: localGuide.id
+      userId: localGuide.id,
     });
 
     // ===============================================
@@ -739,68 +747,68 @@ describe('Hikes (e2e)', () => {
     //HIKEPOINT LINKING
     //Point1 Belongs to hike constant
     await testService.createHikePoint({
-        hikeId: hike.id,
-        pointId: point1.id,
-        index: 0
+      hikeId: hike.id,
+      pointId: point1.id,
+      index: 0,
     });
 
     //Point2 Belongs to hike2 constant
     await testService.createHikePoint({
-        hikeId: hike2.id,
-        pointId: point2.id,
-        index: 0
+      hikeId: hike2.id,
+      pointId: point2.id,
+      index: 0,
     });
 
     //Point3 Belongs to hike3 constant
     await testService.createHikePoint({
-        hikeId: hike3.id,
-        pointId: point3.id,
-        index: 0
+      hikeId: hike3.id,
+      pointId: point3.id,
+      index: 0,
     });
     // ===============================================
 
     //HIKER CREATION
     const hiker2 = await testService.createUser({
-      role: UserRole.hiker
+      role: UserRole.hiker,
     });
 
     const hiker3 = await testService.createUser({
-      role: UserRole.hiker
+      role: UserRole.hiker,
     });
 
     const hiker4 = await testService.createUser({
-      role: UserRole.hiker
+      role: UserRole.hiker,
     });
     // ===============================================
 
     //USERHIKES CREATION
-    
+
     //Hiker 1 started hike 1 (TO BE NOT NOTIFIED FOR DISTANCE)
     const userHike = await testService.createUserHike({
       userId: hiker.id,
       hikeId: hike.id,
-      weatherNotified: null
+      weatherNotified: null,
     });
 
     //Hiker 2 started hike 2 (TO BE NOT NOTIFIED BECAUSE FINISHED)
     const userHike2 = await testService.createUserHike({
       hikeId: hike2.id,
       userId: hiker2.id,
-      weatherNotified: null
+      weatherNotified: null,
     });
 
     //Hiker 3 started hike 2
     await testService.createUserHike({
       hikeId: hike2.id,
       userId: hiker3.id,
-      weatherNotified: null
+      weatherNotified: null,
     });
 
-    //Hiker 3 started hike 3 
+    //Hiker 3 started hike 3
     const userHike4 = await testService.createUserHike({
       hikeId: hike3.id,
       userId: hiker4.id,
-      weatherNotified: null
+      weatherNotified: null,
     });
 
     // ===============================================
@@ -812,7 +820,7 @@ describe('Hikes (e2e)', () => {
         radiusKms: 90,
       },
       weatherStatus: HikeWeather.dangerRain,
-      weatherDescription: "Heavy rains which can cause ground disruption"
+      weatherDescription: 'Heavy rains which can cause ground disruption',
     };
 
     await restService
@@ -822,90 +830,108 @@ describe('Hikes (e2e)', () => {
       .send(updateWeather)
       .expect(({ body }) => {
         expect(body.length).toBe(2);
-        for (const h of body){
+        for (const h of body) {
           expect(h.weatherStatus).toBe(HikeWeather.dangerRain);
-          expect(h.weatherDescription).toBe("Heavy rains which can cause ground disruption");
+          expect(h.weatherDescription).toBe(
+            'Heavy rains which can cause ground disruption',
+          );
         }
       });
 
-      // =============================================
+    // =============================================
 
-      //From here is about notification flag
-      const newUserHikesBefore = (await testService.repo(UserHike).findBy({
-        hikeId: In([hike.id, hike2.id, hike3.id])
-      })).map(userHike => ({weatherNotified: userHike.weatherNotified, id: userHike.id}));
-
-      expect(newUserHikesBefore.length).toBe(4);
-
-      newUserHikesBefore.forEach((notification) => {
-        if(notification.id !== userHike.id)
-          expect(notification.weatherNotified).toBe(false)
-      });
-
-      //This is used to finish an hike and see that it popup is not shown anymore to that user
-      await testService.repo(UserHike).save({
-        id: userHike2.id,
-        finishedAt: new Date()
+    //From here is about notification flag
+    const newUserHikesBefore = (
+      await testService.repo(UserHike).findBy({
+        hikeId: In([hike.id, hike2.id, hike3.id]),
       })
+    ).map((userHike) => ({
+      weatherNotified: userHike.weatherNotified,
+      id: userHike.id,
+    }));
 
-      await restService
-        .build(app, hiker)
-        .request()
-        .get(`/hikes/popupSeen/${hike.id}`)
-        .expect(({body}) =>{
-          expect(body.message).toBe("You can't close a popup because there is not one related to: " + hike.id)
-        });
+    expect(newUserHikesBefore.length).toBe(4);
 
-      await restService
-        .build(app, hiker3)
-        .request()
-        .get(`/hikes/popupSeen/${hike2.id}`);
-      
-      const newUserHikesAfter = (await testService.repo(UserHike).findBy({
-        hikeId:  In([hike.id, hike2.id, hike3.id]),
-      })).map(userHike => ({notification: userHike.weatherNotified, userHikeId: userHike.id}));
-      
-      newUserHikesAfter.forEach((notification) => {
-        if(notification.userHikeId === userHike2.id || notification.userHikeId === userHike4.id) 
-          expect(notification.notification).toBe(false);
-        else if(notification.userHikeId === userHike.id)
-          expect(notification.notification).toBe(null);
-        else 
-          expect(notification.notification).toBe(true)
+    newUserHikesBefore.forEach((notification) => {
+      if (notification.id !== userHike.id)
+        expect(notification.weatherNotified).toBe(false);
+    });
+
+    //This is used to finish an hike and see that it popup is not shown anymore to that user
+    await testService.repo(UserHike).save({
+      id: userHike2.id,
+      finishedAt: new Date(),
+    });
+
+    await restService
+      .build(app, hiker)
+      .request()
+      .get(`/hikes/popupSeen/${hike.id}`)
+      .expect(({ body }) => {
+        expect(body.message).toBe(
+          "You can't close a popup because there is not one related to: " +
+            hike.id,
+        );
       });
 
-      await restService
-        .build(app, hiker4)
-        .request()
-        .get("/hikes/weather/flags")
-        .expect(({body}) => {
-          expect(body.length).toBe(1);
-          expect(body[0].hikeId).toBe(userHike4.hikeId);
-          expect(body[0].weatherStatus).toBe(HikeWeather.dangerRain);
-          expect(body[0].weatherDescription).toBe("Heavy rains which can cause ground disruption");
-        });
+    await restService
+      .build(app, hiker3)
+      .request()
+      .get(`/hikes/popupSeen/${hike2.id}`);
+
+    const newUserHikesAfter = (
+      await testService.repo(UserHike).findBy({
+        hikeId: In([hike.id, hike2.id, hike3.id]),
+      })
+    ).map((userHike) => ({
+      notification: userHike.weatherNotified,
+      userHikeId: userHike.id,
+    }));
+
+    newUserHikesAfter.forEach((notification) => {
+      if (
+        notification.userHikeId === userHike2.id ||
+        notification.userHikeId === userHike4.id
+      )
+        expect(notification.notification).toBe(false);
+      else if (notification.userHikeId === userHike.id)
+        expect(notification.notification).toBe(null);
+      else expect(notification.notification).toBe(true);
+    });
+
+    await restService
+      .build(app, hiker4)
+      .request()
+      .get('/hikes/weather/flags')
+      .expect(({ body }) => {
+        expect(body.length).toBe(1);
+        expect(body[0].hikeId).toBe(userHike4.hikeId);
+        expect(body[0].weatherStatus).toBe(HikeWeather.dangerRain);
+        expect(body[0].weatherDescription).toBe(
+          'Heavy rains which can cause ground disruption',
+        );
+      });
   });
 
-  it("Should test notification sending for unfinished hikes", async () => {
-  
-    const {hike, localGuide, hiker} = await setup();
-    
+  it('Should test notification sending for unfinished hikes', async () => {
+    const { hike, localGuide, hiker } = await setup();
+
     //HIKE CREATION
     const hike2 = await testService.createHike({
-       userId: localGuide.id,
-       expectedTime: 836
+      userId: localGuide.id,
+      expectedTime: 836,
     });
 
     // ===============================================
 
     //USERHIKES CREATION
-    
+
     //Hiker 1 started hike 1
     await testService.createUserHike({
       userId: hiker.id,
       hikeId: hike.id,
       weatherNotified: null,
-      unfinishedNotified: null
+      unfinishedNotified: null,
     });
 
     //Hiker 1 started hike 2
@@ -913,67 +939,71 @@ describe('Hikes (e2e)', () => {
       hikeId: hike2.id,
       userId: hiker.id,
       weatherNotified: null,
-      unfinishedNotified: null
+      unfinishedNotified: null,
     });
 
     // ===============================================
 
     //Test to compute the maximum time elapsed
     await restService
-    .build(app, hiker)
-    .request()
-    .get(`/hikes/maxElapsedTime/${hike.id}`)
-    .expect(200);
+      .build(app, hiker)
+      .request()
+      .get(`/hikes/maxElapsedTime/${hike.id}`)
+      .expect(200);
 
     await restService
-    .build(app, hiker)
-    .request()
-    .get(`/hikes/maxElapsedTime/${hike2.id}`)
-    .expect(200);
+      .build(app, hiker)
+      .request()
+      .get(`/hikes/maxElapsedTime/${hike2.id}`)
+      .expect(200);
 
-    const maxElapsedTimeDouble = (await testService.repo(UserHike).findBy({
-      hikeId: hike.id,
-      finishedAt: IsNull(),
-      userId: hiker.id
-    }))[0].maxElapsedTime;
+    const maxElapsedTimeDouble = (
+      await testService.repo(UserHike).findBy({
+        hikeId: hike.id,
+        finishedAt: IsNull(),
+        userId: hiker.id,
+      })
+    )[0].maxElapsedTime;
 
-    const maxElapsedTimeDoubleHike2 = (await testService.repo(UserHike).findBy({
-      hikeId: hike2.id,
-      finishedAt: IsNull(),
-      userId: hiker.id
-    }))[0].maxElapsedTime;
+    const maxElapsedTimeDoubleHike2 = (
+      await testService.repo(UserHike).findBy({
+        hikeId: hike2.id,
+        finishedAt: IsNull(),
+        userId: hiker.id,
+      })
+    )[0].maxElapsedTime;
 
-    expect(maxElapsedTimeDouble?.toISOString()).toBe("P0Y0M0DT0H0M0S")    
-    expect(maxElapsedTimeDoubleHike2?.toISOString()).toBe("P0Y0M1DT3H52M0S")
+    expect(maxElapsedTimeDouble?.toISOString()).toBe('P0Y0M0DT0H0M0S');
+    expect(maxElapsedTimeDoubleHike2?.toISOString()).toBe('P0Y0M1DT3H52M0S');
 
     // ==============================================
     //Test to see if the list is giving the correct hikeIds of unfinished Hikes
     await restService
-    .build(app, hiker)
-    .request()
-    .get(`/hikes/unfinished/popupsList`)
-    .expect(200)
-    .expect(({body}) => {
-      expect(body).toEqual([1])
-    })
+      .build(app, hiker)
+      .request()
+      .get(`/hikes/unfinished/popupsList`)
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toEqual([1]);
+      });
 
     // =============================================
     //Test to see if closing the popup affect previous list
 
     await restService
-    .build(app, hiker)
-    .request()
-    .get(`/hikes/unfinished/popupSeen/${hike.id}`)
-    .expect(200)
-    .expect(({body}) => {
-      expect(body).toEqual([])
-    })
+      .build(app, hiker)
+      .request()
+      .get(`/hikes/unfinished/popupSeen/${hike.id}`)
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toEqual([]);
+      });
 
     await restService
-    .build(app, hiker)
-    .request()
-    .get(`/hikes/unfinished/popupSeen/${hike2.id}`)
-    .expect(400)
+      .build(app, hiker)
+      .request()
+      .get(`/hikes/unfinished/popupSeen/${hike2.id}`)
+      .expect(400);
   });
 
   it('should upload hike pictures', async () => {
