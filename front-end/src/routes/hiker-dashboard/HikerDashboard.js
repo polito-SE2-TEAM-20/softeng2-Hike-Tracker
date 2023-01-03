@@ -155,7 +155,7 @@ const HikerDashboard = (props) => {
     }, [updateError])
 
     const handleNavigatePerformaces = () => {
-        navigate("/performances")
+        navigate("/hikerPerformance")
     }
 
     return (
