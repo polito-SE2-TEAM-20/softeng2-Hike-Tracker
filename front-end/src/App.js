@@ -40,6 +40,7 @@ import HTNavbar from './components/HTNavbar/HTNavbar';
 import TestPage from './routes/test-page/TestPage';
 import WeatherAlertHikeEditStatus from './routes/new-weather-alert-hike/WeatherAlertHikeEditStatus';
 import FriendTracking from './routes/friend-tracking/FriendTracking';
+import Unauthorized from './routes/unauthorized/Unauthorized';
 
 function App() {
   return (
@@ -165,7 +166,7 @@ function App2() {
         <Route path="/weather-status-edit/:hikeID" element={<WeatherAlertHikeEditStatus />} />
         <Route path="/friend-tracking/:hikeID" element={<FriendTracking />} />
         <Route path="/savedhikes" element={<SavedHikes user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
-
+        <Route path="/unauthorized" element={<Unauthorized />} />
       </Routes>
     </>
   );
