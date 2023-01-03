@@ -28,6 +28,7 @@ describe('Users Preferences (e2e)', () => {
     });
     const hike = await testService.createHike({ userId: localGuide.id });
     const hikeTwo = await testService.createHike({ userId: localGuide.id });
+    const hikeThree = await testService.createHike({ userId: localGuide.id })
 
     const points = await mapArray(10, (i) =>
       testService.createPoint({
@@ -64,8 +65,10 @@ describe('Users Preferences (e2e)', () => {
       user,
       hike,
       hikeTwo,
+      hikeThree,
       points,
       randomPoints,
+      localGuide
     };
   };
 
@@ -254,4 +257,260 @@ describe('Users Preferences (e2e)', () => {
         ]);
       });
   });
+
+  it('should add multiple hikes to the planned ones', async () => {
+    const { user, hike, hikeTwo, hikeThree, localGuide } = await setup();
+
+    const plannedHikes = {
+      plannedHikes: [hike.id,hikeTwo.id,hikeThree.id]
+    }
+
+    await restService
+    .build(app, user)
+    .request()
+    .post('/me/set_planned_hikes')
+    .send(plannedHikes)
+    .expect(201)
+    .expect(({ body }) => {
+      expect(body).toMatchObject([{
+            "id": hike.id,
+            "userId": localGuide.id,
+            "length": 0,
+            "expectedTime": 0,
+            "ascent": 0,
+            "distance": 0,
+            "difficulty": 0,
+            "condition": 0,
+            "weatherStatus": 0,
+            "weatherDescription": "",
+            "cause": "",
+            "title": "",
+            "description": "",
+            "gpxPath": null,
+            "region": "",
+            "province": "",
+            "city": "",
+            "country": "",
+            "pictures": []
+          },
+        {
+          "id": hikeTwo.id,
+          "userId": localGuide.id,
+          "length": 0,
+          "expectedTime": 0,
+          "ascent": 0,
+          "distance": 0,
+          "difficulty": 0,
+          "condition": 0,
+          "weatherStatus": 0,
+          "weatherDescription": "",
+          "cause": "",
+          "title": "",
+          "description": "",
+          "gpxPath": null,
+          "region": "",
+          "province": "",
+          "city": "",
+          "country": "",
+          "pictures": []
+        },
+      {
+        "id": hikeThree.id,
+        "userId": localGuide.id,
+        "length": 0,
+        "expectedTime": 0,
+        "ascent": 0,
+        "distance": 0,
+        "difficulty": 0,
+        "condition": 0,
+        "weatherStatus": 0,
+        "weatherDescription": "",
+        "cause": "",
+        "title": "",
+        "description": "",
+        "gpxPath": null,
+        "region": "",
+        "province": "",
+        "city": "",
+        "country": "",
+        "pictures": []
+      }]);
+    });
+  });
+
+  it('should return error 422 because the hike does not exist', async () => {
+    const { user, hike, hikeTwo } = await setup();
+
+    const plannedHikes = {
+      plannedHikes: [hike.id,hikeTwo.id,7]
+    }
+
+    await restService
+    .build(app, user)
+    .request()
+    .post('/me/set_planned_hikes')
+    .send(plannedHikes)
+    .expect(422)
+    
+  });
+
+  it('should get all the planned hikes', async () => {
+    const { user, hike, hikeTwo, localGuide } = await setup();
+
+    const plannedHikes = {
+      plannedHikes: [hike.id,hikeTwo.id]
+    }
+
+    await restService
+    .build(app, user)
+    .request()
+    .post('/me/set_planned_hikes')
+    .send(plannedHikes)
+    .expect(201)
+
+    await restService
+    .build(app, user)
+    .request()
+    .get('/me/planned_hikes') 
+    .expect(200)
+    .expect(({ body }) => {
+      expect(body).toMatchObject([{
+            "id": hike.id,
+            "userId": localGuide.id,
+            "length": 0,
+            "expectedTime": 0,
+            "ascent": 0,
+            "distance": 0,
+            "difficulty": 0,
+            "condition": 0,
+            "weatherStatus": 0,
+            "weatherDescription": "",
+            "cause": "",
+            "title": "",
+            "description": "",
+            "gpxPath": null,
+            "region": "",
+            "province": "",
+            "city": "",
+            "country": "",
+            "pictures": []
+          },
+        {
+          "id": hikeTwo.id,
+          "userId": localGuide.id,
+          "length": 0,
+          "expectedTime": 0,
+          "ascent": 0,
+          "distance": 0,
+          "difficulty": 0,
+          "condition": 0,
+          "weatherStatus": 0,
+          "weatherDescription": "",
+          "cause": "",
+          "title": "",
+          "description": "",
+          "gpxPath": null,
+          "region": "",
+          "province": "",
+          "city": "",
+          "country": "",
+          "pictures": []
+        },
+      ]);
+    });  
+  });
+
+  it('should return error 404 because there are no planned hikes', async () => {
+    const { user } = await setup();
+
+    await restService
+    .build(app, user)
+    .request()
+    .get('/me/planned_hikes')
+    .expect(404)
+    
+  });
+
+  it('should delete two hikes from the planned hikes', async () => {
+    const { user, hike, hikeTwo, hikeThree, localGuide } = await setup();
+
+    const plannedHikes = {
+      plannedHikes: [hike.id,hikeTwo.id,hikeThree.id]
+    }
+
+    const removeHikes = {
+      plannedHikes: [hike.id, hikeThree.id]
+    }
+
+    await restService
+    .build(app, user)
+    .request()
+    .post('/me/set_planned_hikes')
+    .send(plannedHikes)
+    .expect(201)
+
+    await restService
+    .build(app, user)
+    .request()
+    .delete('/me/planned_hikes')
+    .send(removeHikes)
+    .expect(204)
+    
+
+    await restService
+    .build(app, user)
+    .request()
+    .get('/me/planned_hikes') 
+    .expect(200)
+    .expect(({ body }) => {
+      expect(body).toMatchObject([{
+            "id": hikeTwo.id,
+            "userId": localGuide.id,
+            "length": 0,
+            "expectedTime": 0,
+            "ascent": 0,
+            "distance": 0,
+            "difficulty": 0,
+            "condition": 0,
+            "weatherStatus": 0,
+            "weatherDescription": "",
+            "cause": "",
+            "title": "",
+            "description": "",
+            "gpxPath": null,
+            "region": "",
+            "province": "",
+            "city": "",
+            "country": "",
+            "pictures": []
+          }]);
+    });  
+  });
+
+  it('should return error 422 because you have not planned the hike you want to remove', async () => {
+    const { user, hike, hikeTwo, hikeThree } = await setup();
+
+    const plannedHikes = {
+      plannedHikes: [hike.id,hikeTwo.id,hikeThree.id]
+    }
+
+    const removeHikes = {
+      plannedHikes: [hike.id, 18]
+    }
+
+    await restService
+    .build(app, user)
+    .request()
+    .post('/me/set_planned_hikes')
+    .send(plannedHikes)
+    .expect(201)
+
+    await restService
+    .build(app, user)
+    .request()
+    .delete('/me/planned_hikes')
+    .send(removeHikes)
+    .expect(422)  
+  });
+
 });
