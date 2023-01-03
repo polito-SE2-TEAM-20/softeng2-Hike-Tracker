@@ -109,21 +109,14 @@ export class UsersService extends BaseService<User> {
 
     if (user === null) throw new HttpException("User doesn't exists", 422);
 
-    console.log(body.plannedHikes)
-    console.log(user.plannedHikes)
-
     const isPlannedHike = body.plannedHikes!.every((ph) => {
       return user!.plannedHikes.includes(ph)
     }) 
     if(!isPlannedHike) throw new HttpException("An hike you want to delete was not planned by the user", 422); 
 
-    console.log(isPlannedHike)
-
     const newPlannedHikes = user.plannedHikes.filter((ph) => {
       return body.plannedHikes!.every((uph) =>  {return ph !== uph} )
     }) 
-
-    console.log(newPlannedHikes)
 
     user = await this.usersRepository.save({
       ...user,
