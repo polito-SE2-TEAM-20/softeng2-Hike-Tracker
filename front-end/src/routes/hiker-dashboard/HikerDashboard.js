@@ -13,7 +13,6 @@ import API from '../../API/API'
 import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours'
 import { styled } from '@mui/material/styles';
 import { BEGINNER, ADVANCED } from '../../lib/common/PreferencesConstants'
-import WeatherCard from "../../components/weather-card/WeatherCard";
 import QueryStatsIcon from '@mui/icons-material/QueryStats';
 
 const PerformacesButton = (props) => {
@@ -41,10 +40,6 @@ const PerformacesButton = (props) => {
 
 const HikerDashboard = (props) => {
     const navigate = useNavigate()
-    const gotoLogin = () => {
-        navigate("/login", { replace: false })
-    }
-
     const [updateFinished, setUpdateFinished] = useState(false)
     const [updateError, setUpdateError] = useState(false)
     const [position, setPosition] = useState({ 'lat': 45.0651752130794, 'lon': 7.661497396350511 })
@@ -96,7 +91,7 @@ const HikerDashboard = (props) => {
             "difficultyMax": difficulty + (!suggestionType ? BEGINNER : ADVANCED).difficultyOffset,
             "ascentMin": ascent,
             "ascentMax": ascent + (!suggestionType ? BEGINNER : ADVANCED).ascentOffset,
-            'suggestionType': !suggestionType
+            'suggestionType': suggestionType
         }
         const setPreferences = async () => {
             await API.setPreferences(prefFilter)
@@ -333,7 +328,10 @@ const HikerDashboard = (props) => {
                                 <b>There's been an error with your preferences. Check fields value.</b>
                             </Typography>
                         </div> : <></>}
-                        <FormControlLabel control={<MaterialUISwitch onChange={e => { setSuggestionType(!suggestionType) }} defaultChecked />} label={!suggestionType ? "Beginner" : "Advanced"} />
+                        {
+                            console.log(suggestionType)
+                        }
+                        <FormControlLabel control={<MaterialUISwitch onChange={e => { setSuggestionType(!suggestionType) }} checked={suggestionType} />} label={!suggestionType ? "Beginner" : "Advanced"} />
                         <Button variant="filled"
                             onClick={handlePreferencesUpdate}
                             sx={{
