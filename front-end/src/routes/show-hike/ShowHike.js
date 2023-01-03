@@ -25,7 +25,7 @@ const Difficulty = (props) => {
                     props.diff === 0 ?
                         <>
                             <img src={touristIcon} alt="tourist" width="30px" height="30px" />
-                            <div style={{ backgroundColor: "#55B657", color: "white", borderRadius: "8px", paddingLeft: "12px", paddingTop: "3px", paddingBottom: "3px", paddingRight: "12px", width: "fit-content", display: "inline-block", marginLeft: "8px" }}><b>Tourist</b></div>
+                            <div style={{ backgroundColor: "#55B657", color: "white", borderRadius: "8px", paddingLeft: "12px", paddingTop: "3px", paddingBottom: "3px", paddingRight: "12px", width: "fit-content", display: "inline-block", marginLeft: "8px", fontFamily: "Unbounded" }}><b>Tourist</b></div>
                         </>
                         : <></>
                 }
@@ -33,7 +33,7 @@ const Difficulty = (props) => {
                     props.diff === 1 ?
                         <>
                             <img src={hikerIcon} alt="tourist" width="30px" height="30px" />
-                            <div style={{ backgroundColor: "#1a79aa", color: "white", borderRadius: "8px", paddingLeft: "12px", paddingTop: "3px", paddingBottom: "3px", paddingRight: "12px", width: "fit-content", display: "inline-block", marginLeft: "8px" }}><b>Hiker</b></div>
+                            <div style={{ backgroundColor: "#1a79aa", color: "white", borderRadius: "8px", paddingLeft: "12px", paddingTop: "3px", paddingBottom: "3px", paddingRight: "12px", width: "fit-content", display: "inline-block", marginLeft: "8px", fontFamily: "Unbounded" }}><b>Hiker</b></div>
                         </>
                         : <></>
 
@@ -42,7 +42,7 @@ const Difficulty = (props) => {
                     props.diff === 2 ?
                         <>
                             <img src={proIcon} alt="tourist" width="30px" height="30px" />
-                            <div style={{ backgroundColor: "#FA6952", color: "white", borderRadius: "8px", paddingLeft: "12px", paddingTop: "3px", paddingBottom: "3px", paddingRight: "12px", width: "fit-content", display: "inline-block", marginLeft: "8px" }}><b>Pro</b></div>
+                            <div style={{ backgroundColor: "#FA6952", color: "white", borderRadius: "8px", paddingLeft: "12px", paddingTop: "3px", paddingBottom: "3px", paddingRight: "12px", width: "fit-content", display: "inline-block", marginLeft: "8px", fontFamily: "Unbounded" }}><b>Pro</b></div>
                         </>
                         : <></>
 
