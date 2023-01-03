@@ -16,8 +16,6 @@ export class TrackPointDto {
 }
 
 export class UserHikeReferenceDto {
-
   @IsIdentifier()
   pointId!: ID;
-  
 }

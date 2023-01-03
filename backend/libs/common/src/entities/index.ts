@@ -1,14 +1,14 @@
+import { CodeHike } from './code-hike.entity';
 import { HikePoint } from './hike-point.entity';
 import { Hike } from './hike.entity';
 import { HutWorker } from './hut-worker.entity';
 import { Hut } from './hut.entity';
 import { ParkingLot } from './parking-lot.entity';
 import { Point } from './point.entity';
+import { UserHikeReference } from './user-hike-reference.entity';
 import { UserHikeTrackPoint } from './user-hike-track-point.entity';
 import { UserHike } from './user-hike.entity';
 import { User } from './user.entity';
-import { CodeHike } from './code-hike.entity';
-import { UserHikeReference } from './user-hike-reference.entity';
 
 export * from './user.entity';
 export * from './hike-point.entity';
@@ -33,5 +33,5 @@ export const entities = [
   UserHike,
   UserHikeTrackPoint,
   CodeHike,
-  UserHikeReference
+  UserHikeReference,
 ];
