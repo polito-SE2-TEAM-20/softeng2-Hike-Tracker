@@ -1,6 +1,5 @@
-import { Button, Grid, TextField, Typography, Switch, FormControlLabel } from "@mui/material";
+import { Button, Grid, TextField, Typography, Switch, FormControlLabel, FormGroup, Checkbox } from "@mui/material";
 import { useNavigate } from "react-router";
-import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import { displayTypeFlex } from "../../extra/DisplayType";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import './hiker-dashboard-style.css'
@@ -14,13 +13,33 @@ import API from '../../API/API'
 import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours'
 import { styled } from '@mui/material/styles';
 import { BEGINNER, ADVANCED } from '../../lib/common/PreferencesConstants'
+import QueryStatsIcon from '@mui/icons-material/QueryStats';
+
+const PerformacesButton = (props) => {
+    return (
+        <Grid container item xs={7} sm={7} md={7} lg={12} xl={12} sx={{
+            borderStyle: "solid", borderWidth: "1px", borderRadius: "24px 0px 12px 0px", borderColor: "#4c4c4c",
+            width: "fit-content", height: "fit-content", marginBottom: "8px", "&:hover": {
+                backgroundColor: "#f5f5f5", borderColor: "purple", color: "purple"
+            }
+        }}
+            onClick={props.handleNavigatePerformaces}
+        >
+            <Grid item sx={{ marginTop: "5px", marginBottom: "5px", marginLeft: "24px", marginRight: "24px" }}>
+                <Grid item sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <QueryStatsIcon />
+                    {/* <img src={QueryStatsIcon} alt="weatherMap" width="30px" height="auto" /> */}
+                    <Typography className="unselectable" sx={{ fontFamily: "Unbounded", marginLeft: "12px" }} fontSize={16} textAlign="left">
+                        Performances
+                    </Typography>
+                </Grid>
+            </Grid>
+        </Grid>
+    )
+}
 
 const HikerDashboard = (props) => {
     const navigate = useNavigate()
-    const gotoLogin = () => {
-        navigate("/login", { replace: false })
-    }
-
     const [updateFinished, setUpdateFinished] = useState(false)
     const [updateError, setUpdateError] = useState(false)
     const [position, setPosition] = useState({ 'lat': 45.0651752130794, 'lon': 7.661497396350511 })
@@ -30,6 +49,13 @@ const HikerDashboard = (props) => {
     const [difficulty, setDifficulty] = useState(0)
     const [ascent, setAscent] = useState(0.0)
     const [suggestionType, setSuggestionType] = useState(false)
+
+    const [isStartingPoint, setIsStartingPoint] = useState(false)
+    const [isRadius, setIsRadius] = useState(false)
+    const [isLength, setIsLength] = useState(false)
+    const [isExpectedTime, setIsExpectedTime] = useState(false)
+    const [isDifficulty, setIsDifficulty] = useState(false)
+    const [isAscent, setIsAscent] = useState(false)
 
     const positionStatic = position
     const radiusStatic = radius
@@ -72,9 +98,37 @@ const HikerDashboard = (props) => {
             "difficultyMax": difficulty + (!suggestionType ? BEGINNER : ADVANCED).difficultyOffset,
             "ascentMin": ascent,
             "ascentMax": ascent + (!suggestionType ? BEGINNER : ADVANCED).ascentOffset,
-            'suggestionType': !suggestionType
+            'suggestionType': suggestionType
         }
+
+        const preFilter = () => {
+            if(!isStartingPoint) {
+                prefFilter.lat = null
+                prefFilter.lon = null
+            }
+            if(!isRadius) {
+                prefFilter.radiusKms = null
+            }
+            if(!isLength) {
+                prefFilter.minLength = null
+                prefFilter.maxLength = null
+            }
+            if(!isExpectedTime) {
+                prefFilter.expectedTimeMin = null
+                prefFilter.expectedTimeMax = null
+            }
+            if(!isDifficulty) {
+                prefFilter.difficultyMin = null
+                prefFilter.difficultyMax = null
+            }
+            if(!isAscent) {
+                prefFilter.ascentMin = null
+                prefFilter.ascentMax = null
+            }
+        }
+
         const setPreferences = async () => {
+            preFilter()
             await API.setPreferences(prefFilter)
         }
         setPreferences().then(() => {
@@ -99,6 +153,10 @@ const HikerDashboard = (props) => {
                 setUpdateError(false)
         }, 3000);
     }, [updateError])
+
+    const handleNavigatePerformaces = () => {
+        navigate("/hikerPerformance")
+    }
 
     return (
         <>
@@ -136,6 +194,9 @@ const HikerDashboard = (props) => {
                                 {props?.user?.role === 5 ? "Emergency operator" : ""}
                             </b>
                         </Typography>
+                    </Grid>
+                    <Grid container item md={10} height="fit-content" sx={{ justifyContent: "center", marginTop: "18px", marginBottom: "18px" }}>
+                        <PerformacesButton handleNavigatePerformaces={handleNavigatePerformaces} />
                     </Grid>
                 </Grid>
                 <Grid container item lg={6} xl={6} height="fit-content" justifyContent="center" sx={{ marginLeft: "25px" }}>
@@ -291,6 +352,19 @@ const HikerDashboard = (props) => {
                             </AccordionDetails>
                         </Accordion>
                     </Grid>
+                    <Grid item sx={{marginTop: "24px"}}>
+                        <Typography sx={{fontSize: "20px"}}>
+                            <b>Select which parameters you want us to consider while suggesting you the best hikes based on your preferences.</b>
+                        </Typography>
+                        <FormGroup>
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsStartingPoint(!isStartingPoint)}} checked={isStartingPoint} />} label="Starting point" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsRadius(!isRadius)}} checked={isRadius} />} label="Radius" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsLength(!isLength)}} checked={isLength} />} label="Length" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsExpectedTime(!isExpectedTime)}} checked={isExpectedTime} />} label="Expected time" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsDifficulty(!isDifficulty)}} checked={isDifficulty} />} label="Difficulty" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsAscent(!isAscent)}} checked={isAscent} />} label="Ascent" />
+                        </FormGroup>
+                    </Grid>
                     <Grid item lg={12} xl={12} sx={{ marginTop: "28px", display: "flex", justifyContent: "right" }}>
                         {updateFinished ? <div style={{ marginRight: "25px" }}>
                             <Typography className="unselectable" sx={{ fontSize: "18px" }}>
@@ -302,7 +376,7 @@ const HikerDashboard = (props) => {
                                 <b>There's been an error with your preferences. Check fields value.</b>
                             </Typography>
                         </div> : <></>}
-                        <FormControlLabel control={<MaterialUISwitch onChange={e => { setSuggestionType(!suggestionType) }} defaultChecked />} label={!suggestionType ? "Beginner" : "Advanced"} />
+                        <FormControlLabel control={<MaterialUISwitch onChange={e => { setSuggestionType(!suggestionType) }} checked={suggestionType} />} label={!suggestionType ? "Beginner" : "Advanced"} />
                         <Button variant="filled"
                             onClick={handlePreferencesUpdate}
                             sx={{
@@ -504,6 +578,19 @@ const HikerDashboard = (props) => {
                                 }} variant="outlined" label="Ascent" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
+                    </Grid>
+                    <Grid item sx={{marginTop: "24px"}}>
+                        <Typography sx={{fontSize: "20px"}}>
+                            <b>Select which parameters you want us to consider while suggesting you the best hikes based on your preferences.</b>
+                        </Typography>
+                        <FormGroup>
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsStartingPoint(!isStartingPoint)}} checked={isStartingPoint} />} label="Starting point" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsRadius(!isRadius)}} checked={isRadius} />} label="Radius" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsLength(!isLength)}} checked={isLength} />} label="Length" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsExpectedTime(!isExpectedTime)}} checked={isExpectedTime} />} label="Expected time" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsDifficulty(!isDifficulty)}} checked={isDifficulty} />} label="Difficulty" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsAscent(!isAscent)}} checked={isAscent} />} label="Ascent" />
+                        </FormGroup>
                     </Grid>
                     <Grid item xs={12} sx={{ marginTop: "28px", display: "flex", justifyContent: "right" }}>
                         {updateFinished ? <div style={{ marginRight: "25px" }}>
@@ -718,6 +805,19 @@ const HikerDashboard = (props) => {
                                 }} variant="outlined" label="Ascent" sx={{ width: "100%" }} />
                             </AccordionDetails>
                         </Accordion>
+                    </Grid>
+                    <Grid item sx={{marginTop: "24px"}}>
+                        <Typography sx={{fontSize: "20px"}}>
+                            <b>Select which parameters you want us to consider while suggesting you the best hikes based on your preferences.</b>
+                        </Typography>
+                        <FormGroup>
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsStartingPoint(!isStartingPoint)}} checked={isStartingPoint} />} label="Starting point" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsRadius(!isRadius)}} checked={isRadius} />} label="Radius" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsLength(!isLength)}} checked={isLength} />} label="Length" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsExpectedTime(!isExpectedTime)}} checked={isExpectedTime} />} label="Expected time" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsDifficulty(!isDifficulty)}} checked={isDifficulty} />} label="Difficulty" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsAscent(!isAscent)}} checked={isAscent} />} label="Ascent" />
+                        </FormGroup>
                     </Grid>
                     <Grid item xs={12} sm={12} sx={{ marginTop: "28px", display: "flex", justifyContent: "right" }}>
                         {updateFinished ? <div style={{ marginRight: "25px" }}>

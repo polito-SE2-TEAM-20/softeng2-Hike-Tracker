@@ -21,6 +21,7 @@ import { HikeCondition } from './routes/my-huts/HikeConditionC';
 import WeatherAlertHike from './routes/new-weather-alert-hike/WeatherAlertHike';
 import WeatherAlertMap from './routes/new-weather-alert-map/WeatherAlertMap';
 import HikerPerformance from './routes/hiker-performance/HikerPerformance';
+import SavedHikes from './routes/saved-hikes/SavedHikes';
 
 
 import API from './API/API';
@@ -40,6 +41,7 @@ import { HikerHikesPage } from './routes/HikerHikes/HikerHikesPage';
 import TestPage from './routes/test-page/TestPage';
 import WeatherAlertHikeEditStatus from './routes/new-weather-alert-hike/WeatherAlertHikeEditStatus';
 import FriendTracking from './routes/friend-tracking/FriendTracking';
+import Unauthorized from './routes/unauthorized/Unauthorized';
 
 function App() {
   return (
@@ -167,6 +169,8 @@ function App2() {
         <Route path="/test-page" element={<TestPage />} />
         <Route path="/weather-status-edit/:hikeID" element={<WeatherAlertHikeEditStatus />} />
         <Route path="/friend-tracking/:hikeID" element={<FriendTracking />} />
+        <Route path="/savedhikes" element={<SavedHikes user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
       </Routes>
     </>
   );

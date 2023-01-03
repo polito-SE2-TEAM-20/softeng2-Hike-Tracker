@@ -114,7 +114,7 @@ function NewParking(props) {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Grid container spacing={0} sx={{ backgroundImage: `url(${login})`, minHeight: "100vh", height: "100%", minWidth: "100vw", width: "100%" }}>
-        <Container component="main" maxWidth="sm" sx={{ mb: 4, mt: 1 }}>
+        <Container component="main"  sx={{ mb: 4, mt: 1 }}>
           <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }} >
             <Typography component="h1" variant="h4" align="center">
               ADD A NEW PARKING LOT

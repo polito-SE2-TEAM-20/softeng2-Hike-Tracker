@@ -26,10 +26,26 @@ const HikerPerformance = (props) => {
     }, [])
 
     return (
+        <>
+                <Grid container item height="fit-content" justifyContent="center" sx={{ marginLeft: "25px", marginRight: "25px", marginTop: "25px"}}>
 
+        <Grid style={{justifyContent:"center"}}>
+                        <Typography fontSize={32}>
+                            <b>Some stats based on your finished hikes</b>
+                        </Typography>
+                    </Grid>
+                    <Grid lg={12} xl={12}>
+                        <Typography fontSize={14} color="#555555">
+                            
+                        </Typography>
+                    </Grid>
+        </Grid>
         <Grid container style={{justifyContent:"center"}}>
+            
             <Grid item lg={9} style={{justifyContent:"center"}}>
+            
                 <Grid container columns={10} style={{ marginTop: "25px", display: "flex", justifyContent: "center" }}>
+                
 {
     !loading?
     (
@@ -232,6 +248,7 @@ const HikerPerformance = (props) => {
                 </Grid>
             </Grid>
         </Grid>
+        </>
     );
 
 

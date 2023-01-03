@@ -1021,8 +1021,57 @@ const getHikeByFriendCode = async (code) => {
 
     if (response.ok) {
         return await response.json()
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
     }
-    else {
+}
+
+const userGetReferencePointsReached = async () => {
+    const response = await fetch((APIURL + "/user-hikes/reached-points"), {
+        method: "GET",
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        }
+    })
+    if (response.ok) {
+        return await response.json()
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const userUpdateReferencePointReached = async (request) => {
+    const response = await fetch((APIURL + "/user-hikes/reach-point"), {
+        method: "POST",
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+        body: JSON.stringify({ pointId: request.pointId })
+    })
+
+    if (response.ok) {
+        return true
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const friendGetReferencePointsReached = async (request) => {
+    const response = await fetch((APIURL + "/friends/reached-points/" + request.pointID), {
+        method: "GET",
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        }
+    })
+    if (response.ok) {
+        return await response.json()
+    } else {
         const errDetail = await response.json();
         throw errDetail.message;
     }
@@ -1046,6 +1095,6 @@ const API = {
     getUserHikeTrackingDetails, getAllUserTrackingHikes,
     //#endregion
     setHutPictures, modifyHutPictures, getHikesBasedOnPreferences, updateWeatherSingleHike, updateWeatherMap,
-    requestNewCode, getHikeByFriendCode
+    requestNewCode, getHikeByFriendCode, userGetReferencePointsReached, userUpdateReferencePointReached, friendGetReferencePointsReached
 }
 export default API
