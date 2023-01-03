@@ -1077,6 +1077,67 @@ const friendGetReferencePointsReached = async (request) => {
     }
 }
 
+async function setPlannedHikes(hikeIds) {
+    let response = await fetch((APIURL + '/me/set_planned_hikes'), {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+
+        },
+        body: JSON.stringify({plannedHikes : [hikeIds]})
+
+    });
+    if (response.ok) {
+        const listOfPlannedHikes = await response.json();
+        return listOfPlannedHikes
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const getPlannedHikes = async () => {
+    const response = await fetch((APIURL + "/me/planned_hikes"), {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+        
+    })
+
+    if (response.ok) {
+        const plannedHikes = response.json()
+        return plannedHikes;
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+
+const deletePlannedHike = async (hikeID) => {
+    const response = await fetch((APIURL + '/me/planned_hikes'), {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({plannedHikes : [hikeID]})
+
+    })
+    if (response.ok) {
+
+        const planned_hikes = await response.json();
+        return planned_hikes;
+    } else {
+        const errDetail = await response.json()
+        throw errDetail.message
+    }
+}
+
+
+
 const API = {
     getListOfHikes, getListOfGPXFiles, getPathByID,
     getHikeByListOfPaths, getFilteredListOfHikes, getHikePathByHike,
@@ -1090,6 +1151,8 @@ const API = {
     updateHikeCondition,
     setHikePictures, getPerformanceStats, getUnfinishedHikes, getHikesMaximumElapsedTime,
     getUnfinishedHikesPopupSeen,
+    //plan an hike
+    setPlannedHikes, getPlannedHikes, deletePlannedHike,
     //#region Export HikeTraking APIs
     startTracingkHike, addPointToTracingkHike, stopTrackingHike,
     getUserHikeTrackingDetails, getAllUserTrackingHikes,

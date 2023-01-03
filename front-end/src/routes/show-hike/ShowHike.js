@@ -69,6 +69,12 @@ const ShowHike = (props) => {
     const [showStartTrackError, setShowStartTrackError] = useState(false);
     const [errorStartTrack, setErrorStartTrack] = useState(null);
 
+    //states for message of saved hike
+     const [message, setMessage] = useState(null);
+     const [open, setOpen] = useState(false);
+     const [savedHikes, setSavedHikes] = useState({title: "", description: "", region: "", province: "", length: "", expectedTime: "", ascent: "", difficulty: "" })
+     const [loaded, setLoaded] = useState(false);
+
     useEffect(() => {
         let tmpHike = { title: "", description: "", region: "", province: "", length: "", expectedTime: "", ascent: "", difficulty: -1 }
 
@@ -88,7 +94,10 @@ const ShowHike = (props) => {
                 setLoading(false)
             })
         })
+
+
     }, [])
+
 
     const handleStartTrackHiking = () => {
         API.getAllUserTrackingHikes(UserHikeState.ACTIVE)
@@ -114,8 +123,38 @@ const ShowHike = (props) => {
         setShowStartTrackError(false)
     }
 
-    const handleSaveForLater = () => {
+    useEffect(()=>{
 
+        let savedHike = { title: "", description: "", region: "", province: "", length: "", expectedTime: "", ascent: "", difficulty: -1 }
+
+        const getSavedHikes = async () => {
+            savedHike = await API.getPlannedHikes();
+        }
+
+        getSavedHikes().then(()=>{
+            console.log("qui ci entra");
+            setLoaded(true);
+            setSavedHikes(savedHike);
+        })
+
+    }, [])
+
+    const handleSaveForLater = () => {
+        API.setPlannedHikes(hike.id)
+           .then((hikesPlanned) => {
+             setSavedHikes(hikesPlanned);
+             setMessage('Hikes correctly saved for later');
+             setOpen(true);
+           })
+           .catch((error)=>{
+            setMessage(error);
+            setOpen(true);
+           })
+    }
+
+    const closeMessageSavedHike = () => {
+        setMessage(null);
+        setOpen(false);
     }
 
     return (
@@ -230,8 +269,10 @@ const ShowHike = (props) => {
                         }
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} mt={3}>
+                        {console.log(loaded)}
                         {
-                            (props.user?.role === UserRoles.HIKER) &&
+                            (props.user?.role === UserRoles.HIKER) && (loaded===true) &&  (savedHikes.filter(el => el.id === hike.id).length!==0 || savedHikes.length===1) &&
+                            
                             <Fab
                                 variant="extended"
                                 size="medium"
@@ -299,6 +340,13 @@ const ShowHike = (props) => {
                     isOpen={showStartTrackError}
                     closeAction={closeStartTrackErrorAction} />
             }
+            {
+                <MessageSavedHike
+                    message={message}
+                    isOpen={open}
+                    closeAction={closeMessageSavedHike}
+                     />
+            }
         </Grid>
     );
 }
@@ -319,6 +367,36 @@ function ErrorDialog(props) {
                 props.message !== null &&
                 <>
                     <DialogTitle>{"Opppps!"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-slide-description">
+                            {props.message}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={props.closeAction}>OK!</Button>
+                    </DialogActions>
+                </>
+            }
+        </Dialog>
+    )
+}
+
+function MessageSavedHike(props) {
+    const Transition = React.forwardRef(function Transition(props, ref) {
+        return <Slide direction="up" ref={ref} {...props} />;
+    });
+
+    return (
+        <Dialog
+            open={props.isOpen}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={props.closeAction}
+            aria-describedby="alert-dialog-slide-description">
+            {
+                props.message !== null &&
+                <>
+                    <DialogTitle>{""}</DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-slide-description">
                             {props.message}
