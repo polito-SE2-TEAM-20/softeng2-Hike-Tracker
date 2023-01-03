@@ -107,9 +107,14 @@ const ShowHike = (props) => {
             })
     }
 
+
     const closeStartTrackErrorAction = () => {
         setErrorStartTrack(null)
         setShowStartTrackError(false)
+    }
+
+    const handleSaveForLater = () => {
+
     }
 
     return (
@@ -199,6 +204,22 @@ const ShowHike = (props) => {
                                 }}>
                                 <NavigationIcon />
                                 Start This Hike
+                            </Fab>
+                        }
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} mt={3}>
+                        {
+                            (props.user?.role === UserRoles.HIKER) &&
+                            <Fab
+                                variant="extended"
+                                size="medium"
+                                color="primary"
+                                aria-label="save-for-later"
+                                onClick={() => {
+                                    handleSaveForLater()
+                                }}>
+                                
+                                Save Hike For Later
                             </Fab>
                         }
                     </Grid>

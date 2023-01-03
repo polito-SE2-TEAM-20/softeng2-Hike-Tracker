@@ -44,6 +44,14 @@
           3,
           4
         ]
+      },
+      {
+        "title": "Saved hikes",
+        "URL": "/savedhikes",
+        "reqLogin": true,
+        "role": [
+          0
+        ]
       }
     ]
   },
