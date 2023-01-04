@@ -222,7 +222,7 @@ function TrackingHikePage(props) {
         })
         //check that we have sent this ref point before or not
         trackHike.trackPoints.forEach((item) => {
-            if (item.refPoint.id === refPoint.id) {
+            if (item.pointId === refPoint.id) {
                 hasProblem = true
             }
         })
