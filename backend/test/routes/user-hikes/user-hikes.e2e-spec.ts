@@ -410,4 +410,132 @@ describe('User Hikes (e2e)', () => {
         );
       });
   });
+
+  it('should set as reached a reference point for an hike', async () => {
+    const { userTwo, hike, points } = await setup();
+
+    await restService
+      .build(app, userTwo)
+      .request()
+      .post(`/user-hikes/start`)
+      .send({
+        hikeId: hike.id,
+      })
+      .expect(200)
+  
+      await restService
+      .build(app, userTwo)
+      .request()
+      .post(`/user-hikes/reach-point`)
+      .send({
+        pointId: points[0].id,
+      })
+      .expect(201)
+      .expect(({ body }) => {
+        expect(body).toMatchObject({
+            "id": points[0].id,
+            "type": points[0].type,
+            "position": {
+                "type": points[0].position?.type,
+                "coordinates": points[0].position?.coordinates
+            },
+            "address": points[0].address,
+            "name": points[0].name,
+            "altitude": points[0].altitude
+        });
+      });
+  });
+
+  it('should get bad request error because the point to track as reached is not a reference for this hike', async () => {
+    const { userTwo, hike, randomPoints } = await setup();
+
+    await restService
+      .build(app, userTwo)
+      .request()
+      .post(`/user-hikes/start`)
+      .send({
+        hikeId: hike.id,
+      })
+      .expect(200)
+  
+      await restService
+      .build(app, userTwo)
+      .request()
+      .post(`/user-hikes/reach-point`)
+      .send({
+        pointId: randomPoints[0].id,
+      })
+      .expect(400)
+  });
+
+  it('should get all reached reference points for the user', async () => {
+    const { userTwo, hike, points } = await setup();
+
+    await restService
+      .build(app, userTwo)
+      .request()
+      .post(`/user-hikes/start`)
+      .send({
+        hikeId: hike.id,
+      })
+      .expect(200)
+  
+      await restService
+      .build(app, userTwo)
+      .request()
+      .post(`/user-hikes/reach-point`)
+      .send({
+        pointId: points[0].id,
+      })
+      .expect(201)
+
+      await restService
+      .build(app, userTwo)
+      .request()
+      .post(`/user-hikes/reach-point`)
+      .send({
+        pointId: points[1].id,
+      })
+      .expect(201)
+
+      await restService
+      .build(app, userTwo)
+      .request()
+      .get(`/user-hikes/reached-points`)
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toMatchObject([{
+              "userHikeId": 2,
+              "pointId": {
+                "id": points[0].id,
+                "type": points[0].type,
+                "position": {
+                    "type": points[0].position?.type,
+                    "coordinates": points[0].position?.coordinates
+                },
+                "address": points[0].address,
+                "name": points[0].name,
+                "altitude": points[0].altitude
+              },
+              "datetime": expect.any(String)
+            },
+            {
+              "userHikeId": 2,
+              "pointId": {
+                "id": points[1].id,
+                "type": points[1].type,
+                "position": {
+                    "type": points[1].position?.type,
+                    "coordinates": points[1].position?.coordinates
+                },
+                "address": points[1].address,
+                "name": points[1].name,
+                "altitude": points[1].altitude
+              },
+              "datetime": expect.any(String)
+          }
+        ]);
+      });
+  });
+
 });

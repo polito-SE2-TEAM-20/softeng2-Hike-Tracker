@@ -1,5 +1,8 @@
 import {
     UserRole,
+    PointType,
+    latLonToGisPoint,
+    HikePoint
   } from '@app/common';
   import { finishTest } from '@app/testing';
   import {
@@ -7,12 +10,9 @@ import {
     prepareTestApp,
     prepareVars,
     strDate,
+    mapArray
   } from '@test/base';
 import { pick } from 'ramda';
-
-import { UserRole } from '@app/common';
-import { finishTest } from '@app/testing';
-import { anyId, prepareTestApp, prepareVars, strDate } from '@test/base';
 
 const pickCommon = (el: any) => ({
   ...pick(['id', 'userId']),
@@ -49,12 +49,34 @@ describe('Friends (e2e)', () => {
       hikeId: hike.id,
     });
 
+    const points = await mapArray(10, (i) =>
+    testService.createPoint({
+      address: `${i}th street`,
+      position: latLonToGisPoint({
+        lat: 49 + 1 * Math.sin(i),
+        lon: 128 - 1 * Math.cos(i),
+      }),
+      type: PointType.point,
+    }),
+  );
+
+  // add as reference points
+  await testService.repo(HikePoint).save(
+    points.map<HikePoint>((p, index) => ({
+      pointId: p.id,
+      hikeId: hike.id,
+      type: PointType.referencePoint,
+      index,
+    })),
+  );
+
     return {
       localGuide,
       hiker,
       hike,
       userHike,
       hiker2,
+      points
     };
   };
 
@@ -122,7 +144,7 @@ describe('Friends (e2e)', () => {
       });
 
     await restService
-      .build(app, hiker2)
+      .build(app)
       .request()
       .get(`/friends/track/${res.Code}`)
       .expect(200)
@@ -133,6 +155,86 @@ describe('Friends (e2e)', () => {
           finishedAt: null,
           trackPoints: [],
         });
+      });
+  });
+
+  it('should get all reached reference points for the friend given the code', async () => {
+    const { hiker2, hike, points } = await setup();
+
+    await restService
+      .build(app, hiker2)
+      .request()
+      .post(`/user-hikes/start`)
+      .send({
+        hikeId: hike.id,
+      })
+      .expect(200)
+  
+      await restService
+      .build(app, hiker2)
+      .request()
+      .post(`/user-hikes/reach-point`)
+      .send({
+        pointId: points[0].id,
+      })
+      .expect(201)
+
+      await restService
+      .build(app, hiker2)
+      .request()
+      .post(`/user-hikes/reach-point`)
+      .send({
+        pointId: points[1].id,
+      })
+      .expect(201)
+
+      const { body: res } = await restService
+      .build(app, hiker2)
+      .request()
+      .post('/friends/share')
+      .expect(201)
+      .expect(({ body }) => {
+        expect(body.Code).toHaveLength(4);
+      });
+
+
+      await restService
+      .build(app)
+      .request()
+      .get(`/friends/reached-points/${res.Code}`)
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body).toMatchObject([{
+              "userHikeId": 2,
+              "pointId": {
+                "id": points[0].id,
+                "type": points[0].type,
+                "position": {
+                    "type": points[0].position?.type,
+                    "coordinates": points[0].position?.coordinates
+                },
+                "address": points[0].address,
+                "name": points[0].name,
+                "altitude": points[0].altitude
+              },
+              "datetime": expect.any(String)
+            },
+            {
+              "userHikeId": 2,
+              "pointId": {
+                "id": points[1].id,
+                "type": points[1].type,
+                "position": {
+                    "type": points[1].position?.type,
+                    "coordinates": points[1].position?.coordinates
+                },
+                "address": points[1].address,
+                "name": points[1].name,
+                "altitude": points[1].altitude
+              },
+              "datetime": expect.any(String)
+          }
+        ]);
       });
   });
 });
