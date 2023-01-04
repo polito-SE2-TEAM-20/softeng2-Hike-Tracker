@@ -1,4 +1,4 @@
-import { Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Fab, Grid, Paper, Slide, Typography } from "@mui/material";
+import { Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Fab, formGroupClasses, Grid, Paper, Slide, Typography } from "@mui/material";
 import { useNavigate } from "react-router";
 import { useMatch } from "react-router-dom";
 import touristIcon from '../../Assets/tourist-icon.png'
@@ -16,6 +16,7 @@ import { HikeWeatherByCode } from '../../lib/common/WeatherConditions'
 import { SvgIcon } from "@mui/material";
 import { MapContainer, TileLayer, Marker, ZoomControl, Polyline } from 'react-leaflet'
 import { APIURL } from "../../API/API.js";
+import { MessageSavedHike } from "../saved-hikes/MessageSavedHikes";
 
 const Difficulty = (props) => {
     if (!props.loading) {
@@ -70,10 +71,10 @@ const ShowHike = (props) => {
     const [errorStartTrack, setErrorStartTrack] = useState(null);
 
     //states for message of saved hike
-     const [message, setMessage] = useState(null);
-     const [open, setOpen] = useState(false);
-     const [savedHikes, setSavedHikes] = useState({title: "", description: "", region: "", province: "", length: "", expectedTime: "", ascent: "", difficulty: "" })
-     const [loaded, setLoaded] = useState(false);
+    const [message, setMessage] = useState(null);
+    const [open, setOpen] = useState(false);
+    const [savedHikes, setSavedHikes] = useState({ title: "", description: "", region: "", province: "", length: "", expectedTime: "", ascent: "", difficulty: "" })
+    const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
         let tmpHike = { title: "", description: "", region: "", province: "", length: "", expectedTime: "", ascent: "", difficulty: -1 }
@@ -97,6 +98,7 @@ const ShowHike = (props) => {
 
 
     }, [])
+
 
 
     const handleStartTrackHiking = () => {
@@ -123,39 +125,23 @@ const ShowHike = (props) => {
         setShowStartTrackError(false)
     }
 
-    useEffect(()=>{
 
-        let savedHike = { title: "", description: "", region: "", province: "", length: "", expectedTime: "", ascent: "", difficulty: -1 }
-
-        const getSavedHikes = async () => {
-            savedHike = await API.getPlannedHikes();
-        }
-
-        getSavedHikes().then(()=>{
-            console.log("qui ci entra");
-            setLoaded(true);
-            setSavedHikes(savedHike);
-        })
-
-    }, [])
 
     const handleSaveForLater = () => {
         API.setPlannedHikes(hike.id)
-           .then((hikesPlanned) => {
-             setSavedHikes(hikesPlanned);
-             setMessage('Hikes correctly saved for later');
-             setOpen(true);
-           })
-           .catch((error)=>{
-            setMessage(error);
-            setOpen(true);
-           })
+            .then((hikesPlanned) => {
+                setSavedHikes(hikesPlanned);
+                setMessage('Hikes correctly saved for later');
+                setOpen(true);
+
+            })
+            .catch((error) => {
+                setMessage(error);
+                setOpen(true);
+            })
     }
 
-    const closeMessageSavedHike = () => {
-        setMessage(null);
-        setOpen(false);
-    }
+
 
     return (
         <Grid container flex style={{ minHeight: "100vh", height: "100%" }}>
@@ -169,13 +155,13 @@ const ShowHike = (props) => {
                     }
                 </div>
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "center", marginTop: {xs: "-350px",md: "-200px"} }}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "center", marginTop: { xs: "-350px", md: "-200px" } }}>
                 {
                     !loading ? <Typography variant="h2" sx={{ fontFamily: "Unbounded", textShadow: "#1a1a1a 0px 0 20px", color: "#fafafa", textAlign: "center" }}>{hike.title}</Typography> :
                         <Skeleton variant='rectangular' height={50} width={600} style={{ marginBottom: "10px" }} />
                 }
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{marginTop: "12px"}}>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ marginTop: "12px" }}>
                 <Divider>
                     <Difficulty loading={loading} diff={hike.difficulty} />
                 </Divider>
@@ -269,10 +255,9 @@ const ShowHike = (props) => {
                         }
                     </Grid>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} mt={3}>
-                        {console.log(loaded)}
                         {
-                            (props.user?.role === UserRoles.HIKER) && (loaded===true) &&  (savedHikes.filter(el => el.id === hike.id).length!==0 || savedHikes.length===1) &&
-                            
+                            (props.user?.role === UserRoles.HIKER) &&
+
                             <Fab
                                 variant="extended"
                                 size="medium"
@@ -344,8 +329,10 @@ const ShowHike = (props) => {
                 <MessageSavedHike
                     message={message}
                     isOpen={open}
-                    closeAction={closeMessageSavedHike}
-                     />
+                    setMessage={setMessage}
+                    setOpen={setOpen}
+                    id={hikeid}
+                />
             }
         </Grid>
     );
@@ -381,34 +368,6 @@ function ErrorDialog(props) {
     )
 }
 
-function MessageSavedHike(props) {
-    const Transition = React.forwardRef(function Transition(props, ref) {
-        return <Slide direction="up" ref={ref} {...props} />;
-    });
 
-    return (
-        <Dialog
-            open={props.isOpen}
-            TransitionComponent={Transition}
-            keepMounted
-            onClose={props.closeAction}
-            aria-describedby="alert-dialog-slide-description">
-            {
-                props.message !== null &&
-                <>
-                    <DialogTitle>{""}</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-slide-description">
-                            {props.message}
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={props.closeAction}>OK!</Button>
-                    </DialogActions>
-                </>
-            }
-        </Dialog>
-    )
-}
 
 export default ShowHike;

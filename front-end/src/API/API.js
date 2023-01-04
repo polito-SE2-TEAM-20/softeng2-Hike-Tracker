@@ -1085,7 +1085,7 @@ async function setPlannedHikes(hikeIds) {
             'Content-Type': 'application/json',
 
         },
-        body: JSON.stringify({plannedHikes : [hikeIds]})
+        body: JSON.stringify({ plannedHikes: [hikeIds] })
 
     });
     if (response.ok) {
@@ -1097,6 +1097,23 @@ async function setPlannedHikes(hikeIds) {
     }
 }
 
+const deletePlannedHike = async (hikeID) => {
+    const response = await fetch((APIURL + '/me/planned_hikes'), {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+            'Accept': '*/*'
+        },
+        body: JSON.stringify({ plannedHikes: [hikeID] })
+    });
+    {/*}
+   const data = await response;
+ 
+   // now do whatever you want with the data  
+console.log(data);*/}
+};
+
 const getPlannedHikes = async () => {
     const response = await fetch((APIURL + "/me/planned_hikes"), {
         method: 'GET',
@@ -1104,7 +1121,7 @@ const getPlannedHikes = async () => {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
             'Accept': '*/*'
         },
-        
+
     })
 
     if (response.ok) {
@@ -1113,26 +1130,6 @@ const getPlannedHikes = async () => {
     } else {
         const errDetail = await response.json();
         throw errDetail.message;
-    }
-}
-
-
-const deletePlannedHike = async (hikeID) => {
-    const response = await fetch((APIURL + '/me/planned_hikes'), {
-        method: 'DELETE',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify({plannedHikes : [hikeID]})
-
-    })
-    if (response.ok) {
-
-        const planned_hikes = await response.json();
-        return planned_hikes;
-    } else {
-        const errDetail = await response.json()
-        throw errDetail.message
     }
 }
 
