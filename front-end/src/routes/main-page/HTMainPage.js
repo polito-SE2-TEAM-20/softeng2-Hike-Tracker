@@ -491,7 +491,7 @@ const HTMainPage = (props) => {
                         marginLeft: { xs: "18px", sm: "18px", md: "24px", lg: "250px", xl: "250px" }
                     }}
                     fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "14px", xl: "14px" }}>
-                    All rights reserved. 2022.
+                    © 2023 Team 20. All rights reserved. 
                 </Typography>
 
             </Grid>
