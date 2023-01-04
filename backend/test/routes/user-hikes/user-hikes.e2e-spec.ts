@@ -446,7 +446,7 @@ describe('User Hikes (e2e)', () => {
       });
   });
 
-  it('should get bad request error because the point to track as reachen is not a reference for this hike', async () => {
+  it('should get bad request error because the point to track as reached is not a reference for this hike', async () => {
     const { userTwo, hike, randomPoints } = await setup();
 
     await restService
