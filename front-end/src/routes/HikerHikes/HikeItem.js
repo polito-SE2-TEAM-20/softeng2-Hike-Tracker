@@ -1,4 +1,5 @@
 import { Card, CardActionArea, CardContent, CardMedia, Grid, Typography } from "@mui/material";
+import { APIURL } from "../../API/API";
 import defaultImage from '../../extra/landscape.jpg'
 const dayjs = require('dayjs')
 var localizedFormat = require('dayjs/plugin/localizedFormat')
@@ -12,6 +13,8 @@ function HikeItem(props) {
     
     const duration = props.trackHike.finishedAt ? (dayjs.duration(dayjs(props.trackHike.finishedAt).diff(startDate)).format('D:HH:mm:ss')) : "not finished yet"
 
+    const imageUrl = (props.trackHike.hike.pictures && props.trackHike.hike.pictures.length > 0) ? (APIURL + props.trackHike.hike.pictures[0]) : "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+
     return (
         <Card
             variant="outlined"
@@ -22,10 +25,12 @@ function HikeItem(props) {
                 maxWidth: 400
             }}>
             <CardActionArea>
+                {/* {HikeItemImage(props.hike.difficulty, props.hike.pictures)} */}
                 <CardMedia
                     component="img"
-                    height="140"
-                    image={defaultImage}/>
+                    wide
+                    style={{ minHeight: 140}}
+                    src={imageUrl}/>
 
                 <CardContent>
                     <Grid
