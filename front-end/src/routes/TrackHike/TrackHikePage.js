@@ -9,6 +9,7 @@ import StopCircleIcon from '@mui/icons-material/StopCircle';
 import { icon } from "leaflet";
 import currentLocationIcon from '../../Assets/current-location.png'
 import ShareHike from "../../components/share-hike/ShareHike";
+const dayjs = require('dayjs')
 
 function TrackingHikePage(props) {
 
@@ -32,6 +33,8 @@ function TrackingHikePage(props) {
     const [trackRecordId, setTrackRecordId] = useState(null);
     const [trackHasBeenFinished, setTrackHasBeenFinished] = useState(false);
     const [trackHikeId, setTrackHikeId] = useState(-1);
+    const [trackHike, setTrackHike] = useState(null);
+    const [checkedPoints, setCheckedPoints] = useState([])
 
     const [showTurnOnLocatonDialog, setShowTurnOnLocationDialog] = useState(false);
     const [isLocationAccessable, setIsLocationAccessable] = useState(false);
@@ -99,28 +102,18 @@ function TrackingHikePage(props) {
             case TrackingState.STARTED: {
                 if (!trackHasBeenRecorded) {
                     setTrackHasBeenRecorded(true);
-                    setTrackRecordId(navigator.geolocation.watchPosition((position) => {
-                        setCurrentLocation((olLocation) => {
-                            return position
-                        })
-                        API.addPointToTracingkHike(
-                            trackHikeId, 
-                            position.coords.latitude, 
-                            position.coords.longitude
-                        ).then((result) => {
-
-                        })
-                        .catch((err) => {
-
-                        })
-                    }))
+                    // setTrackRecordId(navigator.geolocation.watchPosition((position) => {
+                    //     setCurrentLocation((olLocation) => {
+                    //         return position
+                    //     })
+                    // }))
                 } else {
                     //Already in recording phase
                 }
                 break;
             }
             case TrackingState.FINISHED: {
-                navigator.geolocation.clearWatch(trackRecordId)
+                // navigator.geolocation.clearWatch(trackRecordId)
                 break;
             }
 
@@ -143,6 +136,7 @@ function TrackingHikePage(props) {
         if (!trackHasBeenStarted) {
             API.startTracingkHike(hikeId)
                 .then((result) => {
+                    setTrackHike(result)
                     setTrackHikeId(result.id);
                     setTrackHasBeenStarted(true)
                     setTrackHasBeenFinished(false)
@@ -170,6 +164,33 @@ function TrackingHikePage(props) {
         } else {
             //Track is already finished
         }
+    }
+
+    const handleCheckingRefPoint = (refPoint) => {
+        //check that this ref point is in the hike ref point list
+        let hasProblem = false;
+        trackHike.hike.referencePoints.forEach((item) => {
+            if (item.id === refPoint.id) {
+                hasProblem = true
+            }
+        })
+        //check that we have sent this ref point before or not
+        checkedPoints.forEach((item) => {
+            if (item.refPoint.id === refPoint.id) {
+                hasProblem = true
+            }
+        })
+        //send to server and update local map and variables
+        const now = dayjs().toISOString()
+
+        API.addPointToTracingkHike(trackHikeId, refPoint.id, now).then((result) => {
+            setTrackHike(result)
+            setCheckedPoints((oldList) => oldList.concat({refPoint: refPoint, time: now}))
+        })
+        .catch((error) => {
+
+        })
+        
     }
 
     return (
@@ -223,7 +244,11 @@ function TrackingHikePage(props) {
                                             key={refPoint.id}
                                             position={[refPoint.position.coordinates[1], refPoint.position.coordinates[0]]}>
                                             <Popup position={[refPoint.position.coordinates[1], refPoint.position.coordinates[0]]}>
-                                                <RefPointPopUp refPoint={refPoint}/>
+                                                <RefPointPopUp 
+                                                    refPoint={refPoint} 
+                                                    checkedPoints={checkedPoints}
+                                                    trackingState={trackingState}
+                                                    handleCheckRefPoint={handleCheckingRefPoint}/>
                                             </Popup>
                                         </Marker>
                                     </>
@@ -357,6 +382,16 @@ function TurnOnLocationDialog(props) {
 }
 
 function RefPointPopUp(props) {
+
+    let haveBeenHere = false;
+    let haveBeenHereTime = null;
+    props.checkedPoints.forEach((item) => {
+        if (item.refPoint.id === props.refPoint.id) {
+            haveBeenHere = true
+            haveBeenHereTime = item.time
+        }
+    })
+
     return(
         <Grid
             container
@@ -377,10 +412,18 @@ function RefPointPopUp(props) {
                 <Typography>Longitude: {props.refPoint?.position?.coordinates[0]}</Typography>
             </Grid>
 
-            <Grid
-                item>
-                {/* <Button text="I arrived HERE" color="black" textColor="white" fontSize="12px" /> */}
-            </Grid>
+            {
+                (props.trackingState === TrackingState.STARTED && haveBeenHere) &&
+                <Typography>I have been here on: {haveBeenHereTime}</Typography>
+            }
+            {
+                (props.trackingState === TrackingState.STARTED && !haveBeenHere) &&
+                <Grid
+                    item>
+                    <Button
+                        onClick={() => props.handleCheckRefPoint(props.refPoint)}>I arrived HERE</Button>
+                </Grid>
+            }
         </Grid>
         // <div>
         //     <div className='popup-line'><b>{props.refPoint?.name}</b></div>
