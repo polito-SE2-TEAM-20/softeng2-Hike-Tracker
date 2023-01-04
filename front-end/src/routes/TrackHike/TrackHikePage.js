@@ -109,6 +109,28 @@ function TrackingHikePage(props) {
             .catch((err) => {
 
             })
+        } else {
+            API.getAllUserTrackingHikes().then((result) => {
+                result.forEach((trackHikeItem) => {
+                    if (trackHikeItem.finishedAt === null || trackHikeItem.finishedAt === undefined) {
+                        if (trackHikeItem.hikeId === +hikeId) {
+                            setTrackHike(trackHikeItem)
+                            setTrackHasBeenStarted(true)
+                            setTrackHasBeenFinished(false)
+                            setTrackingState(TrackingState.STARTED)
+                        } else {
+                            //It is an ongong tracking but with another hike
+                        }
+                    } else {
+                        //it is a finished hike
+                    }
+                })
+            })
+            .catch((err) => {
+    
+            })
+    
+    
         }
 
         getHikeDetails()
