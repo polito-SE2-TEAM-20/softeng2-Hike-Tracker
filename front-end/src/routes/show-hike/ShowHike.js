@@ -128,18 +128,42 @@ const ShowHike = (props) => {
 
 
     const handleSaveForLater = () => {
-        API.setPlannedHikes(hike.id)
-            .then((hikesPlanned) => {
-                setSavedHikes(hikesPlanned);
-                setMessage('Hikes correctly saved for later');
-                setOpen(true);
+        API.getPlannedHikes()
+            .then((plannedHikes) => {
+                console.log(plannedHikes)
+                console.log(hike.id);
+                console.log(plannedHikes.map(el => el.id === hike.id))
+                if (plannedHikes?.filter(el => el.id === hike.id).length !== 0) {
+                    setMessage('Hikes already present in saved hikes');
+                    setOpen(true);
+                } else {
+                    API.setPlannedHikes(hike.id)
+                        .then((hikesPlanned) => {
+                            setSavedHikes(hikesPlanned);
+                            setMessage('Hikes correctly saved for later');
+                            setOpen(true);
 
-            })
-            .catch((error) => {
-                setMessage(error);
-                setOpen(true);
+                        })
+                        .catch((error) => {
+                            setMessage(error);
+                            setOpen(true);
+                        })
+                }
+            }).catch(() => {
+                API.setPlannedHikes(hike.id)
+                    .then((hikesPlanned) => {
+                        setSavedHikes(hikesPlanned);
+                        setMessage('Hikes correctly saved for later');
+                        setOpen(true);
+
+                    })
+                    .catch((error) => {
+                        setMessage(error);
+                        setOpen(true);
+                    })
             })
     }
+
 
 
 
@@ -328,7 +352,7 @@ const ShowHike = (props) => {
             {
                 <MessageSavedHike
                     message={message}
-                    isOpen={open}
+                    open={open}
                     setMessage={setMessage}
                     setOpen={setOpen}
                     id={hikeid}
@@ -367,7 +391,5 @@ function ErrorDialog(props) {
         </Dialog>
     )
 }
-
-
 
 export default ShowHike;

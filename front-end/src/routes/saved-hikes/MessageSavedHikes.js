@@ -1,15 +1,17 @@
-import { Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide } from "@mui/material";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Slide } from "@mui/material";
 import { useNavigate } from "react-router";
 import React from "react";
 import { Button } from "react-bootstrap";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 function MessageSavedHike(props) {
 
     const navigate = useNavigate()
 
-    const Transition = React.forwardRef(function Transition(props, ref) {
-        return <Slide direction="up" ref={ref} {...props} />;
-    });
+
     const closeMessageSavedHike = () => {
         navigate(`/showhike/${props.id}`);
         props.setMessage(null);
@@ -25,7 +27,7 @@ function MessageSavedHike(props) {
 
     return (
         <Dialog
-            open={props.isOpen}
+            open={props.open}
             TransitionComponent={Transition}
             keepMounted
             onClose={closeMessageSavedHike}
