@@ -60,6 +60,11 @@ const HikeCard = (props) => {
                        <DeleteIcon color="#1a1a1a" onClick={() => {props.deleteHike(props.hike.id)}}></DeleteIcon>
                    </div> : <></>
                 }
+                {
+                    props.deleteFromSaved ? <div style={{ marginRight: "12px", marginBottom: "12px", display: "flex", justifyContent: "right" }}>
+                       <Button text="Delete from Saved" fontSize="14px" color="#1a1a1a" textColor="white" navigate={() => {props.deleteHikeFromSaved(props.hike.id)}}></Button>
+                   </div> : <></>
+                }
             </Card >
         </div>
     );

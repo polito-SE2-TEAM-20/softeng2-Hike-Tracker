@@ -18,21 +18,35 @@ const HikeLoading = () => {
 
 const SavedHikes = (props) => {
     const [listOfHikes, setListOfHikes] = useState([])
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     useEffect(() => {
             var loh = []
             const getHikes = async () => {
                 // cambiare con l'API giusta
-                loh = await API.getListOfHikes()
+                loh = await API.getPlannedHikes()
             }
-            getHikes().then(() => {
+            getHikes()
+             .then(() => {
                 setListOfHikes(loh)
                 setLoading(true)
-            });
+                setError('');
+            }).catch((error)=>{
+                setError(error);
+                setLoading(true);
+            })
        
     }, [])
 
+    const deleteHikeFromSaved = (hikeID) => {
+        API.deletePlannedHike(hikeID)
+          .then((plannedHikes) => {
+            console.log(plannedHikes);
+            //setListOfHikes(plannedHikes);
+          })
+          .catch((err) => { console.log(err) })
+      }
 
     return (
         <>
@@ -41,7 +55,7 @@ const SavedHikes = (props) => {
                     <Grid container columns={8} style={{ marginTop: "25px", display: "flex", justifyContent: "center" }}>
                         {
                             loading ?
-                                listOfHikes.length === 0 ?
+                                (listOfHikes.length === 0 || error!=='') ?
                                     <Typography fontFamily={"Bakbak One, display"} fontWeight="600" fontSize="32px">
                                         No matching hikes.
                                     </Typography>
@@ -49,7 +63,7 @@ const SavedHikes = (props) => {
                                     listOfHikes.map(hike => {
                                         return (
                                             <Grid item md={2} xl={2} style={{ marginLeft: "15px", marginRight: "15px", marginBottom: "15px", justifyContent:"center" }}>
-                                                <HikeCard hike={hike} editable={false} />
+                                                <HikeCard hike={hike} editable={false} deleteFromSaved="true" deleteHikeFromSaved={deleteHikeFromSaved}/>
                                             </Grid>
                                         );
                                     })
