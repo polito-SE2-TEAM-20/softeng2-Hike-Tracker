@@ -182,6 +182,7 @@ function TrackingHikePage(props) {
         if (!trackHasBeenStarted) {
             API.startTracingkHike(hikeId)
                 .then((result) => {
+                    API.getHikesMaximumElapsedTime(hikeId)
                     setTrackHike(result)
                     setTrackHikeId(result.id);
                     setTrackHasBeenStarted(true)
