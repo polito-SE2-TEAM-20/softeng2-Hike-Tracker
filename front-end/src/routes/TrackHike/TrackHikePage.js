@@ -1,4 +1,4 @@
-import { Button, Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, Slide, Typography } from "@mui/material";
+import { Button, Card, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, Slide, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { MapContainer, Marker, Polyline, Popup, TileLayer, useMap } from "react-leaflet";
 import { useLocation, useMatch, useParams } from "react-router";
@@ -114,6 +114,7 @@ function TrackingHikePage(props) {
                 result.forEach((trackHikeItem) => {
                     if (trackHikeItem.finishedAt === null || trackHikeItem.finishedAt === undefined) {
                         if (trackHikeItem.hikeId === +hikeId) {
+                            setTrackHikeId(trackHikeItem.id)
                             setTrackHike(trackHikeItem)
                             setTrackHasBeenStarted(true)
                             setTrackHasBeenFinished(false)
@@ -243,15 +244,12 @@ function TrackingHikePage(props) {
         <>
             <Grid
                 container
-                display="column"
                 justifyContent="center"
-                alignItems="center"
-                style={{marginTop: "10vh", height: "90vh", width:"100%"}}>
+                alignItems="center">
                 <Grid
                     item
-                    style={{ height: "60vh", width: "100%" }}>
+                    style={{height: "100%", width: "100%" }}>
                     <MapContainer
-                        style={{ height: "60vh" }}
                         flex
                         center={
                             (hikePositions !== null && hikePositions.length > 0) ? hikePositions[0] :[45.4408474, 12.3155151]
@@ -315,21 +313,13 @@ function TrackingHikePage(props) {
 
                 <Grid
                     item
-                    style={{ height: "20vh" }}>
+                    style={{ zIndex: 1, marginTop: "-35vh", height: "35vh"}}>
                     <TrackingActionsView
                         state={trackingState}
                         startAction={startTrackingAction}
                         stopAction={stopTrackingAction}>
                     </TrackingActionsView>
                 </Grid>
-
-                {
-                    trackingState === TrackingState.STARTED &&
-                    <Grid
-                        item>
-                        <ShareHike/>
-                    </Grid>
-                }
 
                 {
                     showTurnOnLocatonDialog &&
@@ -351,51 +341,101 @@ function TrackingHikePage(props) {
 function MapFlyTracker(props) {
     const map = useMap()
     useEffect(() => {
-        
-        // map.flyTo([props.location.coords.latitude,
-        //     props.location.coords.longitude], 17)
         map.flyTo(props.location, 17)
     }, [props.location])
 }
 
 function TrackingActionsView(props) {
     return (
-        <Grid 
-            flex
-            container
-            direction="column"
-            justifyContent="center"
-            alignItems="center">
-            {
-                props.state === TrackingState.NOT_STARTED &&
-                <>
-                    <PlayCircleIcon
-                        style={{width:150, height: 150}}
-                        onClick={() => props.startAction()}>
-                    
-                    </PlayCircleIcon>
-                </>
-                
-            }
-            {
-                props.state === TrackingState.STARTED &&
-                <>
-                    <StopCircleIcon
-                        style={{width:150, height: 150}}
-                        onClick={() => props.stopAction()}>
-                    
-                    </StopCircleIcon>
-                </>
-            }
-            {
-                props.state === TrackingState.FINISHED &&
-                <Typography variant="h6">
-                    Tracking this hike has been finished.
-                </Typography>
-            }
+        <Card>
+            <CardContent>
+                {
+                    props.state === TrackingState.NOT_STARTED &&
+                    <Grid
+                        item>
+                        <PlayCircleIcon
+                            style={{width:150, height: 150}}
+                            onClick={() => props.startAction()}>
+                        
+                        </PlayCircleIcon>
+                    </Grid>
+    
+                }
+                {
+                    props.state === TrackingState.STARTED &&
+                    <Grid
+                        item>
+                        <StopCircleIcon
+                            style={{width:150, height: 150}}
+                            onClick={() => props.stopAction()}>
+                        
+                        </StopCircleIcon>
+                    </Grid>
+                }
+                {
+                    props.state === TrackingState.STARTED &&
+                    <Grid
+                        item>
+                        <ShareHike/>
+                    </Grid>
+                }
+                {
+                    props.state === TrackingState.FINISHED &&
+                    <Typography variant="h6">
+                        Tracking this hike has been finished.
+                    </Typography>
+                }
 
-        </Grid>
+            </CardContent>       
+        </Card>
     )
+    // return (
+    //     <Grid 
+    //         flex
+    //         container
+    //         elevation={3}
+    //         direction="column"
+    //         justifyContent="center"
+    //         alignItems="center">
+    //         {
+    //             props.state === TrackingState.NOT_STARTED &&
+    //             <Grid
+    //                 item>
+    //                 <PlayCircleIcon
+    //                     style={{width:150, height: 150}}
+    //                     onClick={() => props.startAction()}>
+                    
+    //                 </PlayCircleIcon>
+    //             </Grid>
+  
+    //         }
+    //         {
+    //             props.state === TrackingState.STARTED &&
+    //             <Grid
+    //                 item>
+    //                 <StopCircleIcon
+    //                     style={{width:150, height: 150}}
+    //                     onClick={() => props.stopAction()}>
+                    
+    //                 </StopCircleIcon>
+    //             </Grid>
+    //         }
+    //         {
+    //             props.state === TrackingState.STARTED &&
+    //             <Grid
+    //                 item>
+    //                 <ShareHike/>
+    //             </Grid>
+    //         }
+    //         {
+    //             props.state === TrackingState.FINISHED &&
+    //             <Typography variant="h6">
+    //                 Tracking this hike has been finished.
+    //             </Typography>
+    //         }
+
+    //     </Grid>
+    // )
 }
 
 function TurnOnLocationDialog(props) {
@@ -431,10 +471,10 @@ function RefPointPopUp(props) {
 
     let haveBeenHere = false;
     let haveBeenHereTime = null;
-    props.trackHike.trackPoints.forEach((item) => {
+    props.trackHike?.trackPoints?.forEach((item) => {
         if (item.pointId === props.refPoint.id) {
             haveBeenHere = true
-            haveBeenHereTime = item.datetime
+            haveBeenHereTime = dayjs(item.datetime).format("LLL")
         }
     })
 
@@ -460,7 +500,7 @@ function RefPointPopUp(props) {
 
             {
                 (props.trackingState !== TrackingState.NOT_STARTED && haveBeenHere) &&
-                <Typography>I have been here on: {haveBeenHereTime}</Typography>
+                <Typography>I was here on: {haveBeenHereTime}</Typography>
             }
             {
                 (props.trackingState === TrackingState.STARTED && !haveBeenHere) &&
