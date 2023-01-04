@@ -109,7 +109,7 @@ const ShowHike = (props) => {
                 if (activeHikeList.length === 0) {
                     navigate("/trackhike/" + hikeid)
                 } else {
-                    setErrorStartTrack("You have another active tracking, you should finish it before starting a new one.")
+                    setErrorStartTrack("You have another active tracking, you should finish it before starting a new one. Check your ongoing track in \"My Hikes\" section in your toolbar.")
                     setShowStartTrackError(true)
                 }
             })
@@ -343,7 +343,8 @@ const ShowHike = (props) => {
                     }
                 </Grid>
             </Grid>
-            {
+            { 
+                showStartTrackError &&
                 <ErrorDialog
                     message={errorStartTrack}
                     isOpen={showStartTrackError}
