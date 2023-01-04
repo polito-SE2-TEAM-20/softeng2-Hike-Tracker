@@ -468,7 +468,7 @@ describe('User Hikes (e2e)', () => {
       .expect(400)
   });
 
-  it('should get all reached reference points fot the user', async () => {
+  it('should get all reached reference points for the user', async () => {
     const { userTwo, hike, points } = await setup();
 
     await restService
