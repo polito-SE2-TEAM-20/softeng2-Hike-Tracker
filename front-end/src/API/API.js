@@ -1060,7 +1060,7 @@ const userUpdateReferencePointReached = async (request) => {
 }
 
 const friendGetReferencePointsReached = async (request) => {
-    const response = await fetch((APIURL + "/friends/reached-points/" + request.pointID), {
+    const response = await fetch((APIURL + "/friends/reached-points/" + request.friendCode), {
         method: "GET",
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
