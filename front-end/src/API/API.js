@@ -921,9 +921,11 @@ const getHikesMaximumElapsedTime = async (hikeId) => {
             'Accept': '*/*'
         },
     })
-
+    console.log(response.text());
     if (response.ok) {
-        return await response.json()
+        // return await response.json
+        const hike = await response.text();
+        return hike;
     } else {
         const errDetail = await response.json();
         throw errDetail.message;

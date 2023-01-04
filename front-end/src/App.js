@@ -22,6 +22,7 @@ import WeatherAlertHike from './routes/new-weather-alert-hike/WeatherAlertHike';
 import WeatherAlertMap from './routes/new-weather-alert-map/WeatherAlertMap';
 import HikerPerformance from './routes/hiker-performance/HikerPerformance';
 import SavedHikes from './routes/saved-hikes/SavedHikes';
+import {PopupUnfinishedHike} from './components/PopupUnfinishedHike/PopupUnfinishedHike';
 
 
 import API from './API/API';
@@ -57,6 +58,8 @@ function App2() {
   const [user, setUser] = useState({});
   const [rowsAffected, setRowsAffected] = useState(false);
   const [hikeIDs, setHikeIDs] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [started, setStarted] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -128,17 +131,41 @@ function App2() {
   }
 
 
-  const getUnfinishedHikes = () => {
+  function getUnfinished(){
+    console.log("inside the set interval if started = true call the API unfinished hikes:  started: " + started);
     API.getUnfinishedHikes()
-      .then((HikeIDs) => {
-        console.log(HikeIDs)
-        setHikeIDs(HikeIDs)
-      })
-      .catch((err) => { console.log(err) })
+    .then((HikeIDs) => {
+      console.log("inside the call for API getUnfinishedHikes, started (should be true): " + started, "HikeIDs to finish " + HikeIDs) 
+      setHikeIDs(HikeIDs)
+      if(open===false){
+      if(HikeIDs.length!==0){
+        console.log("array of id's not empty should se the popup" + HikeIDs);
+        setOpen(true);
+      }else{
+        setOpen(false);
+      }}
+      return 0; 
+    })
+  .catch((err) => { console.log(err) })
+  
+}
+
+useEffect(() => {
+  console.log(started);
+  let finish= '';
+  if (started) {
+    console.log(started);
+    finish = setInterval(() => {getUnfinished();}, 60* 1000)
+  }else{
+    clearInterval(finish);
+
   }
+}, [started]);
 
   return (
     <>
+      <PopupUnfinishedHike hikeIDs={hikeIDs} open={open} setOpen={setOpen}/>
+
       <HTNavbar user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} gotoLogin={gotoLogin} />
       <Routes>
         <Route path="/" element={<HTMainPage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} navigate={navigate} />} />
@@ -159,7 +186,7 @@ function App2() {
         <Route path="/hutWorkerHuts" element={<HutWorkerHuts user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/edithut/:hutid" element={<EditHut user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} modifyHutInformation={API.modifyHutInformation} />} />
         <Route path="/hutWorkerHuts/linkedHikes" element={<HikesLinked user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
-        <Route path="/trackhike/:hikeid" element={<TrackingHikePage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
+        <Route path="/trackhike/:hikeid" element={<TrackingHikePage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} setStarted={setStarted} started={started} />} />
         <Route path="/modifyHikeCondition/:hikeid" element={<HikeCondition user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} updateHikeCondition={API.updateHikeCondition} />} />
         <Route path="/hikerhikes" element={<HikerHikesPage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut}/>} />
         <Route path="/new-weather-alert-hike" element={<WeatherAlertHike />} />
