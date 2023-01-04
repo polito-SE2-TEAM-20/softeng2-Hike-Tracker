@@ -926,13 +926,13 @@ describe('Hikes (e2e)', () => {
     .get(`/hikes/maxElapsedTime/${hike.id}`)
     .expect(200);
 
-    await restService
+   await restService
     .build(app, hiker)
     .request()
     .get(`/hikes/maxElapsedTime/${hike2.id}`)
     .expect(200);
 
-    const maxElapsedTimeDouble = (await testService.repo(UserHike).findBy({
+   const maxElapsedTimeDouble = (await testService.repo(UserHike).findBy({
       hikeId: hike.id,
       finishedAt: IsNull(),
       userId: hiker.id

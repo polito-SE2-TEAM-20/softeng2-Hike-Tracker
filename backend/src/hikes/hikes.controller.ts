@@ -723,12 +723,13 @@ export class HikesController {
           maxElapsedTime: dhms
         });
       }
-
     }
 
-    return (await this.dataSource.getRepository(UserHike).findOneBy({
+    const userHikeStarted = (await this.dataSource.getRepository(UserHike).findOneBy({
       id: userHikeId?.id
-    })) || "Nothing to show";
+    }));
+
+    return userHikeStarted || "Nothing to show";
   }
 
   //Evaluate which popups should be shown and update the flag
