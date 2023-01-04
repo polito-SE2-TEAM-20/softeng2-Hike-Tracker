@@ -921,9 +921,11 @@ const getHikesMaximumElapsedTime = async (hikeId) => {
             'Accept': '*/*'
         },
     })
-
+    console.log(response.text());
     if (response.ok) {
-        return await response.json()
+        // return await response.json
+        const hike = await response.text();
+        return hike;
     } else {
         const errDetail = await response.json();
         throw errDetail.message;
@@ -1060,7 +1062,7 @@ const userUpdateReferencePointReached = async (request) => {
 }
 
 const friendGetReferencePointsReached = async (request) => {
-    const response = await fetch((APIURL + "/friends/reached-points/" + request.pointID), {
+    const response = await fetch((APIURL + "/friends/reached-points/" + request.friendCode), {
         method: "GET",
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -1131,7 +1133,39 @@ const getPlannedHikes = async () => {
     }
 }
 
+const definitiveClosePopup = async (hikeID) => {
+    const response = await fetch((APIURL + "/hikes/popupSeen/" + hikeID), {
+        method: "GET",
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+    })
 
+    if (response.ok) {
+        return true
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const getMyAlerts = async () => {
+    const response = await fetch((APIURL + "/hikes/weather/flags"), {
+        method: "GET",
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+    })
+
+    if (response.ok) {
+        return await response.json()
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
 
 const API = {
     getListOfHikes, getListOfGPXFiles, getPathByID,
@@ -1153,6 +1187,7 @@ const API = {
     getUserHikeTrackingDetails, getAllUserTrackingHikes,
     //#endregion
     setHutPictures, modifyHutPictures, getHikesBasedOnPreferences, updateWeatherSingleHike, updateWeatherMap,
-    requestNewCode, getHikeByFriendCode, userGetReferencePointsReached, userUpdateReferencePointReached, friendGetReferencePointsReached
+    requestNewCode, getHikeByFriendCode, userGetReferencePointsReached, userUpdateReferencePointReached, friendGetReferencePointsReached,
+    definitiveClosePopup, getMyAlerts
 }
 export default API

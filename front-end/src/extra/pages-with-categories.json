@@ -52,6 +52,20 @@
         "role": [
           0
         ]
+      },
+      {
+        "title": "Track a friend",
+        "URL": "/friend-code",
+        "reqLogin": false,
+        "role": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
       }
     ]
   },
@@ -116,7 +130,7 @@
         "URL": "/hikerhikes",
         "reqLogin": true,
         "role": [
-            0
+          0
         ]
       }
     ]

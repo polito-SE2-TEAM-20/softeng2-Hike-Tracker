@@ -15,24 +15,31 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 function PopupUnfinishedHike(props) {
-    const [hikeIDsToDisplay, setHikeIDsToDisplay] = React.useState([props.hikeId]);
+    const [hikeIDsToDisplay, setHikeIDsToDisplay] = React.useState([]);
   const navigate = useNavigate();
 
 const goToFinishHike = () => {
   //TODO navigate to the button to finish the hike
   props.setOpen(false);
-  //navigate(`/showHike/${props.id}`)
+  navigate(`/trackhike/${props.hikeIDs[0]}`)
+  API.getUnfinishedHikesPopupSeen(props.hikeIDs[0])
+    .then((hikeIDsToDisplay) => {
+      console.log(hikeIDsToDisplay)
+      setHikeIDsToDisplay(hikeIDsToDisplay)
+    })
+    .catch((err) => { console.log(err) })  
 };
 
   const handleClose = () => {
     props.setOpen(false);
-    API.getUnfinishedHikesPopupSeen()
+    API.getUnfinishedHikesPopupSeen(props.hikeIDs[0])
     .then((hikeIDsToDisplay) => {
       console.log(hikeIDsToDisplay)
       setHikeIDsToDisplay(hikeIDsToDisplay)
     })
     .catch((err) => { console.log(err) })    // get hikes/unfinished/popupsSeen/:hikeID
   };
+
 
   return (
     <div>
@@ -47,7 +54,7 @@ const goToFinishHike = () => {
         <DialogTitle>{"Hike not completed"}</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-slide-description">
-        You have an unfinished hike {}
+        You have an unfinished hike {props.hikeIDs}
 
         </DialogContentText>
       </DialogContent>

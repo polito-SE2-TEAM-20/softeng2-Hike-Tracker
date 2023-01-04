@@ -57,11 +57,11 @@ const HikerDashboard = (props) => {
     const [isDifficulty, setIsDifficulty] = useState(false)
     const [isAscent, setIsAscent] = useState(false)
 
-    const positionStatic = position
-    const radiusStatic = radius
-    const lengthStatic = length
-    const expectedTimeStatic = expectedTime
-    const ascentStatic = ascent
+    const positionStatic = position === null ? 0.0 : position 
+    const radiusStatic = radius === null ? 0.0 : radius 
+    const lengthStatic = length === null ? 0.0 : length 
+    const expectedTimeStatic = expectedTime === null ? 0 : expectedTime 
+    const ascentStatic = ascent === null ? 0.0 : ascent 
 
     useEffect(() => {
         var tmpPref = {}

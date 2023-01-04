@@ -24,10 +24,14 @@ L.Icon.Default.mergeOptions({
 
 
 const FriendTracking = () => {
-    const match = useMatch('/friend-tracking/:hikeid')
+    const match = useMatch('/friend-tracking/:userID/:hikeid')
+    const userID = (match && match.params && match.params.userID) ? match.params.userID : -1
     const hikeid = (match && match.params && match.params.hikeid) ? match.params.hikeid : -1
     const [hike, setHike] = useState({})
     const [loaded, setLoaded] = useState(false)
+    const [reachedReferencePoints, setReachedReferencePoints] = useState([])
+    const [referencePoints, setReferencePoints] = useState([])
+
     const sampleData = [
         {
             'title': "RefPoint#1",
@@ -63,13 +67,20 @@ const FriendTracking = () => {
 
     useEffect(() => {
         let tmpHike = {}
+        let tmpRP = []
 
         const getHike = async () => {
             tmpHike = await API.getSingleHikeByID(hikeid)
         }
+
         const fetchGPXFile = async () => {
             tmpHike = await API.getHikePathByHike(tmpHike)
         }
+
+        const apiGetRefPoints = async () => {
+            tmpRP = await API.friendGetReferencePointsReached({ friendCode: "756b" })
+        }
+
         getHike().then(() => {
             fetchGPXFile().then(() => {
                 let gpxParser = require('gpxparser');
@@ -80,7 +91,26 @@ const FriendTracking = () => {
                 console.log(tmpHike)
                 setLoaded(true)
             })
+            apiGetRefPoints().then(() => {
+                setReferencePoints(tmpHike.referencePoints)
+                setReachedReferencePoints(tmpRP)
+            }).then(() => {
+                console.log(referencePoints)
+                console.log(reachedReferencePoints)
+                let latestReferencePoints = tmpHike.referencePoints
+                for (let index in latestReferencePoints) {
+                    for (let index2 in reachedReferencePoints) {
+                        if (latestReferencePoints[index].id === reachedReferencePoints[index2].id) {
+                            latestReferencePoints[index].reached = true
+                        }
+                    }
+                    if (latestReferencePoints[index].reached === undefined) {
+                        latestReferencePoints[index].reached = false
+                    }
+                }
+            })
         })
+
     }, [])
 
     if (!loaded) return <></>
@@ -89,7 +119,7 @@ const FriendTracking = () => {
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                 <Typography variant="h3" sx={{ fontFamily: "Unbounded", display: "flex", justifyContent: "left", marginBottom: "18px", padding: "12px" }}>{hike.title}: tracking</Typography>
             </Grid>
-            <Grid item xs={12} sm={12} md={4} lg={4} xl={4} sx={{marginTop: "12px"}}>
+            <Grid item xs={12} sm={12} md={4} lg={4} xl={4} sx={{ marginTop: "12px" }}>
                 <Paper style={{ padding: "30px" }}>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         <Typography variant="h4">General information</Typography>
@@ -157,37 +187,37 @@ const FriendTracking = () => {
 
                 </Paper>
             </Grid>
-            <Grid item xs={12} sm={12} md={8} lg={8} xl={8} sx={{marginTop: "12px"}}>
-                <Map loaded={loaded} hike={hike} referencePoints={sampleData} />
+            <Grid item xs={12} sm={12} md={8} lg={8} xl={8} sx={{ marginTop: "12px" }}>
+                <Map loaded={loaded} hike={hike} referencePoints={referencePoints} />
             </Grid>
 
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                 <Typography className="unselectable" variant="h4" sx={{ fontFamily: "Unbounded", marginTop: "24px", padding: "16px", display: "flex", justifyContent: "center" }}>Reference points reached</Typography>
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "center", marginBottom: "24px" }}>
-                <TableContainer sx={{ maxWidth: {xs: "90vw", md: "45vw"} }} component={Paper}>
+                <TableContainer sx={{ maxWidth: { xs: "90vw", md: "45vw" } }} component={Paper}>
                     <Table aria-label="simple table">
                         <TableHead>
-                            <TableRow sx={{backgroundColor: "#CCE5D6"}}>
-                                <TableCell align="left">Title</TableCell>
+                            <TableRow sx={{ backgroundColor: "#CCE5D6" }}>
+                                <TableCell align="left">Name</TableCell>
                                 <TableCell align="left">Coordinates</TableCell>
                                 <TableCell align="left">Reached</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {
-                                sampleData.sort((x, y) => x.reached.toString() < y.reached.toString()).map((refPoint) => (
+                                referencePoints.sort((x, y) => x.reached.toString() < y.reached.toString()).map((refPoint) => (
                                     <TableRow
-                                        key={refPoint.title}
+                                        key={refPoint.name}
                                         sx={{
                                             '&:last-child td, &:last-child th': { border: 0 },
                                             backgroundColor: refPoint.reached ? "#5EE671" : "#E6B0A7"
                                         }}
                                     >
                                         <TableCell align="left" component="th" scope="refPoint">
-                                            <b>{refPoint.title}</b>
+                                            <b>{refPoint.name}</b>
                                         </TableCell>
-                                        <TableCell align="left">{refPoint.lat} - {refPoint.lon}</TableCell>
+                                        <TableCell align="left">{refPoint.position.coordinates[0]} - {refPoint.position.coordinates[1]}</TableCell>
                                         <TableCell align="left">{refPoint.reached ? "Yes" : "No"}</TableCell>
                                     </TableRow>
                                 ))
@@ -228,8 +258,8 @@ const Map = (props) => {
                             return (
                                 <Marker
                                     key={refPoint.title}
-                                    position={[refPoint.lat, refPoint.lon]}>
-                                    <Popup position={[refPoint.lat, refPoint.lon]}>
+                                    position={[refPoint.position.coordinates[1], refPoint.position.coordinates[0]]}>
+                                    <Popup position={[refPoint.position.coordinates[1], refPoint.position.coordinates[0]]}>
                                         <ReferencePointPopup refPoint={refPoint} />
                                     </Popup>
                                 </Marker>
@@ -283,8 +313,8 @@ const ReferencePointPopup = (props) => {
 
             <Divider style={{ marginTop: "2px", marginBottom: "2px" }} />
 
-            <div className='popup-line'>Latitude: {props.refPoint.lat}</div>
-            <div className='popup-line'>Longitude: {props.refPoint.lon}</div>
+            <div className='popup-line'>Latitude: {props.refPoint.position.coordinates}</div>
+            <div className='popup-line'>Longitude: {props.refPoint.position.coordinates}</div>
 
             <Divider style={{ marginTop: "2px", marginBottom: "2px" }} />
 
