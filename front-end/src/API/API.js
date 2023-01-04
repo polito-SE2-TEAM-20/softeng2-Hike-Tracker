@@ -659,13 +659,11 @@ async function startTracingkHike(hikeId) {
     }
 }
 
-async function addPointToTracingkHike(hikeTrackId, lat, lon) {
+async function addPointToTracingkHike(hikeTrackId, pointId, dateTime) {
 
     const body = {
-        position: {
-            lat: lat,
-            lon: lon
-        }
+        pointId: pointId,
+        datetime: dateTime
     }
 
     const response = await fetch((APIURL + '/user-hikes/' + hikeTrackId + '/track-point'), {
