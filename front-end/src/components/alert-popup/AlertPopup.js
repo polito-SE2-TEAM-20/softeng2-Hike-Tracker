@@ -3,9 +3,14 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
+import { DialogContent, Typography } from '@mui/material';
+import { DialogContentText } from '@mui/material';
 import Slide from '@mui/material/Slide';
 import { useNavigate } from 'react-router-dom';
 import { Grid } from '@mui/material';
+import API from '../../API/API';
+import { HikeWeatherByCode } from '../../lib/common/WeatherConditions';
+import { SvgIcon } from '@mui/material';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -13,6 +18,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export const AlertPopup = (props) => {
     const navigate = useNavigate();
+    const [hikes, setHikes] = React.useState([])
+    const [listOfAlerts, setListOfAlerts] = React.useState([])
+    const [loaded, setLoaded] = React.useState(false)
 
     const remindMeLater = () => {
         handleClose()
@@ -26,6 +34,34 @@ export const AlertPopup = (props) => {
         props.setOpen(false);
     };
 
+    React.useEffect(() => {
+        let loa = props.listOfAlerts.filter(alert => alert.weatherStatus >= 4 && alert.weatherStatus < 7)
+        let tmpHikes = []
+
+        const apiGetHikes = async () => {
+            for (let index in props.listOfAlerts) {
+                let x = await API.getSingleHikeByID(props.listOfAlerts[index].hikeId)
+                tmpHikes.push(x)
+            }
+        }
+
+        apiGetHikes().then(() => {
+            setHikes(tmpHikes)
+            for (let index in loa) {
+                for (let index2 in tmpHikes) {
+                    if (loa[index].hikeId === tmpHikes[index2].id) {
+                        loa[index].hikeInfo = tmpHikes[index2]
+                        break
+                    }
+                }
+            }
+
+            setListOfAlerts(loa)
+            setLoaded(true)
+        })
+    }, [])
+
+    if (!loaded) return <></>
     return (
         <div>
             <Dialog
@@ -36,14 +72,41 @@ export const AlertPopup = (props) => {
                 aria-describedby="alert-dialog-slide-description"
             >
                 <DialogTitle>{"Weather alert"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-slide-description">
+                        {
+                            listOfAlerts.length !== 0 ?
+                                <><b>There is a weather alert. </b><br /></>
+                                :
+                                <><b>No weather alerts. </b><br /></>
+                        }
+                        {
+                            listOfAlerts.map(alert => {
+                                return (
+                                    <>
+                                        <Typography>
+                                            Hike name: <b>{alert.hikeInfo.title}</b>
+                                        </Typography>
+                                        <Typography>
+                                            Current weather: <SvgIcon component={HikeWeatherByCode[alert.weatherStatus].image} />&nbsp;{HikeWeatherByCode[alert.weatherStatus].name}
+                                        </Typography>
+                                        <Typography>
+                                            Description: <b>{alert.weatherDescription}</b>
+                                        </Typography>
+                                    </>
+                                )
+                            })
+                        }
+                    </DialogContentText>
+                </DialogContent>
                 <DialogActions>
                     <Grid container spacing={1}>
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{display: "flex", justifyContent: "center"}}>
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "center" }}>
                             <Button
                                 sx={{ borderRadius: "10px", textTransform: "none", backgroundColor: "#1a1a1a", color: "white", "&:hover": { backgroundColor: "#3f3f3f" } }}
                                 onClick={remindMeLater}>Remind me later</Button>
                         </Grid>
-                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{display: "flex", justifyContent: "center"}}>
+                        <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "center" }}>
                             <Button
                                 sx={{ borderRadius: "10px", textTransform: "none", backgroundColor: "#1a1a1a", color: "white", "&:hover": { backgroundColor: "#3f3f3f" } }}
                                 onClick={confirm}>I've understood</Button>
