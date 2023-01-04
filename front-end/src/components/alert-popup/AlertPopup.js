@@ -6,7 +6,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { DialogContent, Typography } from '@mui/material';
 import { DialogContentText } from '@mui/material';
 import Slide from '@mui/material/Slide';
-import { useNavigate } from 'react-router-dom';
 import { Grid } from '@mui/material';
 import API from '../../API/API';
 import { HikeWeatherByCode } from '../../lib/common/WeatherConditions';
@@ -17,18 +16,21 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export const AlertPopup = (props) => {
-    const navigate = useNavigate();
     const [hikes, setHikes] = React.useState([])
     const [listOfAlerts, setListOfAlerts] = React.useState([])
     const [loaded, setLoaded] = React.useState(false)
 
     const remindMeLater = () => {
         handleClose()
-        // navigate(`/admindashboard`)
     };
     const confirm = () => {
-        handleClose()
-        // navigate('/new-weather-alert-hike')
+        const apiDefinitiveClose = async () => {
+            await API.definitiveClosePopup(hikes[0].id)
+        }
+
+        apiDefinitiveClose().then(() => {
+            handleClose()
+        })
     };
     const handleClose = () => {
         props.setOpen(false);
@@ -75,12 +77,6 @@ export const AlertPopup = (props) => {
                 <DialogContent>
                     <DialogContentText id="alert-dialog-slide-description">
                         {
-                            listOfAlerts.length !== 0 ?
-                                <><b>There is a weather alert. </b><br /></>
-                                :
-                                <><b>No weather alerts. </b><br /></>
-                        }
-                        {
                             listOfAlerts.map(alert => {
                                 return (
                                     <>
@@ -97,6 +93,8 @@ export const AlertPopup = (props) => {
                                 )
                             })
                         }
+                        <br />
+                        Please beware of storms or other unpredictable events.
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
