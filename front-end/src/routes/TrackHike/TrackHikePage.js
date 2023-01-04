@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, Slide, Typography } from "@mui/material";
+import { Button, Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, Slide, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { MapContainer, Marker, Polyline, Popup, TileLayer, useMap } from "react-leaflet";
 import { useMatch } from "react-router";
@@ -8,6 +8,7 @@ import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
 import { icon } from "leaflet";
 import currentLocationIcon from '../../Assets/current-location.png'
+import ShareHike from "../../components/share-hike/ShareHike";
 
 function TrackingHikePage(props) {
 
@@ -214,8 +215,8 @@ function TrackingHikePage(props) {
                             </Marker>
                         }
                         {
-                            (hikeDetails.referencePoints !== null && hikeDetails.referencePoints.length > 0 ) &&
-                            hikeDetails.referencePoints.map((refPoint) => {
+                            (hikeDetails?.referencePoints !== null && hikeDetails?.referencePoints.length > 0 ) &&
+                            hikeDetails?.referencePoints.map((refPoint) => {
                                 return(
                                     <>
                                         <Marker
@@ -243,13 +244,21 @@ function TrackingHikePage(props) {
 
                 <Grid
                     item
-                    style={{ height: "30vh" }}>
+                    style={{ height: "20vh" }}>
                     <TrackingActionsView
                         state={trackingState}
                         startAction={startTrackingAction}
                         stopAction={stopTrackingAction}>
                     </TrackingActionsView>
                 </Grid>
+
+                {
+                    trackingState === TrackingState.STARTED &&
+                    <Grid
+                        item>
+                        <ShareHike/>
+                    </Grid>
+                }
 
                 {
                     showTurnOnLocatonDialog &&
@@ -349,22 +358,46 @@ function TurnOnLocationDialog(props) {
 
 function RefPointPopUp(props) {
     return(
-        <div>
-            <div className='popup-line'><b>{props.refPoint.name}</b></div>
+        <Grid
+            container
+            display="column"
+            justifyContent="center"
+            alignItems="center">
+            <Grid
+                item>
+                <Typography>{props.refPoint?.name}</Typography>
+            </Grid>
+            
+            <Grid
+                item>
+                <Typography>Latitude: {props.refPoint?.position?.coordinates[0]}</Typography>
+            </Grid>
+            <Grid
+                item>
+                <Typography>Longitude: {props.refPoint?.position?.coordinates[0]}</Typography>
+            </Grid>
 
-            <Divider style={{marginTop: "2px", marginBottom: "2px"}} />
+            <Grid
+                item>
+                {/* <Button text="I arrived HERE" color="black" textColor="white" fontSize="12px" /> */}
+            </Grid>
+        </Grid>
+        // <div>
+        //     <div className='popup-line'><b>{props.refPoint?.name}</b></div>
 
-            <div className='popup-line'>{props.refPoint.address} </div>
+        //     <Divider style={{marginTop: "2px", marginBottom: "2px"}} />
 
-            <Divider style={{marginTop: "2px", marginBottom: "2px"}} />
+        //     <div className='popup-line'>{props.refPoint?.address} </div>
 
-            <div className='popup-line'>Latitude: {props.refPoint.position.coordinates[0]}</div>
-            <div className='popup-line'>Longitude: {props.refPoint.position.coordinates[0]}</div>
+        //     <Divider style={{marginTop: "2px", marginBottom: "2px"}} />
 
-            <Divider style={{marginTop: "2px", marginBottom: "2px"}} />
+        //     <div className='popup-line'>Latitude: {props.refPoint?.position?.coordinates[0]}</div>
+        //     <div className='popup-line'>Longitude: {props.refPoint?.position?.coordinates[0]}</div>
 
-            <Button text="I arrived HERE" color="black" textColor="white" fontSize="12px" />
-        </div>
+        //     <Divider style={{marginTop: "2px", marginBottom: "2px"}} />
+
+        //     <Button text="I arrived HERE" color="black" textColor="white" fontSize="12px" />
+        // </div>
     );
 }
 

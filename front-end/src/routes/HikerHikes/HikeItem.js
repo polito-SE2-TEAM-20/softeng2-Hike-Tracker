@@ -25,7 +25,6 @@ function HikeItem(props) {
                 maxWidth: 400
             }}>
             <CardActionArea>
-                {/* {HikeItemImage(props.hike.difficulty, props.hike.pictures)} */}
                 <CardMedia
                     component="img"
                     wide
