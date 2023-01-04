@@ -42,6 +42,7 @@ import TestPage from './routes/test-page/TestPage';
 import WeatherAlertHikeEditStatus from './routes/new-weather-alert-hike/WeatherAlertHikeEditStatus';
 import FriendTracking from './routes/friend-tracking/FriendTracking';
 import Unauthorized from './routes/unauthorized/Unauthorized';
+import VerifyKey from './components/share-hike/VerifyKey';
 
 function App() {
   return (
@@ -161,16 +162,15 @@ function App2() {
         <Route path="/trackhike/:hikeid" element={<TrackingHikePage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/modifyHikeCondition/:hikeid" element={<HikeCondition user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} updateHikeCondition={API.updateHikeCondition} />} />
         <Route path="/hikerhikes" element={<HikerHikesPage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut}/>} />
-
-
         <Route path="/new-weather-alert-hike" element={<WeatherAlertHike />} />
         <Route path="/new-weather-alert-map" element={<WeatherAlertMap />} />
         <Route path="/hikerPerformance" element={<HikerPerformance user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/test-page" element={<TestPage />} />
         <Route path="/weather-status-edit/:hikeID" element={<WeatherAlertHikeEditStatus />} />
-        <Route path="/friend-tracking/:hikeID" element={<FriendTracking />} />
+        <Route path="/friend-tracking/:userID/:hikeID" element={<FriendTracking />} />
         <Route path="/savedhikes" element={<SavedHikes user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="/friend-code" element={<VerifyKey />} />
       </Routes>
     </>
   );

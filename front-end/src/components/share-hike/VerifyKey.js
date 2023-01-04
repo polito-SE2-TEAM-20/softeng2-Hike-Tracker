@@ -30,7 +30,8 @@ const VerifyKey = (props) => {
                     setMessage({ color: "green", message: "Access granted: " + response.hike.title })
                 }, 50);
                 setTimeout(() => {
-                    navigate("/friend-tracking/" + response.hikeId)
+                    console.log(response)
+                    navigate("/friend-tracking/" + response.userId + "/" + response.hikeId)
                 }, 2000);
             })
             .catch(() => {
