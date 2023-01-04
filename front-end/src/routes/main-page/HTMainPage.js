@@ -70,7 +70,7 @@ const HTMainPage = (props) => {
                                         </CardMedia>
                                     </Grid>
                                 </Grid>
-                                <Grid container item xs={12} sm={12} md={2} lg={2} xl={2} columns={3} style={{ marginTop: "50px" }}>
+                                <Grid container item xs={12} sm={12} md={2} lg={2} xl={2} columns={3}>
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ marginBottom: "25px", display: "flex", justifyContent: { xs: "center", sm: "center", md: "left", lg: "left", xl: "left" }, marginLeft: { xs: "none", sm: "none", md: "48px", lg: "48px", xl: "48px" } }}>
                                         {
                                             loaded && Object.keys(preferences).length !== 0 ?
