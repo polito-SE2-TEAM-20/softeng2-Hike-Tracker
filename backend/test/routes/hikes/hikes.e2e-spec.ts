@@ -33,6 +33,7 @@ import {
 import { hikeBasic } from './constants';
 import { HikeWeather } from '@app/common/enums/weatherStatus.enum';
 import { In, IsNull } from 'typeorm';
+import { Console } from 'node:console';
 
 const withoutCompositeFields = omit([
   'referencePoints',
