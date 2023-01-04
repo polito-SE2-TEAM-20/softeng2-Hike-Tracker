@@ -650,7 +650,7 @@ export class HikesController {
   async getMaxElapsedTime(
     @Param('id', ParseIdPipe()) id: ID,
     @CurrentUser() user: UserContext
-  ){
+  ):Promise<UserHike | null>{
 
     //Count how many completed hikes has the user
     const userHikes = await this.dataSource.getRepository(UserHike).findBy({
@@ -725,6 +725,10 @@ export class HikesController {
       }
 
     }
+
+    return await this.dataSource.getRepository(UserHike).findOneBy({
+      id: userHikeId?.id
+    });
   }
 
   //Evaluate which popups should be shown and update the flag
@@ -737,6 +741,7 @@ export class HikesController {
 
     const userHikesUnfinished = await this.dataSource.getRepository(UserHike).findBy({
       userId: user.id,
+      maxElapsedTime: Not(IsNull()),
       finishedAt: IsNull(),
       unfinishedNotified: IsNull() //Not notified yet 
     });
