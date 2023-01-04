@@ -1,7 +1,7 @@
 import { Button, Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, Slide, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { MapContainer, Marker, Polyline, Popup, TileLayer, useMap } from "react-leaflet";
-import { useMatch } from "react-router";
+import { useLocation, useMatch, useParams } from "react-router";
 import API from "../../API/API";
 import { TrackingState } from "../../lib/common/Hike";
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
@@ -15,6 +15,10 @@ function TrackingHikePage(props) {
 
     const match = useMatch('/trackhike/:hikeid')
     const hikeId = match.params.hikeid ? match.params.hikeid : -1;
+
+    const location = useLocation()
+
+    const passedTrckingHikeId = (location?.state?.trackHikeId > -1) ? location?.state?.trackHikeId : -1
 
 
     const [hikeDetails, setHikeDetails] = useState(null)
@@ -32,9 +36,9 @@ function TrackingHikePage(props) {
     const [trackHasBeenRecorded, setTrackHasBeenRecorded] = useState(false);
     const [trackRecordId, setTrackRecordId] = useState(null);
     const [trackHasBeenFinished, setTrackHasBeenFinished] = useState(false);
-    const [trackHikeId, setTrackHikeId] = useState(-1);
+    //TODO: get track hike id if exsits
+    const [trackHikeId, setTrackHikeId] = useState(passedTrckingHikeId);
     const [trackHike, setTrackHike] = useState(null);
-    const [checkedPoints, setCheckedPoints] = useState([])
 
     const [showTurnOnLocatonDialog, setShowTurnOnLocationDialog] = useState(false);
     const [isLocationAccessable, setIsLocationAccessable] = useState(false);
@@ -85,6 +89,26 @@ function TrackingHikePage(props) {
                 setErrorOnLoad("Failed to get hike details. Please try again.")
             }
         
+        }
+
+        //Load the track that already exists
+        if (trackHikeId > -1) {
+            API.getUserHikeTrackingDetails(trackHikeId).then((result) => {
+                setTrackHike(result)
+                //TODO update params
+                if (result.finishedAt === null || result.finishedAt === undefined) {
+                    setTrackHasBeenStarted(true)
+                    setTrackHasBeenFinished(false)
+                    setTrackingState(TrackingState.STARTED)
+                } else if (result.finishedAt !== null && result.finishedAt !== undefined) {
+                    setTrackHasBeenStarted(false)
+                    setTrackHasBeenFinished(true)
+                    setTrackingState(TrackingState.FINISHED)
+                }
+            })
+            .catch((err) => {
+
+            })
         }
 
         getHikeDetails()
@@ -175,7 +199,7 @@ function TrackingHikePage(props) {
             }
         })
         //check that we have sent this ref point before or not
-        checkedPoints.forEach((item) => {
+        trackHike.trackPoints.forEach((item) => {
             if (item.refPoint.id === refPoint.id) {
                 hasProblem = true
             }
@@ -185,7 +209,6 @@ function TrackingHikePage(props) {
 
         API.addPointToTracingkHike(trackHikeId, refPoint.id, now).then((result) => {
             setTrackHike(result)
-            setCheckedPoints((oldList) => oldList.concat({refPoint: refPoint, time: now}))
         })
         .catch((error) => {
 
@@ -246,7 +269,7 @@ function TrackingHikePage(props) {
                                             <Popup position={[refPoint.position.coordinates[1], refPoint.position.coordinates[0]]}>
                                                 <RefPointPopUp 
                                                     refPoint={refPoint} 
-                                                    checkedPoints={checkedPoints}
+                                                    trackHike={trackHike}
                                                     trackingState={trackingState}
                                                     handleCheckRefPoint={handleCheckingRefPoint}/>
                                             </Popup>
@@ -385,10 +408,10 @@ function RefPointPopUp(props) {
 
     let haveBeenHere = false;
     let haveBeenHereTime = null;
-    props.checkedPoints.forEach((item) => {
-        if (item.refPoint.id === props.refPoint.id) {
+    props.trackHike.trackPoints.forEach((item) => {
+        if (item.pointId === props.refPoint.id) {
             haveBeenHere = true
-            haveBeenHereTime = item.time
+            haveBeenHereTime = item.datetime
         }
     })
 
@@ -413,7 +436,7 @@ function RefPointPopUp(props) {
             </Grid>
 
             {
-                (props.trackingState === TrackingState.STARTED && haveBeenHere) &&
+                (props.trackingState !== TrackingState.NOT_STARTED && haveBeenHere) &&
                 <Typography>I have been here on: {haveBeenHereTime}</Typography>
             }
             {
