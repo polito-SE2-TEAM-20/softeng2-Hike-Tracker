@@ -21,6 +21,7 @@ export const AlertPopup = (props) => {
     const [loaded, setLoaded] = React.useState(false)
 
     const remindMeLater = () => {
+        props.setAlertTimeout(60 * 1000)
         handleClose()
     };
     const confirm = () => {
