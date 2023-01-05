@@ -7,7 +7,7 @@ const HTButton = (props) => {
             style={{
                 backgroundColor: props.color, color: props.textColor,
                 borderRadius: "24px", fontSize: props.size,
-                fontFamily: "Bakbak One, display", fontWeight: "600",
+                fontFamily: "Unbounded", fontWeight: "600",
                 textTransform: "none"
             }}>
             {props.text}

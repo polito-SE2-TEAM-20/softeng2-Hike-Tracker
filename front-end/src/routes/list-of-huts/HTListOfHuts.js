@@ -48,8 +48,7 @@ const HTListOfHikes = (props) => {
 
     return (
         <>
-            <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
-            <Grid container style={{ marginTop: "75px" }}>
+            <Grid container>
                 <Grid item sm>
                     <HTTopBarFilterHut listOfHuts={listOfHuts} loading={loading} setFilter={setFilter} />
                 </Grid>

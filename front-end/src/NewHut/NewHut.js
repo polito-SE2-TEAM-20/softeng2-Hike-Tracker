@@ -1,7 +1,7 @@
 import { HutDescription } from "./HutDescription";
 import { AddressInformation } from './AddressInformation';
 import { ReviewHutForm } from "./ReviewHutForm";
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import * as React from 'react';
 import { Grid } from '@mui/material'
 import CssBaseline from '@mui/material/CssBaseline';
@@ -16,20 +16,14 @@ import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
-import HTNavbar from '../components/HTNavbar/HTNavbar';
+import API from '../API/API.js';
+
 
 import Alert from '@mui/material/Alert';
-import { MapHut } from './MapHut.js';
 
 
 import login from '../Assets//login.jpg'; // Import using relative path
 import { useNavigate } from "react-router";
-
-const styles = {
-  paperContainer: {
-    backgroundImage: `url(${login})`
-  }
-};
 
 function Copyright() {
   return (
@@ -69,7 +63,7 @@ function NewHutForm(props) {
   const [emailAddress, setEmailAddress] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  const [beds, setBeds] = useState(''); 
+  const [beds, setBeds] = useState('');
   const [price, setPrice] = useState('');
 
   // other informations
@@ -80,7 +74,31 @@ function NewHutForm(props) {
   const [show, setShow] = useState(false);
 
   const [hutId, setHutId] = useState(-1);
-  const [positionShow, setPositionsShow] =useState(false);
+  const [positionShow, setPositionsShow] = useState(false);
+  const [pictures, setPictures] = useState([]);
+  const [picData, setPicData] = useState([]);
+
+  const handleUpload = event => {
+    const fileUploaded = event.target.files[0];
+    setPictures(fileUploaded);
+    console.log(event.target.files[0])
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      console.log(e);
+      setPicData({ 'id': pictures.name, 'img': reader.result })
+      console.log(reader.result);
+    };
+    if (event.target.files[0] && event.target.files) {
+      reader.readAsDataURL(fileUploaded);
+    }
+  }
+
+
+  const handleDeleteLocal = () => {
+    setPicData([])
+    setPictures([])
+  }
+
 
 
   const handleNext = () => {
@@ -90,14 +108,14 @@ function NewHutForm(props) {
         setErrorMessage("All fields with the * should be filled");
         setShow(true);
 
-      }else if (!latitude.toString().match(/^[-+]?([0-9]*[.])?[0-9]+$/)) {
+      } else if (!latitude.toString().match(/^[-+]?([0-9]*[.])?[0-9]+$/)) {
         setErrorMessage("insert a valid value for the latitude ");
         setShow(true);
       } else if (!longitude.toString().match(/^[-+]?([0-9]*[.])?[0-9]+$/)) {
         setErrorMessage("insert a valid value for the longitude ");
         setShow(true);
       } else if (addresssSenzaVirgole.indexOf(',') > -1) {
-        
+
         setErrorMessage("insert an address without commas ");
         setShow(true);
       } else {
@@ -105,22 +123,25 @@ function NewHutForm(props) {
         setActiveStep(activeStep + 1);
       }
     } else if (activeStep === (steps.length - 2)) {
-      if (beds === '' || price === '' || beds === null || price === null || phoneNumber==='' || phoneNumber===null || phoneNumber===undefined || emailAddress===null || emailAddress==='') {
+      if (beds === '' || price === '' || beds === null || price === null || phoneNumber === '' || phoneNumber === null || phoneNumber === undefined || emailAddress === null || emailAddress === '') {
         setErrorMessage("All fields with the * should be filled");
+        setShow(true);
+      } else if (pictures.length === 0) {
+        setErrorMessage("insert a picture of the hut ");
         setShow(true);
       } else {
         setShow(false);
         setActiveStep(activeStep + 1);
       }
     } else if (activeStep === (steps.length - 1)) {
-      //cosa cambia tra title e name???
- 
       let add = [addresssSenzaVirgole, city, province, region, country];
       console.log(add.join(','))
-      let object = { title: name, elevation: parseFloat(elevation), description: description, 
-                    website: website, ownerName: owner, numberOfBeds: parseInt(beds), 
-                    location: { lat: parseFloat(latitude), lon: parseFloat(longitude), name: name, address: add.join(",") }, 
-                    price: parseFloat(price), phoneNumber: phoneNumber, email: emailAddress }
+      let object = {
+        title: name, elevation: parseFloat(elevation), description: description,
+        website: website, ownerName: owner, numberOfBeds: parseInt(beds),
+        location: { lat: parseFloat(latitude), lon: parseFloat(longitude), name: name, address: add.join(",") },
+        price: parseFloat(price), phoneNumber: phoneNumber, email: emailAddress
+      }
       setShow(false);
       setActiveStep(activeStep + 1);
 
@@ -130,6 +151,9 @@ function NewHutForm(props) {
           setHutId(newHut.id);
           setShow(false);
           setErrorMessage('');
+          const formData = new FormData();
+          formData.append("pictures", pictures);
+          API.setHutPictures({ 'hutID': newHut.id, 'pictures': formData })
         })
         .catch(err => {
           setShow(true);
@@ -146,6 +170,7 @@ function NewHutForm(props) {
       setCountry(''); setCity(''); setElevation('');
     } else if (activeStep === (steps.length - 2)) {
       setWebsite(''); setOwner(''); setEmailAddress(''); setBeds(''); setDescription(''); setPrice(''); setPhoneNumber('');
+      setPicData([]); setPictures([]);
     }
 
 
@@ -173,12 +198,12 @@ function NewHutForm(props) {
       case 0:
         return <AddressInformation name={name} setName={setName} elevation={elevation} setElevation={setElevation} setLatitude={setLatitude} latitude={latitude}
           longitude={longitude} setLongitude={setLongitude} region={region} setRegion={setRegion} province={province}
-          setProvince={setProvince} address={address} setAddress={setAddress} city={city} setCity={setCity} country={country} setCountry={setCountry} 
-          positionShow={positionShow} setPositionsShow={setPositionsShow}/>;
+          setProvince={setProvince} address={address} setAddress={setAddress} city={city} setCity={setCity} country={country} setCountry={setCountry}
+          positionShow={positionShow} setPositionsShow={setPositionsShow} />;
       case 1:
         return <HutDescription owner={owner} setOwner={setOwner} website={website} setWebsite={setWebsite} emailAddress={emailAddress}
           setEmailAddress={setEmailAddress} beds={beds} setBeds={setBeds} description={description} setDescription={setDescription}
-          price={price} setPrice={setPrice} phoneNumber={phoneNumber} setPhoneNumber={setPhoneNumber} />;
+          price={price} setPrice={setPrice} phoneNumber={phoneNumber} setPhoneNumber={setPhoneNumber} handleDeleteLocal={handleDeleteLocal} handleUpload={handleUpload} pictures={pictures} picData={picData} />;
       case 2:
         return <ReviewHutForm name={name} elevation={elevation} latitude={latitude}
           longitude={longitude} region={region} province={province}
@@ -188,16 +213,12 @@ function NewHutForm(props) {
         throw new Error('Unknown step');
     }
   }
-  const gotoLogin = () => {
-    navigate("/login", { replace: false })
-  }
 
   return (
     <ThemeProvider theme={theme} >
       <CssBaseline />
-      <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
-      <Grid container spacing={0} sx={{ backgroundImage: `url(${login})`, minHeight: "100vh", height: "100%", minWidth: "100vw", width: "100%" }}>
-        <Container component="main" maxWidth="sm" sx={{ mb: 4, mt: 9 }} >
+      <Grid container sx={{ backgroundImage: `url(${login})`, minHeight: "100vh", height: "100%", minWidth: "100vw", width: "100%" }}>
+        <Container component="main" sx={{ mb: 4, mt: 1 }} >
 
           <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }} >
             <Typography component="h1" variant="h4" align="center">

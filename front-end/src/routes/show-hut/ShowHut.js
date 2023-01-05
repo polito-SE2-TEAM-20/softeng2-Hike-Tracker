@@ -1,13 +1,13 @@
 import { Button, Chip, Divider, Grid, Paper, Typography } from "@mui/material";
 import { useNavigate } from "react-router";
 import { useMatch } from "react-router-dom";
-import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import hutIcon from '../../Assets/hut-icon.png'
 import { useEffect, useState } from "react";
 import API from '../../API/API.js';
 import { Skeleton } from "@mui/material";
 import { MapContainer, TileLayer, Marker, Popup, ZoomControl } from 'react-leaflet'
 import { PictureCard } from "../edit-hut/PictureCard";
+import { APIURL } from "../../API/API.js";
 
 const Difficulty = (props) => {
     if (!props.loading) {
@@ -70,15 +70,30 @@ const ShowHut = (props) => {
         })
     }, [hut])
 
-
-    const gotoLogin = () => {
-        navigate("/login", { replace: false })
-    }
-
     return (
         <Grid container style={{ minHeight: "100vh", height: "100%" }}>
-            <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
-            <Grid style={{ marginTop: "105px", marginLeft: "auto", marginRight: "auto", marginBottom: "25px", height: "40vh" }} item lg={3}>
+            <Grid item>
+                <div style={{ display: "flex", justifyContent: "center", borderRadius: 12 }}>
+                    {
+                        !loading ?
+                            <img src={APIURL + hut.pictures[0]} alt={"landscape"} style={{ objectFit: "cover", width: "100vw", height: "400px" }} />
+                            :
+                            <></>
+                    }
+                </div>
+            </Grid>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "center", marginTop: {xs: "-350px",md: "-200px"} }}>
+                {
+                    !loading ? <Typography variant="h2" sx={{ fontFamily: "Unbounded", textShadow: "#1a1a1a 0px 0 20px", color: "#fafafa", textAlign: "center", zIndex: "15" }}>{hut.title}</Typography> :
+                        <Skeleton variant='rectangular' height={50} width={600} style={{ marginBottom: "10px" }} />
+                }
+            </Grid>
+            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{marginTop: "12px"}}>
+                <Divider>
+                    <Difficulty loading={loading} diff={hut.difficulty} />
+                </Divider>
+            </Grid>
+            <Grid style={{  marginLeft: "auto", marginRight: "auto", marginBottom: "25px", height: "fit-content" }} item lg={3}>
                 <Paper style={{ padding: "30px", height: "fit-content" }}>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                         <Typography variant="h4">General information</Typography>
@@ -133,9 +148,9 @@ const ShowHut = (props) => {
                             !loading ? <Typography><b>Working time: </b>
                                 {hut.workingTimeStart === "" || hut.workingTimeStart === null || hut.workingTimeStart === undefined ?
                                     "not provided"
-                                    : hut.workingTimeStart.slice(0,-3)} - {hut.workingTimeEnd === "" || hut.workingTimeEnd === null || hut.workingTimeEnd === undefined ?
+                                    : hut.workingTimeStart.slice(0, -3)} - {hut.workingTimeEnd === "" || hut.workingTimeEnd === null || hut.workingTimeEnd === undefined ?
                                         "not provided"
-                                        : hut.workingTimeEnd.slice(0,-3)}
+                                        : hut.workingTimeEnd.slice(0, -3)}
                             </Typography> :
                                 <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                         }
@@ -169,18 +184,7 @@ const ShowHut = (props) => {
                     }
                 </Paper>
             </Grid>
-            <Grid style={{ marginTop: "105px", marginLeft: "auto", marginRight: "auto", marginBottom: "25px", height: "80vh", paddingLeft: "25px", paddingRight: "25px" }} item lg={6}>
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
-                    {
-                        !loading ? <Typography variant="h2">{hut.title}</Typography> :
-                            <Skeleton variant='rectangular' height={50} width={600} style={{ marginBottom: "10px" }} />
-                    }
-                </Grid>
-                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                    <Divider>
-                        <Difficulty loading={loading} diff={hut.difficulty} />
-                    </Divider>
-                </Grid>
+            <Grid style={{  marginLeft: "auto", marginRight: "auto", marginBottom: "25px", height: "80vh", paddingLeft: "25px", paddingRight: "25px" }} item lg={6}>
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ marginTop: "30px" }}>
                     {
                         !loading ?
