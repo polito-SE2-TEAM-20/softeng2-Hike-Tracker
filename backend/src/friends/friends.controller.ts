@@ -1,7 +1,6 @@
 import { Controller, HttpCode, Post, Get, Param } from '@nestjs/common';
 
 import { HikerOnly, CurrentUser, UserContext } from '@app/common';
-import { UserHikeReference } from '@app/common';
 import { UserHikeFull } from '@core/user-hikes/user-hikes.interface';
 
 import { FriendsService } from './friends.service';
@@ -23,11 +22,4 @@ export class FriendsController {
     return await this.friends.getFriendHike(code);
   }
 
-  @Get('reached-points/:code')
-  @HttpCode(200)
-  async getFriendReachedReferencePoints(
-    @Param('code') code: string,
-  ): Promise<UserHikeReference[]> {
-    return await this.friends.getFriendReachedReferencePoints(code);
-  }
 }

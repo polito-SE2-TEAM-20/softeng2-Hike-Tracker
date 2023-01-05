@@ -17,7 +17,6 @@ import {
   HikerOnly,
   ID,
   ParseIdPipe,
-  Point,
   PointType,
   RolesOnly,
   tableNameSchemed,
@@ -25,7 +24,6 @@ import {
   UserHike,
   UserRole,
 } from '@app/common';
-import { UserHikeReference } from '@app/common';
 import { HikesService } from '@core/hikes/hikes.service';
 import { PointsService } from '@core/points/points.service';
 
@@ -33,7 +31,6 @@ import { UserHikeTrackPointsService } from './user-hike-track-points.service';
 import {
   StartHikeDto,
   TrackPointDto,
-  UserHikeReferenceDto,
 } from './user-hikes.dto';
 import { UserHikeFull } from './user-hikes.interface';
 import { UserHikesService } from './user-hikes.service';
@@ -59,8 +56,8 @@ export class UserHikesController {
   @HttpCode(200)
   async getReachedReferencePoints(
     @CurrentUser() user: UserContext,
-  ): Promise<UserHikeReference[]> {
-    return await this.service.getReachenReferencePoints(user.id);
+  ): Promise<UserHikeFull> {
+    return await this.userHikeTrackPointsService.getReachedReferencePoints(user.id);
   }
 
   @Get(':id')
@@ -264,13 +261,4 @@ export class UserHikesController {
     return await this.service.getFullUserHike(id);
   }
 
-  @Post('reach-point')
-  @HikerOnly()
-  @HttpCode(201)
-  async reachReferencePoint(
-    @CurrentUser() user: UserContext,
-    @Body() body: UserHikeReferenceDto,
-  ): Promise<Point> {
-    return await this.service.reachReferencePoint(user.id, body.pointId);
-  }
 }
