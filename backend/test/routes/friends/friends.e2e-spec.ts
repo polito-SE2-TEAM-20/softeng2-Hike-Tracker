@@ -20,6 +20,8 @@ const pickCommon = (el: any) => ({
   hike: expect.objectContaining({ id: el.hikeId }),
 });
 
+const isoDateNow = () => strDate(new Date());
+
 describe('Friends (e2e)', () => {
   let { dbName, app, restService, moduleRef, testService } = prepareVars();
 
@@ -160,6 +162,7 @@ describe('Friends (e2e)', () => {
 
   it('should get all reached reference points for the friend given the code', async () => {
     const { hiker2, hike, points } = await setup();
+    const datetime = isoDateNow();
 
     await restService
       .build(app, hiker2)
@@ -173,20 +176,22 @@ describe('Friends (e2e)', () => {
       await restService
       .build(app, hiker2)
       .request()
-      .post(`/user-hikes/reach-point`)
+      .post(`/user-hikes/${2}/track-point`)
       .send({
         pointId: points[0].id,
+        datetime
       })
-      .expect(201)
-
+      .expect(200)
+  
       await restService
       .build(app, hiker2)
       .request()
-      .post(`/user-hikes/reach-point`)
+      .post(`/user-hikes/${2}/track-point`)
       .send({
         pointId: points[1].id,
+        datetime
       })
-      .expect(201)
+      .expect(200)
 
       const { body: res } = await restService
       .build(app, hiker2)
@@ -197,16 +202,19 @@ describe('Friends (e2e)', () => {
         expect(body.Code).toHaveLength(4);
       });
 
-
+      console.log(res)
       await restService
       .build(app)
       .request()
-      .get(`/friends/reached-points/${res.Code}`)
+      .get(`/friends/track/${res.Code}`)
       .expect(200)
       .expect(({ body }) => {
-        expect(body).toMatchObject([{
+        expect(body.trackPoints).toMatchObject([{
               "userHikeId": 2,
-              "pointId": {
+              "pointId": points[0].id,
+              "index": expect.any(Number),
+              "datetime": expect.any(String),
+              "point": {
                 "id": points[0].id,
                 "type": points[0].type,
                 "position": {
@@ -216,12 +224,14 @@ describe('Friends (e2e)', () => {
                 "address": points[0].address,
                 "name": points[0].name,
                 "altitude": points[0].altitude
-              },
-              "datetime": expect.any(String)
+              }
             },
             {
               "userHikeId": 2,
-              "pointId": {
+              "pointId": points[1].id,
+              "index": expect.any(Number),
+              "datetime": expect.any(String),
+              "point": {
                 "id": points[1].id,
                 "type": points[1].type,
                 "position": {
@@ -231,9 +241,8 @@ describe('Friends (e2e)', () => {
                 "address": points[1].address,
                 "name": points[1].name,
                 "altitude": points[1].altitude
-              },
-              "datetime": expect.any(String)
-          }
+              }
+            }
         ]);
       });
   });

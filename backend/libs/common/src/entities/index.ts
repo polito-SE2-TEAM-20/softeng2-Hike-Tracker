@@ -5,7 +5,6 @@ import { HutWorker } from './hut-worker.entity';
 import { Hut } from './hut.entity';
 import { ParkingLot } from './parking-lot.entity';
 import { Point } from './point.entity';
-import { UserHikeReference } from './user-hike-reference.entity';
 import { UserHikeTrackPoint } from './user-hike-track-point.entity';
 import { UserHike } from './user-hike.entity';
 import { User } from './user.entity';
@@ -20,7 +19,6 @@ export * from './user-hike-track-point.entity';
 export * from './hut.entity';
 export * from './hut-worker.entity';
 export * from './code-hike.entity';
-export * from './user-hike-reference.entity';
 
 export const entities = [
   User,
@@ -32,6 +30,5 @@ export const entities = [
   HutWorker,
   UserHike,
   UserHikeTrackPoint,
-  CodeHike,
-  UserHikeReference,
+  CodeHike
 ];

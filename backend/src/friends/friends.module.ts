@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { UserHike, UserHikeReference } from '@app/common';
+import { UserHike } from '@app/common';
 import { CodeHike } from '@app/common/entities/code-hike.entity';
 import { HikesModule } from '@core/hikes/hikes.module';
 import { PointsModule } from '@core/points/points.module';
@@ -12,7 +12,7 @@ import { FriendsService } from './friends.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([CodeHike, UserHike, UserHikeReference]),
+    TypeOrmModule.forFeature([CodeHike, UserHike]),
     HikesModule,
     PointsModule,
   ],
