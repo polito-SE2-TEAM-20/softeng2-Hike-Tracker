@@ -69,13 +69,18 @@ const VerifyKey = (props) => {
     const handlePaste = e => {
         const data = e.clipboardData.getData("text")
         const value = data.split("")
-        if (value.length === listOfInputs.length && !sending) {
-            listOfInputs.forEach((input, index) => {
-                const fun = setters[index]
-                fun(value[index])
-            })
+        console.log(data)
+        if (value.length === 4 && !sending) {
+            listOfInputs[0].value = value[0]
+            listOfInputs[1].value = value[1]
+            listOfInputs[2].value = value[2]
+            listOfInputs[3].value = value[3]
+            setters[0](value[0])
+            setters[1](value[1])
+            setters[2](value[2])
+            setters[3](value[3])
             setReady(true)
-        } else if (value.length < listOfInputs.length) {
+        } else if (value.length < 4) {
             setMessage({ color: "red", message: "The code you pasted is too short" })
             setTimeout(() => {
                 setMessage({ color: "", message: "" })
@@ -207,7 +212,7 @@ const VerifyKey = (props) => {
                 </Grid>
 
                 <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "center", marginBottom: "24px" }}>
-                    <Typography sx={{ color: message.color, fontFamily: "Unbounded", fontSize: "32px" }}>
+                    <Typography sx={{ color: message.color, fontFamily: "Unbounded", fontSize: "32px", textAlign: "center" }}>
                         {message.message}
                     </Typography>
                 </Grid>
