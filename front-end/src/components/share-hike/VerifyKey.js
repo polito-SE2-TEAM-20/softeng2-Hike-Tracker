@@ -95,10 +95,10 @@ const VerifyKey = (props) => {
         const fun = setters[n]
         const newDigit = e.target.value[e.target.value.length - 1]
         fun(newDigit)
-        if (n < listOfInputs.length - 1 && isDigitValid(newDigit)) {
+        if (n < 3 && isDigitValid(newDigit)) {
             setIndex(n + 1)
         } else if (!isDigitValid(newDigit)) {
-            setIndex(n - 1)
+            setIndex(n)
         }
     }
 
