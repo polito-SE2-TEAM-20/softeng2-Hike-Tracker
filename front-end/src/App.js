@@ -99,8 +99,10 @@ function App2() {
 				apiGetAlerts().then(() => {
 					console.log(tmpListOfAlerts)
 					setListOfAlerts(tmpListOfAlerts)
-					if (tmpListOfAlerts.length !== 0) setAlertOpen(true)
-					setLoaded(true)
+					if (tmpListOfAlerts.length !== 0) {
+						setAlertOpen(true)
+						setLoaded(true)
+					}
 				})
 
 				// update
