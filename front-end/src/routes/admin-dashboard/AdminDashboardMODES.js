@@ -21,7 +21,7 @@ export const AdminDashboardPC = (props) => {
                     <AccountCircleIcon sx={{ fontSize: 300 }} />
                 </Grid>
                 <Grid item lg={12} xl={12}>
-                    <Typography sx={{ fontFamily: "Unbounded" }} fontSize={32}>
+                    <Typography sx={{ fontFamily: "Unbounded" }} fontSize={24}>
                         <b>
                             {props?.user?.firstName + " " + props?.user?.lastName}
                         </b>
@@ -206,7 +206,7 @@ export const AdminDashboardTABLET = (props) => {
                     <AccountCircleIcon sx={{ fontSize: 120 }} />
                 </Grid>
                 <Grid item md={12} display="flex" justifyContent="center">
-                    <Typography sx={{ fontFamily: "Unbounded" }} fontSize={32} display="flex" justifyContent="center">
+                    <Typography sx={{ fontFamily: "Unbounded" }} fontSize={24} display="flex" justifyContent="center">
                         <b>
                             {props?.user?.firstName + " " + props?.user?.lastName}
                         </b>
@@ -388,7 +388,7 @@ export const AdminDashboardMOBILE = (props) => {
                     <AccountCircleIcon sx={{ fontSize: 120 }} />
                 </Grid>
                 <Grid item xs={12} sm={12} display="flex" justifyContent="center">
-                    <Typography sx={{ fontFamily: "Unbounded", textAlign: "center" }} fontSize={32} display="flex" justifyContent="center">
+                    <Typography sx={{ fontFamily: "Unbounded", textAlign: "center" }} fontSize={24} display="flex" justifyContent="center">
                         <b>
                             {props?.user?.firstName + " " + props?.user?.lastName}
                         </b>
