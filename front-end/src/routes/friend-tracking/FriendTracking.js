@@ -1,7 +1,7 @@
 import { Divider, Grid, Button, Typography, Paper, Chip, Skeleton, SvgIcon } from "@mui/material"
 import { useMatch, useNavigate } from "react-router"
 import { MapContainer, TileLayer, Marker, Popup, ZoomControl, Polyline, } from 'react-leaflet'
-import L from 'leaflet';
+import L, { point } from 'leaflet';
 import { useState, useEffect } from "react";
 import API from "../../API/API";
 import '../../components/hike-popup/hikepopup-style.css'
@@ -13,7 +13,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-
+import TroubleshootIcon from '@mui/icons-material/Troubleshoot';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -32,39 +32,6 @@ const FriendTracking = () => {
     const [reachedReferencePoints, setReachedReferencePoints] = useState([])
     const [referencePoints, setReferencePoints] = useState([])
 
-    const sampleData = [
-        {
-            'title': "RefPoint#1",
-            'lat': 45.4,
-            "lon": 6.94569,
-            'reached': false
-        },
-        {
-            'title': "RefPoint#2",
-            'lat': 45.5,
-            "lon": 6.945684,
-            'reached': true
-        },
-        {
-            'title': "RefPoint#3",
-            'lat': 45.6,
-            "lon": 6.94566,
-            'reached': false
-        },
-        {
-            'title': "RefPoint#4",
-            'lat': 45.7,
-            "lon": 6.94567,
-            'reached': true
-        },
-        {
-            'title': "RefPoint#5",
-            'lat': 45.8,
-            "lon": 6.94566,
-            'reached': false
-        }
-    ]
-
     useEffect(() => {
         let tmpHike = {}
         let tmpRP = []
@@ -78,7 +45,7 @@ const FriendTracking = () => {
         }
 
         const apiGetRefPoints = async () => {
-            tmpRP = await API.friendGetReferencePointsReached({ friendCode: "756b" })
+            tmpRP = await API.friendGetReferencePointsReached({ friendCode: "7fc6" })
         }
 
         getHike().then(() => {
@@ -117,7 +84,13 @@ const FriendTracking = () => {
     return (
         <Grid container sx={{ marginLeft: { md: "32px" }, marginRight: { md: "32px" }, marginTop: "20px" }}>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                <Typography variant="h3" sx={{ fontFamily: "Unbounded", display: "flex", justifyContent: "left", marginBottom: "18px", padding: "12px" }}>{hike.title}: tracking</Typography>
+                <Typography className="unselectable" variant="h3" sx={{ fontFamily: "Unbounded", display: "flex", justifyContent: "left", marginBottom: "18px", padding: "12px", fontSize: { xs: "32px", md: "38px" }, alignItems: "center" }}>
+                    <Typography className="unselectable" variant="h3" sx={{ fontFamily: "Unbounded", display: "flex", justifyContent: "left", paddingLeft: "12px", fontSize: { xs: "18px", md: "18px" } }}>Tracking</Typography>
+                    &nbsp;
+                    <TroubleshootIcon sx={{ fontSize: { xs: "32px", md: "38px" } }}></TroubleshootIcon>
+                    &nbsp;
+                    {hike.title}
+                </Typography>
             </Grid>
             <Grid item xs={12} sm={12} md={4} lg={4} xl={4} sx={{ marginTop: "12px" }}>
                 <Paper style={{ padding: "30px" }}>
@@ -201,6 +174,7 @@ const FriendTracking = () => {
                             <TableRow sx={{ backgroundColor: "#CCE5D6" }}>
                                 <TableCell align="left">Name</TableCell>
                                 <TableCell align="left">Coordinates</TableCell>
+                                <TableCell align="left">Point type</TableCell>
                                 <TableCell align="left">Reached</TableCell>
                             </TableRow>
                         </TableHead>
@@ -218,6 +192,7 @@ const FriendTracking = () => {
                                             <b>{refPoint.name}</b>
                                         </TableCell>
                                         <TableCell align="left">{refPoint.position.coordinates[0]} - {refPoint.position.coordinates[1]}</TableCell>
+                                        <TableCell align="left">{fromIntToPointType(refPoint.type)}</TableCell>
                                         <TableCell align="left">{refPoint.reached ? "Yes" : "No"}</TableCell>
                                     </TableRow>
                                 ))
@@ -321,6 +296,37 @@ const ReferencePointPopup = (props) => {
             <div className='popup-line'>{props.refPoint.reached ? "Reached" : "Not reached yet"}</div>
         </div>
     )
+}
+
+/* also for point type: 
+enum PointType {
+  point = 0,
+  hut = 1,
+  parkingLot = 2,
+  referencePoint = 3,
+  linkedPoint = 4,
+  startPoint = 5,
+  endPoint = 6,
+}, can you confirm? */
+const fromIntToPointType = (pointType) => {
+    switch (pointType) {
+        case 0:
+            return "Generic point"
+        case 1:
+            return "Hut"
+        case 2:
+            return "Parking lot"
+        case 3:
+            return "Reference point"
+        case 4:
+            return "Linked point"
+        case 5:
+            return "Starting point"
+        case 6:
+            return "Ending point"
+        default:
+            return ""
+    }
 }
 
 export default FriendTracking

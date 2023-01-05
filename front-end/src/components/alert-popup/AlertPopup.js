@@ -29,10 +29,11 @@ export const AlertPopup = (props) => {
         }
 
         apiDefinitiveClose().then(() => {
-            handleClose()
+            props.setOpen(false)
         })
     };
     const handleClose = () => {
+        props.setAlertTimeout(60 * 1000)
         props.setOpen(false);
     };
 
@@ -73,7 +74,9 @@ export const AlertPopup = (props) => {
                 onClose={handleClose}
                 aria-describedby="alert-dialog-slide-description"
             >
-                <DialogTitle>{"Weather alert"}</DialogTitle>
+                <DialogTitle>
+                    <Typography className="unselectable" variant='h2' sx={{ color: "red", fontSize: "24px", fontFamily: "Unbounded" }}>Weather alert</Typography>
+                </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-slide-description">
                         {
@@ -95,6 +98,7 @@ export const AlertPopup = (props) => {
                         }
                         <br />
                         Please beware of storms or other unpredictable events.
+                        <Typography sx={{ fontSize: "12px" }}>*After selecting "I've understood" you won't ever being notified about this alert until new alerts will be raised.</Typography>
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -102,12 +106,12 @@ export const AlertPopup = (props) => {
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "center" }}>
                             <Button
                                 sx={{ borderRadius: "10px", textTransform: "none", backgroundColor: "#1a1a1a", color: "white", "&:hover": { backgroundColor: "#3f3f3f" } }}
-                                onClick={remindMeLater}>Remind me later</Button>
+                                onClick={remindMeLater}>Remind me in a minute</Button>
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "center" }}>
                             <Button
                                 sx={{ borderRadius: "10px", textTransform: "none", backgroundColor: "#1a1a1a", color: "white", "&:hover": { backgroundColor: "#3f3f3f" } }}
-                                onClick={confirm}>I've understood</Button>
+                                onClick={confirm}>I've understood*</Button>
                         </Grid>
                     </Grid>
                 </DialogActions>
