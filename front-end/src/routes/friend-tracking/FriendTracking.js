@@ -32,39 +32,6 @@ const FriendTracking = () => {
     const [reachedReferencePoints, setReachedReferencePoints] = useState([])
     const [referencePoints, setReferencePoints] = useState([])
 
-    const sampleData = [
-        {
-            'title': "RefPoint#1",
-            'lat': 45.4,
-            "lon": 6.94569,
-            'reached': false
-        },
-        {
-            'title': "RefPoint#2",
-            'lat': 45.5,
-            "lon": 6.945684,
-            'reached': true
-        },
-        {
-            'title': "RefPoint#3",
-            'lat': 45.6,
-            "lon": 6.94566,
-            'reached': false
-        },
-        {
-            'title': "RefPoint#4",
-            'lat': 45.7,
-            "lon": 6.94567,
-            'reached': true
-        },
-        {
-            'title': "RefPoint#5",
-            'lat': 45.8,
-            "lon": 6.94566,
-            'reached': false
-        }
-    ]
-
     useEffect(() => {
         let tmpHike = {}
         let tmpRP = []
