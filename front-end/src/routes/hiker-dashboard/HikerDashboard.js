@@ -57,11 +57,11 @@ const HikerDashboard = (props) => {
     const [isDifficulty, setIsDifficulty] = useState(false)
     const [isAscent, setIsAscent] = useState(false)
 
-    const positionStatic = position === null ? 0.0 : position 
-    const radiusStatic = radius === null ? 0.0 : radius 
-    const lengthStatic = length === null ? 0.0 : length 
-    const expectedTimeStatic = expectedTime === null ? 0 : expectedTime 
-    const ascentStatic = ascent === null ? 0.0 : ascent 
+    const positionStatic = position === null ? 0.0 : position
+    const radiusStatic = radius === null ? 0.0 : radius
+    const lengthStatic = length === null ? 0.0 : length
+    const expectedTimeStatic = expectedTime === null ? 0 : expectedTime
+    const ascentStatic = ascent === null ? 0.0 : ascent
 
     useEffect(() => {
         var tmpPref = {}
@@ -77,12 +77,31 @@ const HikerDashboard = (props) => {
                 setDifficulty(tmpPref.difficultyMin)
                 setAscent(tmpPref.ascentMin)
                 setSuggestionType(tmpPref.suggestionType)
+
+                setIsStartingPoint(tmpPref.lat !== null && tmpPref.lon !== null)
+                setIsRadius(tmpPref.radiusKms !== null)
+                setIsLength(tmpPref.minLength !== null)
+                setIsExpectedTime(tmpPref.expectedTimeMin !== null)
+                setIsDifficulty(tmpPref.difficultyMin !== null)
+                setIsAscent(tmpPref.ascentMin !== null)
             }
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    const isAlmostOnePreferenceSelected = () => {
+        return isStartingPoint || isRadius || isLength || isExpectedTime || isDifficulty || isAscent
+    }
+
     const handlePreferencesUpdate = () => {
+        if (!isAlmostOnePreferenceSelected()) {
+            setUpdateError(true)
+            setTimeout(() => {
+                if (updateError)
+                    setUpdateError(false)
+            }, 3000);
+            return
+        }
         const prefFilter =
         {
             "lat": position.lat,
@@ -102,26 +121,26 @@ const HikerDashboard = (props) => {
         }
 
         const preFilter = () => {
-            if(!isStartingPoint) {
+            if (!isStartingPoint) {
                 prefFilter.lat = null
                 prefFilter.lon = null
             }
-            if(!isRadius) {
+            if (!isRadius) {
                 prefFilter.radiusKms = null
             }
-            if(!isLength) {
+            if (!isLength) {
                 prefFilter.minLength = null
                 prefFilter.maxLength = null
             }
-            if(!isExpectedTime) {
+            if (!isExpectedTime) {
                 prefFilter.expectedTimeMin = null
                 prefFilter.expectedTimeMax = null
             }
-            if(!isDifficulty) {
+            if (!isDifficulty) {
                 prefFilter.difficultyMin = null
                 prefFilter.difficultyMax = null
             }
-            if(!isAscent) {
+            if (!isAscent) {
                 prefFilter.ascentMin = null
                 prefFilter.ascentMax = null
             }
@@ -352,17 +371,17 @@ const HikerDashboard = (props) => {
                             </AccordionDetails>
                         </Accordion>
                     </Grid>
-                    <Grid item sx={{marginTop: "24px"}}>
-                        <Typography sx={{fontSize: "20px"}}>
+                    <Grid item sx={{ marginTop: "24px" }}>
+                        <Typography sx={{ fontSize: "20px" }}>
                             <b>Select which parameters you want us to consider while suggesting you the best hikes based on your preferences.</b>
                         </Typography>
                         <FormGroup>
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsStartingPoint(!isStartingPoint)}} checked={isStartingPoint} />} label="Starting point" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsRadius(!isRadius)}} checked={isRadius} />} label="Radius" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsLength(!isLength)}} checked={isLength} />} label="Length" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsExpectedTime(!isExpectedTime)}} checked={isExpectedTime} />} label="Expected time" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsDifficulty(!isDifficulty)}} checked={isDifficulty} />} label="Difficulty" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsAscent(!isAscent)}} checked={isAscent} />} label="Ascent" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsStartingPoint(!isStartingPoint) }} checked={isStartingPoint} />} label="Starting point" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsRadius(!isRadius) }} checked={isRadius} />} label="Radius" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsLength(!isLength) }} checked={isLength} />} label="Length" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsExpectedTime(!isExpectedTime) }} checked={isExpectedTime} />} label="Expected time" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsDifficulty(!isDifficulty) }} checked={isDifficulty} />} label="Difficulty" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsAscent(!isAscent) }} checked={isAscent} />} label="Ascent" />
                         </FormGroup>
                     </Grid>
                     <Grid item lg={12} xl={12} sx={{ marginTop: "28px", display: "flex", justifyContent: "right" }}>
@@ -579,17 +598,17 @@ const HikerDashboard = (props) => {
                             </AccordionDetails>
                         </Accordion>
                     </Grid>
-                    <Grid item sx={{marginTop: "24px"}}>
-                        <Typography sx={{fontSize: "20px"}}>
+                    <Grid item sx={{ marginTop: "24px" }}>
+                        <Typography sx={{ fontSize: "20px" }}>
                             <b>Select which parameters you want us to consider while suggesting you the best hikes based on your preferences.</b>
                         </Typography>
                         <FormGroup>
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsStartingPoint(!isStartingPoint)}} checked={isStartingPoint} />} label="Starting point" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsRadius(!isRadius)}} checked={isRadius} />} label="Radius" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsLength(!isLength)}} checked={isLength} />} label="Length" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsExpectedTime(!isExpectedTime)}} checked={isExpectedTime} />} label="Expected time" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsDifficulty(!isDifficulty)}} checked={isDifficulty} />} label="Difficulty" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsAscent(!isAscent)}} checked={isAscent} />} label="Ascent" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsStartingPoint(!isStartingPoint) }} checked={isStartingPoint} />} label="Starting point" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsRadius(!isRadius) }} checked={isRadius} />} label="Radius" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsLength(!isLength) }} checked={isLength} />} label="Length" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsExpectedTime(!isExpectedTime) }} checked={isExpectedTime} />} label="Expected time" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsDifficulty(!isDifficulty) }} checked={isDifficulty} />} label="Difficulty" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsAscent(!isAscent) }} checked={isAscent} />} label="Ascent" />
                         </FormGroup>
                     </Grid>
                     <Grid item xs={12} sx={{ marginTop: "28px", display: "flex", justifyContent: "right" }}>
@@ -806,17 +825,17 @@ const HikerDashboard = (props) => {
                             </AccordionDetails>
                         </Accordion>
                     </Grid>
-                    <Grid item sx={{marginTop: "24px"}}>
-                        <Typography sx={{fontSize: "20px"}}>
+                    <Grid item sx={{ marginTop: "24px" }}>
+                        <Typography sx={{ fontSize: "20px" }}>
                             <b>Select which parameters you want us to consider while suggesting you the best hikes based on your preferences.</b>
                         </Typography>
                         <FormGroup>
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsStartingPoint(!isStartingPoint)}} checked={isStartingPoint} />} label="Starting point" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsRadius(!isRadius)}} checked={isRadius} />} label="Radius" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsLength(!isLength)}} checked={isLength} />} label="Length" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsExpectedTime(!isExpectedTime)}} checked={isExpectedTime} />} label="Expected time" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsDifficulty(!isDifficulty)}} checked={isDifficulty} />} label="Difficulty" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsAscent(!isAscent)}} checked={isAscent} />} label="Ascent" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsStartingPoint(!isStartingPoint) }} checked={isStartingPoint} />} label="Starting point" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsRadius(!isRadius) }} checked={isRadius} />} label="Radius" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsLength(!isLength) }} checked={isLength} />} label="Length" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsExpectedTime(!isExpectedTime) }} checked={isExpectedTime} />} label="Expected time" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsDifficulty(!isDifficulty) }} checked={isDifficulty} />} label="Difficulty" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsAscent(!isAscent) }} checked={isAscent} />} label="Ascent" />
                         </FormGroup>
                     </Grid>
                     <Grid item xs={12} sm={12} sx={{ marginTop: "28px", display: "flex", justifyContent: "right" }}>
