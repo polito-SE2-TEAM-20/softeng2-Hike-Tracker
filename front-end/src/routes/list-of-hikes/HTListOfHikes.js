@@ -72,12 +72,12 @@ const HTListOfHikes = (props) => {
                 <Grid item sm>
                     <HTTopBarFilterHike listOfHikes={listOfHikes} loading={loading} setFilter={setFilter} filter={filter} isUserPrefHikes={isUserPrefHikes} setIsUserPrefHikes={setIsUserPrefHikes} />
                 </Grid>
-                <Grid item lg={9}>
-                    <Grid container columns={5} style={{ marginTop: "25px", display: "flex", justifyContent: "center" }}>
+                <Grid container item lg={9}>
+                    <Grid container item columns={5} style={{ marginTop: "25px", display: "flex", justifyContent: "center" }}>
                         {
                             loading ?
                                 listOfHikes.length === 0 ?
-                                    <Typography fontFamily={"Bakbak One, display"} fontWeight="600" fontSize="32px">
+                                    <Typography fontFamily={"Unbounded"} fontWeight="600" fontSize="32px">
                                         No matching hikes.
                                     </Typography>
                                     :
