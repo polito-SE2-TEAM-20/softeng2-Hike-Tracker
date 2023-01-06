@@ -31,7 +31,7 @@ const VerifyKey = (props) => {
                 }, 50);
                 setTimeout(() => {
                     console.log(response)
-                    navigate("/friend-tracking/" + response.userId + "/" + response.hikeId)
+                    navigate("/friend-tracking/" + response.userId + "/" + response.hikeId + "/" + friendCode)
                 }, 2000);
             })
             .catch(() => {
