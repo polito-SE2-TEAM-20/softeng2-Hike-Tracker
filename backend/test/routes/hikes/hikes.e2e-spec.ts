@@ -4,7 +4,6 @@ import path from 'node:path';
 
 import * as fs from 'fs-extra';
 import { omit } from 'ramda';
-import { In, IsNull } from 'typeorm';
 
 import {
   HikeDifficulty,
@@ -20,7 +19,6 @@ import {
   UserRole,
 } from '@app/common';
 import { HikeCondition } from '@app/common/enums/hike-condition.enum';
-import { HikeWeather } from '@app/common/enums/weatherStatus.enum';
 import { finishTest } from '@app/testing';
 import {
   anyId,
@@ -32,6 +30,9 @@ import {
 } from '@test/base';
 
 import { hikeBasic } from './constants';
+import { HikeWeather } from '@app/common/enums/weatherStatus.enum';
+import { In, IsNull } from 'typeorm';
+import { Console } from 'node:console';
 
 const withoutCompositeFields = omit([
   'referencePoints',
