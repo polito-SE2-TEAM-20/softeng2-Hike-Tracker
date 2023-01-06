@@ -769,8 +769,10 @@ export class HikesController {
         unfinishedNotified: IsNull(), //Not notified yet
       });
 
+    console.log(userHikesUnfinished.map((u) => u.maxElapsedTime))
     //Check if there are some to be updated
     if (userHikesUnfinished.length > 0) {
+      console.log("CIAO LAURA, ALCUNI VANNO UPDATED")
       await Promise.all(
         userHikesUnfinished.map(async (userHike) => {
           if (!isNil(userHike.maxElapsedTime)) {
