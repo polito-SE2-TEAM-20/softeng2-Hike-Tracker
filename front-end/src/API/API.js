@@ -931,7 +931,7 @@ const getHikesMaximumElapsedTime = async (hikeId) => {
 }
 
 const getUnfinishedHikesPopupSeen = async (hikeId) => {
-    const response = await fetch((APIURL + "/hikes/unfinished/popupsSeen/" + hikeId), {
+    const response = await fetch((APIURL + "/hikes/unfinished/popupSeen/" + hikeId), {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
