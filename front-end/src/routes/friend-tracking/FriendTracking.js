@@ -46,8 +46,10 @@ const FriendTracking = () => {
             tmpHike = await API.getHikePathByHike(tmpHike)
         }
 
+        
         const apiGetRefPoints = async () => {
-            tmpRP = await API.friendGetReferencePointsReached({ "friendCode": friendCode })
+            tmpRP = await API.getHikeByFriendCode(friendCode)
+            console.log(tmpRP)
         }
 
         if (localStorage.length !== 0) {
@@ -64,24 +66,23 @@ const FriendTracking = () => {
                 console.log(tmpHike)
                 setLoaded(true)
             })
-            apiGetRefPoints().then(() => {
-                setReferencePoints(tmpHike.referencePoints)
-                setReachedReferencePoints(tmpRP)
-            }).then(() => {
-                console.log(referencePoints)
-                console.log(reachedReferencePoints)
-                let latestReferencePoints = tmpHike.referencePoints
-                for (let index in latestReferencePoints) {
-                    for (let index2 in reachedReferencePoints) {
-                        if (latestReferencePoints[index].id === reachedReferencePoints[index2].id) {
-                            latestReferencePoints[index].reached = true
-                        }
-                    }
-                    if (latestReferencePoints[index].reached === undefined) {
-                        latestReferencePoints[index].reached = false
+        })
+
+        apiGetRefPoints().then(() => {
+            setReferencePoints(tmpHike.referencePoints)
+            setReachedReferencePoints(tmpRP.trackPoints)
+        }).then(() => {
+            let latestReferencePoints = tmpHike.referencePoints
+            for (let index in latestReferencePoints) {
+                for (let index2 in tmpRP.trackPoints) {
+                    if (latestReferencePoints[index].id === tmpRP.trackPoints[index2].point.id) {
+                        latestReferencePoints[index].reached = true
                     }
                 }
-            })
+                if (latestReferencePoints[index].reached === undefined) {
+                    latestReferencePoints[index].reached = false
+                }
+            }
         })
 
     }, [])
@@ -190,22 +191,24 @@ const FriendTracking = () => {
                         </TableHead>
                         <TableBody>
                             {
-                                referencePoints.sort((x, y) => x.reached.toString() < y.reached.toString()).map((refPoint) => (
-                                    <TableRow
-                                        key={refPoint.name}
-                                        sx={{
-                                            '&:last-child td, &:last-child th': { border: 0 },
-                                            backgroundColor: refPoint.reached ? "#5EE671" : "#E6B0A7"
-                                        }}
-                                    >
-                                        <TableCell align="left" component="th" scope="refPoint">
-                                            <b>{refPoint.name}</b>
-                                        </TableCell>
-                                        <TableCell align="left">{refPoint.position.coordinates[0]} - {refPoint.position.coordinates[1]}</TableCell>
-                                        <TableCell align="left">{fromIntToPointType(refPoint.type)}</TableCell>
-                                        <TableCell align="left">{refPoint.reached ? "Yes" : "No"}</TableCell>
-                                    </TableRow>
-                                ))
+                                referencePoints
+                                    .sort((x, y) => x.reached.toString() < y.reached.toString())
+                                    .map((refPoint) => (
+                                        <TableRow
+                                            key={refPoint.name}
+                                            sx={{
+                                                '&:last-child td, &:last-child th': { border: 0 },
+                                                backgroundColor: refPoint.reached ? "#5EE671" : "#E6B0A7"
+                                            }}
+                                        >
+                                            <TableCell align="left" component="th" scope="refPoint">
+                                                <b>{refPoint.name}</b>
+                                            </TableCell>
+                                            <TableCell align="left">{refPoint.position.coordinates[0]} - {refPoint.position.coordinates[1]}</TableCell>
+                                            <TableCell align="left">{fromIntToPointType(refPoint.type)}</TableCell>
+                                            <TableCell align="left">{refPoint.reached ? "Yes" : "No"}</TableCell>
+                                        </TableRow>
+                                    ))
                             }
                         </TableBody>
                     </Table>
