@@ -24,9 +24,10 @@ L.Icon.Default.mergeOptions({
 
 
 const FriendTracking = () => {
-    const match = useMatch('/friend-tracking/:userID/:hikeid')
+    const match = useMatch('/friend-tracking/:userID/:hikeid/:friendCode')
     const userID = (match && match.params && match.params.userID) ? match.params.userID : -1
     const hikeid = (match && match.params && match.params.hikeid) ? match.params.hikeid : -1
+    const friendCode = (match && match.params && match.params.friendCode) ? match.params.friendCode : -1
     const [hike, setHike] = useState({})
     const [loaded, setLoaded] = useState(false)
     const [reachedReferencePoints, setReachedReferencePoints] = useState([])
@@ -45,7 +46,7 @@ const FriendTracking = () => {
         }
 
         const apiGetRefPoints = async () => {
-            tmpRP = await API.friendGetReferencePointsReached({ friendCode: "7fc6" })
+            tmpRP = await API.friendGetReferencePointsReached({ "friendCode": friendCode })
         }
 
         getHike().then(() => {
