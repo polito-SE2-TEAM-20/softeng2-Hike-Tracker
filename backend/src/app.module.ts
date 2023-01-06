@@ -15,6 +15,7 @@ import {
 import { AppExceptionFilter } from '@app/common/filters/app-exception.filter';
 
 import { AuthModule } from './auth/auth.module';
+import { FriendsModule } from './friends/friends.module';
 import { HealthcheckModule } from './healthcheck/healthcheck.module';
 import { HikesModule } from './hikes/hikes.module';
 import { HutsModule } from './huts/huts.module';
@@ -55,6 +56,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     HutsModule,
     UserHikesModule,
+    FriendsModule,
   ],
   controllers: [],
   providers: [

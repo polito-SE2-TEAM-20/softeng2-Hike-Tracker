@@ -24,7 +24,7 @@ import { UserHikeFull } from './user-hikes.interface';
 export class UserHikesService extends BaseService<UserHike> {
   constructor(
     @InjectRepository(UserHike)
-    private userHikesRepository: Repository<UserHike>,
+    userHikesRepository: Repository<UserHike>,
     private hikesService: HikesService,
   ) {
     super(UserHike, {
@@ -90,4 +90,5 @@ export class UserHikesService extends BaseService<UserHike> {
 
     return query;
   }
+
 }

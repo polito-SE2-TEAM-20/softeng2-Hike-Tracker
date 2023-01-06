@@ -40,7 +40,6 @@ import {
   PointType,
   UserContext,
   UserHike,
-  UserRole,
 } from '@app/common';
 import { HikeCondition } from '@app/common/enums/hike-condition.enum';
 import { GpxService } from '@app/gpx';
@@ -52,7 +51,6 @@ import {
   FilteredHikesDto,
   HikeDto,
   LinkHutToHikeDto,
-  PointWithRadius,
   UpdateHikeDto,
   WeatherFlagsDto,
   WeatherInRangeDto,
@@ -141,6 +139,7 @@ export class HikesController {
           name: refPoint.name,
           address: refPoint.address,
           point: latLonToGisPoint(refPoint),
+          altitude: refPoint.altitude,
         };
       });
 
@@ -150,6 +149,7 @@ export class HikesController {
           position: point.point,
           address: point.address,
           name: point.name,
+          altitude: point.altitude,
         })),
       );
 
@@ -513,26 +513,28 @@ export class HikesController {
     @Body()
     { weatherStatus, weatherDescription },
   ): Promise<Hike> {
-
     await this.service.ensureExistsOrThrow(id);
 
     await this.service.getRepository().save({
       id,
       weatherStatus,
-      weatherDescription
+      weatherDescription,
     });
 
     const update = await this.dataSource.getRepository(UserHike).findBy({
       hikeId: id,
-      finishedAt: IsNull()
+      finishedAt: IsNull(),
     });
 
-    if(!isNil(update)){
-      await this.dataSource.getRepository(UserHike).update({
-        hikeId: In(update.map(userHike => userHike.hikeId))        
-      }, {
-        weatherNotified: false
-      });
+    if (!isNil(update)) {
+      await this.dataSource.getRepository(UserHike).update(
+        {
+          hikeId: In(update.map((userHike) => userHike.hikeId)),
+        },
+        {
+          weatherNotified: false,
+        },
+      );
     }
 
     return await this.service.getFullHike(id);
@@ -544,41 +546,45 @@ export class HikesController {
   @HttpCode(200)
   async updateHikeWeatherInRange(
     @Body()
-    {
-      inPointRadius,
-      weatherStatus,
-      weatherDescription
-    }: WeatherInRangeDto,
+    { inPointRadius, weatherStatus, weatherDescription }: WeatherInRangeDto,
   ): Promise<Hike[]> {
+    const query = this.dataSource
+      .getRepository(HikePoint)
+      .createQueryBuilder('h');
 
-    const query = this.dataSource.getRepository(HikePoint).createQueryBuilder('h');
-    
     query.andWhere(
-      `ST_DWithin(ST_MakePoint(${inPointRadius.lon}, ${inPointRadius.lat}), p."position", ${inPointRadius.radiusKms*1000})`,
+      `ST_DWithin(ST_MakePoint(${inPointRadius.lon}, ${
+        inPointRadius.lat
+      }), p."position", ${inPointRadius.radiusKms * 1000})`,
     );
-    
+
     query
-    .innerJoinAndMapOne('h.point', Point, 'p', 'p.id = h."pointId"')
-    .orderBy('h.hikeId', 'DESC');
+      .innerJoinAndMapOne('h.point', Point, 'p', 'p.id = h."pointId"')
+      .orderBy('h.hikeId', 'DESC');
 
     const hikesToUpdate = await query.getMany();
-    const hikesToUpdateIds = hikesToUpdate.map(hike => hike.hikeId);
+    const hikesToUpdateIds = hikesToUpdate.map((hike) => hike.hikeId);
 
-    await this.service.getRepository().save(hikesToUpdateIds.map(id => ({
-      id,
-      weatherStatus,
-      weatherDescription
-    })));
+    await this.service.getRepository().save(
+      hikesToUpdateIds.map((id) => ({
+        id,
+        weatherStatus,
+        weatherDescription,
+      })),
+    );
 
-    await this.dataSource.getRepository(UserHike).update({
-      hikeId: In(hikesToUpdateIds),
-      finishedAt: IsNull()        
-    }, {
-      weatherNotified: false
-    });
+    await this.dataSource.getRepository(UserHike).update(
+      {
+        hikeId: In(hikesToUpdateIds),
+        finishedAt: IsNull(),
+      },
+      {
+        weatherNotified: false,
+      },
+    );
 
     return await this.service.getRepository().findBy({
-      id: In(hikesToUpdateIds)
+      id: In(hikesToUpdateIds),
     });
   }
 
@@ -590,21 +596,22 @@ export class HikesController {
     @Param('id', ParseIdPipe()) id: ID,
     @CurrentUser() user: UserContext,
   ) {
-
     const update = await this.dataSource.getRepository(UserHike).findOneBy({
       hikeId: id,
       userId: user.id,
       finishedAt: IsNull(),
-      weatherNotified: false
+      weatherNotified: false,
     });
 
-    if(!isNil(update)){
+    if (!isNil(update)) {
       await this.dataSource.getRepository(UserHike).save({
         id: update.id,
         weatherNotified: true,
       });
-    }else{
-      throw new BadRequestException("You can't close a popup because there is not one related to: " + id)
+    } else {
+      throw new BadRequestException(
+        "You can't close a popup because there is not one related to: " + id,
+      );
     }
   }
 
@@ -614,34 +621,34 @@ export class HikesController {
   @HttpCode(200)
   async userWeatherFlags(
     @CurrentUser() user: UserContext,
-  ): Promise<WeatherFlagsDto[] | void[]>{
+  ): Promise<WeatherFlagsDto[] | void[]> {
+    const userHikesUnfinishedWithAlert = await this.dataSource
+      .getRepository(UserHike)
+      .findBy({
+        userId: user.id,
+        weatherNotified: false,
+        finishedAt: IsNull(),
+      });
 
-    const userHikesUnfinishedWithAlert = await this.dataSource.getRepository(UserHike).findBy({
-      userId: user.id,
-      weatherNotified: false,
-      finishedAt: IsNull()
-    });
-
-    const hikeIds = userHikesUnfinishedWithAlert.map(uh => uh.hikeId);
+    const hikeIds = userHikesUnfinishedWithAlert.map((uh) => uh.hikeId);
 
     const hikes = await this.service.getRepository().findBy({
-      id: In(hikeIds)
+      id: In(hikeIds),
     });
 
-    const arrayOfWFlags:WeatherFlagsDto[] = [];
-    
-    hikes.forEach(hike => {
-      if(!isNil(hike.weatherStatus))  
-      {
-          arrayOfWFlags.push({
-            hikeId: hike.id,
-            weatherStatus: hike.weatherStatus,
-            weatherDescription: hike.weatherDescription
-          });
+    const arrayOfWFlags: WeatherFlagsDto[] = [];
+
+    hikes.forEach((hike) => {
+      if (!isNil(hike.weatherStatus)) {
+        arrayOfWFlags.push({
+          hikeId: hike.id,
+          weatherStatus: hike.weatherStatus,
+          weatherDescription: hike.weatherDescription,
+        });
       }
     });
     return arrayOfWFlags;
-  } 
+  }
 
   //Calculate time after which a notification must be sent to a user
   @Get('maxElapsedTime/:id')
@@ -649,13 +656,12 @@ export class HikesController {
   @HttpCode(200)
   async getMaxElapsedTime(
     @Param('id', ParseIdPipe()) id: ID,
-    @CurrentUser() user: UserContext
-  ){
-
+    @CurrentUser() user: UserContext,
+  ) {
     //Count how many completed hikes has the user
     const userHikes = await this.dataSource.getRepository(UserHike).findBy({
       userId: user.id,
-      finishedAt: Not(IsNull())
+      finishedAt: Not(IsNull()),
     });
 
     const userHikeId = await this.dataSource.getRepository(UserHike).findOneBy({
@@ -663,11 +669,10 @@ export class HikesController {
       hikeId: id,
       finishedAt: IsNull(),
     });
-    
 
-    if(userHikes.length >= 30){
-      const completionTimes = userHikes.map(userHike => { 
-        if(!isNil(userHike.finishedAt)){
+    if (userHikes.length >= 30) {
+      const completionTimes = userHikes.map((userHike) => {
+        if (!isNil(userHike.finishedAt)) {
           const endingTime = new Date(userHike.finishedAt);
           const startingTime = new Date(userHike.startedAt);
           const completionTime = endingTime.getTime() - startingTime.getTime();
@@ -677,53 +682,68 @@ export class HikesController {
         }
       });
 
-      completionTimes.sort((a, b) => a - b);
+      completionTimes.sort();
+      const ninentyPerc =
+        completionTimes[Math.floor(completionTimes.length * 0.9)];
+      if (ninentyPerc) {
+        const days = Math.floor(ninentyPerc / (24 * 60 * 60 * 1000));
+        const newMillis = ninentyPerc % (24 * 60 * 60 * 1000);
+        const hours = Math.floor(newMillis / (60 * 60 * 1000));
+        const newMillis2 = newMillis % (60 * 60 * 1000);
+        const minutes = Math.floor(newMillis2 / (60 * 1000));
+        const newMillis3 = newMillis2 % (60 * 1000);
+        const seconds = Math.floor(newMillis3 / 1000);
 
-      const ninentyPerc = completionTimes[Math.floor(completionTimes.length*0.9)];
+        const dhms =
+          days.toString() +
+          ' ' +
+          hours.toString() +
+          ':' +
+          (minutes < 10 ? '0' : '') +
+          minutes.toString() +
+          ':' +
+          (seconds < 10 ? '0' : '') +
+          seconds.toString();
 
-      if(ninentyPerc){
-        const days = Math.floor(ninentyPerc / (24*60*60*1000));
-        const newMillis = ninentyPerc%(24*60*60*1000);
-        const hours = Math.floor( newMillis / (60*60*1000));
-        const newMillis2 = newMillis % (60*60*1000);
-        const minutes = Math.floor(newMillis2 / (60*1000));
-        const newMillis3 = newMillis2 % (60*1000);
-        const seconds = Math.floor(newMillis3 / (1000));
-
-        const dhms = days.toString() + " " + hours.toString() + ":" + (minutes<10 ? "0" : "") + minutes.toString() + ":" + 
-                     (seconds<10 ? "0" : "") + seconds.toString();
-      
         await this.dataSource.getRepository(UserHike).save({
           id: userHikeId?.id,
-          maxElapsedTime: dhms
+          maxElapsedTime: dhms,
         });
       }
-    }else{
-      
-      const expectedTime = (await this.service.getRepository().findOneBy({
-        id
-      }))?.expectedTime;
+    } else {
+      const expectedTime = (
+        await this.service.getRepository().findOneBy({
+          id,
+        })
+      )?.expectedTime;
 
-      if(!isNil(expectedTime)){
+      if (!isNil(expectedTime)) {
         const maxElapsedTime = expectedTime * 2 * 60 * 1000;
 
-        const days = Math.floor(maxElapsedTime / (24*60*60*1000));
-        const newMillis = maxElapsedTime%(24*60*60*1000);
-        const hours = Math.floor( newMillis / (60*60*1000));
-        const newMillis2 = newMillis % (60*60*1000);
-        const minutes = Math.floor(newMillis2 / (60*1000));
-        const newMillis3 = newMillis2 % (60*1000);
-        const seconds = Math.floor(newMillis3 / (1000));
+        const days = Math.floor(maxElapsedTime / (24 * 60 * 60 * 1000));
+        const newMillis = maxElapsedTime % (24 * 60 * 60 * 1000);
+        const hours = Math.floor(newMillis / (60 * 60 * 1000));
+        const newMillis2 = newMillis % (60 * 60 * 1000);
+        const minutes = Math.floor(newMillis2 / (60 * 1000));
+        const newMillis3 = newMillis2 % (60 * 1000);
+        const seconds = Math.floor(newMillis3 / 1000);
 
-        const dhms = days.toString() + " " + hours.toString() + ":" + (minutes<10 ? "0" : "") + minutes.toString() + ":" + 
-                     (seconds<10 ? "0" : "") + seconds.toString();
+        const dhms =
+          days.toString() +
+          ' ' +
+          hours.toString() +
+          ':' +
+          (minutes < 10 ? '0' : '') +
+          minutes.toString() +
+          ':' +
+          (seconds < 10 ? '0' : '') +
+          seconds.toString();
 
         await this.dataSource.getRepository(UserHike).save({
           id: userHikeId?.id,
-          maxElapsedTime: dhms
+          maxElapsedTime: dhms,
         });
       }
-
     }
   }
 
@@ -731,92 +751,100 @@ export class HikesController {
   @Get('unfinished/popupsList')
   @HikerOnly()
   @HttpCode(200)
-  async getPopupsList(
-    @CurrentUser() user: UserContext
-  ): Promise<ID[]>{
-
-    const userHikesUnfinished = await this.dataSource.getRepository(UserHike).findBy({
-      userId: user.id,
-      finishedAt: IsNull(),
-      unfinishedNotified: IsNull() //Not notified yet 
-    });
+  async getPopupsList(@CurrentUser() user: UserContext): Promise<ID[]> {
+    const userHikesUnfinished = await this.dataSource
+      .getRepository(UserHike)
+      .findBy({
+        userId: user.id,
+        finishedAt: IsNull(),
+        unfinishedNotified: IsNull(), //Not notified yet
+      });
 
     //Check if there are some to be updated
-    if(userHikesUnfinished.length > 0){
-      await Promise.all(userHikesUnfinished.map(
-        async (userHike) =>{
-          if(!isNil(userHike.maxElapsedTime)){
-            const intervalISO = (userHike.maxElapsedTime).toISOString();
+    if (userHikesUnfinished.length > 0) {
+      await Promise.all(
+        userHikesUnfinished.map(async (userHike) => {
+          if (!isNil(userHike.maxElapsedTime)) {
+            const intervalISO = userHike.maxElapsedTime.toISOString();
             let intervalMillis = 0;
             for (let i = 0; i < intervalISO.length; i++) {
-             if(intervalISO[i] === 'D')
-              intervalMillis += parseInt(intervalISO[i-1]) * 24 * 60 * 60 * 1000;
-             if(intervalISO[i] === 'H')
-              intervalMillis += parseInt(intervalISO[i-1]) * 60 * 60 * 1000;
-             if(intervalISO[i] === 'M')
-              intervalMillis += parseInt(intervalISO[i-1]) * 60 * 1000;
-             if(intervalISO[i] === 'S')
-              intervalMillis += parseInt(intervalISO[i-1]) * 1000;
+              if (intervalISO[i] === 'D')
+                intervalMillis +=
+                  parseInt(intervalISO[i - 1]) * 24 * 60 * 60 * 1000;
+              if (intervalISO[i] === 'H')
+                intervalMillis += parseInt(intervalISO[i - 1]) * 60 * 60 * 1000;
+              if (intervalISO[i] === 'M')
+                intervalMillis += parseInt(intervalISO[i - 1]) * 60 * 1000;
+              if (intervalISO[i] === 'S')
+                intervalMillis += parseInt(intervalISO[i - 1]) * 1000;
             }
-  
+
             const upperBound = intervalMillis + userHike.startedAt.getTime();
-            
-            if(upperBound < Date.now()) //Means that the elapsed time is over the upperBound
-            {
-              await this.dataSource.getRepository(UserHike).update({
-                id: userHike.id,
-              },
-              {
-                unfinishedNotified: false,
-              })
+
+            if (upperBound < Date.now()) {
+              //Means that the elapsed time is over the upperBound
+              await this.dataSource.getRepository(UserHike).update(
+                {
+                  id: userHike.id,
+                },
+                {
+                  unfinishedNotified: false,
+                },
+              );
             }
           }
-        }
-      ))
+        }),
+      );
     }
 
-    const userHikesUnfinishedIds = (await this.dataSource.getRepository(UserHike).findBy({
-      userId: user.id,
-      finishedAt: IsNull(),
-      unfinishedNotified: false //Not seen yet 
-    })).map((userHike) => userHike.hikeId);
-   
+    const userHikesUnfinishedIds = (
+      await this.dataSource.getRepository(UserHike).findBy({
+        userId: user.id,
+        finishedAt: IsNull(),
+        unfinishedNotified: false, //Not seen yet
+      })
+    ).map((userHike) => userHike.hikeId);
+
     return userHikesUnfinishedIds;
   }
 
-   //Function which set the notification status OF UNFINISHED HIKE to true after that the user sees the popup
-   @Get('unfinished/popupSeen/:id')
-   @HikerOnly()
-   @HttpCode(200)
-   async unfinishedPopupSeen(
-     @Param('id', ParseIdPipe()) id: ID,
-     @CurrentUser() user: UserContext,
-   ) {
- 
-     const update = await this.dataSource.getRepository(UserHike).findOneBy({
-       hikeId: id,
-       userId: user.id,
-       finishedAt: IsNull(),
-       unfinishedNotified: false
-     });
- 
-     if(!isNil(update)){
-       await this.dataSource.getRepository(UserHike).save({
-         id: update.id,
-         unfinishedNotified: true,
-       });
+  //Function which set the notification status OF UNFINISHED HIKE to true after that the user sees the popup
+  @Get('unfinished/popupSeen/:id')
+  @HikerOnly()
+  @HttpCode(200)
+  async unfinishedPopupSeen(
+    @Param('id', ParseIdPipe()) id: ID,
+    @CurrentUser() user: UserContext,
+  ) {
+    const update = await this.dataSource.getRepository(UserHike).findOneBy({
+      hikeId: id,
+      userId: user.id,
+      finishedAt: IsNull(),
+      unfinishedNotified: false,
+    });
 
-       const userHikesUnfinishedIds = (await this.dataSource.getRepository(UserHike).findBy({
-        userId: user.id,
-        finishedAt: IsNull(),
-        unfinishedNotified: false //Not seen yet 
-      })).map((userHike) => userHike.hikeId);
-     
+    if (!isNil(update)) {
+      await this.dataSource.getRepository(UserHike).save({
+        id: update.id,
+        unfinishedNotified: true,
+      });
+
+      const userHikesUnfinishedIds = (
+        await this.dataSource.getRepository(UserHike).findBy({
+          userId: user.id,
+          finishedAt: IsNull(),
+          unfinishedNotified: false, //Not seen yet
+        })
+      ).map((userHike) => userHike.hikeId);
+
       return userHikesUnfinishedIds;
-     }else{
-       throw new BadRequestException("You can't close a popup because there is not one related to unfinished hike: " + id)
-     }
-   }
+    } else {
+      throw new BadRequestException(
+        "You can't close a popup because there is not one related to unfinished hike: " +
+          id,
+      );
+    }
+  }
 
   @Get(':id')
   async getHike(@Param('id', ParseIdPipe()) id: ID): Promise<HikeFull> {

@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Param
 } from '@nestjs/common';
 import { find, map, prop, propEq } from 'ramda';
 import { In } from 'typeorm';
@@ -21,11 +22,12 @@ import { HikesService } from '@core/hikes/hikes.service';
 import { UserHikeFull } from '@core/user-hikes/user-hikes.interface';
 import { UserHikesService } from '@core/user-hikes/user-hikes.service';
 
-import { MyTrackedHikesDto } from './me.dto';
+import { MyTrackedHikesDto, PlannedHikesDto } from './me.dto';
 import { PreferencesDto } from './preferences.dto';
 import { UsersStatsService } from './users-stats.service';
 import { UserPerformance } from './users.schema';
 import { UsersService } from './users.service';
+import { Delete } from '@nestjs/common/decorators';
 
 @Controller('me')
 @AuthenticatedOnly()
@@ -124,5 +126,26 @@ export class MeController {
         radiusKms: preferences.radiusKms,
       },
     });
+  }
+
+  @HikerOnly()
+  @HttpCode(201)
+  @Post('set_planned_hikes')
+  async setPlannedHikes(@CurrentUser() user: UserContext, @Body() body: PlannedHikesDto): Promise<Hike[]> {
+    return await this.usersService.setPlannedHike(user.id, body);
+  }
+
+  @HikerOnly()
+  @HttpCode(200)
+  @Get('planned_hikes')
+  async getPlannedHikes(@CurrentUser() user: UserContext): Promise<Hike[]> {
+    return await this.usersService.getPlannedHikes(user.id);
+  }
+
+  @HikerOnly()
+  @HttpCode(204)
+  @Delete('planned_hikes')
+  async deletePlannedHike(@CurrentUser() user: UserContext, @Body() body: PlannedHikesDto): Promise<void> {
+    return await this.usersService.removePlannedHike(user.id,body)
   }
 }
