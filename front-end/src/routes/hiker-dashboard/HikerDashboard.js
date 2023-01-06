@@ -230,7 +230,7 @@ const HikerDashboard = (props) => {
                             </b>
                         </Typography>
                     </Grid>
-                    <Grid container item md={10} height="fit-content" sx={{ justifyContent: "center", marginTop: "18px", marginBottom: "18px" }}>
+                    <Grid container item lg={10} xl={10} height="fit-content" sx={{ justifyContent: "center", marginTop: "18px", marginBottom: "18px" }}>
                         <PerformacesButton handleNavigatePerformaces={handleNavigatePerformaces} />
                     </Grid>
                 </Grid>
@@ -446,6 +446,9 @@ const HikerDashboard = (props) => {
                             </b>
                         </Typography>
                     </Grid>
+                    <Grid container item md={12} height="fit-content" sx={{ justifyContent: "center", marginTop: "18px", marginBottom: "18px" }}>
+                        <PerformacesButton handleNavigatePerformaces={handleNavigatePerformaces} />
+                    </Grid>
                 </Grid>
                 <Grid container item md={12} height="fit-content" justifyContent="center" sx={{ marginLeft: "25px", marginRight: "25px", marginTop: "25px" }}>
                     <Grid md={12} sx={{ display: "flex", justifyContent: "center" }}>
@@ -658,6 +661,9 @@ const HikerDashboard = (props) => {
                                 {props?.user?.role === 5 ? "Emergency operator" : ""}
                             </b>
                         </Typography>
+                    </Grid>
+                    <Grid container item xs={10} sm={10} height="fit-content" sx={{ justifyContent: "center", marginTop: "18px", marginBottom: "18px" }}>
+                        <PerformacesButton handleNavigatePerformaces={handleNavigatePerformaces} />
                     </Grid>
                 </Grid>
                 <Grid container item xs={12} sm={12} height="fit-content" justifyContent="center" sx={{ marginLeft: "25px", marginRight: "25px", marginTop: "25px" }}>
