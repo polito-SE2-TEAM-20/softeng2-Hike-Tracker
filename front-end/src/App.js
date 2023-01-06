@@ -80,7 +80,7 @@ function App2() {
 
 	useEffect(() => {
 		if (loggedIn && user?.user.role === UserRoles.HIKER) {
-			setAlertTimeout(500)
+			setAlertTimeout(3000)
 		}
 	}, [loggedIn, user])
 
@@ -109,7 +109,7 @@ function App2() {
 				apiGetAlerts().then(() => {
 					console.log(tmpListOfAlerts)
 					setListOfAlerts(tmpListOfAlerts)
-					if (tmpListOfAlerts.length !== 0 && alertsContainDangers()) {
+					if (tmpListOfAlerts.length !== 0 && alertsContainDangers(tmpListOfAlerts)) {
 						setAlertOpen(true)
 						setLoaded(true)
 					}
