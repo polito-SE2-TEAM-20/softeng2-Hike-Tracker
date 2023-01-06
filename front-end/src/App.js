@@ -84,6 +84,16 @@ function App2() {
 		}
 	}, [loggedIn, user])
 
+
+	const alertsContainDangers = (list) => {
+		for (let index = 0; index < list.length; index++) {
+			const alert = list[index];
+			if (alert.weatherStatus >= 4 && alert.weatherStatus < 7)
+				return true
+		}
+		return false
+	}
+
 	/**
 	 * Alert popup timeout
 	 */
@@ -99,7 +109,7 @@ function App2() {
 				apiGetAlerts().then(() => {
 					console.log(tmpListOfAlerts)
 					setListOfAlerts(tmpListOfAlerts)
-					if (tmpListOfAlerts.length !== 0) {
+					if (tmpListOfAlerts.length !== 0 && alertsContainDangers()) {
 						setAlertOpen(true)
 						setLoaded(true)
 					}
