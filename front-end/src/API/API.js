@@ -1021,6 +1021,8 @@ const getHikeByFriendCode = async (code) => {
 
     if (response.ok) {
         return await response.json()
+    } else if (response.status === 422) {
+        return {status: response.status}
     } else {
         const errDetail = await response.json();
         throw errDetail.message;
