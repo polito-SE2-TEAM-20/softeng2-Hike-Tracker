@@ -769,6 +769,7 @@ export class HikesController {
         unfinishedNotified: IsNull(), //Not notified yet
       });
 
+    console.log("Prova")
     console.log(userHikesUnfinished.map((u) => u.maxElapsedTime))
     //Check if there are some to be updated
     if (userHikesUnfinished.length > 0) {
