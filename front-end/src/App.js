@@ -107,7 +107,6 @@ function App2() {
 				}
 
 				apiGetAlerts().then(() => {
-					console.log(tmpListOfAlerts)
 					setListOfAlerts(tmpListOfAlerts)
 					if (tmpListOfAlerts.length !== 0 && alertsContainDangers(tmpListOfAlerts)) {
 						setAlertOpen(true)
@@ -204,14 +203,11 @@ function App2() {
 	}
 
 	useEffect(() => {
-		console.log(started);
 		let finish = '';
 		if (started) {
-			console.log(started);
 			finish = setInterval(() => { getUnfinished(); }, 60 * 1000)
 		} else {
 			clearInterval(finish);
-
 		}
 	}, [started]);
 
