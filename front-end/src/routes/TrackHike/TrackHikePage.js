@@ -182,6 +182,18 @@ function TrackingHikePage(props) {
         if (!trackHasBeenStarted) {
             API.startTracingkHike(hikeId)
                 .then((result) => {
+
+                    console.log("entra ")
+                    API.getHikesMaximumElapsedTime(hikeId)
+                          .then((userHike)=> {
+                            console.log("in track hike hike started setStarted(true)");
+                            props.setStarted(true);
+                            console.log(userHike);
+                            console.log("variable started: in track hike start" + props.started);
+                            console.log("maximum elapsed time setted");
+                            console.log("result of masimum elapsed time" + result);
+                            console.log("hike id for max time" + hikeId);
+                          }).catch((err)=>{console.log(err)})
                     setTrackHike(result)
                     setTrackHikeId(result.id);
                     setTrackHasBeenStarted(true)
@@ -197,6 +209,8 @@ function TrackingHikePage(props) {
     }
 
     const stopTrackingAction = () => {
+        props.setStarted(false);
+
         if (!trackHasBeenFinished) {
             API.stopTrackingHike(trackHikeId)
                 .then((result) => {

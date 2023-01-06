@@ -921,10 +921,8 @@ const getHikesMaximumElapsedTime = async (hikeId) => {
             'Accept': '*/*'
         },
     })
-    console.log(response.text());
     if (response.ok) {
-        // return await response.json
-        const hike = await response.text();
+        const hike = await response.json();
         return hike;
     } else {
         const errDetail = await response.json();
@@ -942,13 +940,15 @@ const getUnfinishedHikesPopupSeen = async (hikeId) => {
     })
 
     if (response.ok) {
-        const hikeIDs = response.json()
+        const hikeIDs = await response.json()
         return hikeIDs;
     } else {
         const errDetail = await response.json();
         throw errDetail.message;
     }
 }
+
+
 
 const updateWeatherSingleHike = async (request) => {
     const response = await fetch((APIURL + "/hikes/updateWeather/" + request.hikeID), {
