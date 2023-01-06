@@ -250,7 +250,7 @@ function App2() {
 				<Route path="/hikerPerformance" element={<HikerPerformance user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
 				<Route path="/test-page" element={<TestPage />} />
 				<Route path="/weather-status-edit/:hikeID" element={<WeatherAlertHikeEditStatus />} />
-				<Route path="/friend-tracking/:userID/:hikeID" element={<FriendTracking />} />
+				<Route path="/friend-tracking/:userID/:hikeID/:friendCode" element={<FriendTracking />} />
 				<Route path="/savedhikes" element={<SavedHikes user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
 				<Route path="/unauthorized" element={<Unauthorized />} />
 				<Route path="/friend-code" element={<VerifyKey />} />
