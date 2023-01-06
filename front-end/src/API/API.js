@@ -808,16 +808,6 @@ const setHutPictures = async (request) => {
     }
 }
 
-/*
-    POST /hut-pictures/:hutId/modify
-    accepts json
-    {
-    pictures: array of strings
-    }
-
-    With this endpoint you can update pictures array: remove images, reorder existing ones.
- */
-
 const modifyHutPictures = async (request) => {
     const response = await fetch((APIURL + '/hut-pictures/' + request.hutID + '/modify'), {
         method: 'POST',
