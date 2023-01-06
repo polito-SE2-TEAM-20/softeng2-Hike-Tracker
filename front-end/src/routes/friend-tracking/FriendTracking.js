@@ -32,6 +32,7 @@ const FriendTracking = () => {
     const [loaded, setLoaded] = useState(false)
     const [reachedReferencePoints, setReachedReferencePoints] = useState([])
     const [referencePoints, setReferencePoints] = useState([])
+    const [user, setUser] = useState({})
 
     useEffect(() => {
         let tmpHike = {}
@@ -47,6 +48,10 @@ const FriendTracking = () => {
 
         const apiGetRefPoints = async () => {
             tmpRP = await API.friendGetReferencePointsReached({ "friendCode": friendCode })
+        }
+
+        if (localStorage.length !== 0) {
+            setUser(JSON.parse(localStorage.getItem('user')));
         }
 
         getHike().then(() => {
@@ -92,7 +97,11 @@ const FriendTracking = () => {
                     &nbsp;
                     {hike.title}
                 </Typography>
+                <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <Typography className="unselectable" variant="h3" sx={{ fontFamily: "Unbounded", display: "flex", justifyContent: "left", paddingLeft: "12px", fontSize: { xs: "18px", md: "18px" } }}>Hiker: {user?.user.firstName} {user?.user.lastName}</Typography>
+                </Grid>
             </Grid>
+
             <Grid item xs={12} sm={12} md={4} lg={4} xl={4} sx={{ marginTop: "12px" }}>
                 <Paper style={{ padding: "30px" }}>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
