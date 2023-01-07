@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
-import { basename, join } from 'path';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { ensureDir } from 'fs-extra';
+import path from 'path';
 import chalk from 'chalk';
 import glob from 'globule';
 import { uniqBy, prop, pick, clamp } from 'ramda';
@@ -19,6 +20,7 @@ faker.locale = 'it';
 const SOURCE_DIR = './prove/';
 const DEST_DIR = './result/gpx';
 const IMAGES_DIR = './result/images';
+const HIKES_DIR = './result/gpx';
 
 const LOCAL_GUIDE_ID = 2;
 const HASH_ROUNDS = 10;
@@ -39,9 +41,9 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
     console.log('No files found, exiting...');
     process.exit();
   }
-  if (!existsSync(dest)) {
-    mkdirSync(dest);
-  }
+
+  await ensureDir(dest);
+  await ensureDir(IMAGES_DIR);
 
   const allHikesSaved = []
   let fileIndex = 1;
@@ -49,22 +51,42 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
   for (const file of fileList) {
     try {
       console.log('reading gpx', file);
-      const fileName = basename(file)
+      const fileName = path.basename(file)
       const contents = (readFileSync(file));
       const parser = new XMLParser({
         ignoreAttributes: false,
         attributeNamePrefix: "$"
       });
       const gpxData = parser.parse(contents).gpx;
+
+      const pointsCount = gpxData.trk.trkseg.trkpt.length;
+      const lengthMin = clamp(0.05, 1, pointsCount / 1500) * 1 + 0.5;
+      const lengthMax = clamp(0.05, 1, pointsCount / 1500) * 20 + 0.5;
+      const length = faker.datatype.float({ precision: 0.1, min: lengthMin, max: lengthMax });
+      const ascent = faker.datatype.float({ precision: 0.1, min: 5, max: 30 });
+
+      // save gpx
+      const filePath = path.join(HIKES_DIR, fileName);
+      writeFileSync(filePath, contents);
+      // save images
+      const pictures = gpxData.metadata.pictures?.length ? [
+        gpxData.metadata.pictures,
+      ] : [];
+      pictures.forEach(filename => {
+        copyFileSync(path.join(SOURCE_DIR, filename), path.join(IMAGES_DIR, filename));
+      });
+
       const hike = {
         fileName,
+        sourceFile: file,
+        gpxPath: `/static/gpx/${fileName}`,
         title: gpxData.trk.name,
         description: gpxData.metadata.desc,
         expectedTime: gpxData.metadata.time,
-        pictures: gpxData.metadata.pictures?.length ? [
-          `/static/images/${gpxData.metadata.pictures}`
-        ] : [],
-        ascent: 1,
+        pictures: pictures.map(filename => `/static/images/${filename}`),
+        ascent,
+        length,
+        userId: undefined,
         ...pick(['region', 'province', 'city', 'country', 'difficulty'], gpxData.trk),
       }
 
@@ -114,70 +136,30 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
           }
         }
        */
-      console.log(gpxData.trk.trkseg);
-      throw new Error('123');
+      // console.log(gpxData.trk.trkseg);
+      // throw new Error('123');
 
-      for (const feature of features) {
-        const name = feature.properties.TRAILNAME;
-        const difficulty = feature.properties.TRAILSURF
-          ? feature.properties.TRAILSURF.includes('Unpaved')
-            ? 2
-            : randomInt(0, 3)
-          : 0;
-
-        if (!feature.geometry?.coordinates || !name
-          || feature.geometry.type !== 'LineString') continue;
-
-        const points = feature.geometry.coordinates.map(([lon, lat]) => ({ lat, lon }));
-
-        if (!points.length
-          || points.length < 25) { continue; }
-
-        featuresPrepared.push({
-          name,
-          country: 'USA',
-          difficulty,
-          points,
-        });
-      }
-
-      const hikes = uniqBy(prop('name'), featuresPrepared);
-
-      // write all hikes to gpx
-      for (let i = 0; i < hikes.length; ++i) {
-        const hike = hikes[i];
-
-        const { fileName } = await saveGPXFile({
-          hike,
-          fileIndex,
-        });
-        ++fileIndex;
-
-        hike.fileName = fileName;
-
-        allHikesSaved.push(hike);
-      }
-
-      console.log('prepared', allHikesSaved.length, 'hikes');
-      // now prepare sql for inserting them
-      const usersSql = await prepareUsersSql();
-      const hikesSql = prepareHikesSql(allHikesSaved);
-
-      // fill local db and export it
-
-      const schemaSql = await prepareSchemaSql()
-      writeFileSync(join('./result/init.sql'), [
-        schemaSql,
-        usersSql,
-        hikesSql,
-        prepareHutsSql(),
-        await prepareParkingLotsSql()
-      ].join('\n'));
+      allHikesSaved.push(hike);
+      fileIndex++;
     } catch (error) {
       console.error(chalk.red(error));
     }
   }
 
+  console.log('prepared', allHikesSaved.length, 'hikes');
+  // now prepare sql for inserting them
+  const usersSql = await prepareUsersSql();
+  const hikesSql = prepareHikesSql(allHikesSaved);
+
+  // fill local db and export it
+  const schemaSql = await prepareSchemaSql();
+  writeFileSync(path.join('./result/init.sql'), [
+    schemaSql,
+    usersSql,
+    hikesSql,
+    prepareHutsSql(),
+    await prepareParkingLotsSql()
+  ].join('\n'));
 
   async function prepareSchemaSql() {
     return new Promise((res, rej) => {
@@ -278,31 +260,36 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
   function prepareHikesSql(hikes) {
     let sql = '';
 
-    let maxPoints = 0;
     hikes.forEach(({
       fileName,
-      name,
+      userId = LOCAL_GUIDE_ID,
+      title,
       difficulty,
-      points
+      gpxPath,
+      country,
+      region,
+      province,
+      city,
+      length,
+      ascent,
+      expectedTime,
+      description,
+      pictures,
     }) => {
-      if (points.length > maxPoints) {
-        maxPoints = points.length;
-      }
+      // const gpxPath = `/static/gpx/${fileName}`;
 
-      const gpxPath = `/static/gpx/${fileName}`;
+      // const country = 'USA';
+      // const city = faker.address.city()
+      // const province = '';
+      // const region = faker.address.state();
 
-      const country = 'USA';
-      const city = faker.address.city()
-      const province = '';
-      const region = faker.address.state();
-
-      const pointsCount = points.length;
-      const lengthMin = clamp(0.05, 1, pointsCount / 1500) * 1 + 0.5;
-      const lengthMax = clamp(0.05, 1, pointsCount / 1500) * 20 + 0.5;
-      const length = faker.datatype.float({ precision: 0.1, min: lengthMin, max: lengthMax });
-      const ascent = faker.datatype.float({ precision: 0.1, min: 5, max: 30 });
-      const expectedTime = +((length / faker.datatype.float({ precision: 0.01, min: 3.5, max: 5 }) * 60).toFixed(3));
-      const description = '';
+      // const pointsCount = points.length;
+      // const lengthMin = clamp(0.05, 1, pointsCount / 1500) * 1 + 0.5;
+      // const lengthMax = clamp(0.05, 1, pointsCount / 1500) * 20 + 0.5;
+      // const length = faker.datatype.float({ precision: 0.1, min: lengthMin, max: lengthMax });
+      // const ascent = faker.datatype.float({ precision: 0.1, min: 5, max: 30 });
+      // const expectedTime = +((length / faker.datatype.float({ precision: 0.01, min: 3.5, max: 5 }) * 60).toFixed(3));
+      // const description = '';
 
       sql += `
       INSERT INTO "public"."hikes" (
@@ -317,10 +304,11 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
         "length",
         "ascent",
         "expectedTime",
-        "description"
+        "description",
+        "pictures"
       ) VALUES(
-        ${LOCAL_GUIDE_ID},
-        ${escape.literal(name)},
+        ${userId},
+        ${escape.literal(title)},
         ${difficulty},
         ${escape.literal(gpxPath)},
         ${escape.literal(country)},
@@ -331,23 +319,25 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
         ${ascent},
         ${expectedTime},
         ${escape.literal(description)}
+        ${escape.literal(JSON.stringify(pictures))}::jsonb
       );
     `;
     });
-
-    console.log('----- MNAX POINTS', maxPoints)
 
     return sql;
   }
 
   function prepareHutsSql() {
-    const hutsAll = JSON.parse(readFileSync(join(SOURCE_DIR, 'huts.json')).toString());
+    const hutsAll = JSON.parse(readFileSync('./source/huts.json').toString());
     const everyNth = 15;
     const huts = hutsAll.filter((e, i) => i % everyNth === everyNth - 1);
 
     const hutsSql = huts.map(hut => {
       const [name, ...other] = hut[2].split(' - ');
       const address = other.map(v => v.trim()).filter(v => !!v).join(', ');
+
+      const workingTimeStart = faker.datatype.number({min: 1, max: 9 });
+      const workingTimeEnd = faker.datatype.number({min: workingTimeStart + 1, max: 23 });
 
       return `
       select public."insert_hut"(
@@ -360,7 +350,12 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
         ${escape.literal(address)},
         ${escape.literal(faker.name.fullName())},
         ${escape.literal(faker.internet.url())},
-        null
+        null,
+        ${faker.datatype.number({ min: 260, max: 340,precision: 0.001 })},
+        '${workingTimeStart.toString().padStart(2, '0')}:00:00',
+        '${workingTimeEnd.toString().padStart(2, '0')}:00:00',
+        ${escape.literal(faker.internet.email())},
+        ${escape.literal(faker.phone.number('+39##########'))},
       );
     `;
     }).join('\n');
@@ -376,7 +371,11 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
         address varchar,
         owner_name varchar,
         website varchar,
-        elevation numeric(12,2)
+        elevation numeric(12,2),
+        workingTimeStart time without time zone,
+        workingTimeEnd time without time zone,
+        email varchar,
+        phoneNumber varchar
     )  RETURNS VOID AS
     $func$
     DECLARE
@@ -399,7 +398,11 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
       "title",
       "ownerName",
       "website",
-      "elevation"
+      "elevation",
+      "workingTimeStart",
+      "workingTimeEnd",
+      "email",
+      "phoneNumber"
     ) VALUES (
       user_id,
       point_id,
@@ -420,7 +423,7 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
   }
 
   async function prepareParkingLotsSql() {
-    const parkingsAll = await xml.parseStringPromise(readFileSync(join(SOURCE_DIR, 'parking.xml')).toString());
+    const parkingsAll = await xml.parseStringPromise(readFileSync('./source/parking.xml').toString());
     const everyNth = 100;
 
     const parkings = parkingsAll.osm.node.filter((e, i) => i % everyNth === everyNth - 1);
@@ -533,7 +536,7 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
   function saveGPXFile({ fileIndex, hike: { name, difficulty, points } }) {
     const prepared = name.replace(/[^a-z0-9]/gi, '_');
     let fileName = `${fileIndex.toString().padStart(3, '0')}_${prepared}.gpx`;
-    const filePath = join(DEST_DIR, `${fileIndex.toString().padStart(3, '0')}_${prepared}.gpx`);
+    const filePath = path.join(DEST_DIR, `${fileIndex.toString().padStart(3, '0')}_${prepared}.gpx`);
     let count = 0;
     let lines = [];
     lines.push(XML_TAG);
