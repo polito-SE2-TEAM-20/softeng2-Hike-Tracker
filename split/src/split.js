@@ -9,8 +9,9 @@ import { randomInt } from 'crypto';
 import escape from 'pg-escape';
 import { hash } from 'bcrypt';
 import { exec } from 'child_process';
+import { XMLParser, XMLBuilder, XMLValidator} from 'fast-xml-parser'
 
-const SOURCE_DIR = './source/';
+const SOURCE_DIR = './prove/';
 const DEST_DIR = './result/';
 
 const LOCAL_GUIDE_ID = 2;
@@ -27,7 +28,7 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
   const source = SOURCE_DIR;
   const dest = DEST_DIR;
 
-  const fileList = getGPXFileList(source);
+  const fileList = getTestFilesList(source);
   if (fileList.length === 0) {
     console.log('No files found, exiting...');
     process.exit();
@@ -39,10 +40,41 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
   const allHikesSaved = []
   for (const file of fileList) {
     try {
-      console.log('reading file', file);
-      const contents = JSON.parse((readFileSync(file)));
+      console.log('reading gpx', file);
+      const contents = (readFileSync(file));
+      const parser = new XMLParser();
+      const gpxData = parser.parse(contents).gpx;
 
-      const features = contents.features;
+      /**
+        gpx: {
+          metadata: {
+            author: {
+              email: '',
+              firstName: 'Mary',
+              lastName: 'Anderson',
+              phoneNumber: 321456783
+            },
+            desc: 'Durante il periodo invernale la strada è pulita solo fino all’abitato di Città, sarà necessario quindi lasciare l’auto qui e proseguire a piedi.',
+            time: 80,
+            pictures: '3.jpg',
+            bounds: ''
+          },
+          trk: {
+            name: 'Amprimo',
+            difficulty: 2,
+            country: 'Italia',
+            region: 'Piemonte',
+            province: 'Torino',
+            city: 'Bussoleno',
+            startPoint: [Object],
+            endPoint: [Object],
+            referencePoint: [Object],
+            trkseg: [Object]
+          }
+        }
+       */
+      console.log(gpxData.trk.referencePoint);
+      throw new Error('123');
 
       const featuresPrepared = [];
       for (const feature of features) {
@@ -68,7 +100,7 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
 
       const hikes = uniqBy(prop('name'), featuresPrepared);
 
-      // write all hikes to gpx
+      // todo: maybe prepare gpx files without metainfo
       for (let i = 0, fileIndex = 1; i < hikes.length; ++i, ++fileIndex) {
         const hike = hikes[i];
 
@@ -245,6 +277,13 @@ function getGPXFileList(dir) {
     srcBase: dir,
   };
   return glob.find('*.geojson', globOpts).sort();
+}
+
+function getTestFilesList(dir) {
+  return glob.find('*.gpx', {
+    prefixBase: true,
+    srcBase: dir,
+  }).sort();
 }
 
 function saveGPXFile({ fileIndex, hike: { name, difficulty, points } }) {
