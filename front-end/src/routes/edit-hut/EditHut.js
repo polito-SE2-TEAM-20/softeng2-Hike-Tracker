@@ -165,7 +165,7 @@ const EditHut = (props) => {
     return (
         <>
             <Grid container style={{ minHeight: "100vh", height: "100%" }}>
-                <Grid style={{ marginLeft: "auto", marginRight: "auto", marginBottom: "400px", height: "40vh" }} item lg={3}>
+                <Grid style={{ marginLeft: "auto", marginRight: "auto", marginBottom: "550px", height: "40vh" }} item lg={3}>
                     {
                         op &&
                         <PopupModifyHut id={hutid} err={err} open={op} setOpen={setOp} />
