@@ -57,7 +57,7 @@ export class UserHike {
   @Column({
     type: 'boolean',
     nullable: true,
-    default: false,
+    default: null,
   })
   weatherNotified?: boolean | null;
 
