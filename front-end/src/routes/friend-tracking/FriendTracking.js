@@ -13,7 +13,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-
+import TroubleshootIcon from '@mui/icons-material/Troubleshoot';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -24,46 +24,13 @@ L.Icon.Default.mergeOptions({
 
 
 const FriendTracking = () => {
-    const match = useMatch('/friend-tracking/:userID/:hikeid')
-    const userID = (match && match.params && match.params.userID) ? match.params.userID : -1
+    const match = useMatch('/friend-tracking/:userID/:hikeid/:friendCode')
     const hikeid = (match && match.params && match.params.hikeid) ? match.params.hikeid : -1
+    const friendCode = (match && match.params && match.params.friendCode) ? match.params.friendCode : -1
     const [hike, setHike] = useState({})
     const [loaded, setLoaded] = useState(false)
-    const [reachedReferencePoints, setReachedReferencePoints] = useState([])
     const [referencePoints, setReferencePoints] = useState([])
-
-    const sampleData = [
-        {
-            'title': "RefPoint#1",
-            'lat': 45.4,
-            "lon": 6.94569,
-            'reached': false
-        },
-        {
-            'title': "RefPoint#2",
-            'lat': 45.5,
-            "lon": 6.945684,
-            'reached': true
-        },
-        {
-            'title': "RefPoint#3",
-            'lat': 45.6,
-            "lon": 6.94566,
-            'reached': false
-        },
-        {
-            'title': "RefPoint#4",
-            'lat': 45.7,
-            "lon": 6.94567,
-            'reached': true
-        },
-        {
-            'title': "RefPoint#5",
-            'lat': 45.8,
-            "lon": 6.94566,
-            'reached': false
-        }
-    ]
+    const [isHikeTerminated, setIsHikeTerminated] = useState(false)
 
     useEffect(() => {
         let tmpHike = {}
@@ -77,8 +44,15 @@ const FriendTracking = () => {
             tmpHike = await API.getHikePathByHike(tmpHike)
         }
 
+
         const apiGetRefPoints = async () => {
-            tmpRP = await API.friendGetReferencePointsReached({ friendCode: "756b" })
+            tmpRP = await API.getHikeByFriendCode(friendCode)
+            if (tmpRP.status !== undefined && tmpRP.status === 422) {
+                /**
+                 * The hike has been terminated
+                 */
+                setIsHikeTerminated(true)
+            }
         }
 
         getHike().then(() => {
@@ -88,19 +62,16 @@ const FriendTracking = () => {
                 gpx.parse(tmpHike.positions);
                 tmpHike.positions = gpx.tracks[0].points.map(p => [p.lat, p.lon])
                 setHike(tmpHike)
-                console.log(tmpHike)
                 setLoaded(true)
             })
+        }).then(() => {
             apiGetRefPoints().then(() => {
                 setReferencePoints(tmpHike.referencePoints)
-                setReachedReferencePoints(tmpRP)
             }).then(() => {
-                console.log(referencePoints)
-                console.log(reachedReferencePoints)
                 let latestReferencePoints = tmpHike.referencePoints
                 for (let index in latestReferencePoints) {
-                    for (let index2 in reachedReferencePoints) {
-                        if (latestReferencePoints[index].id === reachedReferencePoints[index2].id) {
+                    for (let index2 in tmpRP.trackPoints) {
+                        if (latestReferencePoints[index].id === tmpRP.trackPoints[index2].point.id) {
                             latestReferencePoints[index].reached = true
                         }
                     }
@@ -110,15 +81,22 @@ const FriendTracking = () => {
                 }
             })
         })
-
     }, [])
 
     if (!loaded) return <></>
     return (
         <Grid container sx={{ marginLeft: { md: "32px" }, marginRight: { md: "32px" }, marginTop: "20px" }}>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                <Typography variant="h3" sx={{ fontFamily: "Unbounded", display: "flex", justifyContent: "left", marginBottom: "18px", padding: "12px" }}>{hike.title}: tracking</Typography>
+                <Typography className="unselectable" variant="h3" sx={{ fontFamily: "Unbounded", display: "flex", justifyContent: "left", marginBottom: "18px", padding: "12px", fontSize: { xs: "32px", md: "38px" }, alignItems: "center" }}>
+                    <Typography className="unselectable" variant="h3" sx={{ fontFamily: "Unbounded", display: "flex", justifyContent: "left", padding: "5px", fontSize: { xs: "18px", md: "18px" }, backgroundColor: isHikeTerminated ? "red" : "green", color: "white", borderRadius: "8px" }}>{isHikeTerminated?"Closed":"Active"}</Typography>
+                    <Typography className="unselectable" variant="h3" sx={{ fontFamily: "Unbounded", display: "flex", justifyContent: "left", paddingLeft: "12px", fontSize: { xs: "18px", md: "18px" } }}>Tracking</Typography>
+                    &nbsp;
+                    <TroubleshootIcon sx={{ fontSize: { xs: "32px", md: "38px" } }}></TroubleshootIcon>
+                    &nbsp;
+                    {hike.title}
+                </Typography>
             </Grid>
+
             <Grid item xs={12} sm={12} md={4} lg={4} xl={4} sx={{ marginTop: "12px" }}>
                 <Paper style={{ padding: "30px" }}>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
@@ -191,41 +169,49 @@ const FriendTracking = () => {
                 <Map loaded={loaded} hike={hike} referencePoints={referencePoints} />
             </Grid>
 
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                <Typography className="unselectable" variant="h4" sx={{ fontFamily: "Unbounded", marginTop: "24px", padding: "16px", display: "flex", justifyContent: "center" }}>Reference points reached</Typography>
-            </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "center", marginBottom: "24px" }}>
-                <TableContainer sx={{ maxWidth: { xs: "90vw", md: "45vw" } }} component={Paper}>
-                    <Table aria-label="simple table">
-                        <TableHead>
-                            <TableRow sx={{ backgroundColor: "#CCE5D6" }}>
-                                <TableCell align="left">Name</TableCell>
-                                <TableCell align="left">Coordinates</TableCell>
-                                <TableCell align="left">Reached</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {
-                                referencePoints.sort((x, y) => x.reached.toString() < y.reached.toString()).map((refPoint) => (
-                                    <TableRow
-                                        key={refPoint.name}
-                                        sx={{
-                                            '&:last-child td, &:last-child th': { border: 0 },
-                                            backgroundColor: refPoint.reached ? "#5EE671" : "#E6B0A7"
-                                        }}
-                                    >
-                                        <TableCell align="left" component="th" scope="refPoint">
-                                            <b>{refPoint.name}</b>
-                                        </TableCell>
-                                        <TableCell align="left">{refPoint.position.coordinates[0]} - {refPoint.position.coordinates[1]}</TableCell>
-                                        <TableCell align="left">{refPoint.reached ? "Yes" : "No"}</TableCell>
+            {isHikeTerminated ? <></> :
+                <>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                        <Typography className="unselectable" variant="h4" sx={{ fontFamily: "Unbounded", marginTop: "24px", padding: "16px", display: "flex", justifyContent: "center" }}>Reference points reached</Typography>
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ display: "flex", justifyContent: "center", marginBottom: "24px" }}>
+                        <TableContainer sx={{ maxWidth: { xs: "90vw", md: "45vw" } }} component={Paper}>
+                            <Table aria-label="simple table">
+                                <TableHead>
+                                    <TableRow sx={{ backgroundColor: "#CCE5D6" }}>
+                                        <TableCell align="left">Name</TableCell>
+                                        <TableCell align="left">Coordinates</TableCell>
+                                        <TableCell align="left">Point type</TableCell>
+                                        <TableCell align="left">Reached</TableCell>
                                     </TableRow>
-                                ))
-                            }
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Grid>
+                                </TableHead>
+                                <TableBody>
+                                    {
+                                        referencePoints
+                                            .sort((x, y) => x.reached.toString() < y.reached.toString())
+                                            .map((refPoint) => (
+                                                <TableRow
+                                                    key={refPoint.name}
+                                                    sx={{
+                                                        '&:last-child td, &:last-child th': { border: 0 },
+                                                        backgroundColor: refPoint.reached ? "#5EE671" : "#E6B0A7"
+                                                    }}
+                                                >
+                                                    <TableCell align="left" component="th" scope="refPoint">
+                                                        <b>{refPoint.name}</b>
+                                                    </TableCell>
+                                                    <TableCell align="left">{refPoint.position.coordinates[0]} - {refPoint.position.coordinates[1]}</TableCell>
+                                                    <TableCell align="left">{fromIntToPointType(refPoint.type)}</TableCell>
+                                                    <TableCell align="left">{refPoint.reached ? "Yes" : "No"}</TableCell>
+                                                </TableRow>
+                                            ))
+                                    }
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Grid>
+                </>
+            }
         </Grid>
     )
 }
@@ -321,6 +307,37 @@ const ReferencePointPopup = (props) => {
             <div className='popup-line'>{props.refPoint.reached ? "Reached" : "Not reached yet"}</div>
         </div>
     )
+}
+
+/* also for point type: 
+enum PointType {
+  point = 0,
+  hut = 1,
+  parkingLot = 2,
+  referencePoint = 3,
+  linkedPoint = 4,
+  startPoint = 5,
+  endPoint = 6,
+}, can you confirm? */
+const fromIntToPointType = (pointType) => {
+    switch (pointType) {
+        case 0:
+            return "Generic point"
+        case 1:
+            return "Hut"
+        case 2:
+            return "Parking lot"
+        case 3:
+            return "Reference point"
+        case 4:
+            return "Linked point"
+        case 5:
+            return "Starting point"
+        case 6:
+            return "Ending point"
+        default:
+            return ""
+    }
 }
 
 export default FriendTracking

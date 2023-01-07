@@ -92,7 +92,7 @@
         ]
       },
       {
-        "title": "New Parking",
+        "title": "New Parking Lot",
         "URL": "/newParking",
         "reqLogin": true,
         "role": [
