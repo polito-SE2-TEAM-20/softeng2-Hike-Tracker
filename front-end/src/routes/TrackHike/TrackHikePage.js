@@ -12,7 +12,6 @@ import ShareHike from "../../components/share-hike/ShareHike";
 const dayjs = require('dayjs')
 
 function TrackingHikePage(props) {
-
     const match = useMatch('/trackhike/:hikeid')
     const hikeId = match.params.hikeid ? match.params.hikeid : -1;
 
@@ -43,6 +42,20 @@ function TrackingHikePage(props) {
     const [showTurnOnLocatonDialog, setShowTurnOnLocationDialog] = useState(false);
     const [isLocationAccessable, setIsLocationAccessable] = useState(false);
 
+    const labelStyle = {
+        background: {
+            0: "#1a1a1a",
+            1: "green",
+            2: "red"
+        },
+        text: {
+            0: "white",
+            1: "white",
+            2: "white"
+        }
+
+    }
+
     const checkLocationAccess = () => {
         navigator.permissions
             .query({ name: "geolocation" })
@@ -57,12 +70,12 @@ function TrackingHikePage(props) {
                             setIsLocationAccessable(false)
                             setShowTurnOnLocationDialog(true)
                         }
-                )
+                    )
                 } else if (result.state === "denied") {
                     setIsLocationAccessable(false)
                     setShowTurnOnLocationDialog(true)
                 }
-                
+
             });
     }
 
@@ -72,7 +85,7 @@ function TrackingHikePage(props) {
             const details = await API.getSingleHikeByID(hikeId);
             if (details) {
                 const gpxFile = await API.getPathByID(details.gpxPath)
-    
+
                 if (gpxFile) {
                     setHikeDetails(details)
                     setHikeGpx(gpxFile)
@@ -88,7 +101,7 @@ function TrackingHikePage(props) {
                 setHasErrorOnLoad(true);
                 setErrorOnLoad("Failed to get hike details. Please try again.")
             }
-        
+
         }
 
         //Load the track that already exists
@@ -106,9 +119,9 @@ function TrackingHikePage(props) {
                     setTrackingState(TrackingState.FINISHED)
                 }
             })
-            .catch((err) => {
+                .catch((err) => {
 
-            })
+                })
         } else {
             API.getAllUserTrackingHikes().then((result) => {
                 result.forEach((trackHikeItem) => {
@@ -126,25 +139,25 @@ function TrackingHikePage(props) {
                     }
                 })
             })
-            .catch((err) => {
-    
-            })
-    
-    
+                .catch((err) => {
+
+                })
+
+
         }
 
         getHikeDetails()
     }, [])
 
     useEffect(() => {
-        if(hikeGpx, hikeDetails) {
+        if (hikeGpx, hikeDetails) {
             parseGpxFile()
         }
     }, [hikeGpx, hikeDetails])
 
     useEffect(() => {
 
-        switch(trackingState) {
+        switch (trackingState) {
             case TrackingState.STARTED: {
                 if (!trackHasBeenRecorded) {
                     setTrackHasBeenRecorded(true);
@@ -162,9 +175,10 @@ function TrackingHikePage(props) {
                 // navigator.geolocation.clearWatch(trackRecordId)
                 break;
             }
-
+            default:
+                break;
         }
-        
+
     }, [trackingState])
 
     const parseGpxFile = () => {
@@ -178,9 +192,9 @@ function TrackingHikePage(props) {
         //#endregion
     }
 
-    const startTrackingAction = () => {
+    const startTrackingAction = async () => {
         if (!trackHasBeenStarted) {
-            API.startTracingkHike(hikeId)
+            await API.startTracingkHike(hikeId)
                 .then((result) => {
                     setTrackHike(result)
                     setTrackHikeId(result.id);
@@ -196,16 +210,16 @@ function TrackingHikePage(props) {
         }
     }
 
-    const stopTrackingAction = () => {
+    const stopTrackingAction = async () => {
         if (!trackHasBeenFinished) {
-            API.stopTrackingHike(trackHikeId)
+            await API.stopTrackingHike(trackHikeId)
                 .then((result) => {
                     setTrackHasBeenFinished(true)
                     setTrackHasBeenStarted(false)
                     setTrackingState(TrackingState.FINISHED)
                 })
                 .catch((error) => {
-                    
+
                 })
         } else {
             //Track is already finished
@@ -232,10 +246,10 @@ function TrackingHikePage(props) {
         API.addPointToTracingkHike(trackHikeId, refPoint.id, now).then((result) => {
             setTrackHike(result)
         })
-        .catch((error) => {
+            .catch((error) => {
 
-        })
-        
+            })
+
     }
 
     return (
@@ -245,15 +259,41 @@ function TrackingHikePage(props) {
                 display="column"
                 justifyContent="center"
                 alignItems="center"
-                style={{marginTop: "10vh", height: "90vh", width:"100%"}}>
+                style={{ marginTop: "10px", height: "90vh", width: "100%" }}>
+                <Grid container item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
+                    <Grid item xs={12}>
+                        <Typography variant="h2" sx={{ fontFamily: "Unbounded", textAlign: "center" }}>
+                            {hikeDetails !== undefined && hikeDetails !== null ? hikeDetails.title : ""}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
+                        <Typography sx={{
+                            textAlign: "center", borderStyle: "solid", borderWidth: "1px", borderRadius: "18px", 
+                            fontSize: "18px", width: "fit-content", paddingLeft: "8px", paddingRight: "8px",
+                            backgroundColor: labelStyle.background[trackingState],
+                            color: labelStyle.text[trackingState],
+                            borderColor: labelStyle.background[trackingState]
+                        }}>
+                            {
+                                trackingState === TrackingState.NOT_STARTED ? "Not started" : <></>
+                            }
+                            {
+                                trackingState === TrackingState.STARTED ? "Started" : <></>
+                            }
+                            {
+                                trackingState === TrackingState.FINISHED ? "Finished" : <></>
+                            }
+                        </Typography>
+                    </Grid>
+                </Grid>
                 <Grid
                     item
-                    style={{ height: "60vh", width: "100%" }}>
+                    style={{ height: "60vh", width: "100%", marginTop: "12px" }}>
                     <MapContainer
                         style={{ height: "60vh" }}
                         flex
                         center={
-                            (hikePositions !== null && hikePositions.length > 0) ? hikePositions[0] :[45.4408474, 12.3155151]
+                            (hikePositions !== null && hikePositions.length > 0) ? hikePositions[0] : [45.4408474, 12.3155151]
                         }
                         zoom={13}
                         scrollWheelZoom={{ xs: false, sm: false, md: false, lg: true, xl: true }} zoomControl={true}>
@@ -274,26 +314,26 @@ function TrackingHikePage(props) {
                                     iconSize: [36, 36]
                                 })}
                                 key={[currentLocation.coords.latitude,
-                                    currentLocation.coords.longitude]}
+                                currentLocation.coords.longitude]}
                                 position={[currentLocation.coords.latitude,
-                                    currentLocation.coords.longitude]}>
+                                currentLocation.coords.longitude]}>
 
                             </Marker>
                         }
                         {
-                            (hikeDetails?.referencePoints !== null && hikeDetails?.referencePoints.length > 0 ) &&
+                            (hikeDetails?.referencePoints !== null && hikeDetails?.referencePoints.length > 0) &&
                             hikeDetails?.referencePoints.map((refPoint) => {
-                                return(
+                                return (
                                     <>
                                         <Marker
                                             key={refPoint.id}
                                             position={[refPoint.position.coordinates[1], refPoint.position.coordinates[0]]}>
                                             <Popup position={[refPoint.position.coordinates[1], refPoint.position.coordinates[0]]}>
-                                                <RefPointPopUp 
-                                                    refPoint={refPoint} 
+                                                <RefPointPopUp
+                                                    refPoint={refPoint}
                                                     trackHike={trackHike}
                                                     trackingState={trackingState}
-                                                    handleCheckRefPoint={handleCheckingRefPoint}/>
+                                                    handleCheckRefPoint={handleCheckingRefPoint} />
                                             </Popup>
                                         </Marker>
                                     </>
@@ -302,7 +342,7 @@ function TrackingHikePage(props) {
                         }
 
                         {
-                            (hikePositions !== null && hikePositions.length > 0)  &&
+                            (hikePositions !== null && hikePositions.length > 0) &&
                             <MapFlyTracker
                                 location={hikePositions[0]}>
 
@@ -326,7 +366,7 @@ function TrackingHikePage(props) {
                     trackingState === TrackingState.STARTED &&
                     <Grid
                         item>
-                        <ShareHike/>
+                        <ShareHike />
                     </Grid>
                 }
 
@@ -350,7 +390,7 @@ function TrackingHikePage(props) {
 function MapFlyTracker(props) {
     const map = useMap()
     useEffect(() => {
-        
+
         // map.flyTo([props.location.coords.latitude,
         //     props.location.coords.longitude], 17)
         map.flyTo(props.location, 17)
@@ -359,7 +399,7 @@ function MapFlyTracker(props) {
 
 function TrackingActionsView(props) {
     return (
-        <Grid 
+        <Grid
             flex
             container
             direction="column"
@@ -369,20 +409,20 @@ function TrackingActionsView(props) {
                 props.state === TrackingState.NOT_STARTED &&
                 <>
                     <PlayCircleIcon
-                        style={{width:150, height: 150}}
+                        style={{ width: 150, height: 150 }}
                         onClick={() => props.startAction()}>
-                    
+
                     </PlayCircleIcon>
                 </>
-                
+
             }
             {
                 props.state === TrackingState.STARTED &&
                 <>
                     <StopCircleIcon
-                        style={{width:150, height: 150}}
+                        style={{ width: 150, height: 150 }}
                         onClick={() => props.stopAction()}>
-                    
+
                     </StopCircleIcon>
                 </>
             }
@@ -409,7 +449,7 @@ function TurnOnLocationDialog(props) {
             keepMounted
             onClose={props.closeAction}
             aria-describedby="alert-dialog-slide-description">
-            {   
+            {
                 <>
                     <DialogTitle>{"Attention!"}</DialogTitle>
                     <DialogContent>
@@ -437,7 +477,7 @@ function RefPointPopUp(props) {
         }
     })
 
-    return(
+    return (
         <Grid
             container
             display="column"
@@ -447,7 +487,7 @@ function RefPointPopUp(props) {
                 item>
                 <Typography>{props.refPoint?.name}</Typography>
             </Grid>
-            
+
             <Grid
                 item>
                 <Typography>Latitude: {props.refPoint?.position?.coordinates[0]}</Typography>
@@ -489,4 +529,4 @@ function RefPointPopUp(props) {
     );
 }
 
-export {TrackingHikePage}
+export { TrackingHikePage }
