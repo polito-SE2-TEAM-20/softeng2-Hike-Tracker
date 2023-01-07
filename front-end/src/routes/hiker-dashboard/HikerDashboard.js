@@ -1,6 +1,5 @@
-import { Button, Grid, TextField, Typography, Switch, FormControlLabel } from "@mui/material";
+import { Button, Grid, TextField, Typography, Switch, FormControlLabel, FormGroup, Checkbox } from "@mui/material";
 import { useNavigate } from "react-router";
-import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import { displayTypeFlex } from "../../extra/DisplayType";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import './hiker-dashboard-style.css'
@@ -14,13 +13,33 @@ import API from '../../API/API'
 import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours'
 import { styled } from '@mui/material/styles';
 import { BEGINNER, ADVANCED } from '../../lib/common/PreferencesConstants'
+import QueryStatsIcon from '@mui/icons-material/QueryStats';
+
+const PerformacesButton = (props) => {
+    return (
+        <Grid container item xs={7} sm={7} md={7} lg={12} xl={12} sx={{
+            borderStyle: "solid", borderWidth: "1px", borderRadius: "24px 0px 12px 0px", borderColor: "#4c4c4c",
+            width: "fit-content", height: "fit-content", marginBottom: "8px", "&:hover": {
+                backgroundColor: "#f5f5f5", borderColor: "purple", color: "purple"
+            }
+        }}
+            onClick={props.handleNavigatePerformaces}
+        >
+            <Grid item sx={{ marginTop: "5px", marginBottom: "5px", marginLeft: "24px", marginRight: "24px" }}>
+                <Grid item sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <QueryStatsIcon />
+                    {/* <img src={QueryStatsIcon} alt="weatherMap" width="30px" height="auto" /> */}
+                    <Typography className="unselectable" sx={{ fontFamily: "Unbounded", marginLeft: "12px" }} fontSize={16} textAlign="left">
+                        Performances
+                    </Typography>
+                </Grid>
+            </Grid>
+        </Grid>
+    )
+}
 
 const HikerDashboard = (props) => {
     const navigate = useNavigate()
-    const gotoLogin = () => {
-        navigate("/login", { replace: false })
-    }
-
     const [updateFinished, setUpdateFinished] = useState(false)
     const [updateError, setUpdateError] = useState(false)
     const [position, setPosition] = useState({ 'lat': 45.0651752130794, 'lon': 7.661497396350511 })
@@ -31,11 +50,18 @@ const HikerDashboard = (props) => {
     const [ascent, setAscent] = useState(0.0)
     const [suggestionType, setSuggestionType] = useState(false)
 
-    const positionStatic = position
-    const radiusStatic = radius
-    const lengthStatic = length
-    const expectedTimeStatic = expectedTime
-    const ascentStatic = ascent
+    const [isStartingPoint, setIsStartingPoint] = useState(false)
+    const [isRadius, setIsRadius] = useState(false)
+    const [isLength, setIsLength] = useState(false)
+    const [isExpectedTime, setIsExpectedTime] = useState(false)
+    const [isDifficulty, setIsDifficulty] = useState(false)
+    const [isAscent, setIsAscent] = useState(false)
+
+    const positionStatic = position === null ? 0.0 : position 
+    const radiusStatic = radius === null ? 0.0 : radius 
+    const lengthStatic = length === null ? 0.0 : length 
+    const expectedTimeStatic = expectedTime === null ? 0 : expectedTime 
+    const ascentStatic = ascent === null ? 0.0 : ascent 
 
     useEffect(() => {
         var tmpPref = {}
@@ -53,7 +79,7 @@ const HikerDashboard = (props) => {
                 setSuggestionType(tmpPref.suggestionType)
             }
         })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const handlePreferencesUpdate = () => {
@@ -72,9 +98,37 @@ const HikerDashboard = (props) => {
             "difficultyMax": difficulty + (!suggestionType ? BEGINNER : ADVANCED).difficultyOffset,
             "ascentMin": ascent,
             "ascentMax": ascent + (!suggestionType ? BEGINNER : ADVANCED).ascentOffset,
-            'suggestionType': !suggestionType
+            'suggestionType': suggestionType
         }
+
+        const preFilter = () => {
+            if(!isStartingPoint) {
+                prefFilter.lat = null
+                prefFilter.lon = null
+            }
+            if(!isRadius) {
+                prefFilter.radiusKms = null
+            }
+            if(!isLength) {
+                prefFilter.minLength = null
+                prefFilter.maxLength = null
+            }
+            if(!isExpectedTime) {
+                prefFilter.expectedTimeMin = null
+                prefFilter.expectedTimeMax = null
+            }
+            if(!isDifficulty) {
+                prefFilter.difficultyMin = null
+                prefFilter.difficultyMax = null
+            }
+            if(!isAscent) {
+                prefFilter.ascentMin = null
+                prefFilter.ascentMax = null
+            }
+        }
+
         const setPreferences = async () => {
+            preFilter()
             await API.setPreferences(prefFilter)
         }
         setPreferences().then(() => {
@@ -100,10 +154,13 @@ const HikerDashboard = (props) => {
         }, 3000);
     }, [updateError])
 
+    const handleNavigatePerformaces = () => {
+        navigate("/hikerPerformance")
+    }
+
     return (
         <>
-            <HTNavbar user={props?.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
-            <Grid container columns={12} display={displayTypeFlex.pc} style={{ marginTop: "105px", marginBottom: "50px", justifyContent: "center" }}>
+            <Grid sx={{ marginTop: "20px" }} container columns={12} display={displayTypeFlex.pc} style={{ marginBottom: "50px", justifyContent: "center" }}>
                 <Grid container item xl={2} lg={3} height="fit-content">
                     <Grid item lg={12} xl={12}>
                         <AccountCircleIcon sx={{ fontSize: 300 }} />
@@ -122,9 +179,11 @@ const HikerDashboard = (props) => {
                     </Grid>
                     <Grid item lg={12} xl={12} sx={{ marginTop: "12px" }}>
                         <Typography className="unselectable" fontSize={18} sx={{
-                            backgroundColor: "white", color: "purple", borderStyle: "solid",
-                            borderWidth: "1px", borderRadius: "18px", width: "fit-content", padding: "4px 12px 4px 12px",
-                            fontFamily: "Bakbak One, display", fontWeight: "50", borderColor: "purple"
+                            backgroundColor: "white", color: "purple", borderColor: "purple",
+                            borderStyle: "solid", borderWidth: "1px",
+                            borderRadius: "18px", width: "fit-content",
+                            padding: "4px 12px 4px 12px", fontFamily: "Unbounded",
+                            fontWeight: "50"
                         }}>
                             <b>
                                 {props?.user?.role === 0 ? "Hiker" : ""}
@@ -135,6 +194,9 @@ const HikerDashboard = (props) => {
                                 {props?.user?.role === 5 ? "Emergency operator" : ""}
                             </b>
                         </Typography>
+                    </Grid>
+                    <Grid container item md={10} height="fit-content" sx={{ justifyContent: "center", marginTop: "18px", marginBottom: "18px" }}>
+                        <PerformacesButton handleNavigatePerformaces={handleNavigatePerformaces} />
                     </Grid>
                 </Grid>
                 <Grid container item lg={6} xl={6} height="fit-content" justifyContent="center" sx={{ marginLeft: "25px" }}>
@@ -290,6 +352,19 @@ const HikerDashboard = (props) => {
                             </AccordionDetails>
                         </Accordion>
                     </Grid>
+                    <Grid item sx={{marginTop: "24px"}}>
+                        <Typography sx={{fontSize: "20px"}}>
+                            <b>Select which parameters you want us to consider while suggesting you the best hikes based on your preferences.</b>
+                        </Typography>
+                        <FormGroup>
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsStartingPoint(!isStartingPoint)}} checked={isStartingPoint} />} label="Starting point" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsRadius(!isRadius)}} checked={isRadius} />} label="Radius" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsLength(!isLength)}} checked={isLength} />} label="Length" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsExpectedTime(!isExpectedTime)}} checked={isExpectedTime} />} label="Expected time" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsDifficulty(!isDifficulty)}} checked={isDifficulty} />} label="Difficulty" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsAscent(!isAscent)}} checked={isAscent} />} label="Ascent" />
+                        </FormGroup>
+                    </Grid>
                     <Grid item lg={12} xl={12} sx={{ marginTop: "28px", display: "flex", justifyContent: "right" }}>
                         {updateFinished ? <div style={{ marginRight: "25px" }}>
                             <Typography className="unselectable" sx={{ fontSize: "18px" }}>
@@ -301,7 +376,7 @@ const HikerDashboard = (props) => {
                                 <b>There's been an error with your preferences. Check fields value.</b>
                             </Typography>
                         </div> : <></>}
-                        <FormControlLabel control={<MaterialUISwitch onChange={e => { setSuggestionType(!suggestionType) }} defaultChecked />} label={!suggestionType ? "Beginner" : "Advanced"} />
+                        <FormControlLabel control={<MaterialUISwitch onChange={e => { setSuggestionType(!suggestionType) }} checked={suggestionType} />} label={!suggestionType ? "Beginner" : "Advanced"} />
                         <Button variant="filled"
                             onClick={handlePreferencesUpdate}
                             sx={{
@@ -315,28 +390,30 @@ const HikerDashboard = (props) => {
                 </Grid>
             </Grid>
 
-            <Grid container columns={12} display={displayTypeFlex.tablet} style={{ marginTop: "105px", marginBottom: "50px" }}>
+            <Grid container sx={{ marginTop: "20px" }} columns={12} display={displayTypeFlex.tablet} style={{ marginBottom: "50px" }}>
                 <Grid container item md={12} height="fit-content">
-                    <Grid item md={12} sx={{display: "flex", justifyContent: "center"}}>
+                    <Grid item md={12} sx={{ display: "flex", justifyContent: "center" }}>
                         <AccountCircleIcon sx={{ fontSize: 300 }} />
                     </Grid>
-                    <Grid item md={12} sx={{display: "flex", justifyContent: "center"}}>
+                    <Grid item md={12} sx={{ display: "flex", justifyContent: "center" }}>
                         <Typography fontSize={32}>
                             <b>
                                 {props?.user?.firstName + " " + props?.user?.lastName}
                             </b>
                         </Typography>
                     </Grid>
-                    <Grid item md={12} sx={{display: "flex", justifyContent: "center"}}>
+                    <Grid item md={12} sx={{ display: "flex", justifyContent: "center" }}>
                         <Typography fontSize={20} color="#666666">
                             {props?.user?.email}
                         </Typography>
                     </Grid>
-                    <Grid item md={12} sx={{ marginTop: "12px", display: "flex", justifyContent: "center"}}>
+                    <Grid item md={12} sx={{ marginTop: "12px", display: "flex", justifyContent: "center" }}>
                         <Typography className="unselectable" fontSize={18} sx={{
-                            backgroundColor: "white", color: "purple", borderStyle: "solid",
-                            borderWidth: "1px", borderRadius: "18px", width: "fit-content", padding: "4px 12px 4px 12px",
-                            fontFamily: "Bakbak One, display", fontWeight: "50", borderColor: "purple"
+                            backgroundColor: "white", color: "purple", borderColor: "purple",
+                            borderStyle: "solid", borderWidth: "1px",
+                            borderRadius: "18px", width: "fit-content",
+                            padding: "4px 12px 4px 12px", fontFamily: "Unbounded",
+                            fontWeight: "50"
                         }}>
                             <b>
                                 {props?.user?.role === 0 ? "Hiker" : ""}
@@ -349,8 +426,8 @@ const HikerDashboard = (props) => {
                         </Typography>
                     </Grid>
                 </Grid>
-                <Grid container item md={12} height="fit-content" justifyContent="center" sx={{ marginLeft: "25px",marginRight: "25px", marginTop: "25px" }}>
-                    <Grid md={12} sx={{display: "flex", justifyContent: "center"}}>
+                <Grid container item md={12} height="fit-content" justifyContent="center" sx={{ marginLeft: "25px", marginRight: "25px", marginTop: "25px" }}>
+                    <Grid md={12} sx={{ display: "flex", justifyContent: "center" }}>
                         <Typography className="unselectable" fontSize={32}>
                             <b>Preferences</b>
                         </Typography>
@@ -502,6 +579,19 @@ const HikerDashboard = (props) => {
                             </AccordionDetails>
                         </Accordion>
                     </Grid>
+                    <Grid item sx={{marginTop: "24px"}}>
+                        <Typography sx={{fontSize: "20px"}}>
+                            <b>Select which parameters you want us to consider while suggesting you the best hikes based on your preferences.</b>
+                        </Typography>
+                        <FormGroup>
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsStartingPoint(!isStartingPoint)}} checked={isStartingPoint} />} label="Starting point" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsRadius(!isRadius)}} checked={isRadius} />} label="Radius" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsLength(!isLength)}} checked={isLength} />} label="Length" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsExpectedTime(!isExpectedTime)}} checked={isExpectedTime} />} label="Expected time" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsDifficulty(!isDifficulty)}} checked={isDifficulty} />} label="Difficulty" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsAscent(!isAscent)}} checked={isAscent} />} label="Ascent" />
+                        </FormGroup>
+                    </Grid>
                     <Grid item xs={12} sx={{ marginTop: "28px", display: "flex", justifyContent: "right" }}>
                         {updateFinished ? <div style={{ marginRight: "25px" }}>
                             <Typography className="unselectable" sx={{ fontSize: "18px" }}>
@@ -527,28 +617,30 @@ const HikerDashboard = (props) => {
                 </Grid>
             </Grid>
 
-            <Grid container columns={12} display={displayTypeFlex.mobile} style={{ marginTop: "105px", marginBottom: "50px" }}>
+            <Grid container sx={{ marginTop: "20px" }} columns={12} display={displayTypeFlex.mobile} style={{ marginBottom: "50px" }}>
                 <Grid container item xs={12} sm={12} height="fit-content">
-                    <Grid item xs={12} sm={12} sx={{display: "flex", justifyContent: "center"}}>
+                    <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                         <AccountCircleIcon sx={{ fontSize: 300 }} />
                     </Grid>
-                    <Grid item xs={12} sm={12} sx={{display: "flex", justifyContent: "center"}}>
+                    <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center", textAlign: "center" }}>
                         <Typography fontSize={32}>
                             <b>
                                 {props?.user?.firstName + " " + props?.user?.lastName}
                             </b>
                         </Typography>
                     </Grid>
-                    <Grid item xs={12} sm={12} sx={{display: "flex", justifyContent: "center"}}>
+                    <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                         <Typography fontSize={20} color="#666666">
                             {props?.user?.email}
                         </Typography>
                     </Grid>
-                    <Grid item xs={12} sm={12} sx={{ marginTop: "12px", display: "flex", justifyContent: "center"}}>
+                    <Grid item xs={12} sm={12} sx={{ marginTop: "12px", display: "flex", justifyContent: "center" }}>
                         <Typography className="unselectable" fontSize={18} sx={{
-                            backgroundColor: "white", color: "purple", borderStyle: "solid",
-                            borderWidth: "1px", borderRadius: "18px", width: "fit-content", padding: "4px 12px 4px 12px",
-                            fontFamily: "Bakbak One, display", fontWeight: "50", borderColor: "purple"
+                            backgroundColor: "white", color: "purple", borderColor: "purple",
+                            borderStyle: "solid", borderWidth: "1px",
+                            borderRadius: "18px", width: "fit-content",
+                            padding: "4px 12px 4px 12px", fontFamily: "Unbounded",
+                            fontWeight: "50"
                         }}>
                             <b>
                                 {props?.user?.role === 0 ? "Hiker" : ""}
@@ -561,8 +653,8 @@ const HikerDashboard = (props) => {
                         </Typography>
                     </Grid>
                 </Grid>
-                <Grid container item xs={12} sm={12} height="fit-content" justifyContent="center" sx={{ marginLeft: "25px",marginRight: "25px", marginTop: "25px" }}>
-                    <Grid xs={12} sm={12} sx={{display: "flex", justifyContent: "center"}}>
+                <Grid container item xs={12} sm={12} height="fit-content" justifyContent="center" sx={{ marginLeft: "25px", marginRight: "25px", marginTop: "25px" }}>
+                    <Grid xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                         <Typography className="unselectable" fontSize={32}>
                             <b>Preferences</b>
                         </Typography>
@@ -714,6 +806,19 @@ const HikerDashboard = (props) => {
                             </AccordionDetails>
                         </Accordion>
                     </Grid>
+                    <Grid item sx={{marginTop: "24px"}}>
+                        <Typography sx={{fontSize: "20px"}}>
+                            <b>Select which parameters you want us to consider while suggesting you the best hikes based on your preferences.</b>
+                        </Typography>
+                        <FormGroup>
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsStartingPoint(!isStartingPoint)}} checked={isStartingPoint} />} label="Starting point" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsRadius(!isRadius)}} checked={isRadius} />} label="Radius" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsLength(!isLength)}} checked={isLength} />} label="Length" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsExpectedTime(!isExpectedTime)}} checked={isExpectedTime} />} label="Expected time" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsDifficulty(!isDifficulty)}} checked={isDifficulty} />} label="Difficulty" />
+                            <FormControlLabel control={<Checkbox onChange={() => {setIsAscent(!isAscent)}} checked={isAscent} />} label="Ascent" />
+                        </FormGroup>
+                    </Grid>
                     <Grid item xs={12} sm={12} sx={{ marginTop: "28px", display: "flex", justifyContent: "right" }}>
                         {updateFinished ? <div style={{ marginRight: "25px" }}>
                             <Typography className="unselectable" sx={{ fontSize: "18px" }}>
@@ -800,7 +905,7 @@ const FetchServiceManagement = (props) => {
     const map = useMap()
     useEffect(() => {
         map.flyTo([props.position.lat, props.position.lon], 11)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.position])
 }
 

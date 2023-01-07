@@ -1,7 +1,6 @@
 import API from '../../API/API.js';
 
 import { useEffect, useState } from 'react';
-import HTNavbar from '../../components/HTNavbar/HTNavbar';
 import { Grid, Typography, Skeleton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import HutCard from '../../components/hut-card/HutCard';
@@ -28,7 +27,6 @@ function HutWorkerHuts(props) {
 
     return (
         <>
-            <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
             <Grid container style={{ marginTop: "75px" }}>
                 <Grid item lg={9}>
                     <Grid container columns={5} style={{ marginTop: "25px", display: "flex", justifyContent: "center" }}>

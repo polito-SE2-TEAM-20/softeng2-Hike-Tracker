@@ -1,9 +1,7 @@
 import './list-of-hikes-style.css'
 
 import { useEffect, useState } from 'react';
-import HTNavbar from '../../components/HTNavbar/HTNavbar';
 import { Grid, Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import API from '../../API/API.js';
 import HikeCard from '../../components/hike-card/HikeCard';
 import HTTopBarFilterHike from '../../components/side-filter/HTTopBarFilterHike';
@@ -21,7 +19,6 @@ const HikeLoading = () => {
 
 const HTListOfHikes = (props) => {
     const [listOfHikes, setListOfHikes] = useState([])
-    const navigate = useNavigate()
     const [filter, setFilter] = useState({
         "province": null,
         "region": null,
@@ -69,14 +66,9 @@ const HTListOfHikes = (props) => {
         });
     }, [filter])
 
-    const gotoLogin = () => {
-        navigate("/login", { replace: false })
-    }
-
     return (
         <>
-            <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
-            <Grid container style={{ marginTop: "75px" }}>
+            <Grid container>
                 <Grid item sm>
                     <HTTopBarFilterHike listOfHikes={listOfHikes} loading={loading} setFilter={setFilter} filter={filter} isUserPrefHikes={isUserPrefHikes} setIsUserPrefHikes={setIsUserPrefHikes} />
                 </Grid>

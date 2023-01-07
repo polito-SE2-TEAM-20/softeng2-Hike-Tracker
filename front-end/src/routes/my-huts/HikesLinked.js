@@ -1,4 +1,3 @@
-
 import { Grid, Typography, CircularProgress } from "@mui/material";
 import '../admin-dashboard/admin-dashboard-style.css'
 import Accordion from '@mui/material/Accordion';
@@ -8,7 +7,6 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HTButton from "../../components/buttons/Button";
 import API from '../../API/API.js';
 import { useEffect, useState } from 'react';
-import HTNavbar from '../../components/HTNavbar/HTNavbar';
 import { useNavigate } from 'react-router-dom';
 import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours'
 
@@ -39,8 +37,6 @@ const HikesLinked = (props) => {
 
     return (
         <>
-            <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
-
             <Grid container columns={12} display="flex" justifyContent="center" style={{ marginTop: "105px" }}>
                 {console.log(hikesUpdatable)}
                 <Grid container item lg={8} xl={6} justifyContent="center" height="fit-content" sx={{ marginLeft: "25px", marginBottom: "35px" }}>

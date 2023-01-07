@@ -11,11 +11,12 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import pages from '../../extra/pages.json'
+import navbarPages from '../../extra/pages-with-categories.json'
 import { useNavigate } from 'react-router';
 import './navbar-style.css'
-import { Divider } from '@mui/material';
+import { Grid, Divider } from '@mui/material';
 import { displayTypeFlex, displayTypeBlock } from '../../extra/DisplayType';
+import DropdownMenu from './DropdownMenu';
 
 function HTNavbar(props) {
     const settings = ['Sign in', 'Sign out'];
@@ -39,31 +40,94 @@ function HTNavbar(props) {
     };
 
     return (
-        <AppBar position="fixed" style={{
-            backgroundColor: "#202020f0", marginBottom: "auto", paddingLeft: 10,
-            paddingRight: 10, borderRadius: 0
+        <AppBar position="sticky" style={{
+            backgroundColor: "#202020f0", paddingLeft: 10,
+            paddingRight: 10, borderRadius: 0, zIndex: "15"
         }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <Typography
-                        key="titlePC"
-                        className="unselectable"
-                        variant="h3"
-                        noWrap
-                        onClick={() => { navigate("/") }}
-                        sx={{
-                            mr: 5,
-                            display: displayTypeFlex.pc,
-                            fontFamily: "Unbounded",
-                            fontWeight: 700,
-                            color: 'inherit',
-                            textDecoration: 'none', transition: "0.2s",
-                            "&:hover": { borderColor: "#EBC824", color: "#EBC824" }
-                        }}
-                    >
-                        HackTheHike
-                    </Typography>
-
+                    <Grid container sx={{ width: "min-content" }}>
+                        <Grid xs={12} sm={12} md={12} lg={12} xl={12} item>
+                            <Typography
+                                key="titlePC1"
+                                className="unselectable"
+                                variant="h5"
+                                noWrap
+                                onClick={() => { navigate("/") }}
+                                sx={{
+                                    mr: 5,
+                                    display: displayTypeFlex.pc,
+                                    fontFamily: "Unbounded",
+                                    fontWeight: 700,
+                                    color: 'inherit',
+                                    textDecoration: 'none', transition: "0.2s",
+                                    "&:hover": { borderColor: "#EBC824", color: "#EBC824" }
+                                }}
+                            >
+                                HackTheHike.com
+                            </Typography>
+                        </Grid>
+                        <Grid xs={12} sm={12} md={12} lg={12} xl={12} item>
+                            <Typography
+                                key="titlePC2"
+                                className="unselectable"
+                                variant="h5"
+                                noWrap
+                                sx={{
+                                    mr: 5,
+                                    display: displayTypeFlex.pc,
+                                    fontFamily: "Unbounded",
+                                    fontWeight: 700,
+                                    color: 'inherit',
+                                    fontSize: "12px",
+                                    textDecoration: 'none', transition: "0.2s"
+                                }}
+                            >
+                                Best solutions for best adventures.
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                    <Grid container sx={{ width: "min-content" }}>
+                        <Grid xs={12} sm={12} md={12} lg={12} xl={12} item>
+                            <Typography
+                                key="titleTABLET1"
+                                className="unselectable"
+                                variant="h5"
+                                noWrap
+                                onClick={() => { navigate("/") }}
+                                sx={{
+                                    mr: 5,
+                                    display: displayTypeFlex.tablet,
+                                    fontFamily: "Unbounded",
+                                    fontWeight: 700,
+                                    color: 'inherit',
+                                    textDecoration: 'none', transition: "0.2s",
+                                    "&:hover": { borderColor: "#EBC824", color: "#EBC824" }
+                                }}
+                            >
+                                HackTheHike.com
+                            </Typography>
+                        </Grid>
+                        <Grid xs={12} sm={12} md={12} lg={12} xl={12} item>
+                            <Typography
+                                key="titleTABLET2"
+                                className="unselectable"
+                                variant="h5"
+                                noWrap
+                                sx={{
+                                    mr: 5,
+                                    display: displayTypeFlex.tablet,
+                                    fontFamily: "Unbounded",
+                                    fontWeight: 700,
+                                    color: 'inherit',
+                                    fontSize: "12px",
+                                    textDecoration: 'none', transition: "0.2s"
+                                }}
+                            >
+                                Best solutions for best adventures.
+                            </Typography>
+                        </Grid>
+                    </Grid>
                     <Box sx={{ flexGrow: 1, display: displayTypeFlex.mobile }}>
                         <IconButton
                             size="large"
@@ -94,79 +158,98 @@ function HTNavbar(props) {
                             }}
                         >
                             {
-                                pages.map((page) => {
-                                    if (props.isLoggedIn && page.role.includes(props.user?.role)) {
-                                        return (
-                                            <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}>
-                                                <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Unbounded" }}>{page.title}</Typography>
-                                            </MenuItem>
-                                        )
-                                    }
-                                    else if (!props.isLoggedIn && !page.reqLogin) {
-                                        return (
-                                            <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}>
-                                                <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Unbounded" }}>{page.title}</Typography>
-                                            </MenuItem>
-                                        )
-                                    }
-                                    else return (null)
+                                navbarPages.map((category) => {
+                                    return (<>
+                                        {
+                                            category.pages.map(page => {
+                                                if (props.isLoggedIn && page.role.includes(props.user?.role)) {
+                                                    return (
+                                                        <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}>
+                                                            <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Unbounded" }}>{page.title}</Typography>
+                                                        </MenuItem>
+                                                    )
+                                                }
+                                                else if (!props.isLoggedIn && !page.reqLogin) {
+                                                    return (
+                                                        <MenuItem key={page.title} onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}>
+                                                            <Typography textAlign="center" style={{ textTransform: "none", fontFamily: "Unbounded" }}>{page.title}</Typography>
+                                                        </MenuItem>
+                                                    )
+                                                }
+                                                else return (null)
+                                            }
+                                            )
+                                        }
+                                    </>)
+
                                 })
                             }
                         </Menu>
                     </Box>
-                    <Typography
-                        key="titleMobile"
-                        className="unselectable"
-                        style={{ fontFamily: "Unbounded", fontSize: "18px" }}
-                        variant="h5"
-                        noWrap
-                        onClick={() => { navigate("/") }}
-                        sx={{
-                            mr: 4,
-                            display: displayTypeFlex.mobile,
-                            fontFamily: "Unbounded",
-                            fontWeight: 700,
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}
-                    >
-                        HackTheHike
-                    </Typography>
+                    <Grid container sx={{ width: "min-content" }}>
+                        <Grid xs={12} sm={12} md={12} lg={12} xl={12} item sx={{ display: "flex", justifyContent: "center" }}>
+                            <Typography
+                                key="titleMobile"
+                                className="unselectable"
+                                style={{ fontFamily: "Unbounded", fontSize: "14px" }}
+                                variant="h5"
+                                noWrap
+                                onClick={() => { navigate("/") }}
+                                sx={{
+                                    mr: 4,
+                                    display: displayTypeFlex.mobile,
+                                    fontFamily: "Unbounded",
+                                    fontWeight: 700,
+                                    color: 'inherit',
+                                    textDecoration: 'none',
+                                }}
+                            >
+                                HackTheHike.com
+                            </Typography>
+                        </Grid>
+                        <Grid xs={12} sm={12} md={12} lg={12} xl={12} item sx={{ display: "flex", justifyContent: "center" }}>
+                            <Typography
+                                key="titlePC"
+                                className="unselectable"
+                                variant="h5"
+                                noWrap
+                                onClick={() => { navigate("/") }}
+                                sx={{
+                                    mr: 5,
+                                    display: displayTypeFlex.mobile,
+                                    fontFamily: "Unbounded",
+                                    fontWeight: 700,
+                                    color: 'inherit',
+                                    fontSize: "8px",
+                                    textDecoration: 'none', transition: "0.2s",
+                                    "&:hover": { borderColor: "#EBC824", color: "#EBC824" }
+                                }}
+                            >
+                                Best solutions for best adventures.
+                            </Typography>
+                        </Grid>
+                    </Grid>
+
+
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        {pages.map((page) => {
-                            if (props.isLoggedIn && page.role.includes(props.user?.role)) {
-                                return (
-                                    <Button style={{ textTransform: "none", fontFamily: "Unbounded", fontSize: "18px", marginRight: "12px" }}
-                                        key={page.title}
-                                        onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}
-                                        sx={{
-                                            my: 1, color: 'white', display: 'block',
-                                            "&:hover": { borderColor: "#EBC824", color: "#EBC824" }
-                                        }}
-                                    >
-                                        {page.title}
-                                    </Button>
-                                )
-                            }
-                            else if (!props.isLoggedIn && !page.reqLogin) {
-                                return (
-                                    <Button style={{ textTransform: "none", fontFamily: "Unbounded", fontSize: "18px", marginRight: "12px" }}
-                                        key={page.title}
-                                        onClick={() => { handleCloseNavMenu(); navigate(page.URL) }}
-                                        sx={{
-                                            my: 1, color: 'white', display: 'block',
-                                            "&:hover": { borderColor: "#EBC824", color: "#EBC824" }
-                                        }}
-                                    >
-                                        {page.title}
-                                        <Divider orientation='vertical' flexItem />
-                                    </Button>
-                                )
-                            }
-                            else return (<></>)
+                        {
+                            navbarPages.map((category) => {
+                                if (props.isLoggedIn && category.overallPermissions.includes(props.user?.role)) {
+                                    return (
+                                        <div style={{ marginRight: "24px" }}>
+                                            <DropdownMenu category={category} role={props.user?.role} />
+                                        </div>
+                                    )
+                                } else if (!props.isLoggedIn && category.overallPermissions.includes(-1)) {
+                                    return (
+                                        <div style={{ marginRight: "24px" }}>
+                                            <DropdownMenu category={category} role={-1} />
+                                        </div>
+                                    )
+                                } else return <></>
+                            })
                         }
-                        )}
                     </Box>
 
                     <Box sx={{ flexGrow: 0, display: { xs: "none", sm: "none", md: "flex", lg: "flex", xl: "flex" } }}>
@@ -175,6 +258,7 @@ function HTNavbar(props) {
                                 <Tooltip>
                                     <IconButton onClick={() => { navigate("/login") }} sx={{ p: 0 }}>
                                         <Button variant="outlined" sx={{
+                                            fontFamily: "Unbounded", fontSize: "14px",
                                             borderRadius: "24px", color: "white",
                                             "&:hover": { borderColor: "#EBC824", color: "#EBC824" }, textTransform: "none", borderColor: "white"
                                         }}><b>Sign in</b></Button>
@@ -186,6 +270,7 @@ function HTNavbar(props) {
                                 <Tooltip style={{ marginLeft: "20px" }}>
                                     <IconButton onClick={() => { navigate("/signup") }} sx={{ p: 0 }}>
                                         <Button variant="outlined" sx={{
+                                            fontFamily: "Unbounded", fontSize: "14px",
                                             "&:hover": { borderColor: "#EBC824", color: "#EBC824" },
                                             borderRadius: "24px", color: "white", textTransform: "none", borderColor: "white"
                                         }}><b>Sign up</b></Button>
@@ -197,10 +282,10 @@ function HTNavbar(props) {
                         {
                             props.isLoggedIn ? <Tooltip>
                                 <div style={{ marginRight: "15px" }}>
-                                    <Typography color="white" className='unselectable' fontFamily={"Unbounded"} fontSize="24px">
+                                    <Typography color="white" className='unselectable' fontFamily={"Unbounded"} fontSize="18px">
                                         {props.user?.firstName} {props.user?.lastName}
                                     </Typography>
-                                    <Typography color="white" className='unselectable' fontFamily={"Unbounded"} fontSize="14px">
+                                    <Typography color="white" className='unselectable' fontFamily={"Unbounded"} fontSize="12px">
                                         {props.user?.role === 0 ? "Hiker" : ""}
                                         {props.user?.role === 1 ? "Friend" : ""}
                                         {props.user?.role === 2 ? "Local guide" : ""}
@@ -216,6 +301,7 @@ function HTNavbar(props) {
                                 <Tooltip style={{ marginLeft: "20px" }}>
                                     <IconButton onClick={() => { navigate('/hikerdashboard') }} sx={{ p: 0 }}>
                                         <Button variant="outlined" sx={{
+                                            fontFamily: "Unbounded", fontSize: "14px",
                                             borderRadius: "24px", color: "white",
                                             "&:hover": { borderColor: "#EBC824", color: "#EBC824" },
                                             textTransform: "none", borderColor: "white"
@@ -230,6 +316,7 @@ function HTNavbar(props) {
                                 <Tooltip style={{ marginLeft: "20px" }}>
                                     <IconButton sx={{ p: 0 }}>
                                         <Button onClick={() => { navigate('/admindashboard') }} variant="outlined" sx={{
+                                            fontFamily: "Unbounded", fontSize: "14px",
                                             "&:hover": { borderColor: "#EBC824", color: "#EBC824" },
                                             borderRadius: "24px", color: "white", textTransform: "none", borderColor: "white"
                                         }}><b>Dashboard</b></Button>
@@ -243,6 +330,7 @@ function HTNavbar(props) {
                                 <Tooltip style={{ marginLeft: "20px" }}>
                                     <IconButton sx={{ p: 0 }}>
                                         <Button variant="outlined" onClick={() => { props.doLogOut() }} sx={{
+                                            fontFamily: "Unbounded", fontSize: "14px",
                                             borderRadius: "24px", color: "white", textTransform: "none", borderColor: "white",
                                             "&:hover": { borderColor: "#EBC824", color: "#EBC824" }
                                         }}><b>Sign out</b></Button>
@@ -291,6 +379,25 @@ function HTNavbar(props) {
                                                 {props.user?.role === 5 ? " Emergency operator" : ""}
                                             </Typography>
                                         </div>
+
+                                        <div hidden={props.user?.role !== 0}>
+                                            <Divider />
+                                            <MenuItem key={"hikerdashboard"} onClick={() => navigate("/hikerdashboard")}>
+                                                <Typography onClick={props.doLogOut} textAlign="center">
+                                                    Dashboard
+                                                </Typography>
+                                            </MenuItem>
+                                        </div>
+
+                                        <div hidden={props.user?.role !== 3}>
+                                            <Divider />
+                                            <MenuItem key={"admindashboard"} onClick={() => navigate("/admindashboard")}>
+                                                <Typography onClick={props.doLogOut} textAlign="center">
+                                                    Dashboard
+                                                </Typography>
+                                            </MenuItem>
+                                        </div>
+
                                         <Divider />
                                         <MenuItem key={settings[1]} onClick={handleCloseUserMenu}>
                                             <Typography onClick={props.doLogOut} textAlign="center">

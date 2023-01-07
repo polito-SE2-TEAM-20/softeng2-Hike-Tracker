@@ -6,6 +6,8 @@ import Typography from '@mui/material/Typography';
 import { useNavigate } from 'react-router';
 import hutIcon from '../../Assets/hut-icon.png'
 import './hut-card-style.css'
+import { APIURL } from "../../API/API";
+
 
 const HutCard = (props) => {
     const navigate = useNavigate()
@@ -14,10 +16,10 @@ const HutCard = (props) => {
         <div className="zoom">
             <Card sx={{ minWidth: 275, maxWidth: 275 }}>
                 <CardContent>
-                    <div style={{ backgroundColor: "#f2f250", display: "flex", justifyContent: "center", margin: "16px", padding: "18px", borderRadius: "32px" }}>
-                        <img src={hutIcon} alt="hutIcon" width="75px" height="75px" />
+                    <div style={{  display: "flex", justifyContent: "center",  borderRadius: "32px" }}>
+                        <img src={APIURL + props.hut.pictures[0]} alt="hutIcon" style={{objectFit: "cover", width: "100vw", height: "150px", borderRadius: "8px"}} />
                     </div>
-                    <Typography variant="h5" component="div" style={{ fontFamily: "Bakbak One, display", fontWeight: "100" }}>
+                    <Typography variant="h5" component="div" style={{ fontFamily: "Unbounded", fontWeight: "100" }}>
                         {props.hut.title}
                     </Typography>
                     <Typography sx={{ mb: 1.5 }} color="text.secondary">
