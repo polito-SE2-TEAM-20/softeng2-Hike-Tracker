@@ -7,13 +7,22 @@ import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { MapContainer, TileLayer, Marker, ZoomControl, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, ZoomControl, useMap, FeatureGroup } from 'react-leaflet'
+import L from 'leaflet';
+import { EditControl } from 'react-leaflet-draw'
 import { useState, useEffect } from "react";
 import API from '../../API/API'
 import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours'
 import { styled } from '@mui/material/styles';
 import { BEGINNER, ADVANCED } from '../../lib/common/PreferencesConstants'
 import QueryStatsIcon from '@mui/icons-material/QueryStats';
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+    iconUrl: require('leaflet/dist/images/marker-icon.png'),
+    shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+});
 
 const PerformacesButton = (props) => {
     return (
@@ -57,11 +66,18 @@ const HikerDashboard = (props) => {
     const [isDifficulty, setIsDifficulty] = useState(false)
     const [isAscent, setIsAscent] = useState(false)
 
-    const positionStatic = position === null ? 0.0 : position 
-    const radiusStatic = radius === null ? 0.0 : radius 
-    const lengthStatic = length === null ? 0.0 : length 
-    const expectedTimeStatic = expectedTime === null ? 0 : expectedTime 
-    const ascentStatic = ascent === null ? 0.0 : ascent 
+    const [radiusFilter, setRadiusFilter] = useState([[0.0, 0.0], 0.0])
+
+    const positionStatic = position.lat === null || position.lon === null ? { "lat": 0.0, "lon": 0.0 } : position
+    const radiusStatic = radius === null ? 0.0 : radius
+    const lengthStatic = length === null ? 0.0 : length
+    const expectedTimeStatic = expectedTime === null ? 0 : expectedTime
+    const ascentStatic = ascent === null ? 0.0 : ascent
+
+    useEffect(() => {
+        setPosition({ "lat": radiusFilter[0][0], "lon": radiusFilter[0][1] })
+        setRadius(radiusFilter[1])
+    }, [radiusFilter])
 
     useEffect(() => {
         var tmpPref = {}
@@ -77,12 +93,31 @@ const HikerDashboard = (props) => {
                 setDifficulty(tmpPref.difficultyMin)
                 setAscent(tmpPref.ascentMin)
                 setSuggestionType(tmpPref.suggestionType)
+
+                setIsStartingPoint(tmpPref.lat !== null && tmpPref.lon !== null)
+                setIsRadius(tmpPref.radiusKms !== null)
+                setIsLength(tmpPref.minLength !== null)
+                setIsExpectedTime(tmpPref.expectedTimeMin !== null)
+                setIsDifficulty(tmpPref.difficultyMin !== null)
+                setIsAscent(tmpPref.ascentMin !== null)
             }
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    const isAlmostOnePreferenceSelected = () => {
+        return isStartingPoint || isRadius || isLength || isExpectedTime || isDifficulty || isAscent
+    }
+
     const handlePreferencesUpdate = () => {
+        if (!isAlmostOnePreferenceSelected()) {
+            setUpdateError(true)
+            setTimeout(() => {
+                if (updateError)
+                    setUpdateError(false)
+            }, 3000);
+            return
+        }
         const prefFilter =
         {
             "lat": position.lat,
@@ -102,26 +137,26 @@ const HikerDashboard = (props) => {
         }
 
         const preFilter = () => {
-            if(!isStartingPoint) {
+            if (!isStartingPoint) {
                 prefFilter.lat = null
                 prefFilter.lon = null
             }
-            if(!isRadius) {
+            if (!isRadius) {
                 prefFilter.radiusKms = null
             }
-            if(!isLength) {
+            if (!isLength) {
                 prefFilter.minLength = null
                 prefFilter.maxLength = null
             }
-            if(!isExpectedTime) {
+            if (!isExpectedTime) {
                 prefFilter.expectedTimeMin = null
                 prefFilter.expectedTimeMax = null
             }
-            if(!isDifficulty) {
+            if (!isDifficulty) {
                 prefFilter.difficultyMin = null
                 prefFilter.difficultyMax = null
             }
-            if(!isAscent) {
+            if (!isAscent) {
                 prefFilter.ascentMin = null
                 prefFilter.ascentMax = null
             }
@@ -195,7 +230,7 @@ const HikerDashboard = (props) => {
                             </b>
                         </Typography>
                     </Grid>
-                    <Grid container item md={10} height="fit-content" sx={{ justifyContent: "center", marginTop: "18px", marginBottom: "18px" }}>
+                    <Grid container item lg={10} xl={10} height="fit-content" sx={{ justifyContent: "center", marginTop: "18px", marginBottom: "18px" }}>
                         <PerformacesButton handleNavigatePerformaces={handleNavigatePerformaces} />
                     </Grid>
                 </Grid>
@@ -222,21 +257,7 @@ const HikerDashboard = (props) => {
                                 <Typography className="unselectable" sx={{ fontSize: "18px" }}>
                                     Choose a point on the map to fix your favorite starting point.
                                 </Typography>
-                                <MapContainer center={[position.lat, position.lon]} zoom={9}
-                                    scrollWheelZoom={{ xs: false, sm: false, md: false, lg: true, xl: true }} zoomControl={false}
-                                    style={{ width: "auto", minHeight: "40vh", height: "40%" }}>
-                                    <TileLayer
-                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                        url={"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}
-                                    />
-                                    <ZoomControl position='bottomright' />
-                                    <ClickServiceManagement setPosition={setPosition} />
-                                    <FetchServiceManagement position={position} />
-                                    <Marker
-                                        key={0}
-                                        position={[position.lat, position.lon]}>
-                                    </Marker>
-                                </MapContainer>
+                                <HikerDashboardMap setRadiusFilter={setRadiusFilter} centerPosition={[position.lat === null ? 0.0 : position.lat, position.lon === null ? 0.0 : position.lon]} />
                             </AccordionDetails>
                         </Accordion>
 
@@ -352,17 +373,17 @@ const HikerDashboard = (props) => {
                             </AccordionDetails>
                         </Accordion>
                     </Grid>
-                    <Grid item sx={{marginTop: "24px"}}>
-                        <Typography sx={{fontSize: "20px"}}>
+                    <Grid item sx={{ marginTop: "24px" }}>
+                        <Typography sx={{ fontSize: "20px" }}>
                             <b>Select which parameters you want us to consider while suggesting you the best hikes based on your preferences.</b>
                         </Typography>
                         <FormGroup>
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsStartingPoint(!isStartingPoint)}} checked={isStartingPoint} />} label="Starting point" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsRadius(!isRadius)}} checked={isRadius} />} label="Radius" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsLength(!isLength)}} checked={isLength} />} label="Length" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsExpectedTime(!isExpectedTime)}} checked={isExpectedTime} />} label="Expected time" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsDifficulty(!isDifficulty)}} checked={isDifficulty} />} label="Difficulty" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsAscent(!isAscent)}} checked={isAscent} />} label="Ascent" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsStartingPoint(!isStartingPoint) }} checked={isStartingPoint} />} label="Starting point" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsRadius(!isRadius) }} checked={isRadius} />} label="Radius" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsLength(!isLength) }} checked={isLength} />} label="Length" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsExpectedTime(!isExpectedTime) }} checked={isExpectedTime} />} label="Expected time" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsDifficulty(!isDifficulty) }} checked={isDifficulty} />} label="Difficulty" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsAscent(!isAscent) }} checked={isAscent} />} label="Ascent" />
                         </FormGroup>
                     </Grid>
                     <Grid item lg={12} xl={12} sx={{ marginTop: "28px", display: "flex", justifyContent: "right" }}>
@@ -425,6 +446,9 @@ const HikerDashboard = (props) => {
                             </b>
                         </Typography>
                     </Grid>
+                    <Grid container item md={12} height="fit-content" sx={{ justifyContent: "center", marginTop: "18px", marginBottom: "18px" }}>
+                        <PerformacesButton handleNavigatePerformaces={handleNavigatePerformaces} />
+                    </Grid>
                 </Grid>
                 <Grid container item md={12} height="fit-content" justifyContent="center" sx={{ marginLeft: "25px", marginRight: "25px", marginTop: "25px" }}>
                     <Grid md={12} sx={{ display: "flex", justifyContent: "center" }}>
@@ -449,21 +473,7 @@ const HikerDashboard = (props) => {
                                 <Typography className="unselectable" sx={{ fontSize: "18px" }}>
                                     Choose a point on the map to fix your favorite starting point.
                                 </Typography>
-                                <MapContainer center={[position.lat, position.lon]} zoom={9}
-                                    scrollWheelZoom={{ xs: false, sm: false, md: false, lg: true, xl: true }} zoomControl={false}
-                                    style={{ width: "auto", minHeight: "40vh", height: "40%" }}>
-                                    <TileLayer
-                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                        url={"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}
-                                    />
-                                    <ZoomControl position='bottomright' />
-                                    <ClickServiceManagement setPosition={setPosition} />
-                                    <FetchServiceManagement position={position} />
-                                    <Marker
-                                        key={0}
-                                        position={[position.lat, position.lon]}>
-                                    </Marker>
-                                </MapContainer>
+                                <HikerDashboardMap setRadiusFilter={setRadiusFilter} centerPosition={[position.lat === null ? 0.0 : position.lat, position.lon === null ? 0.0 : position.lon]} />
                             </AccordionDetails>
                         </Accordion>
 
@@ -579,17 +589,17 @@ const HikerDashboard = (props) => {
                             </AccordionDetails>
                         </Accordion>
                     </Grid>
-                    <Grid item sx={{marginTop: "24px"}}>
-                        <Typography sx={{fontSize: "20px"}}>
+                    <Grid item sx={{ marginTop: "24px" }}>
+                        <Typography sx={{ fontSize: "20px" }}>
                             <b>Select which parameters you want us to consider while suggesting you the best hikes based on your preferences.</b>
                         </Typography>
                         <FormGroup>
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsStartingPoint(!isStartingPoint)}} checked={isStartingPoint} />} label="Starting point" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsRadius(!isRadius)}} checked={isRadius} />} label="Radius" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsLength(!isLength)}} checked={isLength} />} label="Length" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsExpectedTime(!isExpectedTime)}} checked={isExpectedTime} />} label="Expected time" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsDifficulty(!isDifficulty)}} checked={isDifficulty} />} label="Difficulty" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsAscent(!isAscent)}} checked={isAscent} />} label="Ascent" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsStartingPoint(!isStartingPoint) }} checked={isStartingPoint} />} label="Starting point" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsRadius(!isRadius) }} checked={isRadius} />} label="Radius" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsLength(!isLength) }} checked={isLength} />} label="Length" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsExpectedTime(!isExpectedTime) }} checked={isExpectedTime} />} label="Expected time" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsDifficulty(!isDifficulty) }} checked={isDifficulty} />} label="Difficulty" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsAscent(!isAscent) }} checked={isAscent} />} label="Ascent" />
                         </FormGroup>
                     </Grid>
                     <Grid item xs={12} sx={{ marginTop: "28px", display: "flex", justifyContent: "right" }}>
@@ -652,6 +662,9 @@ const HikerDashboard = (props) => {
                             </b>
                         </Typography>
                     </Grid>
+                    <Grid container item xs={10} sm={10} height="fit-content" sx={{ justifyContent: "center", marginTop: "18px", marginBottom: "18px" }}>
+                        <PerformacesButton handleNavigatePerformaces={handleNavigatePerformaces} />
+                    </Grid>
                 </Grid>
                 <Grid container item xs={12} sm={12} height="fit-content" justifyContent="center" sx={{ marginLeft: "25px", marginRight: "25px", marginTop: "25px" }}>
                     <Grid xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
@@ -676,21 +689,7 @@ const HikerDashboard = (props) => {
                                 <Typography className="unselectable" sx={{ fontSize: "18px" }}>
                                     Choose a point on the map to fix your favorite starting point.
                                 </Typography>
-                                <MapContainer center={[position.lat, position.lon]} zoom={9}
-                                    scrollWheelZoom={{ xs: false, sm: false, md: false, lg: true, xl: true }} zoomControl={false}
-                                    style={{ width: "auto", minHeight: "40vh", height: "40%" }}>
-                                    <TileLayer
-                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                        url={"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}
-                                    />
-                                    <ZoomControl position='bottomright' />
-                                    <ClickServiceManagement setPosition={setPosition} />
-                                    <FetchServiceManagement position={position} />
-                                    <Marker
-                                        key={0}
-                                        position={[position.lat, position.lon]}>
-                                    </Marker>
-                                </MapContainer>
+                                <HikerDashboardMap setRadiusFilter={setRadiusFilter} centerPosition={[position.lat === null ? 0.0 : position.lat, position.lon === null ? 0.0 : position.lon]} />
                             </AccordionDetails>
                         </Accordion>
 
@@ -806,17 +805,17 @@ const HikerDashboard = (props) => {
                             </AccordionDetails>
                         </Accordion>
                     </Grid>
-                    <Grid item sx={{marginTop: "24px"}}>
-                        <Typography sx={{fontSize: "20px"}}>
+                    <Grid item sx={{ marginTop: "24px" }}>
+                        <Typography sx={{ fontSize: "20px" }}>
                             <b>Select which parameters you want us to consider while suggesting you the best hikes based on your preferences.</b>
                         </Typography>
                         <FormGroup>
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsStartingPoint(!isStartingPoint)}} checked={isStartingPoint} />} label="Starting point" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsRadius(!isRadius)}} checked={isRadius} />} label="Radius" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsLength(!isLength)}} checked={isLength} />} label="Length" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsExpectedTime(!isExpectedTime)}} checked={isExpectedTime} />} label="Expected time" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsDifficulty(!isDifficulty)}} checked={isDifficulty} />} label="Difficulty" />
-                            <FormControlLabel control={<Checkbox onChange={() => {setIsAscent(!isAscent)}} checked={isAscent} />} label="Ascent" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsStartingPoint(!isStartingPoint) }} checked={isStartingPoint} />} label="Starting point" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsRadius(!isRadius) }} checked={isRadius} />} label="Radius" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsLength(!isLength) }} checked={isLength} />} label="Length" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsExpectedTime(!isExpectedTime) }} checked={isExpectedTime} />} label="Expected time" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsDifficulty(!isDifficulty) }} checked={isDifficulty} />} label="Difficulty" />
+                            <FormControlLabel control={<Checkbox onChange={() => { setIsAscent(!isAscent) }} checked={isAscent} />} label="Ascent" />
                         </FormGroup>
                     </Grid>
                     <Grid item xs={12} sm={12} sx={{ marginTop: "28px", display: "flex", justifyContent: "right" }}>
@@ -907,6 +906,48 @@ const FetchServiceManagement = (props) => {
         map.flyTo([props.position.lat, props.position.lon], 11)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.position])
+}
+
+const HikerDashboardMap = (props) => {
+    const _circleCreated = (e) => {
+        props.setRadiusFilter([[e.layer.toGeoJSON().geometry.coordinates[1], e.layer.toGeoJSON().geometry.coordinates[0]], e.layer.getRadius() / 1000.0])
+    }
+
+    const _circleEdited = (e) => {
+        console.log(e)
+    }
+
+    const _circleDeleted = (e) => {
+        console.log(e)
+    }
+
+    return (
+        <div>
+            <MapContainer center={props.centerPosition} zoom={9}
+                scrollWheelZoom={{ xs: false, sm: false, md: false, lg: true, xl: true }} zoomControl={false}
+                style={{ width: "auto", minHeight: "40vh", height: "40%" }}>
+                <FeatureGroup>
+                    <EditControl position="bottomright" draw={{
+                        rectangle: false,
+                        circle: true,
+                        circlemarker: false,
+                        marker: false,
+                        polygon: false,
+                        polyline: false
+                    }} onCreated={e => _circleCreated(e)} onEdited={e => _circleEdited(e)} onDeleted={e => _circleDeleted(e)} />
+                </FeatureGroup>
+                <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    url={"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"}
+                />
+                <ZoomControl position='bottomright' />
+                <Marker
+                    key={"center"}
+                    position={props.centerPosition}>
+                </Marker>
+            </MapContainer>
+        </div>
+    );
 }
 
 export default HikerDashboard;

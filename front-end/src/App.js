@@ -80,9 +80,19 @@ function App2() {
 
 	useEffect(() => {
 		if (loggedIn && user?.user.role === UserRoles.HIKER) {
-			setAlertTimeout(500)
+			setAlertTimeout(3000)
 		}
 	}, [loggedIn, user])
+
+
+	const alertsContainDangers = (list) => {
+		for (let index = 0; index < list.length; index++) {
+			const alert = list[index];
+			if (alert.weatherStatus >= 4 && alert.weatherStatus < 7)
+				return true
+		}
+		return false
+	}
 
 	/**
 	 * Alert popup timeout
@@ -97,9 +107,8 @@ function App2() {
 				}
 
 				apiGetAlerts().then(() => {
-					console.log(tmpListOfAlerts)
 					setListOfAlerts(tmpListOfAlerts)
-					if (tmpListOfAlerts.length !== 0) {
+					if (tmpListOfAlerts.length !== 0 && alertsContainDangers(tmpListOfAlerts)) {
 						setAlertOpen(true)
 						setLoaded(true)
 					}
@@ -194,14 +203,11 @@ function App2() {
 	}
 
 	useEffect(() => {
-		console.log(started);
 		let finish = '';
 		if (started) {
-			console.log(started);
 			finish = setInterval(() => { getUnfinished(); }, 60 * 1000)
 		} else {
 			clearInterval(finish);
-
 		}
 	}, [started]);
 
@@ -240,7 +246,7 @@ function App2() {
 				<Route path="/hikerPerformance" element={<HikerPerformance user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
 				<Route path="/test-page" element={<TestPage />} />
 				<Route path="/weather-status-edit/:hikeID" element={<WeatherAlertHikeEditStatus />} />
-				<Route path="/friend-tracking/:userID/:hikeID" element={<FriendTracking />} />
+				<Route path="/friend-tracking/:userID/:hikeID/:friendCode" element={<FriendTracking />} />
 				<Route path="/savedhikes" element={<SavedHikes user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
 				<Route path="/unauthorized" element={<Unauthorized />} />
 				<Route path="/friend-code" element={<VerifyKey />} />
