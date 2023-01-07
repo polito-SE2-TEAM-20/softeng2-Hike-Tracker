@@ -21,7 +21,7 @@ RUN mkdir -p /srv/uploads/images
 RUN chown -R node:node /srv/uploads
 
 # copy demo hikes
-RUN unzip /srv/demo/demo_gpx.zip -d /srv/uploads/gpx/
+RUN unzip /srv/demo/demo_uploads.zip -d /srv/uploads/
 
 HEALTHCHECK CMD node healthcheck.js localhost ${PORT} /healthcheck 200
 

@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
+import { basename, join } from 'path';
 import chalk from 'chalk';
 import glob from 'globule';
-import { uniqBy, prop } from 'ramda';
+import { uniqBy, prop, pick } from 'ramda';
 import { randomInt } from 'crypto';
 import escape from 'pg-escape';
 import { hash } from 'bcrypt';
@@ -12,7 +12,8 @@ import { exec } from 'child_process';
 import { XMLParser, XMLBuilder, XMLValidator} from 'fast-xml-parser'
 
 const SOURCE_DIR = './prove/';
-const DEST_DIR = './result/';
+const DEST_DIR = './result/gpx';
+const IMAGES_DIR = './result/images';
 
 const LOCAL_GUIDE_ID = 2;
 const HASH_ROUNDS = 10;
@@ -41,9 +42,24 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
   for (const file of fileList) {
     try {
       console.log('reading gpx', file);
+      const fileName = basename(file) 
       const contents = (readFileSync(file));
-      const parser = new XMLParser();
+      const parser = new XMLParser({
+        ignoreAttributes: false,
+        attributeNamePrefix : "$"
+      });
       const gpxData = parser.parse(contents).gpx;
+      const hike = {
+        fileName,
+        title: gpxData.trk.name,
+        description: gpxData.metadata.desc,
+        expectedTime: gpxData.metadata.time,
+        pictures: gpxData.metadata.pictures?.length ? [
+          `/static/images/${gpxData.metadata.pictures}`
+        ] : [],
+        ascent: 1,
+        ...pick(['region', 'province', 'city', 'country', 'difficulty'], gpxData.trk),
+      }
 
       /**
         gpx: {
@@ -66,14 +82,32 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
             region: 'Piemonte',
             province: 'Torino',
             city: 'Bussoleno',
-            startPoint: [Object],
-            endPoint: [Object],
-            referencePoint: [Object],
+            startPoint?: {
+              name: 'Start Point',
+              address: 'Rifugio Amprimo, Via Rio Gerardo, Giordani, Mattie, Torino, Piemonte, 10053, Italia',
+              lat: 45.102780737,
+              lon: 7.165559804
+            },
+            endPoint?: {
+              name: 'Start Point',
+              address: 'Rifugio Amprimo, Via Rio Gerardo, Giordani, Mattie, Torino, Piemonte, 10053, Italia',
+              lat: 45.102780737,
+              lon: 7.165559804
+            },
+            referencePoint?: {
+              ref: [{
+                name: 'Ref Point 2',
+                address: '',
+                elevation: 1283.605,
+                lat: 45.102886551,
+                lon: 7.158207147
+              }]
+            },
             trkseg: [Object]
           }
         }
        */
-      console.log(gpxData.trk.referencePoint);
+      console.log(gpxData.trk.trkseg);
       throw new Error('123');
 
       const featuresPrepared = [];
@@ -146,16 +180,6 @@ async function prepareSchemaSql() {
       return res(stdout);
     })
   })
-}
-
-function prepareTableSql() {
-  return `
-    -- CREATE USER softeng;
-    -- CREATE USER softeng WITH PASSWORD 'demo-pass';
-    -- DROP DATABASE IF EXISTS hiking_demo;
-    -- CREATE DATABASE hiking_demo;
-    -- GRANT ALL PRIVILEGES ON DATABASE hiking_demo TO ${DB_USERNAME};
-  `
 }
 
 async function prepareUsersSql() {

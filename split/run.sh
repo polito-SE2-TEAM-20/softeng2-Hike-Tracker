@@ -1,4 +1,4 @@
-export GPX_ZIP="demo_gpx.zip"
+export UPLOADS_ZIP="demo_uploads.zip"
 export DB_USERNAME="germangorodnev"
 export DB_NAME=hiking_demo
 
@@ -6,13 +6,13 @@ export DB_NAME=hiking_demo
 npm run split
 
 # copy all test data into backend
-rm "$GPX_ZIP"
+rm "$UPLOADS_ZIP"
 
 cd result
 zip -r -D "../$GPX_ZIP" *
 cd ..
 # move to backend folder
-cp "$GPX_ZIP" "../backend/demo/$GPX_ZIP"
+cp "$UPLOADS_ZIP" "../backend/demo/$UPLOADS_ZIP"
 
 # cp ./result/init.sql ../demo-db/init.sql
 
