@@ -11,7 +11,7 @@ npm run split
 rm "$UPLOADS_ZIP"
 
 cd result
-zip -r -q -D "../$GPX_ZIP" *
+zip -r -q -D "../$UPLOADS_ZIP" *
 cd ..
 # move to backend folder
 cp "$UPLOADS_ZIP" "../backend/demo/$UPLOADS_ZIP"
