@@ -14,6 +14,7 @@ export const typeormOptions: PostgresConnectionOptions & TypeOrmModuleOptions =
     database: process.env.DB_NAME,
     entities,
     connectTimeoutMS: 14 * 1000,
+    retryDelay: 1000 * 6,
     extra: {
       max: 5,
       connectionTimeoutMillis: 30 * 1000,

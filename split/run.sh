@@ -2,6 +2,8 @@ export UPLOADS_ZIP="demo_uploads.zip"
 export DB_USERNAME="germangorodnev"
 export DB_NAME=hiking_demo
 
+rm -rf ./result/*
+
 # split geojsons to gpx, generate sql
 npm run split
 
@@ -9,7 +11,7 @@ npm run split
 rm "$UPLOADS_ZIP"
 
 cd result
-zip -r -D "../$GPX_ZIP" *
+zip -r -q -D "../$GPX_ZIP" *
 cd ..
 # move to backend folder
 cp "$UPLOADS_ZIP" "../backend/demo/$UPLOADS_ZIP"
@@ -20,6 +22,7 @@ cp "$UPLOADS_ZIP" "../backend/demo/$UPLOADS_ZIP"
 psql -U ${DB_USERNAME} -c "DROP DATABASE IF EXISTS $DB_NAME;"
 psql -U ${DB_USERNAME} -c "CREATE DATABASE $DB_NAME;"
 psql -U ${DB_USERNAME} -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USERNAME;"
+# psql -U ${DB_USERNAME} -c "alter database $DB_NAME set search_path = public, postgis;"
 
 psql -U ${DB_USERNAME} -d ${DB_NAME} -f ./result/init.sql
 

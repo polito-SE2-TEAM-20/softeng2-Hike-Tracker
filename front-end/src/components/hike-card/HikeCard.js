@@ -33,31 +33,26 @@ const HikeCard = (props) => {
 
                     {HikeItemImage(props.hike.difficulty)}
 
-                    <Typography variant="h5" component="div" style={{ fontFamily: "Bakbak One, display", fontWeight: "100" }}>
-                        {props.hike.title}
-                    </Typography>
-                    <Typography color="text.secondary">
-                        {props.hike.province} {bull} {props.hike.region}
-                    </Typography>
-                    <Typography variant="body2">
-                        Length: {(Math.round(props.hike.length * 10) / 10000).toFixed(2)}km<br />
-                        Expected time: {fromMinutesToHours(props.hike.expectedTime)}<br />
-                        Ascent: {props.hike.ascent}m<br />
-                    </Typography>
-                </CardContent>
-                <div style={{ marginRight: "12px", marginBottom: "12px", display: "flex", justifyContent: "right" }}>
-                    <Button text="Read more about" fontSize="14px" color="#1a1a1a" textColor="white" navigate={() => { navigate(`/showhike/${props.hike.id}`) }} />
-                </div>
-                {
-                    props.editable ? <div style={{ marginRight: "12px", marginBottom: "12px", display: "flex", justifyContent: "right" }}>
-                        <Button text="Edit" fontSize="14px" color="#1a1a1a" textColor="white" navigate={() => { navigate(`/edithike/${props.hike.id}`) }} />
-                    </div> : <></>
-                }
-                {
-                    props.delete ? <div style={{ marginRight: "12px", marginBottom: "12px", display: "flex", justifyContent: "left" }}>
-                       <DeleteIcon color="#1a1a1a" onClick={() => {props.deleteHike(props.hike.id)}}></DeleteIcon>
-                   </div> : <></>
-                }
+                <Typography variant="h5" component="div" style={{ fontFamily: "Bakbak One, display", fontWeight: "100" }}>
+                    {props.hike.title}
+                </Typography>
+                <Typography color="text.secondary">
+                    {props.hike.province} {bull} {props.hike.region}
+                </Typography>
+                <Typography variant="body2">
+                    Length: {(Math.round(props.hike.length)).toFixed(2)}km<br />
+                    Expected time: {fromMinutesToHours(props.hike.expectedTime)}<br />
+                    Ascent: {props.hike.ascent}m<br />
+                </Typography>
+            </CardContent>
+            <div style={{ marginRight: "12px", marginBottom: "12px", display: "flex", justifyContent: "right" }}>
+                <Button text="Read more about" fontSize="14px" color="#1a1a1a" textColor="white" navigate={() => { navigate(`/showhike/${props.hike.id}`) }} />
+            </div>
+            {
+                props.editable ? <div style={{ marginRight: "12px", marginBottom: "12px", display: "flex", justifyContent: "right" }}>
+                    <Button text="Edit" fontSize="14px" color="#1a1a1a" textColor="white" navigate={() => { navigate(`/edithike/${props.hike.id}`) }} />
+                </div> : <></>
+            }
             </Card >
         </div>
     );
