@@ -709,7 +709,7 @@ export class HikesController {
 
         await this.dataSource.getRepository(UserHike).save({
           id: userHikeId?.id,
-          maxElapsedTime: dhms,
+          maxElapsedTime: dhms as any,
         });
       }
     } else {
@@ -743,7 +743,7 @@ export class HikesController {
 
         await this.dataSource.getRepository(UserHike).save({
           id: userHikeId?.id,
-          maxElapsedTime: dhms,
+          maxElapsedTime: dhms as any,
         });
       }
     }
@@ -774,22 +774,16 @@ export class HikesController {
       await Promise.all(
         userHikesUnfinished.map(async (userHike) => {
           if (!isNil(userHike.maxElapsedTime)) {
-            const intervalISO = userHike.maxElapsedTime.toISOString();
+            const intervalObject = userHike.maxElapsedTime;
             let intervalMillis = 0;
-            for (let i = 0; i < intervalISO.length; i++) {
-              if (intervalISO[i] === 'D')
-                intervalMillis +=
-                  parseInt(intervalISO[i - 1]) * 24 * 60 * 60 * 1000;
-              if (intervalISO[i] === 'H')
-                intervalMillis += parseInt(intervalISO[i - 1]) * 60 * 60 * 1000;
-              if (intervalISO[i] === 'M')
-                intervalMillis += parseInt(intervalISO[i - 1]) * 60 * 1000;
-              if (intervalISO[i] === 'S')
-                intervalMillis += parseInt(intervalISO[i - 1]) * 1000;
-            }
+            intervalMillis += (intervalObject.days ?? 0) * 24 * 60 * 60 * 1000;
+            intervalMillis += (intervalObject.hours ?? 0) * 60 * 60 * 1000;
+            intervalMillis += (intervalObject.minutes ?? 0) * 60 * 1000;
+            intervalMillis += (intervalObject.seconds ?? 0) * 1000;
 
+            console.log(intervalMillis)
             const upperBound = intervalMillis + userHike.startedAt.getTime();
-
+            console.log(upperBound, Date.now())
             if (upperBound < Date.now()) {
               //Means that the elapsed time is over the upperBound
               await this.dataSource.getRepository(UserHike).update(
