@@ -262,7 +262,7 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
     ${escape.literal(firstName)},
     ${escape.literal(lastName)},
     ${role},
-    ${verified ? 'true' : 'false'}
+    ${verified ? 'true' : 'false'},
     ${approved ? 'true' : 'false'}
   );
   `}));
