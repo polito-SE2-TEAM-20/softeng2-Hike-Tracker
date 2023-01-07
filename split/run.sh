@@ -16,6 +16,8 @@ cd ..
 # move to backend folder
 cp "$UPLOADS_ZIP" "../backend/demo/$UPLOADS_ZIP"
 
+rm $UPLOADS_ZIP
+
 # cp ./result/init.sql ../demo-db/init.sql
 
 # create db, populate with data

@@ -81,13 +81,25 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
         sourceFile: file,
         gpxPath: `/static/gpx/${fileName}`,
         title: gpxData.trk.name,
-        description: gpxData.metadata.desc,
+        description: (gpxData.metadata.desc ?? '').slice(0, 1000),
         expectedTime: gpxData.metadata.time,
         pictures: pictures.map(filename => `/static/images/${filename}`),
         ascent,
         length,
         userId: undefined,
         ...pick(['region', 'province', 'city', 'country', 'difficulty'], gpxData.trk),
+        startPoint: gpxData.trk.startPoint ? {
+          ...pick(['name', 'address', 'lon', 'lat'], gpxData.trk.startPoint)
+        } : null,
+        endPoint: gpxData.trk.endPoint ? {
+          ...pick(['name', 'address', 'lon', 'lat'], gpxData.trk.endPoint)
+        } : null,
+        referencePoints: gpxData.trk.referencePoint?.ref?.length 
+          ? gpxData.trk.referencePoint.ref.map(ref => ({
+            ...pick(['name', 'address', 'lon', 'lat'], ref),
+            altitude: ref.elevation,
+          }))
+          : null,
       }
 
       /**
@@ -258,7 +270,7 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
 
   // prepare final sql for all hikes
   function prepareHikesSql(hikes) {
-    let sql = '';
+    let hikesSql = '';
 
     hikes.forEach(({
       fileName,
@@ -275,6 +287,9 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
       expectedTime,
       description,
       pictures,
+      startPoint = null,
+      endPoint = null,
+      referencePoints = null,
     }) => {
       // const gpxPath = `/static/gpx/${fileName}`;
 
@@ -291,7 +306,54 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
       // const expectedTime = +((length / faker.datatype.float({ precision: 0.01, min: 3.5, max: 5 }) * 60).toFixed(3));
       // const description = '';
 
-      sql += `
+      hikesSql += `
+      select public."insert_hike"(
+        ${userId},
+        ${escape.literal(title)},
+        ${difficulty},
+        ${escape.literal(gpxPath)},
+        ${escape.literal(country)},
+        ${escape.literal(region)},
+        ${escape.literal(province)},
+        ${escape.literal(city)},
+        ${length},
+        ${ascent},
+        ${expectedTime},
+        ${escape.literal(description)},
+        ${escape.literal(JSON.stringify(pictures))}::jsonb,
+        ${startPoint ? `${escape.literal(JSON.stringify(startPoint))}::jsonb` : 'NULL'},
+        ${endPoint ? `${escape.literal(JSON.stringify(endPoint))}::jsonb` : 'NULL'},
+        ${referencePoints ? `${escape.literal(JSON.stringify(referencePoints))}::jsonb` : 'NULL'}
+      );
+    `;
+    });
+
+    const sql = `
+      CREATE OR REPLACE FUNCTION public.insert_hike(
+        user_id integer,
+        title varchar,
+        difficulty integer,
+        gpx_path varchar,
+        country varchar,
+        region varchar,
+        province varchar,
+        city varchar,
+        length numeric(12,2),
+        ascent numeric(12,2),
+        expected_time integer,
+        description varchar,
+        pictures jsonb,
+        start_point jsonb,
+        end_point jsonb,
+        reference_points jsonb
+      )  RETURNS VOID AS
+      $func$
+      DECLARE
+        hike_id integer;
+        point_id integer;
+        ref jsonb;
+        i integer;
+      BEGIN
       INSERT INTO "public"."hikes" (
         "userId",
         "title",
@@ -307,22 +369,81 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
         "description",
         "pictures"
       ) VALUES(
-        ${userId},
-        ${escape.literal(title)},
-        ${difficulty},
-        ${escape.literal(gpxPath)},
-        ${escape.literal(country)},
-        ${escape.literal(region)},
-        ${escape.literal(province)},
-        ${escape.literal(city)},
-        ${length},
-        ${ascent},
-        ${expectedTime},
-        ${escape.literal(description)}
-        ${escape.literal(JSON.stringify(pictures))}::jsonb
-      );
+        user_id, title, difficulty, gpx_path,
+        country, region, province, city,
+        length, ascent, expected_time, description, pictures
+      ) returning id into hike_id;
+
+      -- create start end point if necessary
+      if start_point is not null then
+        insert into public.points (
+          "type", "position", "name", "address"
+        ) values (
+          0,
+          public.ST_SetSRID(public.ST_MakePoint((start_point->>'lon')::double precision, (start_point->>'lat')::double precision), 4326),
+          (start_point->>'name')::varchar,
+          (start_point->>'address')::varchar
+        ) returning id into point_id;
+        insert into public.hike_points (
+          "hikeId", "pointId", "type", "index"
+        ) values (
+          hike_id,
+          point_id,
+          5,
+          0
+        );
+      end if;
+
+      -- end point --
+      if end_point is not null then
+        insert into public.points (
+          "type", "position", "name", "address"
+        ) values (
+          0,
+          public.ST_SetSRID(public.ST_MakePoint((end_point->>'lon')::double precision, (end_point->>'lat')::double precision), 4326),
+          (end_point->>'name')::varchar,
+          (end_point->>'address')::varchar
+        ) returning id into point_id;
+        insert into public.hike_points (
+          "hikeId", "pointId", "type", "index"
+        ) values (
+          hike_id,
+          point_id,
+          6,
+          100000
+        );
+      end if;
+
+      -- reference points
+      i = 1;
+      if reference_points is not null then
+        for ref in select * FROM jsonb_array_elements(reference_points)
+        loop
+          insert into public.points (
+            "type", "position", "name", "address", "altitude"
+          ) values (
+            0,
+            public.ST_SetSRID(public.ST_MakePoint((ref->>'lon')::double precision, (ref->>'lat')::double precision), 4326),
+            (ref->>'address')::varchar,
+            (ref->>'name')::varchar,
+            (ref->>'altitude')::numeric(12,2)
+          ) returning id into point_id;
+          insert into public.hike_points (
+            "hikeId", "pointId", "type", "index"
+          ) values (
+            hike_id,
+            point_id,
+            3,
+            i
+          );
+          i = i + 1;
+        end loop;
+      end if;
+      END
+      $func$ LANGUAGE plpgsql;
+
+      ${hikesSql}
     `;
-    });
 
     return sql;
   }
@@ -336,8 +457,8 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
       const [name, ...other] = hut[2].split(' - ');
       const address = other.map(v => v.trim()).filter(v => !!v).join(', ');
 
-      const workingTimeStart = faker.datatype.number({min: 1, max: 9 });
-      const workingTimeEnd = faker.datatype.number({min: workingTimeStart + 1, max: 23 });
+      const workingTimeStart = faker.datatype.number({ min: 1, max: 9 });
+      const workingTimeEnd = faker.datatype.number({ min: workingTimeStart + 6, max: 23 });
 
       return `
       select public."insert_hut"(
@@ -345,17 +466,16 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
         ${hut[0]},
         ${hut[1]},
         ${faker.datatype.number({ min: 1, max: 10 })},
-        ${faker.datatype.number({ min: 35, max: 150 })},
+        ${faker.datatype.number({ min: 35, max: 150 })}::numeric(12,2),
         ${escape.literal(name)},
         ${escape.literal(address)},
         ${escape.literal(faker.name.fullName())},
         ${escape.literal(faker.internet.url())},
-        null,
-        ${faker.datatype.number({ min: 260, max: 340,precision: 0.001 })},
-        '${workingTimeStart.toString().padStart(2, '0')}:00:00',
-        '${workingTimeEnd.toString().padStart(2, '0')}:00:00',
+        ${faker.datatype.number({ min: 260, max: 340, precision: 0.001 })},
+        '${workingTimeStart.toString().padStart(2, '0')}:00:00'::time without time zone,
+        '${workingTimeEnd.toString().padStart(2, '0')}:00:00'::time without time zone,
         ${escape.literal(faker.internet.email())},
-        ${escape.literal(faker.phone.number('+39##########'))},
+        ${escape.literal(faker.phone.number('+39##########'))}
       );
     `;
     }).join('\n');
@@ -372,10 +492,10 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
         owner_name varchar,
         website varchar,
         elevation numeric(12,2),
-        workingTimeStart time without time zone,
-        workingTimeEnd time without time zone,
+        working_time_start time without time zone,
+        working_time_end time without time zone,
         email varchar,
-        phoneNumber varchar
+        phone_number varchar
     )  RETURNS VOID AS
     $func$
     DECLARE
@@ -411,7 +531,11 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
       title,
       owner_name,
       website,
-      elevation
+      elevation,
+      working_time_start,
+      working_time_end,
+      email,
+      phone_number
     );
     END
     $func$ LANGUAGE plpgsql;
