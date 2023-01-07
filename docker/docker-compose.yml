@@ -22,6 +22,8 @@ services:
       - WEB_DOMAIN=$WEB_DOMAIN
       - SQL_LOGGING=$SQL_LOGGING
       - SYNCHRONIZE=$SYNCHRONIZE
+      - MAILER_USER=$MAILER_USER
+      - MAILER_PASSWORD=$MAILER_PASSWORD
     networks:
       - stacknet
     depends_on:
