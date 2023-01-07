@@ -57,14 +57,14 @@ export class UserHike {
   @Column({
     type: 'boolean',
     nullable: true,
-    default: null,
+    default: false,
   })
   weatherNotified?: boolean | null;
 
   @Column({
     type: 'boolean',
     nullable: true,
-    default: false,
+    default: null,
   })
   unfinishedNotified?: boolean | null;
 
