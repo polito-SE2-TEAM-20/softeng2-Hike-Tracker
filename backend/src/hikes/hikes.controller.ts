@@ -684,7 +684,7 @@ export class HikesController {
         }
       });
 
-      completionTimes.sort();
+      completionTimes.sort((a,b) => a-b);
       const ninentyPerc =
         completionTimes[Math.floor(completionTimes.length * 0.9)];
       if (ninentyPerc) {
