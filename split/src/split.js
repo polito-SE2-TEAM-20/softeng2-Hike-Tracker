@@ -243,6 +243,7 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
     ].map(async ({ id, email, password, firstName, lastName, role }) => {
       const passwordHashed = await hash(password, HASH_ROUNDS);
       const verified = true;
+      const approved = true;
 
       return `
   INSERT INTO "public"."users" (
@@ -252,7 +253,8 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
     "firstName",
     "lastName",
     "role",
-    "verified"
+    "verified",
+    "approved"
   ) VALUES(
     ${id},
     ${escape.literal(email)},
@@ -261,6 +263,7 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
     ${escape.literal(lastName)},
     ${role},
     ${verified ? 'true' : 'false'}
+    ${approved ? 'true' : 'false'}
   );
   `}));
 
