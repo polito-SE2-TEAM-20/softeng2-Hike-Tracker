@@ -781,9 +781,7 @@ export class HikesController {
             intervalMillis += (intervalObject.minutes ?? 0) * 60 * 1000;
             intervalMillis += (intervalObject.seconds ?? 0) * 1000;
 
-            console.log(intervalMillis)
             const upperBound = intervalMillis + userHike.startedAt.getTime();
-            console.log(upperBound, Date.now())
             if (upperBound < Date.now()) {
               //Means that the elapsed time is over the upperBound
               await this.dataSource.getRepository(UserHike).update(
