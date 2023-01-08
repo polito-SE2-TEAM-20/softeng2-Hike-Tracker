@@ -1,4 +1,4 @@
-import { Grid, SvgIcon, Typography, Button, TextField } from "@mui/material"
+import { Grid, SvgIcon, Typography, Button } from "@mui/material"
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -9,6 +9,7 @@ import API from "../../API/API";
 import { HikeWeatherByCode } from '../../lib/common/WeatherConditions'
 import { CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router";
+import { UserRoles } from "../../lib/common/UserRoles";
 
 const WeatherAlertHike = (props) => {
     const [listOfHikes, setListOfHikes] = useState([])
@@ -27,6 +28,9 @@ const WeatherAlertHike = (props) => {
         });
     }, [])
 
+    if (props.user?.role !== UserRoles.PLATFORM_MANAGER) {
+        navigate('/unauthorized')
+    }
     return (
         <Grid sx={{ marginTop: "20px", display: "flex", justifyContent: "center" }} container item xs={12} sm={12} md={12} lg={12} xl={12}>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
