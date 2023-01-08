@@ -9,6 +9,8 @@ import MapLoading from "../../components/map/MapLoading";
 import WeatherButton from "../../components/weather-card/WeatherButton";
 import WeatherDescription from "../../components/weather-card/WeatherDescription";
 import { WeatherPopupMap } from "./WeatherPopupMap";
+import { useNavigate } from "react-router";
+import { UserRoles } from "../../lib/common/UserRoles";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -25,6 +27,7 @@ const WeatherAlertMap = (props) => {
     const [geospacialData, setGeospacialData] = useState([[-1.0, -1.0], -1.0])
     const [status, setStatus] = useState(0)
     const [description, setDescription] = useState("")
+    const navigate = useNavigate()
 
     // states for the popup after adding a new hike
     const [open, setOpen] = useState(false);
@@ -111,6 +114,9 @@ const WeatherAlertMap = (props) => {
         )
     }
 
+    if (props.user?.role !== UserRoles.PLATFORM_MANAGER) {
+        navigate('/unauthorized')
+    }
     return (
         <Grid sx={{ marginTop: "20px", display: "flex", justifyContent: "center", paddingLeft: { xs: "10px", md: "200px" }, paddingRight: { xs: "10px", md: "200px" }, marginBottom: "50px" }} container item xs={12} sm={12} md={12} lg={12} xl={12}>
             <WeatherPopupMap open={open} setOpen={setOpen} />

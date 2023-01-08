@@ -10,7 +10,7 @@ import MapLoading from '../../components/map/MapLoading';
 import MapFilters from '../../components/map-filters/MapFilters';
 import API from '../../API/API.js';
 import { useNavigate } from 'react-router';
-import {UserRoles} from '../../lib/common/UserRoles'
+import { UserRoles } from '../../lib/common/UserRoles'
 
 const HTBrowseHikes = (props) => {
     const [loading, setLoading] = useState(false)
@@ -30,7 +30,7 @@ const HTBrowseHikes = (props) => {
         "difficultyMax": null,
         "ascentMin": null,
         "ascentMax": null,
-        "inPointRadius" : {
+        "inPointRadius": {
             "lat": null,
             "lon": null,
             "radiusKms": null
@@ -49,7 +49,7 @@ const HTBrowseHikes = (props) => {
             "difficultyMax": filter.difficultyMax,
             "ascentMin": filter.ascentMin,
             "ascentMax": filter.ascentMax,
-            "inPointRadius" : {
+            "inPointRadius": {
                 "lat": radiusFilter[0][0],
                 "lon": radiusFilter[0][1],
                 "radiusKms": radiusFilter[1]
@@ -104,8 +104,12 @@ const HTBrowseHikes = (props) => {
 
 
     const navigate = useNavigate()
-    
-    if(props.user?.role !== UserRoles.PLATFORM_MANAGER) {
+
+    if (props.user?.role !== UserRoles.HIKER &&
+        props.user?.role !== UserRoles.LOCAL_GUIDE &&
+        props.user?.role !== UserRoles.PLATFORM_MANAGER &&
+        props.user?.role !== UserRoles.HUT_WORKER &&
+        props.user?.role !== UserRoles.EMERGENCY_OPERATOR) {
         navigate('/unauthorized')
     }
 
