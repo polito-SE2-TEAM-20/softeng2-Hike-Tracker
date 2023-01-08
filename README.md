@@ -42,6 +42,12 @@ All information required to run the project with docker is given there in `Insta
 - Email: erfan@hutworker.it --- password: 098765 (HUT WORKER)
 - Email: laura@emergency.it --- password: hetise (EMERGENCY OPERATOR)
 
+There are also 100 hut worker accounts with similar credentials:  
+Email: `hutWorker{i}@gmail.com`  
+Password: `soundsLike{i}`  
+Where `{i}` is number 0 - 100.
+Even `i`'s are approved by manager, odd ones are not (for example, `hutWorker10@gmail.com` is approved, `hutWorker9@gmail.com` is not)
+         
 ### Local
 
 Requirements:

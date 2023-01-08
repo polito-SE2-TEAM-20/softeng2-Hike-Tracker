@@ -575,7 +575,8 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
         '${workingTimeEnd.toString().padStart(2, '0')}:00:00'::time without time zone,
         ${escape.literal(faker.internet.email())},
         ${escape.literal(faker.phone.number('+39##########'))},
-        ${escape.literal(JSON.stringify(pictures))}::jsonb
+        ${escape.literal(JSON.stringify(pictures))}::jsonb,
+        ${escape.literal(faker.lorem.sentences(faker.datatype.number({ min: 2, max: 5 }), '\n').slice(0, 1000))}
       );
     `;
     }).join('\n');
@@ -596,7 +597,8 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
         working_time_end time without time zone,
         email varchar,
         phone_number varchar,
-        pictures jsonb
+        pictures jsonb,
+        description varchar
     )  RETURNS VOID AS
     $func$
     DECLARE
@@ -624,7 +626,8 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
       "workingTimeEnd",
       "email",
       "phoneNumber",
-      "pictures"
+      "pictures",
+      "description"
     ) VALUES (
       user_id,
       point_id,
@@ -638,7 +641,8 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
       working_time_end,
       email,
       phone_number,
-      pictures
+      pictures,
+      description
     );
     END
     $func$ LANGUAGE plpgsql;
