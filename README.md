@@ -62,6 +62,6 @@ $ npm start
 - Email: cicicoco.1234@libero.it, Password: qwertyAndrea (HUT WORKER)
 - Email: xesica8246@covbase.com, Password: qwerty (HUT WORKER)
 - Email: docorix637@cnogs.com, Password: qwerty (HUT WORKER)
-- Email: provaAdam@gmail.com, Password: qwertyAdam (HIKER )
-- Email: provaPeter, Password: qwertyPeter (HIKER)
+- Email: provaAdam@gmail.com, Password: qwertyAdam (HIKER)
+- Email: provaPeter@gmail.com, Password: qwertyPeter (HIKER)
 - Email: premierensp@gmail.com, Password: qwerty (PLATFORM MANAGER)
