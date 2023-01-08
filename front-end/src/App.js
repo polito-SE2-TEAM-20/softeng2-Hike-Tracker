@@ -62,6 +62,8 @@ function App2() {
 	const [hikeIDs, setHikeIDs] = useState([]);
 	const [open, setOpen] = useState(false);
 	const [started, setStarted] = useState(false);
+	const [update, setUpdate] = useState(false);
+	const [unfinishedAlert, setUnfinishedAlert] = useState(0);
 	const navigate = useNavigate();
 
 	// weather alert popup
@@ -70,6 +72,7 @@ function App2() {
 	const [listOfAlerts, setListOfAlerts] = useState([])
 	const [loaded, setLoaded] = useState(false)
 	const [alertTimeout, setAlertTimeout] = useState(0)
+
 
 	useEffect(() => {
 		if (localStorage.length !== 0) {
@@ -181,39 +184,44 @@ function App2() {
 		navigate("/login", { replace: false })
 	}
 
-
-	function getUnfinished() {
-		console.log("inside the set interval if started = true call the API unfinished hikes:  started: " + started);
-		API.getUnfinishedHikes()
-			.then((HikeIDs) => {
-				console.log("inside the call for API getUnfinishedHikes, started (should be true): " + started, "HikeIDs to finish " + HikeIDs)
-				setHikeIDs(HikeIDs)
-				if (open === false) {
-					if (HikeIDs.length !== 0) {
-						console.log("array of id's not empty should se the popup" + HikeIDs);
-						setOpen(true);
-					} else {
-						setOpen(false);
+	useEffect(()=>{
+		console.log(unfinishedAlert);
+		console.log(started);
+		if(loggedIn && user?.user.role === UserRoles.HIKER && started===true){
+			setUnfinishedAlert(60*1000);
+		  }else{
+			setUnfinishedAlert(0);
+		  }
+		}, [loggedIn, user, started])
+	
+		useEffect(() => {
+		   console.log(unfinishedAlert)
+		  if (started===true  && unfinishedAlert!==0) {
+			setTimeout(() => {
+			  // fetch from the db
+			console.log("inside the set interval if started = true call the API unfinished hikes:  started: " + started);
+			API.getUnfinishedHikes()
+				.then((HikeIDs) => {
+					console.log("inside the call for API getUnfinishedHikes, started (should be true): " + started, "HikeIDs to finish " + HikeIDs)
+					setHikeIDs(HikeIDs)
+					if (open === false) {
+						if (HikeIDs.length !== 0) {
+							console.log("array of id's not empty should se the popup" + HikeIDs);
+							setOpen(true);
+						} else {
+							setOpen(false);
+						}
 					}
-				}
-				return 0;
-			})
-			.catch((err) => { console.log(err) })
-
-	}
-
-	useEffect(() => {
-		let finish = '';
-		if (started) {
-			finish = setInterval(() => { getUnfinished(); }, 60 * 1000)
-		} else {
-			clearInterval(finish);
-		}
-	}, [started]);
+		  })
+				.catch((err) => { console.log(err) })
+		  setUpdate(!update);
+			}, unfinishedAlert);
+		  }
+		}, [update, unfinishedAlert, started])
 
 	return (
 		<>
-			<PopupUnfinishedHike hikeIDs={hikeIDs} open={open} setOpen={setOpen} />
+			<PopupUnfinishedHike hikeIDs={hikeIDs} open={open} setOpen={setOpen} started={started} setStarted={setStarted} setUnfinishedAlert={setUnfinishedAlert}/>
 
 			<HTNavbar user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} gotoLogin={gotoLogin} />
 			{

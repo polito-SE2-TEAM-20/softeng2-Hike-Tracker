@@ -911,10 +911,8 @@ const getHikesMaximumElapsedTime = async (hikeId) => {
             'Accept': '*/*'
         },
     })
-    console.log(response.text());
     if (response.ok) {
-        // return await response.json
-        const hike = await response.text();
+        const hike = await response.json();
         return hike;
     } else {
         const errDetail = await response.json();
@@ -923,7 +921,7 @@ const getHikesMaximumElapsedTime = async (hikeId) => {
 }
 
 const getUnfinishedHikesPopupSeen = async (hikeId) => {
-    const response = await fetch((APIURL + "/hikes/unfinished/popupsSeen/" + hikeId), {
+    const response = await fetch((APIURL + "/hikes/unfinished/popupSeen/" + hikeId), {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
