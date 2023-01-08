@@ -10,14 +10,14 @@ Application for promoting hiking activities in the mountains, fostering group ac
 ### s301290 Gholami Erfan
 ## Table of Contents
 
-- [Install](#install)
+- [Clone the project](#clone-the-project)
 - [Usage](#usage)
     - [Docker](#docker)
     - [Local](#local)
-- [Database Table](#database-tables)
+- [Screenshot](#screenshot)
 - [User Credentials](#user-credentials)
 
-## Install
+## Clone the project
 
 Use following command to download the project:
 ```sh
