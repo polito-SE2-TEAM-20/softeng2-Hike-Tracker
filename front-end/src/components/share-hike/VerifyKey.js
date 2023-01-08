@@ -26,13 +26,26 @@ const VerifyKey = (props) => {
 
         apiSubmitCode()
             .then(() => {
-                setTimeout(() => {
-                    setMessage({ color: "green", message: "Access granted: " + response.hike.title })
-                }, 50);
-                setTimeout(() => {
-                    console.log(response)
-                    navigate("/friend-tracking/" + response.userId + "/" + response.hikeId)
-                }, 2000);
+                if (response.status !== undefined && response.status === 422) {
+                    setSending(true)
+                    setMessage({ color: "red", message: "Access denied" })
+                    setTimeout(() => {
+                        setMessage({ color: "", message: "" })
+                    }, 2000);
+                    setTimeout(() => {
+                        setSending(false)
+                        setters.forEach(setter => setter(""))
+                        setIndex(0)
+                    }, 50);
+                } else {
+                    setTimeout(() => {
+                        setMessage({ color: "green", message: "Access granted: " + response.hike.title })
+                    }, 50);
+                    setTimeout(() => {
+                        console.log(response)
+                        navigate("/friend-tracking/" + response.userId + "/" + response.hikeId + "/" + friendCode)
+                    }, 2000);
+                }
             })
             .catch(() => {
                 setSending(true)
@@ -57,10 +70,14 @@ const VerifyKey = (props) => {
         submitCode(friendCode)
     }
 
-    const isDigitValid = digit => digit !== undefined && digit !== "" && digit.length !== 0
-    if (isDigitValid(code1) && isDigitValid(code2) && isDigitValid(code3) && isDigitValid(code4) && !sending) {
+    function setSendingAndReady() {
         setSending(true)
         setReady(true)
+    }
+
+    const isDigitValid = digit => digit !== undefined && digit !== "" && digit.length !== 0
+    if (isDigitValid(code1) && isDigitValid(code2) && isDigitValid(code3) && isDigitValid(code4) && !sending) {
+        setSendingAndReady()
     }
 
     /**

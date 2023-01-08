@@ -18,7 +18,9 @@
         "role": [
           0,
           2,
-          3
+          3,
+          4,
+          5
         ]
       },
       {
@@ -43,14 +45,6 @@
           2,
           3,
           4
-        ]
-      },
-      {
-        "title": "Saved hikes",
-        "URL": "/savedhikes",
-        "reqLogin": true,
-        "role": [
-          0
         ]
       },
       {
@@ -92,7 +86,7 @@
         ]
       },
       {
-        "title": "New Parking",
+        "title": "New Parking Lot",
         "URL": "/newParking",
         "reqLogin": true,
         "role": [
@@ -128,6 +122,14 @@
       {
         "title": "My Hikes",
         "URL": "/hikerhikes",
+        "reqLogin": true,
+        "role": [
+          0
+        ]
+      },
+      {
+        "title": "Saved hikes",
+        "URL": "/savedhikes",
         "reqLogin": true,
         "role": [
           0

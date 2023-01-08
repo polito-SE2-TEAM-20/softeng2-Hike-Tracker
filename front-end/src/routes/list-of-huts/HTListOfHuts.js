@@ -1,13 +1,13 @@
 import './list-of-huts-style.css'
 
 import { useEffect, useState } from 'react';
-import HTNavbar from '../../components/HTNavbar/HTNavbar';
 import { Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import API from '../../API/API.js';
 import HutCard from '../../components/hut-card/HutCard';
 import HTTopBarFilterHut from '../../components/side-filter/HTTopBarFilterHut';
 import Skeleton from '@mui/material/Skeleton';
+import { UserRoles } from '../../lib/common/UserRoles';
 
 const HTListOfHikes = (props) => {
     const [listOfHuts, setListOfHuts] = useState([])
@@ -42,10 +42,12 @@ const HTListOfHikes = (props) => {
         });
     }, [filter])
 
-    const gotoLogin = () => {
-        navigate("/login", { replace: false })
+    if (props.user?.role !== UserRoles.HIKER &&
+        props.user?.role !== UserRoles.LOCAL_GUIDE &&
+        props.user?.role !== UserRoles.PLATFORM_MANAGER &&
+        props.user?.role !== UserRoles.HUT_WORKER) {
+        navigate('/unauthorized')
     }
-
     return (
         <>
             <Grid container>

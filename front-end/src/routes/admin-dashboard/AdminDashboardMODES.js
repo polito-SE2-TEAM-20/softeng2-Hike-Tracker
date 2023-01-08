@@ -12,8 +12,15 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import HTButton from "../../components/buttons/Button";
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 import WeatherCard from "../../components/weather-card/WeatherCard";
+import {UserRoles} from '../../lib/common/UserRoles.js'
+import { useNavigate } from "react-router";
 
 export const AdminDashboardPC = (props) => {
+    const navigate = useNavigate()
+
+    if(props.user?.role !== UserRoles.PLATFORM_MANAGER) {
+        navigate('/unauthorized')
+    }
     return (
         <Grid container sx={{marginTop: "20px"}} columns={12} display={displayTypeFlex.pc} justifyContent="center">
             <Grid container item lg={2} xl={2} height="fit-content">
@@ -199,6 +206,11 @@ export const AdminDashboardPC = (props) => {
 }
 
 export const AdminDashboardTABLET = (props) => {
+    const navigate = useNavigate()
+
+    if(props.user?.role !== UserRoles.PLATFORM_MANAGER) {
+        navigate('/unauthorized')
+    }
     return (
         <Grid container sx={{marginTop: "20px"}} columns={12} display={displayTypeFlex.tablet} justifyContent="center">
             <Grid container item md={12} height="fit-content" display="flex" justifyContent="center">
@@ -381,6 +393,11 @@ export const AdminDashboardTABLET = (props) => {
 }
 
 export const AdminDashboardMOBILE = (props) => {
+    const navigate = useNavigate()
+    
+    if(props.user?.role !== UserRoles.PLATFORM_MANAGER) {
+        navigate('/unauthorized')
+    }
     return (
         <Grid container sx={{marginTop: "20px"}} columns={12} display={displayTypeFlex.mobile} justifyContent="center">
             <Grid container item xs={12} sm={12} height="fit-content" display="flex" justifyContent="center">
