@@ -357,8 +357,8 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
         "firstName",
         "lastName",
         "role",
-        "approved",
-        "verified"
+        "verified",
+        "approved"
       ) VALUES(
         hwid, email, password, first_name, last_name, role, true, approved
       ) returning id into user_id;
