@@ -14,6 +14,8 @@ import HikingIcon from '@mui/icons-material/Hiking';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import './Login.css'
+import { UserRoles } from '../../lib/common/UserRoles'
+
 
 function Copyright(props) {
   return (
@@ -70,6 +72,13 @@ const handleSubmit = async (event) => {
 };
 
 
+if (props.user?.role === UserRoles.HIKER ||
+  props.user?.role === UserRoles.LOCAL_GUIDE ||
+  props.user?.role === UserRoles.PLATFORM_MANAGER ||
+  props.user?.role === UserRoles.HUT_WORKER ||
+  props.user?.role === UserRoles.EMERGENCY_OPERATOR) {
+  navigate("/")
+}
   return (
     <ThemeProvider theme={theme}>
       <Grid container component="main" sx={{ height: '100vh' }}>

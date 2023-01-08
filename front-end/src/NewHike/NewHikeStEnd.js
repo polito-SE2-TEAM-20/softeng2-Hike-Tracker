@@ -21,6 +21,8 @@ import { Fab } from "@mui/material"
 import AddIcon from '@mui/icons-material/Add';
 import '../routes/edit-hut/edit-hut-style.css'
 import API from '../API/API.js';
+import {UserRoles} from '../lib/common/UserRoles'
+
 
 function NewHikeStEnd(props) {
 
@@ -430,6 +432,11 @@ function NewHikeStEnd(props) {
 
 	}
 
+	const navigate = useNavigate()
+	if (
+        props.user?.role !== UserRoles.LOCAL_GUIDE) {
+        navigate('/unauthorized')
+    }
 	return (
 		<React.Fragment>
 			<Grid container>

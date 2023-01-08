@@ -11,6 +11,7 @@ import React, { useState, useEffect } from 'react';
 import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours'
 import Alert from '@mui/material/Alert';
 import { PopupEditCondition } from "./PopupEditCondition";
+import {UserRoles} from '../../lib/common/UserRoles'
 
 function HikeCondition(props) {
 
@@ -74,6 +75,11 @@ const navigate = useNavigate();
 
     const gotoLogin = () => {
         navigate("/login", { replace: false })
+    }
+
+    if (
+        props.user?.role !== UserRoles.HUT_WORKER) {
+        navigate('/unauthorized')
     }
     return (
         <Grid container style={{ minHeight: "100vh", height: "100%" }}>

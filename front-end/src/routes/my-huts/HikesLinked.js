@@ -9,6 +9,7 @@ import API from '../../API/API.js';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours'
+import {UserRoles} from '../../lib/common/UserRoles'
 
 
 const HikesLinked = (props) => {
@@ -33,6 +34,11 @@ const HikesLinked = (props) => {
 
     const gotoLogin = () => {
         navigate("/login", { replace: false })
+    }
+
+    if (
+        props.user?.role !== UserRoles.HUT_WORKER) {
+        navigate('/unauthorized')
     }
 
     return (

@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { Grid, Typography, Skeleton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import HutCard from '../../components/hut-card/HutCard';
+import {UserRoles} from '../../lib/common/UserRoles'
+
 
 function HutWorkerHuts(props) {
     const [myHuts, setMyHuts] = useState([])
@@ -22,6 +24,11 @@ function HutWorkerHuts(props) {
 
     const gotoLogin = () => {
         navigate("/login", { replace: false })
+    }
+
+    if (
+        props.user?.role !== UserRoles.HUT_WORKER) {
+        navigate('/unauthorized')
     }
 
 

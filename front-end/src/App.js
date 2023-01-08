@@ -231,8 +231,8 @@ function App2() {
 				<Route path="/listofhikes" element={<HTListOfHikes user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
 				<Route path="/listofhuts" element={<HTListOfHuts user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
 				<Route path="/browsehikes" element={<HTBrowseHikes user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
-				<Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut} />} />
-				<Route path="/signup" element={<SignUpForm doRegister={doRegister} />} />
+				<Route path="/login" element={<LoginForm login={doLogIn} user={user?.user}logout={doLogOut} />} />
+				<Route path="/signup" element={<SignUpForm doRegister={doRegister} user={user?.user} />} />
 				<Route path="/newHut" element={<NewHutForm user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} addNewHut={API.addNewHut} />} />
 				<Route path="/myHikes" element={<MyHikesPage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} deleteHike={deleteHike} rowsAffected={rowsAffected} setRowsAffected={setRowsAffected} />} />
 				<Route path="/showhike/:hikeid" element={<ShowHike user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
@@ -248,10 +248,10 @@ function App2() {
 				<Route path="/trackhike/:hikeid" element={<TrackingHikePage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} setStarted={setStarted} started={started} />} />
 				<Route path="/modifyHikeCondition/:hikeid" element={<HikeCondition user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} updateHikeCondition={API.updateHikeCondition} />} />
 				<Route path="/hikerhikes" element={<HikerHikesPage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
-				<Route path="/new-weather-alert-hike" element={<WeatherAlertHike />} />
-				<Route path="/new-weather-alert-map" element={<WeatherAlertMap />} />
+				<Route path="/new-weather-alert-hike" element={<WeatherAlertHike user={user?.user} />} />
+				<Route path="/new-weather-alert-map" element={<WeatherAlertMap user={user?.user} />} />
 				<Route path="/hikerPerformance" element={<HikerPerformance user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
-				<Route path="/weather-status-edit/:hikeID" element={<WeatherAlertHikeEditStatus />} />
+				<Route path="/weather-status-edit/:hikeID" element={<WeatherAlertHikeEditStatus user={user?.user} />} />
 				<Route path="/friend-tracking/:userID/:hikeID/:friendCode" element={<FriendTracking />} />
 				<Route path="/savedhikes" element={<SavedHikes user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
 				<Route path="/unauthorized" element={<Unauthorized />} />

@@ -1,21 +1,19 @@
 import { Button, Chip, Divider, Grid, Paper, Typography } from "@mui/material";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { useMatch } from "react-router-dom";
-import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import hutIcon from '../../Assets/hut-icon.png'
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import API from '../../API/API.js';
 import { Skeleton } from "@mui/material";
-import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, useMapEvents, ZoomControl, Polyline, useMap } from 'react-leaflet'
-import { UploadPictureDialog } from '../../components/map-filters/Dialogs'
+import { MapContainer, TileLayer, Marker, Popup, ZoomControl } from 'react-leaflet'
 import TextField from '@mui/material/TextField';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Alert from '@mui/material/Alert';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
 import { PopupModifyHut } from './PopupModifyHut'
 import * as React from 'react';
 import { AddPictureCard, PictureCard } from "./PictureCard";
+import {UserRoles} from '../../lib/common/UserRoles'
+
 
 const Difficulty = (props) => {
     if (!props.loading) {
@@ -72,11 +70,6 @@ const EditHut = (props) => {
     //states for the popup after modifying the hut 
     const [op, setOp] = useState(false);
     const [err, setErr] = useState(null);
-
-
-    const gotoLogin = () => {
-        navigate("/login", { replace: false })
-    }
 
     const handleClear = () => {
         setDescription(hut.description); setWorkingTimeStart(hut.workingTimeStart);
@@ -143,7 +136,7 @@ const EditHut = (props) => {
             console.log(price);
             setErrorMessage("insert valid value for the price");
             setShow(true);
-        }else if (hut.pictures.length===0 && picData.length===0) {
+        } else if (hut.pictures.length === 0 && picData.length === 0) {
             setErrorMessage("insert at least one picture of the hut");
             setShow(true);
         } else {
@@ -163,6 +156,11 @@ const EditHut = (props) => {
         const formData = new FormData()
         pictures.forEach(picture => formData.append("pictures", picture))
         API.setHutPictures({ 'hutID': hutid, 'pictures': formData })
+    }
+
+    if (
+        props.user?.role !== UserRoles.HUT_WORKER) {
+        navigate('/unauthorized')
     }
 
     return (
@@ -312,7 +310,7 @@ const EditHut = (props) => {
                 <Grid style={{ marginLeft: "auto", marginRight: "auto", marginBottom: "25px", height: "80vh", paddingLeft: "25px", paddingRight: "25px" }} item lg={6}>
                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} style={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
                         {
-                            !loading ? <Typography variant="h2" sx={{fontFamily: "Unbounded"}}>{hut.title}</Typography> :
+                            !loading ? <Typography variant="h2" sx={{ fontFamily: "Unbounded" }}>{hut.title}</Typography> :
                                 <Skeleton variant='rectangular' height={50} width={600} style={{ marginBottom: "10px" }} />
                         }
                     </Grid>

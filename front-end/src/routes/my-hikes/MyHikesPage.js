@@ -6,6 +6,7 @@ import HikeItemLoadingEffect from './HikeItemLoadingEffect';
 import emptyStateImage from '../../Assets/empty-state.jpg'
 import { useNavigate } from 'react-router';
 import HikeCard from '../../components/hike-card/HikeCard.js';
+import { UserRoles } from '../../lib/common/UserRoles'
 
 
 function MyHikesPage(props) {
@@ -27,6 +28,11 @@ function MyHikesPage(props) {
             props.setRowsAffected(false);
         }
       }, []);
+
+      if (
+        props.user?.role !== UserRoles.LOCAL_GUIDE) {
+        navigate('/unauthorized')
+      }
 
 
     return (
