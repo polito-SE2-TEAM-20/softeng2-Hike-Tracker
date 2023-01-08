@@ -7,8 +7,6 @@ import TextField from '@mui/material/TextField';
 import { FormControl, MenuItem, Select } from "@mui/material";
 import { Chip, Divider, Paper } from "@mui/material";
 import { useNavigate } from "react-router";
-
-import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import React, { useState, useEffect } from 'react';
 import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours'
 import Alert from '@mui/material/Alert';
@@ -50,7 +48,7 @@ const navigate = useNavigate();
         if (hikeCondition === '' || hikeCondition === null || hikeCondition === undefined) {
             setErrorMessage("specify a condition for the hike");
             setShow(true);
-        } else if ((hikeCondition === 1 || hikeCondition === 2 || hikeCondition === 3) && (cause === '' || cause === null || cause === undefined)) {
+        } else if ((hikeCondition == 1 || hikeCondition == 2 || hikeCondition == 3) && (cause === '' || cause === null || cause === undefined)) {
             setErrorMessage("specify a cause for the condition");
             setShow(true);
         } else {
@@ -79,8 +77,6 @@ const navigate = useNavigate();
     }
     return (
         <Grid container style={{ minHeight: "100vh", height: "100%" }}>
-
-            <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} />
             {
                 <PopupEditCondition id={hikeId} err={err} open={open} setOpen={setOpen} />
             }

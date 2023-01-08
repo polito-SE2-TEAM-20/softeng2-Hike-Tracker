@@ -5,8 +5,6 @@ import 'leaflet-draw/dist/leaflet.draw.css'
 import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, useMapEvents, ZoomControl, Polyline, useMap } from 'react-leaflet'
 import L from 'leaflet';
 import HikePopup from '../hike-popup/HikePopup';
-import sampledata from '../../extra/sample-data/sample-data.json'
-import { Paper } from '@mui/material'
 import { EditControl } from 'react-leaflet-draw'
 
 delete L.Icon.Default.prototype._getIconUrl;
@@ -50,7 +48,7 @@ export const MapBrowseHike = (props) => {
         const map = useMap()
         if (props.index === -1)
             return;
-        map.flyTo(props.dataset.filter(x => x.id == props.index)[0].positions[0], 14)
+        map.flyTo(props.dataset.filter(x => x.id === props.index)[0].positions[0], 14)
     }
 
     const _circleCreated = (e) => {
@@ -67,10 +65,10 @@ export const MapBrowseHike = (props) => {
     }
 
     return (
-        <div style={{ marginTop: "0px" }}>
+        <div>
             <MapContainer center={clickedCenter} zoom={9}
                 scrollWheelZoom={{ xs: false, sm: false, md: false, lg: true, xl: true }} zoomControl={false}
-                style={{ width: "auto", minHeight: "100vh", height: "100%" }}>
+                style={{ width: "auto", minHeight: "85vh", height: "85%" }}>
                 <FeatureGroup>
                     <EditControl position="bottomright" draw={{
                         rectangle: false,
@@ -90,7 +88,7 @@ export const MapBrowseHike = (props) => {
                 {
                     props.dataset.filter(x => x.gpxFile !== undefined || x.gpxFile !== "" || x.positions === null || x.positions === undefined || x.positions.length === 0).map((hike) => {
                         if (!hike?.positions?.[0]) {return null;}
-                        if (selected == hike?.id) {
+                        if (selected === hike?.id) {
                             return (
                                 <>
                                     <Marker

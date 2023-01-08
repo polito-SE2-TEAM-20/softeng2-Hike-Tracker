@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button, Grid } from '@mui/material';
 import { Typography } from '@mui/material';
-import HTNavbar from '../../components/HTNavbar/HTNavbar'
 import './main-page-style.css'
 import { CardMedia } from "@mui/material";
 import mainPagePicture from '../../Assets/tmpmainpage.jpg'
@@ -13,6 +12,7 @@ import API from "../../API/API";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@mui/material";
 import HikeCard from "../../components/hike-card/HikeCard";
+import { UserRoles } from '../../lib/common/UserRoles'
 
 const HikeLoading = () => {
     return (
@@ -50,28 +50,23 @@ const HTMainPage = (props) => {
         });
     }, [])
 
-    const gotoLogin = () => {
-        navigate("/login", { replace: false })
-    }
-
     return (
         <div style={{ backgroundColor: "#1a1a1a", height: "100%", minHeight: "100vh", paddingBottom: "5px" }}>
             <Grid columns={12} container spacing={0} style={{ height: "fit-content" }}>
-                <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} gotoLogin={gotoLogin} navigate={props.navigate} />
                 {
-                    props.isLoggedIn && props?.user?.role === 0 ?
+                    props.isLoggedIn && props?.user?.role === UserRoles.HIKER ?
                         <>
                             <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} columns={12} >
                                 <Grid container item xs={0} sm={0} md={4} lg={4} xl={4} width="fit-content">
                                     <Grid item display={{ xs: "none", sm: "none", md: "flex", lg: "flex", xl: "flex" }}>
                                         <CardMedia component="img"
-                                            style={{ objectFit: "cover", height: "100vh", marginTop: "25px" }}
+                                            style={{ objectFit: "cover", height: "100vh" }}
                                             image={asidePicture}
                                             alt="Paella dish">
                                         </CardMedia>
                                     </Grid>
                                 </Grid>
-                                <Grid container item xs={12} sm={12} md={2} lg={2} xl={2} columns={3} style={{ marginTop: "50px" }}>
+                                <Grid container item xs={12} sm={12} md={2} lg={2} xl={2} columns={3}>
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ marginBottom: "25px", display: "flex", justifyContent: { xs: "center", sm: "center", md: "left", lg: "left", xl: "left" }, marginLeft: { xs: "none", sm: "none", md: "48px", lg: "48px", xl: "48px" } }}>
                                         {
                                             loaded && Object.keys(preferences).length !== 0 ?
@@ -105,7 +100,7 @@ const HTMainPage = (props) => {
                                                         animationDuration: "3s",
                                                         animationName: "headerMovement"
                                                     }}
-                                                    fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "32px", xl: "32px" }}
+                                                    fontSize={{ xs: "24px", sm: "24px", md: "24px", lg: "32px", xl: "32px" }}
                                                 >
                                                     Based on your preferences
                                                 </Typography> :
@@ -220,20 +215,36 @@ const HTMainPage = (props) => {
                                     {
                                         loaded && Object.keys(preferences).length !== 0 ?
                                             listOfHikes.length === 0 ?
-                                                <Typography
-                                                    variant="h2"
-                                                    className="unselectable"
-                                                    sx={{
-                                                        justifyContent: "left",
-                                                        textAlign: "left",
-                                                        color: '#ffffff',
-                                                        textDecoration: 'none',
-                                                        marginLeft: "48px"
-                                                    }}
-                                                    fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "24px", xl: "24px" }}
-                                                >
-                                                    There are no hikes matching your preferences.
-                                                </Typography>
+                                                <Grid item>
+                                                    <Typography
+                                                        variant="h2"
+                                                        className="unselectable"
+                                                        sx={{
+                                                            justifyContent: "left",
+                                                            textAlign: "left",
+                                                            color: '#ffffff',
+                                                            textDecoration: 'none',
+                                                            marginLeft: "48px"
+                                                        }}
+                                                        fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "24px", xl: "24px" }}
+                                                    >
+                                                        There is no hike matching your preferences.
+                                                    </Typography>
+                                                    <Typography
+                                                        variant="h2"
+                                                        className="unselectable"
+                                                        sx={{
+                                                            justifyContent: "left",
+                                                            textAlign: "left",
+                                                            color: '#ffffff',
+                                                            textDecoration: 'none',
+                                                            marginLeft: "48px"
+                                                        }}
+                                                        fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "24px", xl: "24px" }}
+                                                    >
+                                                        Go to the hiker dashboard and set your preferences in order to see more relevant suggestions in the home page.
+                                                    </Typography>
+                                                </Grid>
                                                 :
                                                 listOfHikes.slice(0, 6).map((hike, index) => {
                                                     if (index < 3) {
@@ -274,7 +285,6 @@ const HTMainPage = (props) => {
                                         }
                                     </Grid>
                                 </Grid>
-
                             </Grid>
                         </>
                         :
@@ -293,17 +303,39 @@ const HTMainPage = (props) => {
                                     className="unselectable"
                                     sx={{
                                         justifyContent: "center",
-                                        fontFamily: "Crimson Text, serif",
+                                        fontFamily: "Unbounded",
+                                        backgroundImage: "linear-gradient(-45deg, yellow, pink, orange, blue)",
                                         fontWeight: 700,
                                         textAlign: "center",
-                                        color: '#EBC824',
+                                        color: 'transparent',
+                                        backgroundClip: "text",
+                                        backgroundSize: "400% 400%",
                                         textDecoration: 'none',
                                         marginTop: { xs: "-350px", sm: "-350px", md: "-300px", lg: "-300px", xl: "-300px" },
-                                        textShadow: "0 0 0.75rem black"
+                                        "@keyframes whereText": {
+                                            '0%': {
+                                                backgroundPosition: "0% 50%"
+                                            },
+                                            '25%': {
+                                                backgroundPosition: "30% 50%"
+                                            },
+                                            '50%': {
+                                                backgroundPosition: "100% 50%"
+                                            },
+                                            '75%': {
+                                                backgroundPosition: "30% 50%"
+                                            },
+                                            '100%': {
+                                                backgroundPosition: "0% 50%"
+                                            }
+                                        },
+                                        animationIterationCount: "infinite",
+                                        animationDuration: "15s",
+                                        animationName: "whereText"
                                     }}
                                     fontSize={{ xs: "60px", sm: "70px", md: "75px", lg: "60px", xl: "60px" }}
                                 >
-                                    where will your next adventure be?
+                                    Where will your next adventure be?
                                 </Typography>
                             </Grid>
                             <Grid item xs={2} sm={2} md={2} lg={2} xl={2} />
@@ -470,11 +502,11 @@ const HTMainPage = (props) => {
                         marginLeft: { xs: "18px", sm: "18px", md: "24px", lg: "250px", xl: "250px" }
                     }}
                     fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "14px", xl: "14px" }}>
-                    All rights reserved. 2022.
+                    © 2023 Team 20. All rights reserved.
                 </Typography>
 
             </Grid>
-        </div>
+        </div >
     );
 }
 

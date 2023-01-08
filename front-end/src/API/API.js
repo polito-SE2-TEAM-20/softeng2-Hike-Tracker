@@ -1,6 +1,7 @@
 import { UserHikeState } from "../lib/common/Hike";
 
 export const APIURL = process.env.REACT_APP_API_BASE || 'https://hiking-backend.germangorodnev.com';
+export const WEBSITEURL = "https://hiking.germangorodnev.com"
 
 async function getListOfHikes() {
     let response = await fetch((APIURL + '/hikes'), {
@@ -487,11 +488,11 @@ async function modifyHutInformation(information, hutId) {
     });
 
     if (response.ok) {
-        const hutUpdated = response.json()
+        const hutUpdated = await response.json()
         return hutUpdated;
     } else {
         try {
-            const errDetail = response.json();
+            const errDetail = await response.json();
             throw errDetail.message;
         }
         catch (err) {
@@ -525,11 +526,11 @@ async function editHikeStartEndPoint(hikeId, startPoint, endPoint, referencePoin
     });
 
     if (response.ok) {
-        const hikeUpdate = response.json()
+        const hikeUpdate = await response.json()
         return hikeUpdate;
     } else {
         try {
-            const errDetail = response.json();
+            const errDetail = await response.json();
             throw errDetail.message;
         }
         catch (err) {
@@ -570,11 +571,11 @@ async function linkPointsToHike(hikeId, huts, parkingLots) {
     });
 
     if (response.ok) {
-        const hikeDetails = response.json()
+        const hikeDetails = await response.json()
         return hikeDetails;
     } else {
         try {
-            const errDetail = response.json();
+            const errDetail = await response.json();
             throw errDetail.message;
         }
         catch (err) {
@@ -614,11 +615,11 @@ async function updateHikeCondition(information, hikeId) {
     });
 
     if (response.ok) {
-        const hikeConditionUpdate = response.json()
+        const hikeConditionUpdate = await response.json()
         return hikeConditionUpdate;
     } else {
         try {
-            const errDetail = response.json();
+            const errDetail = await response.json();
             throw errDetail.message;
         }
         catch (err) {
@@ -645,11 +646,11 @@ async function startTracingkHike(hikeId) {
     });
 
     if (response.ok) {
-        const hikeTrackingDetails = response.json()
+        const hikeTrackingDetails = await response.json()
         return hikeTrackingDetails;
     } else {
         try {
-            const errDetail = response.json();
+            const errDetail = await response.json();
             throw errDetail.message;
         }
         catch (err) {
@@ -658,13 +659,11 @@ async function startTracingkHike(hikeId) {
     }
 }
 
-async function addPointToTracingkHike(hikeTrackId, lat, lon) {
+async function addPointToTracingkHike(hikeTrackId, pointId, dateTime) {
 
     const body = {
-        position: {
-            lat: lat,
-            lon: lon
-        }
+        pointId: pointId,
+        datetime: dateTime
     }
 
     const response = await fetch((APIURL + '/user-hikes/' + hikeTrackId + '/track-point'), {
@@ -678,11 +677,11 @@ async function addPointToTracingkHike(hikeTrackId, lat, lon) {
     });
 
     if (response.ok) {
-        const hikeTrackingDetails = response.json()
+        const hikeTrackingDetails = await response.json()
         return hikeTrackingDetails;
     } else {
         try {
-            const errDetail = response.json();
+            const errDetail = await response.json();
             throw errDetail.message;
         }
         catch (err) {
@@ -702,11 +701,11 @@ async function stopTrackingHike(hikeTrackId) {
     });
 
     if (response.ok) {
-        const hikeTrackingDetails = response.json()
+        const hikeTrackingDetails = await response.json()
         return hikeTrackingDetails;
     } else {
         try {
-            const errDetail = response.json();
+            const errDetail = await response.json();
             throw errDetail.message;
         }
         catch (err) {
@@ -726,11 +725,11 @@ async function getUserHikeTrackingDetails(hikeTrackId) {
     });
 
     if (response.ok) {
-        const hikeTrackingDetails = response.json()
+        const hikeTrackingDetails = await response.json()
         return hikeTrackingDetails;
     } else {
         try {
-            const errDetail = response.json();
+            const errDetail = await response.json();
             throw errDetail.message;
         }
         catch (err) {
@@ -765,11 +764,11 @@ async function getAllUserTrackingHikes(userHikeState) {
     });
 
     if (response.ok) {
-        const hikeTrackingDetails = response.json()
+        const hikeTrackingDetails = await response.json()
         return hikeTrackingDetails;
     } else {
         try {
-            const errDetail = response.json();
+            const errDetail = await response.json();
             throw errDetail.message;
         }
         catch (err) {
@@ -809,16 +808,6 @@ const setHutPictures = async (request) => {
     }
 }
 
-/*
-    POST /hut-pictures/:hutId/modify
-    accepts json
-    {
-    pictures: array of strings
-    }
-
-    With this endpoint you can update pictures array: remove images, reorder existing ones.
- */
-
 const modifyHutPictures = async (request) => {
     const response = await fetch((APIURL + '/hut-pictures/' + request.hutID + '/modify'), {
         method: 'POST',
@@ -827,7 +816,7 @@ const modifyHutPictures = async (request) => {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
             'Accept': '*/*'
         },
-        body: JSON.stringify({'pictures': request.params})
+        body: JSON.stringify({ 'pictures': request.params })
     })
 
     if (response.ok) {
@@ -856,6 +845,318 @@ const getHikesBasedOnPreferences = async () => {
     }
 }
 
+// picture for the hike
+const setHikePictures = async (request) => {
+    const response = await fetch((APIURL + '/hike-pictures/' + request.hikeID), {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+        body: request.pictures
+    })
+
+    if (response.ok) {
+        return true
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+//get performance stats only for hiker 
+// returns {stats: [{stat:'stat name', value: number, unit:string}]}
+const getPerformanceStats = async () => {
+    const response = await fetch((APIURL + "/me/performance-stats"), {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+    })
+
+    if (response.ok) {
+        const performanceStats = response.json()
+        return performanceStats;
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+// called every minute
+const getUnfinishedHikes = async () => {
+    const response = await fetch((APIURL + "/hikes/unfinished/popupsList"), {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+    })
+
+    if (response.ok) {
+        const hikeIDs = response.json()
+        return hikeIDs;
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const getHikesMaximumElapsedTime = async (hikeId) => {
+    const response = await fetch((APIURL + "/hikes/maxElapsedTime/" + hikeId), {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+    })
+    if (response.ok) {
+        const hike = await response.json();
+        return hike;
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const getUnfinishedHikesPopupSeen = async (hikeId) => {
+    const response = await fetch((APIURL + "/hikes/unfinished/popupSeen/" + hikeId), {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+    })
+
+    if (response.ok) {
+        const hikeIDs = response.json()
+        return hikeIDs;
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const updateWeatherSingleHike = async (request) => {
+    const response = await fetch((APIURL + "/hikes/updateWeather/" + request.hikeID), {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+        body: JSON.stringify({
+            weatherStatus: request.weatherInfo.weatherStatus,
+            weatherDescription: request.weatherInfo.weatherDescription
+        })
+    })
+
+    if (response.ok) return true
+    else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const updateWeatherMap = async (request) => {
+    const response = await fetch((APIURL + "/hikes/range/updateWeatherInRange"), {
+        method: "PUT",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+        body: JSON.stringify({
+            inPointRadius: {
+                lat: request.weatherInfo.lat,
+                lon: request.weatherInfo.lon,
+                radiusKms: request.weatherInfo.radiusKms
+            },
+            weatherStatus: request.weatherInfo.weatherStatus,
+            weatherDescription: request.weatherInfo.weatherDescription
+        })
+    })
+
+    if (response.ok) return true
+    else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const requestNewCode = async () => {
+    const response = await fetch((APIURL + "/friends/share"), {
+        method: "POST",
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        }
+    })
+
+    if (response.ok) {
+        return await response.json()
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const getHikeByFriendCode = async (code) => {
+    const response = await fetch((APIURL + "/friends/track/" + code), {
+        method: "GET"
+    })
+
+    if (response.ok) {
+        return await response.json()
+    } else if (response.status === 422) {
+        return {status: response.status}
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const userGetReferencePointsReached = async () => {
+    const response = await fetch((APIURL + "/user-hikes/reached-points"), {
+        method: "GET",
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        }
+    })
+    if (response.ok) {
+        return await response.json()
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const userUpdateReferencePointReached = async (request) => {
+    const response = await fetch((APIURL + "/user-hikes/reach-point"), {
+        method: "POST",
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+        body: JSON.stringify({ pointId: request.pointId })
+    })
+
+    if (response.ok) {
+        return true
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const friendGetReferencePointsReached = async (request) => {
+    const response = await fetch((APIURL + "/friends/reached-points/" + request.friendCode), {
+        method: "GET",
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        }
+    })
+    if (response.ok) {
+        return await response.json()
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+async function setPlannedHikes(hikeIds) {
+    let response = await fetch((APIURL + '/me/set_planned_hikes'), {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+
+        },
+        body: JSON.stringify({ plannedHikes: [hikeIds] })
+
+    });
+    if (response.ok) {
+        const listOfPlannedHikes = await response.json();
+        return listOfPlannedHikes
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const deletePlannedHike = async (hikeID) => {
+    const response = await fetch((APIURL + '/me/planned_hikes'), {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+            'Accept': '*/*'
+        },
+        body: JSON.stringify({ plannedHikes: [hikeID] })
+    });
+    {/*}
+   const data = await response;
+ 
+   // now do whatever you want with the data  
+console.log(data);*/}
+};
+
+const getPlannedHikes = async () => {
+    const response = await fetch((APIURL + "/me/planned_hikes"), {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+
+    })
+
+    if (response.ok) {
+        const plannedHikes = response.json()
+        return plannedHikes;
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const definitiveClosePopup = async (hikeID) => {
+    const response = await fetch((APIURL + "/hikes/popupSeen/" + hikeID), {
+        method: "GET",
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+    })
+
+    if (response.ok) {
+        return true
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
+const getMyAlerts = async () => {
+    const response = await fetch((APIURL + "/hikes/weather/flags"), {
+        method: "GET",
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Accept': '*/*'
+        },
+    })
+
+    if (response.ok) {
+        return await response.json()
+    } else {
+        const errDetail = await response.json();
+        throw errDetail.message;
+    }
+}
+
 const API = {
     getListOfHikes, getListOfGPXFiles, getPathByID,
     getHikeByListOfPaths, getFilteredListOfHikes, getHikePathByHike,
@@ -867,10 +1168,16 @@ const API = {
     getHutsHutWorker, modifyHutInformation, editHikeStartEndPoint, getHikesUpdatableHutWorker,
     linkPointsToHike,
     updateHikeCondition,
+    setHikePictures, getPerformanceStats, getUnfinishedHikes, getHikesMaximumElapsedTime,
+    getUnfinishedHikesPopupSeen,
+    //plan an hike
+    setPlannedHikes, getPlannedHikes, deletePlannedHike,
     //#region Export HikeTraking APIs
     startTracingkHike, addPointToTracingkHike, stopTrackingHike,
     getUserHikeTrackingDetails, getAllUserTrackingHikes,
     //#endregion
-    setHutPictures, modifyHutPictures, getHikesBasedOnPreferences
+    setHutPictures, modifyHutPictures, getHikesBasedOnPreferences, updateWeatherSingleHike, updateWeatherMap,
+    requestNewCode, getHikeByFriendCode, userGetReferencePointsReached, userUpdateReferencePointReached, friendGetReferencePointsReached,
+    definitiveClosePopup, getMyAlerts
 }
 export default API

@@ -1,0 +1,138 @@
+[
+  {
+    "categoryName": "Discovery",
+    "overallPermissions": [
+      -1,
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "pages": [
+      {
+        "title": "Browse hikes",
+        "URL": "/browsehikes",
+        "reqLogin": true,
+        "role": [
+          0,
+          2,
+          3
+        ]
+      },
+      {
+        "title": "List of hikes",
+        "URL": "/listofhikes",
+        "reqLogin": false,
+        "role": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "title": "List of huts",
+        "URL": "/listofhuts",
+        "reqLogin": true,
+        "role": [
+          0,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "title": "Track a friend",
+        "URL": "/friend-code",
+        "reqLogin": false,
+        "role": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      }
+    ]
+  },
+  {
+    "categoryName": "Create",
+    "overallPermissions": [
+      2
+    ],
+    "pages": [
+      {
+        "title": "New Hike",
+        "URL": "/newHike",
+        "reqLogin": true,
+        "role": [
+          2
+        ]
+      },
+      {
+        "title": "New Hut",
+        "URL": "/newHut",
+        "reqLogin": true,
+        "role": [
+          2
+        ]
+      },
+      {
+        "title": "New Parking Lot",
+        "URL": "/newParking",
+        "reqLogin": true,
+        "role": [
+          2
+        ]
+      }
+    ]
+  },
+  {
+    "categoryName": "Personal",
+    "overallPermissions": [
+      0,
+      2,
+      4
+    ],
+    "pages": [
+      {
+        "title": "My Hikes",
+        "URL": "/myhikes",
+        "reqLogin": true,
+        "role": [
+          2
+        ]
+      },
+      {
+        "title": "My huts",
+        "URL": "/hutworkerhuts",
+        "reqLogin": true,
+        "role": [
+          4
+        ]
+      },
+      {
+        "title": "My Hikes",
+        "URL": "/hikerhikes",
+        "reqLogin": true,
+        "role": [
+          0
+        ]
+      },
+      {
+        "title": "Saved hikes",
+        "URL": "/savedhikes",
+        "reqLogin": true,
+        "role": [
+          0
+        ]
+      }
+    ]
+  }
+]

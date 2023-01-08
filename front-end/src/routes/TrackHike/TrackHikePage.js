@@ -1,30 +1,60 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Slide, Stack, Typography } from "@mui/material";
+import { Button, Card, CardContent, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, Slide, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { MapContainer, Marker, Polyline, TileLayer, useMap } from "react-leaflet";
-import { useMatch } from "react-router";
+import { MapContainer, Marker, Polyline, Popup, TileLayer, useMap } from "react-leaflet";
+import { useLocation, useMatch, useParams } from "react-router";
 import API from "../../API/API";
-import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import { TrackingState } from "../../lib/common/Hike";
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import StopCircleIcon from '@mui/icons-material/StopCircle';
-import { icon, Icon } from "leaflet";
+import { icon } from "leaflet";
 import currentLocationIcon from '../../Assets/current-location.png'
+import ShareHike from "../../components/share-hike/ShareHike";
+const dayjs = require('dayjs')
 
 function TrackingHikePage(props) {
-
     const match = useMatch('/trackhike/:hikeid')
     const hikeId = match.params.hikeid ? match.params.hikeid : -1;
 
-    const [recordedGpsLocations, setRecordedGpsLocations] = useState([]);
+    const location = useLocation()
+
+    const passedTrckingHikeId = (location?.state?.trackHikeId > -1) ? location?.state?.trackHikeId : -1
+
+
+    const [hikeDetails, setHikeDetails] = useState(null)
+    const [hikeGpx, setHikeGpx] = useState(null)
+    const [hikePositions, setHikePositions] = useState(null)
+
+    const [isLoading, setLoading] = useState(false);
+    const [hasErrorOnLoad, setHasErrorOnLoad] = useState(false);
+    const [errorOnLoad, setErrorOnLoad] = useState(null);
+
+
+    const [currentLocation, setCurrentLocation] = useState(null);
     const [trackingState, setTrackingState] = useState(TrackingState.NOT_STARTED);
     const [trackHasBeenStarted, setTrackHasBeenStarted] = useState(false);
     const [trackHasBeenRecorded, setTrackHasBeenRecorded] = useState(false);
     const [trackRecordId, setTrackRecordId] = useState(null);
     const [trackHasBeenFinished, setTrackHasBeenFinished] = useState(false);
-    const [trackHikeId, setTrackHikeId] = useState(-1);
+    //TODO: get track hike id if exsits
+    const [trackHikeId, setTrackHikeId] = useState(passedTrckingHikeId);
+    const [trackHike, setTrackHike] = useState(null);
 
     const [showTurnOnLocatonDialog, setShowTurnOnLocationDialog] = useState(false);
     const [isLocationAccessable, setIsLocationAccessable] = useState(false);
+
+    const labelStyle = {
+        background: {
+            0: "#1a1a1a",
+            1: "green",
+            2: "red"
+        },
+        text: {
+            0: "white",
+            1: "white",
+            2: "white"
+        }
+
+    }
 
     const checkLocationAccess = () => {
         navigator.permissions
@@ -40,163 +70,265 @@ function TrackingHikePage(props) {
                             setIsLocationAccessable(false)
                             setShowTurnOnLocationDialog(true)
                         }
-                )
+                    )
                 } else if (result.state === "denied") {
                     setIsLocationAccessable(false)
                     setShowTurnOnLocationDialog(true)
                 }
-                
+
             });
     }
 
     useEffect(() => {
-        checkLocationAccess()
+
+        const getHikeDetails = async () => {
+            const details = await API.getSingleHikeByID(hikeId);
+            if (details) {
+                const gpxFile = await API.getPathByID(details.gpxPath)
+
+                if (gpxFile) {
+                    setHikeDetails(details)
+                    setHikeGpx(gpxFile)
+                    setLoading(false);
+                    checkLocationAccess();
+                } else {
+                    setLoading(false)
+                    setHasErrorOnLoad(true);
+                    setErrorOnLoad("Failed to get hike details. Please try again.")
+                }
+            } else {
+                setLoading(false)
+                setHasErrorOnLoad(true);
+                setErrorOnLoad("Failed to get hike details. Please try again.")
+            }
+
+        }
+
+        //Load the track that already exists
+        if (trackHikeId > -1) {
+            API.getUserHikeTrackingDetails(trackHikeId).then((result) => {
+                setTrackHike(result)
+                //TODO update params
+                if (result.finishedAt === null || result.finishedAt === undefined) {
+                    setTrackHasBeenStarted(true)
+                    setTrackHasBeenFinished(false)
+                    setTrackingState(TrackingState.STARTED)
+                } else if (result.finishedAt !== null && result.finishedAt !== undefined) {
+                    setTrackHasBeenStarted(false)
+                    setTrackHasBeenFinished(true)
+                    setTrackingState(TrackingState.FINISHED)
+                }
+            })
+                .catch((err) => {
+
+                })
+        } else {
+            API.getAllUserTrackingHikes().then((result) => {
+                result.forEach((trackHikeItem) => {
+                    if (trackHikeItem.finishedAt === null || trackHikeItem.finishedAt === undefined) {
+                        if (trackHikeItem.hikeId === +hikeId) {
+                            setTrackHikeId(trackHikeItem.id)
+                            setTrackHike(trackHikeItem)
+                            setTrackHasBeenStarted(true)
+                            setTrackHasBeenFinished(false)
+                            setTrackingState(TrackingState.STARTED)
+                        } else {
+                            //It is an ongong tracking but with another hike
+                        }
+                    } else {
+                        //it is a finished hike
+                    }
+                })
+            })
+                .catch((err) => {
+
+                })
+
+
+        }
+
+        getHikeDetails()
     }, [])
 
     useEffect(() => {
+        if (hikeGpx, hikeDetails) {
+            parseGpxFile()
+        }
+    }, [hikeGpx, hikeDetails])
 
-        switch(trackingState) {
+    useEffect(() => {
+
+        switch (trackingState) {
             case TrackingState.STARTED: {
                 if (!trackHasBeenRecorded) {
                     setTrackHasBeenRecorded(true);
-                    setTrackRecordId(navigator.geolocation.watchPosition((position) => {
-                        setRecordedGpsLocations((oldList) => {
-                            return oldList.concat(position)
-                        })
-                        API.addPointToTracingkHike(
-                            trackHikeId, 
-                            position.coords.latitude, 
-                            position.coords.longitude
-                        ).then((result) => {
-
-                        })
-                        .catch((err) => {
-
-                        })
-                    }))
+                    // setTrackRecordId(navigator.geolocation.watchPosition((position) => {
+                    //     setCurrentLocation((olLocation) => {
+                    //         return position
+                    //     })
+                    // }))
                 } else {
                     //Already in recording phase
                 }
                 break;
             }
             case TrackingState.FINISHED: {
-                navigator.geolocation.clearWatch(trackRecordId)
+                // navigator.geolocation.clearWatch(trackRecordId)
                 break;
             }
-
+            default:
+                break;
         }
-        
+
     }, [trackingState])
 
-    const startTrackingAction = () => {
-        if (isLocationAccessable) {
-            if (!trackHasBeenStarted) {
-                API.startTracingkHike(hikeId)
-                    .then((result) => {
-                        setTrackHikeId(result.id);
-                        setTrackHasBeenStarted(true)
-                        setTrackHasBeenFinished(false)
-                        setTrackingState(TrackingState.STARTED)
-                    })
-                    .catch((error) => {
+    const parseGpxFile = () => {
+        //#region GPX parsing
+        let gpxParser = require('gpxparser');
+        var gpx = new gpxParser();
+        gpx.parse(hikeGpx);
+        const positions = gpx.tracks[0].points.map(p => [p.lat, p.lon]);
 
-                    })
-            } else {
-                //Tracking is already started
-            }
+        setHikePositions(positions);
+        //#endregion
+    }
+
+    const startTrackingAction = async () => {
+        if (!trackHasBeenStarted) {
+            await API.startTracingkHike(hikeId)
+                .then((result) => {
+                    console.log("entra ")
+                    API.getHikesMaximumElapsedTime(hikeId)
+                          .then((userHike)=> {
+                            console.log("in track hike hike started setStarted(true)");
+                            props.setStarted(true);
+                            console.log(userHike);
+                            console.log("variable started: in track hike start" + props.started);
+                            console.log("maximum elapsed time setted");
+                            console.log("result of masimum elapsed time" + result);
+                            console.log("hike id for max time" + hikeId);
+                          }).catch((err)=>{console.log(err)})
+                    setTrackHike(result)
+                    setTrackHikeId(result.id);
+                    setTrackHasBeenStarted(true)
+                    setTrackHasBeenFinished(false)
+                    setTrackingState(TrackingState.STARTED)
+                })
+                .catch((error) => {
+
+                })
         } else {
-            checkLocationAccess();
+            //Tracking is already started
         }
     }
 
-    const stopTrackingAction = () => {
+    const stopTrackingAction = async () => {
         if (!trackHasBeenFinished) {
-            API.stopTrackingHike(trackHikeId)
+            await API.stopTrackingHike(trackHikeId)
                 .then((result) => {
+                    props.setStarted(false);
                     setTrackHasBeenFinished(true)
                     setTrackHasBeenStarted(false)
                     setTrackingState(TrackingState.FINISHED)
                 })
                 .catch((error) => {
-                    
+
                 })
         } else {
             //Track is already finished
         }
     }
 
+    const handleCheckingRefPoint = (refPoint) => {
+        //check that this ref point is in the hike ref point list
+        let hasProblem = false;
+        trackHike.hike.referencePoints.forEach((item) => {
+            if (item.id === refPoint.id) {
+                hasProblem = true
+            }
+        })
+        //check that we have sent this ref point before or not
+        trackHike.trackPoints.forEach((item) => {
+            if (item.pointId === refPoint.id) {
+                hasProblem = true
+            }
+        })
+        //send to server and update local map and variables
+        const now = dayjs().toISOString()
+
+        API.addPointToTracingkHike(trackHikeId, refPoint.id, now).then((result) => {
+            setTrackHike(result)
+        })
+            .catch((error) => {
+
+            })
+
+    }
+
     return (
         <>
-            <HTNavbar item user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} />
-
             <Grid
                 container
-                display="column"
                 justifyContent="center"
-                alignItems="center"
-                style={{marginTop: "10vh", height: "90vh", width:"100%"}}>
+                alignItems="center">
                 <Grid
                     item
-                    style={{ height: "60vh", width: "100%" }}>
+                    style={{height: "100%", width: "100%" }}>
                     <MapContainer
-                        style={{ height: "60vh" }}
                         flex
                         center={
-                            recordedGpsLocations.length > 0 ? [recordedGpsLocations[recordedGpsLocations.length - 1].coords.latitude,
-                            recordedGpsLocations[recordedGpsLocations.length - 1].coords.longitude] :
-                                [45.4408474, 12.3155151]
+                            (hikePositions !== null && hikePositions.length > 0) ? hikePositions[0] : [45.4408474, 12.3155151]
                         }
                         zoom={13}
                         scrollWheelZoom={{ xs: false, sm: false, md: false, lg: true, xl: true }} zoomControl={true}>
                         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                        <Polyline
-                            pathOptions={{ fillColor: 'red', color: 'blue' }}
-                            positions={recordedGpsLocations.map((location) => {
-                                return [location.coords.latitude, location.coords.longitude]
-                            })}
-                        />
+                        {
+                            (hikePositions !== null && hikePositions.length > 0) &&
+                            <Polyline
+                                pathOptions={{ fillColor: 'red', color: 'blue' }}
+                                positions={hikePositions}
+                            />
+                        }
                         {
                             //Current location
-                            (trackHasBeenStarted && !trackHasBeenFinished && recordedGpsLocations.length > 0) &&
+                            (trackHasBeenStarted && !trackHasBeenFinished && currentLocation) &&
                             <Marker
                                 icon={icon({
                                     iconUrl: currentLocationIcon,
                                     iconSize: [36, 36]
                                 })}
-                                key={[recordedGpsLocations[recordedGpsLocations.length - 1].coords.latitude,
-                                recordedGpsLocations[recordedGpsLocations.length - 1].coords.longitude]}
-                                position={[recordedGpsLocations[recordedGpsLocations.length - 1].coords.latitude,
-                                recordedGpsLocations[recordedGpsLocations.length - 1].coords.longitude]}>
+                                key={[currentLocation.coords.latitude,
+                                currentLocation.coords.longitude]}
+                                position={[currentLocation.coords.latitude,
+                                currentLocation.coords.longitude]}>
 
                             </Marker>
                         }
-
                         {
-                            //Starting point
-                            (trackHasBeenStarted && recordedGpsLocations.length > 0) &&
-                            <Marker
-                                key={"start"}
-                                position={[recordedGpsLocations[0].coords.latitude,
-                                recordedGpsLocations[0].coords.longitude]}>
-
-                            </Marker>
+                            (hikeDetails?.referencePoints !== null && hikeDetails?.referencePoints.length > 0) &&
+                            hikeDetails?.referencePoints.map((refPoint) => {
+                                return (
+                                    <>
+                                        <Marker
+                                            key={refPoint.id}
+                                            position={[refPoint.position.coordinates[1], refPoint.position.coordinates[0]]}>
+                                            <Popup position={[refPoint.position.coordinates[1], refPoint.position.coordinates[0]]}>
+                                                <RefPointPopUp
+                                                    refPoint={refPoint}
+                                                    trackHike={trackHike}
+                                                    trackingState={trackingState}
+                                                    handleCheckRefPoint={handleCheckingRefPoint} />
+                                            </Popup>
+                                        </Marker>
+                                    </>
+                                )
+                            })
                         }
 
                         {
-                            //ending point
-                            (trackHasBeenFinished && recordedGpsLocations.length > 0) &&
-                            <Marker
-                                key={"end"}
-                                position={[recordedGpsLocations[recordedGpsLocations.length - 1].coords.latitude,
-                                recordedGpsLocations[recordedGpsLocations.length - 1].coords.longitude]}>
-
-                            </Marker>
-                        }
-
-                        {
-                            recordedGpsLocations.length > 0 &&
+                            (hikePositions !== null && hikePositions.length > 0) &&
                             <MapFlyTracker
-                                locations={recordedGpsLocations}>
+                                location={hikePositions[0]}>
 
                             </MapFlyTracker>
                         }
@@ -206,13 +338,21 @@ function TrackingHikePage(props) {
 
                 <Grid
                     item
-                    style={{ height: "30vh" }}>
+                    style={{ zIndex: 1, marginTop: "-35vh", height: "35vh"}}>
                     <TrackingActionsView
                         state={trackingState}
                         startAction={startTrackingAction}
                         stopAction={stopTrackingAction}>
                     </TrackingActionsView>
                 </Grid>
+
+                {
+                    trackingState === TrackingState.STARTED &&
+                    <Grid
+                        item>
+                        <ShareHike />
+                    </Grid>
+                }
 
                 {
                     showTurnOnLocatonDialog &&
@@ -234,49 +374,101 @@ function TrackingHikePage(props) {
 function MapFlyTracker(props) {
     const map = useMap()
     useEffect(() => {
-        map.flyTo([props.locations[props.locations.length - 1].coords.latitude,
-            props.locations[props.locations.length - 1].coords.longitude], 17)
-    }, [props.locations])
+        map.flyTo(props.location, 17)
+    }, [props.location])
 }
 
 function TrackingActionsView(props) {
     return (
-        <Grid 
-            flex
-            container
-            direction="column"
-            justifyContent="center"
-            alignItems="center">
-            {
-                props.state === TrackingState.NOT_STARTED &&
-                <>
-                    <PlayCircleIcon
-                        style={{width:150, height: 150}}
-                        onClick={() => props.startAction()}>
-                    
-                    </PlayCircleIcon>
-                </>
-                
-            }
-            {
-                props.state === TrackingState.STARTED &&
-                <>
-                    <StopCircleIcon
-                        style={{width:150, height: 150}}
-                        onClick={() => props.stopAction()}>
-                    
-                    </StopCircleIcon>
-                </>
-            }
-            {
-                props.state === TrackingState.FINISHED &&
-                <Typography variant="h6">
-                    Tracking this hike has been finished.
-                </Typography>
-            }
+        <Card>
+            <CardContent>
+                {
+                    props.state === TrackingState.NOT_STARTED &&
+                    <Grid
+                        item>
+                        <PlayCircleIcon
+                            style={{width:150, height: 150}}
+                            onClick={() => props.startAction()}>
+                        
+                        </PlayCircleIcon>
+                    </Grid>
+    
+                }
+                {
+                    props.state === TrackingState.STARTED &&
+                    <Grid
+                        item>
+                        <StopCircleIcon
+                            style={{width:150, height: 150}}
+                            onClick={() => props.stopAction()}>
+                        
+                        </StopCircleIcon>
+                    </Grid>
+                }
+                {
+                    props.state === TrackingState.STARTED &&
+                    <Grid
+                        item>
+                        <ShareHike/>
+                    </Grid>
+                }
+                {
+                    props.state === TrackingState.FINISHED &&
+                    <Typography variant="h6">
+                        Tracking this hike has been finished.
+                    </Typography>
+                }
 
-        </Grid>
+            </CardContent>       
+        </Card>
     )
+    // return (
+    //     <Grid 
+    //         flex
+    //         container
+    //         elevation={3}
+    //         direction="column"
+    //         justifyContent="center"
+    //         alignItems="center">
+    //         {
+    //             props.state === TrackingState.NOT_STARTED &&
+    //             <Grid
+    //                 item>
+    //                 <PlayCircleIcon
+    //                     style={{width:150, height: 150}}
+    //                     onClick={() => props.startAction()}>
+                    
+    //                 </PlayCircleIcon>
+    //             </Grid>
+  
+    //         }
+    //         {
+    //             props.state === TrackingState.STARTED &&
+    //             <Grid
+    //                 item>
+    //                 <StopCircleIcon
+    //                     style={{width:150, height: 150}}
+    //                     onClick={() => props.stopAction()}>
+                    
+    //                 </StopCircleIcon>
+    //             </Grid>
+    //         }
+    //         {
+    //             props.state === TrackingState.STARTED &&
+    //             <Grid
+    //                 item>
+    //                 <ShareHike/>
+    //             </Grid>
+    //         }
+    //         {
+    //             props.state === TrackingState.FINISHED &&
+    //             <Typography variant="h6">
+    //                 Tracking this hike has been finished.
+    //             </Typography>
+    //         }
+
+    //     </Grid>
+    // )
 }
 
 function TurnOnLocationDialog(props) {
@@ -291,16 +483,16 @@ function TurnOnLocationDialog(props) {
             keepMounted
             onClose={props.closeAction}
             aria-describedby="alert-dialog-slide-description">
-            {   
+            {
                 <>
                     <DialogTitle>{"Attention!"}</DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-slide-description">
-                            You need to allow location access in your browser settings before start tracking.
+                            For a better expirience you can turn on your location and see your real location on the map while tracking.
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={props.closeAction}>OK!</Button>
+                        <Button onClick={props.closeAction}>COOL!</Button>
                     </DialogActions>
                 </>
             }
@@ -308,15 +500,67 @@ function TurnOnLocationDialog(props) {
     )
 }
 
-function GpsItemView(props) {
-    const date = new Date(props.gpsItem.timestamp).toISOString()
+function RefPointPopUp(props) {
+
+    let haveBeenHere = false;
+    let haveBeenHereTime = null;
+    props.trackHike?.trackPoints?.forEach((item) => {
+        if (item.pointId === props.refPoint.id) {
+            haveBeenHere = true
+            haveBeenHereTime = dayjs(item.datetime).format("LLL")
+        }
+    })
+
     return (
-        <Grid>
-            <Typography variant="h6">
-                {date}, [{props.gpsItem.coords.latitude}, {props.gpsItem.coords.longitude}]
-            </Typography>
+        <Grid
+            container
+            display="column"
+            justifyContent="center"
+            alignItems="center">
+            <Grid
+                item>
+                <Typography>{props.refPoint?.name}</Typography>
+            </Grid>
+
+            <Grid
+                item>
+                <Typography>Latitude: {props.refPoint?.position?.coordinates[0]}</Typography>
+            </Grid>
+            <Grid
+                item>
+                <Typography>Longitude: {props.refPoint?.position?.coordinates[0]}</Typography>
+            </Grid>
+
+            {
+                (props.trackingState !== TrackingState.NOT_STARTED && haveBeenHere) &&
+                <Typography>I was here on: {haveBeenHereTime}</Typography>
+            }
+            {
+                (props.trackingState === TrackingState.STARTED && !haveBeenHere) &&
+                <Grid
+                    item>
+                    <Button
+                        onClick={() => props.handleCheckRefPoint(props.refPoint)}>I arrived HERE</Button>
+                </Grid>
+            }
         </Grid>
-    )
+        // <div>
+        //     <div className='popup-line'><b>{props.refPoint?.name}</b></div>
+
+        //     <Divider style={{marginTop: "2px", marginBottom: "2px"}} />
+
+        //     <div className='popup-line'>{props.refPoint?.address} </div>
+
+        //     <Divider style={{marginTop: "2px", marginBottom: "2px"}} />
+
+        //     <div className='popup-line'>Latitude: {props.refPoint?.position?.coordinates[0]}</div>
+        //     <div className='popup-line'>Longitude: {props.refPoint?.position?.coordinates[0]}</div>
+
+        //     <Divider style={{marginTop: "2px", marginBottom: "2px"}} />
+
+        //     <Button text="I arrived HERE" color="black" textColor="white" fontSize="12px" />
+        // </div>
+    );
 }
 
-export {TrackingHikePage}
+export { TrackingHikePage }

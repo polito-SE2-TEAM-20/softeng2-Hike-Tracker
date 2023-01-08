@@ -69,6 +69,14 @@
       "role": [
         4
       ]
+    },
+    {
+        "title": "My Hikes",
+        "URL": "/hikerhikes",
+        "reqLogin": true,
+        "role": [
+            0
+        ]
     }
   ]
 

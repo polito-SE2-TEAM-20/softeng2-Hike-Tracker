@@ -1,7 +1,6 @@
 import API from '../../API/API.js';
 
 import { useEffect, useState } from 'react';
-import HTNavbar from '../../components/HTNavbar/HTNavbar';
 import { Grid, Typography } from '@mui/material';
 import HikeItemLoadingEffect from './HikeItemLoadingEffect';
 import emptyStateImage from '../../Assets/empty-state.jpg'
@@ -32,7 +31,6 @@ function MyHikesPage(props) {
 
     return (
         <>
-            <HTNavbar user={props.user} isLoggedIn={props.isLoggedIn} doLogOut={props.doLogOut} />
             <Grid container style={{justifyContent: "center", marginTop: 80}}>
                 {/* Loading effects */}
                 {loading && 
