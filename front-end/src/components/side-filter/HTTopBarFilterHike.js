@@ -1,6 +1,6 @@
-import { Grid, Paper } from "@mui/material";
+import { Grid } from "@mui/material";
 import HTButton from '../buttons/Button'
-import {Button} from "@mui/material";
+import { Button } from "@mui/material";
 import './httopfilter-style.css'
 import HTDropdown from './HTDropdown'
 import { useEffect, useState } from "react";
@@ -52,13 +52,13 @@ const HTTopBarFilterHike = (props) => {
 
     if (props.loading) {
         regions = Array.from(
-            props?.listOfHikes.filter(x => { if (province != "") return x.province === province; return true })
+            props?.listOfHikes.filter(x => { if (province !== "") return x.province === province; return true })
                 .map(x => x.region).filter(x => x !== undefined && x !== '')
                 .reduce((set, x) => set.add(x), new Set()))
     }
     if (props.loading) {
         provinces = Array.from(
-            props?.listOfHikes.filter(x => { if (region != "") return x.region === region; return true })
+            props?.listOfHikes.filter(x => { if (region !== "") return x.region === region; return true })
                 .map(x => x.province).filter(x => x !== undefined && x !== '')
                 .reduce((set, x) => set.add(x), new Set()))
     }
@@ -111,9 +111,7 @@ const HTTopBarFilterHike = (props) => {
                     <HTSlider value={asc} setFun={setAsc} max={maxAsc} text="Ascent" />
                 </Grid>
                 <Grid item lg={12} xl={12} style={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
-                    <Button fontSize="16px" variant="outlined" sx={{textTransform: "none", borderRadius: "28px", backgroundColor: props.isUserPrefHikes ? "blue" : "white", color: props.isUserPrefHikes ? "white" : "blue", "&:hover": {
-                        backgroundColor: "lightblue", color: "blue"
-                    }}} onClick={() => { props.setIsUserPrefHikes(!props.isUserPrefHikes) }}>Show hikes matching my preferences</Button>
+                    <HTButton text="Show hikes matching my preferences" size="16px" textColor="white" navigate={() => { props.setIsUserPrefHikes(!props.isUserPrefHikes) }} />
                 </Grid>
                 <Grid lg={12} item style={{ display: "flex", justifyContent: "center" }}>
                     <Grid item>
@@ -166,13 +164,11 @@ const HTTopBarFilterHike = (props) => {
                 <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                     <HTSlider value={diff} setFun={setDiff} max={maxDiff} text="Difficulty" />
                 </Grid>
-                <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
-                    <Button fontSize="16px" variant="outlined" sx={{textTransform: "none", borderRadius: "28px", backgroundColor: props.isUserPrefHikes ? "blue" : "white", color: props.isUserPrefHikes ? "white" : "blue", "&:hover": {
-                        backgroundColor: "lightblue", color: "blue"
-                    }}} onClick={() => { props.setIsUserPrefHikes(!props.isUserPrefHikes) }}>Show hikes matching my preferences</Button>
-                </Grid>
                 <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center" }}>
                     <HTSlider value={asc} setFun={setAsc} max={maxAsc} text="Ascent" />
+                </Grid>
+                <Grid item xs={12} sm={12} sx={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
+                    <HTButton text="Show hikes matching my preferences" size="16px" textColor="white" navigate={() => { props.setIsUserPrefHikes(!props.isUserPrefHikes) }} />
                 </Grid>
 
                 <Grid xs={12} sm={12} item style={{ display: "flex", justifyContent: "center" }}>
@@ -230,9 +226,7 @@ const HTTopBarFilterHike = (props) => {
                     <HTSlider value={asc} setFun={setAsc} max={maxAsc} text="Ascent" />
                 </Grid>
                 <Grid item md={12} sx={{ display: "flex", justifyContent: "center", marginBottom: "15px" }}>
-                    <Button fontSize="16px" variant="outlined" sx={{textTransform: "none", borderRadius: "28px", backgroundColor: props.isUserPrefHikes ? "blue" : "white", color: props.isUserPrefHikes ? "white" : "blue", "&:hover": {
-                        backgroundColor: "lightblue", color: "blue"
-                    }}} onClick={() => { props.setIsUserPrefHikes(!props.isUserPrefHikes) }}>Show hikes matching my preferences</Button>
+                    <HTButton text="Show hikes matching my preferences" size="16px" textColor="white" navigate={() => { props.setIsUserPrefHikes(!props.isUserPrefHikes) }} />
                 </Grid>
                 <Grid md={12} item style={{ display: "flex", justifyContent: "center" }}>
                     <Grid item>

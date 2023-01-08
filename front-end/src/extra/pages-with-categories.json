@@ -46,14 +46,6 @@
         ]
       },
       {
-        "title": "Saved hikes",
-        "URL": "/savedhikes",
-        "reqLogin": true,
-        "role": [
-          0
-        ]
-      },
-      {
         "title": "Track a friend",
         "URL": "/friend-code",
         "reqLogin": false,
@@ -92,7 +84,7 @@
         ]
       },
       {
-        "title": "New Parking",
+        "title": "New Parking Lot",
         "URL": "/newParking",
         "reqLogin": true,
         "role": [
@@ -128,6 +120,14 @@
       {
         "title": "My Hikes",
         "URL": "/hikerhikes",
+        "reqLogin": true,
+        "role": [
+          0
+        ]
+      },
+      {
+        "title": "Saved hikes",
+        "URL": "/savedhikes",
         "reqLogin": true,
         "role": [
           0

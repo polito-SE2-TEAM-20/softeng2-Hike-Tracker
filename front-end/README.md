@@ -29,6 +29,20 @@
 - Route `/hutWorkerHuts`: lists all the hut owned by the logged hut worker.
 - Route `/edithut/:hutid`: in this page the hut worker can edit all the information about their hut.
 - Route `/hutWorkerHuts/linkedHikes`: in this page there is a list of all the hikes linked to a certain hut in which the hut worker can edit all the conditions for each hike.
+- Route `/trackhike/:hikeid`: in this page the user can track their hikes and share the code to their friends in order to let them know how far they went.
+<Route path="" element={<TrackingHikePage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} setStarted={setStarted} started={started} />} />
+<Route path="/modifyHikeCondition/:hikeid" element={<HikeCondition user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} updateHikeCondition={API.updateHikeCondition} />} />
+<Route path="/hikerhikes" element={<HikerHikesPage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
+<Route path="/new-weather-alert-hike" element={<WeatherAlertHike />} />
+<Route path="/new-weather-alert-map" element={<WeatherAlertMap />} />
+<Route path="/hikerPerformance" element={<HikerPerformance user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
+<Route path="/test-page" element={<TestPage />} />
+<Route path="/weather-status-edit/:hikeID" element={<WeatherAlertHikeEditStatus />} />
+<Route path="/friend-tracking/:userID/:hikeID/:friendCode" element={<FriendTracking />} />
+<Route path="/savedhikes" element={<SavedHikes user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
+<Route path="/unauthorized" element={<Unauthorized />} />
+<Route path="/friend-code" element={<VerifyKey />} />
+
 
 ## API Server
 
@@ -119,6 +133,7 @@
 - POST `/hut-pictures/:hutID/modify`
   - Request: a list of strings containing the pathname of the images associated to the hut corresponding to the one identified by the hutID
   - Response: the information about whether the insertion has been completed successfully or not
+- POST 
 
 ## Database Tables
 
@@ -141,12 +156,9 @@
 - Email: provaMark@gmail.com, Password: qwertyMark (LOCAL GUIDE)
 - Email: provaMike@gmail.com, Password: qwertyMike (LOCAL GUIDE)
 - Email: vepapav822@cosaxu.com, Password: qwerty  (LOCAL GUIDE)
-
 - Email: cicicoco.1234@libero.it, Password: qwertyAndrea (HUT WORKER)
 - Email: xesica8246@covbase.com, Password: qwerty (HUT WORKER)
 - Email: docorix637@cnogs.com, Password: qwerty (HUT WORKER)
-
-
 - Email: provaAdam@gmail.com, Password: qwertyAdam (HIKER )
 - Email: provaPeter, Password: qwertyPeter (HIKER)
 - Email: premierensp@gmail.com, Password: qwerty (PLATFORM MANAGER)

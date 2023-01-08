@@ -18,16 +18,9 @@ function PopupUnfinishedHike(props) {
     const [hikeIDsToDisplay, setHikeIDsToDisplay] = React.useState([]);
   const navigate = useNavigate();
 
-const goToFinishHike = () => {
+const remindMeLater = () => {
   //TODO navigate to the button to finish the hike
   props.setOpen(false);
-  navigate(`/trackhike/${props.hikeIDs[0]}`)
-  API.getUnfinishedHikesPopupSeen(props.hikeIDs[0])
-    .then((hikeIDsToDisplay) => {
-      console.log(hikeIDsToDisplay)
-      setHikeIDsToDisplay(hikeIDsToDisplay)
-    })
-    .catch((err) => { console.log(err) })  
 };
 
   const handleClose = () => {
@@ -36,6 +29,7 @@ const goToFinishHike = () => {
     .then((hikeIDsToDisplay) => {
       console.log(hikeIDsToDisplay)
       setHikeIDsToDisplay(hikeIDsToDisplay)
+      props.setUnfinishedAlert(0);
     })
     .catch((err) => { console.log(err) })    // get hikes/unfinished/popupsSeen/:hikeID
   };
@@ -59,7 +53,7 @@ const goToFinishHike = () => {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={goToFinishHike}>Go to finish the hike</Button>
+        <Button onClick={remindMeLater}>Remind me in a minute</Button>
         <Button onClick={handleClose}>Close</Button>
       </DialogActions>
         </>

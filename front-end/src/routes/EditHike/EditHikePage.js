@@ -128,7 +128,7 @@ function EditHikePage(props) {
 
     //TODO
     useEffect(() => {
-        if (referencePoint.length !== 0 && referencePoint !== null && referencePoint !== '' && referencePoint !== {} && referencePoint !== undefined) {
+        if (referencePoint.length !== 0 && referencePoint !== null && referencePoint != '' && referencePoint != {} && referencePoint !== undefined) {
             setNewReferencePoint(true);
             setReferencePointLat(referencePoint.lat);
             setReferencePointLon(referencePoint.lon);
@@ -539,7 +539,7 @@ function EditHikePage(props) {
         } else if (lengthStr === '' || lengthStr === null || lengthStr === undefined) {
             setErrorMessage('The length cannot be empty');
             setShow(true);
-        } else if (expectedTimeStr === null || expectedTimeStr === '' || expectedTimeStr === undefined || expectedTimeStr === 0) {
+        } else if (expectedTimeStr === null || expectedTimeStr === '' || expectedTimeStr === undefined || expectedTimeStr == 0) {
             setErrorMessage('The time expected for the hike cannot be empty')
             setShow(true);
         } else if (!expectedTimeStr.match(/^(([0-1]{0,1}[0-9])|(2[0-3])):[0-5]{0,1}[0-9]$/)) {
@@ -548,7 +548,7 @@ function EditHikePage(props) {
         } else if (ascentStr === '' || ascentStr === null || ascentStr === undefined) {
             setErrorMessage('The ascent for the hike cannot be empty');
             setShow(true);
-        } else if (difficultyStr === '' || difficultyStr === null || difficultyStr === undefined) {
+        } else if (difficultyStr == '' || difficultyStr === null || difficultyStr === undefined) {
             setErrorMessage('Choose a difficulty for this hike');
              setShow(true);
         } else if (description === '' || description === null || description === undefined) {

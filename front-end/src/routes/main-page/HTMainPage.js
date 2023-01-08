@@ -50,10 +50,6 @@ const HTMainPage = (props) => {
         });
     }, [])
 
-    const gotoLogin = () => {
-        navigate("/login", { replace: false })
-    }
-
     return (
         <div style={{ backgroundColor: "#1a1a1a", height: "100%", minHeight: "100vh", paddingBottom: "5px" }}>
             <Grid columns={12} container spacing={0} style={{ height: "fit-content" }}>
@@ -64,7 +60,7 @@ const HTMainPage = (props) => {
                                 <Grid container item xs={0} sm={0} md={4} lg={4} xl={4} width="fit-content">
                                     <Grid item display={{ xs: "none", sm: "none", md: "flex", lg: "flex", xl: "flex" }}>
                                         <CardMedia component="img"
-                                            style={{ objectFit: "cover", height: "100vh"}}
+                                            style={{ objectFit: "cover", height: "100vh" }}
                                             image={asidePicture}
                                             alt="Paella dish">
                                         </CardMedia>
@@ -104,7 +100,7 @@ const HTMainPage = (props) => {
                                                         animationDuration: "3s",
                                                         animationName: "headerMovement"
                                                     }}
-                                                    fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "32px", xl: "32px" }}
+                                                    fontSize={{ xs: "24px", sm: "24px", md: "24px", lg: "32px", xl: "32px" }}
                                                 >
                                                     Based on your preferences
                                                 </Typography> :
@@ -219,20 +215,36 @@ const HTMainPage = (props) => {
                                     {
                                         loaded && Object.keys(preferences).length !== 0 ?
                                             listOfHikes.length === 0 ?
-                                                <Typography
-                                                    variant="h2"
-                                                    className="unselectable"
-                                                    sx={{
-                                                        justifyContent: "left",
-                                                        textAlign: "left",
-                                                        color: '#ffffff',
-                                                        textDecoration: 'none',
-                                                        marginLeft: "48px"
-                                                    }}
-                                                    fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "24px", xl: "24px" }}
-                                                >
-                                                    There are no hikes matching your preferences.
-                                                </Typography>
+                                                <Grid item>
+                                                    <Typography
+                                                        variant="h2"
+                                                        className="unselectable"
+                                                        sx={{
+                                                            justifyContent: "left",
+                                                            textAlign: "left",
+                                                            color: '#ffffff',
+                                                            textDecoration: 'none',
+                                                            marginLeft: "48px"
+                                                        }}
+                                                        fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "24px", xl: "24px" }}
+                                                    >
+                                                        There is no hike matching your preferences.
+                                                    </Typography>
+                                                    <Typography
+                                                        variant="h2"
+                                                        className="unselectable"
+                                                        sx={{
+                                                            justifyContent: "left",
+                                                            textAlign: "left",
+                                                            color: '#ffffff',
+                                                            textDecoration: 'none',
+                                                            marginLeft: "48px"
+                                                        }}
+                                                        fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "24px", xl: "24px" }}
+                                                    >
+                                                        Go to the hiker dashboard and set your preferences in order to see more relevant suggestions in the home page.
+                                                    </Typography>
+                                                </Grid>
                                                 :
                                                 listOfHikes.slice(0, 6).map((hike, index) => {
                                                     if (index < 3) {
@@ -273,7 +285,6 @@ const HTMainPage = (props) => {
                                         }
                                     </Grid>
                                 </Grid>
-
                             </Grid>
                         </>
                         :
@@ -491,7 +502,7 @@ const HTMainPage = (props) => {
                         marginLeft: { xs: "18px", sm: "18px", md: "24px", lg: "250px", xl: "250px" }
                     }}
                     fontSize={{ xs: "18px", sm: "18px", md: "24px", lg: "14px", xl: "14px" }}>
-                    © 2023 Team 20. All rights reserved. 
+                    © 2023 Team 20. All rights reserved.
                 </Typography>
 
             </Grid>

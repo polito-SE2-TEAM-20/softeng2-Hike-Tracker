@@ -129,7 +129,7 @@ const EditHut = (props) => {
         if (description === '' || description === null || description === undefined) {
             setErrorMessage("insert a valid description");
             setShow(true);
-        } else if (workingTimeStart === '' || workingTimeStart === null || workingTimeStart === undefined || workingTimeEnd === null || workingTimeEnd === undefined || workingTimeEnd === '') {
+        } else if (workingTimeStart == '' || workingTimeStart === null || workingTimeStart === undefined || workingTimeEnd === null || workingTimeEnd === undefined || workingTimeEnd == '') {
             console.log(workingTimeStart);
             console.log(workingTimeEnd)
             setErrorMessage("insert valid time");
@@ -139,9 +139,12 @@ const EditHut = (props) => {
             console.log(workingTimeStart);
             setErrorMessage("insert valid time e.g 12:40, 18:20");
             setShow(true);
-        } else if (price === '' || price === null || price === undefined || price === null || price === undefined || price === '') {
+        } else if (price == '' || price === null || price === undefined) {
             console.log(price);
             setErrorMessage("insert valid value for the price");
+            setShow(true);
+        }else if (hut.pictures.length===0 && picData.length===0) {
+            setErrorMessage("insert at least one picture of the hut");
             setShow(true);
         } else {
             let object = { description: description, workingTimeStart: workingTimeStart, workingTimeEnd: workingTimeEnd, price: parseFloat(price) }
@@ -165,7 +168,7 @@ const EditHut = (props) => {
     return (
         <>
             <Grid container style={{ minHeight: "100vh", height: "100%" }}>
-                <Grid style={{ marginLeft: "auto", marginRight: "auto", marginBottom: "400px", height: "40vh" }} item lg={3}>
+                <Grid style={{ marginLeft: "auto", marginRight: "auto", marginBottom: "550px", height: "40vh" }} item lg={3}>
                     {
                         op &&
                         <PopupModifyHut id={hutid} err={err} open={op} setOpen={setOp} />
@@ -234,7 +237,7 @@ const EditHut = (props) => {
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                             {
                                 !loading ?
-                                    <Typography><b>Number of beds</b> {hut.numberOfBeds === "" || hut.numberOfBeds === null || hut.numberOfBeds === undefined ? "N/A" : hut.numberOfBeds}</Typography> :
+                                    <Typography><b>Number of beds</b> {hut.numberOfBeds == "" || hut.numberOfBeds === null || hut.numberOfBeds === undefined ? "N/A" : hut.numberOfBeds}</Typography> :
                                     <Skeleton variant='rectangular' height={20} width={200} style={{ marginBottom: "10px" }} />
                             }
                         </Grid>
