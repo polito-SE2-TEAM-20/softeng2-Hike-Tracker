@@ -166,7 +166,15 @@ function NewHikeStEnd(props) {
 			let gpxParser = require('gpxparser');
 			var gpx = new gpxParser();
 			gpx.parse(fileContents);
-			const positions = gpx.tracks[0].points.map(p => [p.lat, p.lon, p.ele]);
+			let positions=[];
+			if(gpx.tracks[0]){
+				positions = gpx.tracks[0].points.map(p => [p.lat, p.lon, p.ele]);
+			}else{
+				setSelectedFile(null);
+				setIsFilePicked(false);
+				setFileContents(null);
+				return;
+			}
 			console.log(gpx);
 			// controllare perchè se non ci sono i punti da errore
 			const waypoints = gpx.waypoints.map(reference => [reference.name, reference.desc, reference.lat, reference.lon, reference.altitude])
@@ -193,13 +201,12 @@ function NewHikeStEnd(props) {
 			//set List reference point con i waypoints se presenti nel gpx file
 			setReferencePoint([]);
 			setPositionsState(positions);
-			setDescription(gpx.tracks[0].desc);
-			setDifficultyStr(gpx.tracks[0].type);
-			setAscentStr(gpx.tracks[0].elevation.pos);
-			setTitle(gpx.tracks[0].name);
-			setLengthStr(gpx.tracks[0].distance.total);
-
-			getInformation(positions[0][0], positions[0][1])
+			setDescription(gpx.tracks[0]?.desc);
+			setDifficultyStr(gpx.tracks[0]?.type);
+			setAscentStr(gpx.tracks[0]?.elevation?.pos);
+			setTitle(gpx.tracks[0]?.name);
+			setLengthStr(gpx.tracks[0]?.distance?.total);
+				getInformation(positions[0][0], positions[0][1])
 				.then(informations => {
 					setInformation(informations);
 					setRegion(informations.address.state);
@@ -214,6 +221,7 @@ function NewHikeStEnd(props) {
 					console.log(informations);
 					setInformationEnd(informations);
 				})
+			
 		}
 	}, [fileContents]);
 
