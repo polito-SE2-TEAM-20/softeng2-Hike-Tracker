@@ -143,6 +143,9 @@ const EditHut = (props) => {
             console.log(price);
             setErrorMessage("insert valid value for the price");
             setShow(true);
+        }else if (hut.pictures.length===0 && picData.length===0) {
+            setErrorMessage("insert at least one picture of the hut");
+            setShow(true);
         } else {
             let object = { description: description, workingTimeStart: workingTimeStart, workingTimeEnd: workingTimeEnd, price: parseFloat(price) }
             setShow(false);
