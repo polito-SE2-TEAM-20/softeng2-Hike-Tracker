@@ -41,12 +41,12 @@ Requirements:
 Execute the following commands to start using HackTheHike locally (the install commands will require some minutes):
 
 ```sh
-$ cd server
-$ npm install
-$ npm start
-$ cd client
-$ npm install
-$ npm start
+> cd server
+> npm install
+> npm start
+> cd client
+> npm install
+> npm start
 ```
 
 ## Screenshot
