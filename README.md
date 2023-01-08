@@ -51,7 +51,7 @@ Execute the following commands to start using HackTheHike locally (the install c
 
 ## Screenshot
 
-![Screenshot](./src/extra/screenProj.png)
+![Screenshot](./frontend/src/extra/screenProj.png)
 
 ## User Credentials
 
