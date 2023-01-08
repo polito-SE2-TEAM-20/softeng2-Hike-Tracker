@@ -312,7 +312,7 @@ function NewHikeStEnd(props) {
 		} else if (expectedTimeStr === null || expectedTimeStr === '' || expectedTimeStr === undefined || expectedTimeStr == 0) {
 			setErrorMessage('The time expected for the hike cannot be empty')
 			setShow(true);
-		} else if (ascentStr === '' || ascentStr === null || ascentStr === undefined) {
+		} else if (ascentStr == '' || ascentStr === null || ascentStr === undefined) {
 			setErrorMessage('The ascent for the hike cannot be empty');
 			setShow(true);
 		} else if (difficultyStr === '' || difficultyStr === null || difficultyStr === undefined) {
@@ -539,7 +539,7 @@ function NewHikeStEnd(props) {
 													<Grid container item xs={4} sm={4} md={4} lg={4} xl={4} sx={{ display: "flex", justifyContent: "center" }}>
 
 														<Grid container item sx={{ backgroundColor: "red", width: "200px", height: "250px", marginLeft: "5px", marginRight: "5px", marginTop: "5px", marginBottom: "35px", borderRadius: "8px", display: "flex", justifyContent: "center", alignItems: "center" }}>
-															<Grid sx={{ display: "flex" }} item onClick={() => { handleDeleteLocal(pictures) }}>
+															<Grid sx={{ display: "flex" }} item onClick={() => { handleDeleteLocal() }}>
 																<Typography
 																	className="unselectable"
 																	variant="h1"
