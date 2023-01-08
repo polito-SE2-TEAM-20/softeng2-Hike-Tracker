@@ -27,7 +27,8 @@ services:
     networks:
       - stacknet
     depends_on:
-      - postgresql
+      postgresql:
+        condition: service_healthy
 
   postgresql:
     image: ghcr.io/polito-se2-team-20/demo-db:latest
@@ -39,11 +40,11 @@ services:
       # - POSTGRES_DB=$DB_NAME
     volumes:
       - ./.docker/pg-data:/var/lib/postgresql/data
-    # healthcheck:
-    #   test: /usr/bin/pg_isready
-    #   interval: 5s
-    #   timeout: 10s
-    #   retries: 20
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
     networks:
       - stacknet
     ports:
