@@ -57,12 +57,19 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
         attributeNamePrefix: "$"
       });
       const gpxData = parser.parse(contents).gpx;
-
       const pointsCount = gpxData.trk.trkseg.trkpt.length;
-      const lengthMin = clamp(0.05, 1, pointsCount / 1500) * 1 + 0.5;
-      const lengthMax = clamp(0.05, 1, pointsCount / 1500) * 20 + 0.5;
-      const length = faker.datatype.float({ precision: 0.1, min: lengthMin, max: lengthMax });
-      const ascent = faker.datatype.float({ precision: 0.1, min: 5, max: 30 });
+
+      let length = gpxData.trk.length ? parseFloat(gpxData.trk.length.replace(/,/g, '.')) : NaN;
+      if (Number.isNaN(length)) {
+        const lengthMin = clamp(0.05, 1, pointsCount / 1500) * 1 + 0.5;
+        const lengthMax = clamp(0.05, 1, pointsCount / 1500) * 20 + 0.5;
+        length = faker.datatype.float({ precision: 0.1, min: lengthMin, max: lengthMax });
+      }
+
+      let ascent = gpxData.trk.ascent ? parseFloat(gpxData.trk.ascent.replace(/,/g, '.')) : NaN;
+      if (Number.isNaN(ascent)) {
+        ascent = faker.datatype.float({ precision: 0.1, min: 5, max: 30 });
+      }
 
       // save gpx
       const filePath = path.join(HIKES_DIR, fileName);
@@ -72,7 +79,7 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
         gpxData.metadata.pictures,
       ] : [];
       pictures.forEach(filename => {
-        copyFileSync(path.join(SOURCE_DIR, filename), path.join(IMAGES_DIR, filename));
+        copyFileSync(path.join(SOURCE_DIR, 'processed', filename), path.join(IMAGES_DIR, filename));
       });
 
       const hike = {
@@ -86,14 +93,15 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
         ascent,
         length,
         userId: undefined,
-        ...pick(['region', 'province', 'city', 'country', 'difficulty'], gpxData.trk),
+        ...pick(['region', 'province', 'city', 'country'], gpxData.trk),
+        difficulty: gpxData.trk.difficulty ?? 0,
         startPoint: gpxData.trk.startPoint ? {
           ...pick(['name', 'address', 'lon', 'lat'], gpxData.trk.startPoint)
         } : null,
         endPoint: gpxData.trk.endPoint ? {
           ...pick(['name', 'address', 'lon', 'lat'], gpxData.trk.endPoint)
         } : null,
-        referencePoints: gpxData.trk.referencePoint?.ref?.length 
+        referencePoints: gpxData.trk.referencePoint?.ref?.length
           ? gpxData.trk.referencePoint.ref.map(ref => ({
             ...pick(['name', 'address', 'lon', 'lat'], ref),
             altitude: ref.elevation,
@@ -170,16 +178,18 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
     houses,
     indoors,
     width: 500,
-    height: 500, 
+    height: 500,
   }))
 
   // fill local db and export it
   const schemaSql = await prepareSchemaSql();
+  const {sql:hutsSql,hutsCount} = prepareHutsSql(houses, indoors);
   writeFileSync(path.join('./result/init.sql'), [
     schemaSql,
     usersSql,
     hikesSql,
-    prepareHutsSql(houses, indoors),
+    hutsSql,
+    await prepareHutWorkersSql(hutsCount, 7),
     await prepareParkingLotsSql()
   ].join('\n'));
 
@@ -207,7 +217,7 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
       lastName: "Gorodnev",
       role: 0
     };
-    
+
     const friend = {
       id: 6,
       email: "francesco@friend.it",
@@ -230,7 +240,7 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
       id: 3,
       email: "vincenzo@admin.it",
       password: "asdfgh",
-      firstName: "vincenzo",
+      firstName: "Vincenzo",
       lastName: "Sagristano",
       role: 3
     };
@@ -288,9 +298,81 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
   `}));
 
     return userSqls.join('\n');
-
   }
 
+  async function prepareHutWorkersSql(hutsCount, minId) {
+    // some random hut workers
+    const hutWorkers = Array(hutsCount).fill(0).map((_, i) => {
+      const sex = Math.random() < 0.5 ? 'male' : 'female';
+      const firstName = faker.name.firstName(sex);
+      const lastName = faker.name.lastName(sex);
+
+      return {
+        id: minId + i,
+        email: `hutWorker${i}@gmail.com`,
+        password: `soundsLike${i}`,
+        firstName,
+        lastName,
+        role: 4,
+        approved: i % 2 == 0,
+        hutId: i + 1,
+      }
+    });
+
+    const hutWorkersSql = await Promise.all(hutWorkers.map(async ({ id, hutId, approved, email, password, firstName, lastName, role }) => {
+      const passwordHashed = await hash(password, HASH_ROUNDS);
+
+      return `
+      select public."insert_hut_worker"(
+        ${(id)},
+        ${escape.literal(email)},
+        ${escape.literal(passwordHashed)},
+        ${escape.literal(firstName)},
+        ${escape.literal(lastName)},
+        ${role},
+        ${hutId},
+        ${approved}
+      );
+    `}));
+
+    return `
+      CREATE OR REPLACE FUNCTION public.insert_hut_worker(
+        hwid integer,
+        email varchar,
+        password varchar,
+        first_name varchar,
+        last_name varchar,
+        role integer,
+        hut_id integer,
+        approved boolean
+      ) RETURNS VOID AS
+      $func$
+      DECLARE
+        user_id integer;
+      BEGIN
+      INSERT INTO "public"."users" (
+        "id",
+        "email",
+        "password",
+        "firstName",
+        "lastName",
+        "role",
+        "approved",
+        "verified"
+      ) VALUES(
+        hwid, email, password, first_name, last_name, role, true, approved
+      ) returning id into user_id;
+
+      INSERT INTO "public"."hut-worker" (
+        "userId",
+        "hutId"
+      ) VALUES ( user_id, hut_id);
+      END
+      $func$ LANGUAGE plpgsql;
+
+      ${hutWorkersSql.join('\n')}
+  `;
+  }
   // prepare final sql for all hikes
   function prepareHikesSql(hikes) {
     let hikesSql = '';
@@ -314,21 +396,6 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
       endPoint = null,
       referencePoints = null,
     }) => {
-      // const gpxPath = `/static/gpx/${fileName}`;
-
-      // const country = 'USA';
-      // const city = faker.address.city()
-      // const province = '';
-      // const region = faker.address.state();
-
-      // const pointsCount = points.length;
-      // const lengthMin = clamp(0.05, 1, pointsCount / 1500) * 1 + 0.5;
-      // const lengthMax = clamp(0.05, 1, pointsCount / 1500) * 20 + 0.5;
-      // const length = faker.datatype.float({ precision: 0.1, min: lengthMin, max: lengthMax });
-      // const ascent = faker.datatype.float({ precision: 0.1, min: 5, max: 30 });
-      // const expectedTime = +((length / faker.datatype.float({ precision: 0.01, min: 3.5, max: 5 }) * 60).toFixed(3));
-      // const description = '';
-
       hikesSql += `
       select public."insert_hike"(
         ${userId},
@@ -478,6 +545,7 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
 
     const toStatic = img => `/static/images/${img}`;
 
+    const hutsCount = huts.length;
     // generate random images pool, they will be downloaded on backend build   
     const hutsSql = huts.map(hut => {
       const [name, ...other] = hut[2].split(' - ');
@@ -485,7 +553,7 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
 
       const workingTimeStart = faker.datatype.number({ min: 1, max: 9 });
       const workingTimeEnd = faker.datatype.number({ min: 18, max: 23 });
-      
+
       const mainPicture = toStatic(shuffle(clone(houses))[0]);
       const indoorPics = shuffle(clone(indoors)).slice(0, 4).map(toStatic);
 
@@ -578,7 +646,10 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
     ${hutsSql}
   `;
 
-    return sql;
+    return {
+      sql,
+      hutsCount,
+    };
   }
 
   async function prepareParkingLotsSql() {
