@@ -16,6 +16,7 @@ import { fromMinutesToHours } from '../../lib/common/FromMinutesToHours'
 import { styled } from '@mui/material/styles';
 import { BEGINNER, ADVANCED } from '../../lib/common/PreferencesConstants'
 import QueryStatsIcon from '@mui/icons-material/QueryStats';
+import {UserRoles} from '../../lib/common/UserRoles'
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -191,6 +192,11 @@ const HikerDashboard = (props) => {
 
     const handleNavigatePerformaces = () => {
         navigate("/hikerPerformance")
+    }
+    
+
+    if (props.user?.role !== UserRoles.HIKER) {
+        navigate('/unauthorized')
     }
 
     return (

@@ -6,8 +6,7 @@ import API from '../../API/API.js';
 import { useEffect, useState } from 'react';
 import { Grid, Typography, Skeleton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-
-
+import { UserRoles } from '../../lib/common/UserRoles.js';
 
 const HikerPerformance = (props) => {
     const [myPerformance, setMyPerformance] = useState([])
@@ -24,6 +23,11 @@ const HikerPerformance = (props) => {
         });
     }, [])
 
+    const navigate = useNavigate()
+
+    if (props.user?.role !== UserRoles.HIKER) {
+        navigate('/unauthorized')
+    }
     return (
         <>
             <Grid container item height="fit-content" justifyContent="center" sx={{ marginTop: "25px" }}>
