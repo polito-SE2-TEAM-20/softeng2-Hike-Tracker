@@ -248,10 +248,10 @@ function App2() {
 				<Route path="/trackhike/:hikeid" element={<TrackingHikePage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} setStarted={setStarted} started={started} />} />
 				<Route path="/modifyHikeCondition/:hikeid" element={<HikeCondition user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} updateHikeCondition={API.updateHikeCondition} />} />
 				<Route path="/hikerhikes" element={<HikerHikesPage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
-				<Route path="/new-weather-alert-hike" element={<WeatherAlertHike />} />
-				<Route path="/new-weather-alert-map" element={<WeatherAlertMap />} />
+				<Route path="/new-weather-alert-hike" element={<WeatherAlertHike user={user?.user} />} />
+				<Route path="/new-weather-alert-map" element={<WeatherAlertMap user={user?.user} />} />
 				<Route path="/hikerPerformance" element={<HikerPerformance user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
-				<Route path="/weather-status-edit/:hikeID" element={<WeatherAlertHikeEditStatus />} />
+				<Route path="/weather-status-edit/:hikeID" element={<WeatherAlertHikeEditStatus user={user?.user} />} />
 				<Route path="/friend-tracking/:userID/:hikeID/:friendCode" element={<FriendTracking />} />
 				<Route path="/savedhikes" element={<SavedHikes user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
 				<Route path="/unauthorized" element={<Unauthorized />} />

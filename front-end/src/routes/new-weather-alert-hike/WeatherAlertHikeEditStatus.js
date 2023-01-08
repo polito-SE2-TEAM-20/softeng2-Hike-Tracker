@@ -6,14 +6,17 @@ import { useMatch } from "react-router"
 import { useState, useEffect } from "react"
 import API from "../../API/API"
 import { WeatherPopup } from "./WeatherPopup"
+import { UserRoles } from "../../lib/common/UserRoles"
+import { useNavigate } from "react-router"
 
-const WeatherAlertHikeEditStatus = () => {
+const WeatherAlertHikeEditStatus = (props) => {
     const match = useMatch('/weather-status-edit/:hikeid')
     const hikeid = (match && match.params && match.params.hikeid) ? match.params.hikeid : -1
     const [hike, setHike] = useState({})
     const [loaded, setLoaded] = useState(false)
     const [status, setStatus] = useState(0)
     const [description, setDescription] = useState("")
+    const navigate = useNavigate()
 
     // states for the popup after adding a new hike
     const [open, setOpen] = useState(false);
@@ -51,6 +54,9 @@ const WeatherAlertHikeEditStatus = () => {
         )
     }
 
+    if(props.user?.role !== UserRoles.PLATFORM_MANAGER) {
+        navigate('/unauthorized')
+    }
     return (
         <Grid container sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }} >
             <WeatherPopup open={open} setOpen={setOpen} />
