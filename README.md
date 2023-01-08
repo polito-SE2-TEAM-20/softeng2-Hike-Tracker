@@ -55,13 +55,13 @@ $ npm start
 
 ## User Credentials
 
-- Email: provaMary@gmail.com, Password: qwertyMary (LOCAL GUIDE)
-- Email: provaMark@gmail.com, Password: qwertyMark (LOCAL GUIDE)
-- Email: provaMike@gmail.com, Password: qwertyMike (LOCAL GUIDE)
-- Email: vepapav822@cosaxu.com, Password: qwerty  (LOCAL GUIDE)
-- Email: cicicoco.1234@libero.it, Password: qwertyAndrea (HUT WORKER)
-- Email: xesica8246@covbase.com, Password: qwerty (HUT WORKER)
-- Email: docorix637@cnogs.com, Password: qwerty (HUT WORKER)
-- Email: provaAdam@gmail.com, Password: qwertyAdam (HIKER)
-- Email: provaPeter@gmail.com, Password: qwertyPeter (HIKER)
-- Email: premierensp@gmail.com, Password: qwerty (PLATFORM MANAGER)
+- Email: provaMary@gmail.com --- password: qwertyMary (LOCAL GUIDE)
+- Email: provaMark@gmail.com --- password: qwertyMark (LOCAL GUIDE)
+- Email: provaMike@gmail.com --- password: qwertyMike (LOCAL GUIDE)
+- Email: vepapav822@cosaxu.com --- password: qwerty  (LOCAL GUIDE)
+- Email: cicicoco.1234@libero.it --- password: qwertyAndrea (HUT WORKER)
+- Email: xesica8246@covbase.com --- password: qwerty (HUT WORKER)
+- Email: docorix637@cnogs.com --- password: qwerty (HUT WORKER)
+- Email: provaAdam@gmail.com --- password: qwertyAdam (HIKER)
+- Email: provaPeter@gmail.com --- password: qwertyPeter (HIKER)
+- Email: premierensp@gmail.com --- password: qwerty (PLATFORM MANAGER)
