@@ -61,9 +61,7 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
 
       let length = gpxData.trk.length ? parseFloat(gpxData.trk.length.replace(/,/g, '.')) : NaN;
       if (Number.isNaN(length)) {
-        const lengthMin = clamp(0.05, 1, pointsCount / 1500) * 1 + 0.5;
-        const lengthMax = clamp(0.05, 1, pointsCount / 1500) * 20 + 0.5;
-        length = faker.datatype.float({ precision: 0.1, min: lengthMin, max: lengthMax });
+        length = faker.datatype.float({ precision: 0.1, min: 3, max: 10 });
       }
 
       let ascent = gpxData.trk.ascent ? parseFloat(gpxData.trk.ascent.replace(/,/g, '.')) : NaN;
@@ -514,8 +512,8 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
           ) values (
             0,
             public.ST_SetSRID(public.ST_MakePoint((ref->>'lon')::double precision, (ref->>'lat')::double precision), 4326),
-            (ref->>'address')::varchar,
             (ref->>'name')::varchar,
+            (ref->>'address')::varchar,
             (ref->>'altitude')::numeric(12,2)
           ) returning id into point_id;
           insert into public.hike_points (
