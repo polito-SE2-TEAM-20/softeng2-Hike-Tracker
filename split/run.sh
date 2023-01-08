@@ -14,11 +14,10 @@ cd result
 zip -r -q -D "../$UPLOADS_ZIP" *
 cd ..
 # move to backend folder
-cp "$UPLOADS_ZIP" "../backend/demo/$UPLOADS_ZIP"
+cp "./result/$UPLOADS_ZIP" "../backend/demo/$UPLOADS_ZIP"
+cp ./result/demo.json "../backend/demo/demo.json"
 
 rm $UPLOADS_ZIP
-
-# cp ./result/init.sql ../demo-db/init.sql
 
 # create db, populate with data
 psql -U ${DB_USERNAME} -c "DROP DATABASE IF EXISTS $DB_NAME;"

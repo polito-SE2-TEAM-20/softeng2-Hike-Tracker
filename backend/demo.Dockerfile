@@ -20,8 +20,10 @@ RUN mkdir -p /srv/uploads/images
 
 RUN chown -R node:node /srv/uploads
 
-# copy demo hikes
+# copy demo hikes and images
 RUN unzip /srv/demo/demo_uploads.zip -d /srv/uploads/
+# load hut images
+RUN node demo/demo-prep.js
 
 HEALTHCHECK CMD node healthcheck.js localhost ${PORT} /healthcheck 200
 

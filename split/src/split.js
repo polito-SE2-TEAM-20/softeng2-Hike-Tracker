@@ -5,8 +5,7 @@ import { ensureDir } from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
 import glob from 'globule';
-import { uniqBy, prop, pick, clamp } from 'ramda';
-import { randomInt } from 'crypto';
+import { uniqBy, prop, pick, clamp, clone } from 'ramda';
 import escape from 'pg-escape';
 import { hash } from 'bcrypt';
 import { exec } from 'child_process';
@@ -163,13 +162,22 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
   const usersSql = await prepareUsersSql();
   const hikesSql = prepareHikesSql(allHikesSaved);
 
+  const pictureNames = Array(30).fill(0).map(v => `${faker.datatype.uuid()}.jpg`);
+
+  // prepare demo.json file
+  writeFileSync(path.join('./result/demo.json'), JSON.stringify({
+    pictureNames,
+    width: 500,
+    height: 500, 
+  }))
+
   // fill local db and export it
   const schemaSql = await prepareSchemaSql();
   writeFileSync(path.join('./result/init.sql'), [
     schemaSql,
     usersSql,
     hikesSql,
-    prepareHutsSql(),
+    prepareHutsSql(pictureNames),
     await prepareParkingLotsSql()
   ].join('\n'));
 
@@ -451,17 +459,22 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
     return sql;
   }
 
-  function prepareHutsSql() {
+  function prepareHutsSql(imagesPool) {
     const hutsAll = JSON.parse(readFileSync('./source/huts.json').toString());
     const everyNth = 15;
     const huts = hutsAll.filter((e, i) => i % everyNth === everyNth - 1);
 
+    // generate random images pool, they will be downloaded on backend build   
     const hutsSql = huts.map(hut => {
       const [name, ...other] = hut[2].split(' - ');
       const address = other.map(v => v.trim()).filter(v => !!v).join(', ');
 
       const workingTimeStart = faker.datatype.number({ min: 1, max: 9 });
       const workingTimeEnd = faker.datatype.number({ min: workingTimeStart + 6, max: 23 });
+      
+      const pictures = shuffle(clone(imagesPool)).slice(0, 5).map(img => `/static/images/${img}`);
+
+      console.log(pictures);
 
       return `
       select public."insert_hut"(
@@ -478,7 +491,8 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
         '${workingTimeStart.toString().padStart(2, '0')}:00:00'::time without time zone,
         '${workingTimeEnd.toString().padStart(2, '0')}:00:00'::time without time zone,
         ${escape.literal(faker.internet.email())},
-        ${escape.literal(faker.phone.number('+39##########'))}
+        ${escape.literal(faker.phone.number('+39##########'))},
+        ${escape.literal(JSON.stringify(pictures))}::jsonb
       );
     `;
     }).join('\n');
@@ -498,7 +512,8 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
         working_time_start time without time zone,
         working_time_end time without time zone,
         email varchar,
-        phone_number varchar
+        phone_number varchar,
+        pictures jsonb
     )  RETURNS VOID AS
     $func$
     DECLARE
@@ -525,7 +540,8 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
       "workingTimeStart",
       "workingTimeEnd",
       "email",
-      "phoneNumber"
+      "phoneNumber",
+      "pictures"
     ) VALUES (
       user_id,
       point_id,
@@ -538,7 +554,8 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
       working_time_start,
       working_time_end,
       email,
-      phone_number
+      phone_number,
+      pictures
     );
     END
     $func$ LANGUAGE plpgsql;
@@ -697,4 +714,15 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
       filePath,
     }
   }
+
+  function shuffle(d) {
+    for (let c = d.length - 1; c > 0; c--) {
+      let b = Math.floor(Math.random() * (c + 1));
+      let a = d[c];
+      d[c] = d[b];
+      d[b] = a;
+    }
+
+    return d;
+  };
 })()
