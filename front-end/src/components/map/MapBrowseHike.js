@@ -35,8 +35,8 @@ export const LocationMarker = () => {
 }
 
 export const MapBrowseHike = (props) => {
-    const [clickedCenter, setClickedCenter] = useState([41.9078596,-72.0528959])
-    // const [clickedCenter, setClickedCenter] = useState([45.07412045176881, 7.621063528883495])
+    // const [clickedCenter, setClickedCenter] = useState([41.9078596,-72.0528959])
+    const [clickedCenter, setClickedCenter] = useState([45.07412045176881, 7.621063528883495])
     const [selected, setSelected] = useState(-1)
     const [flyIndex, setFlyIndex] = useState(-1)
 
