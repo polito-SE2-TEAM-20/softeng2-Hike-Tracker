@@ -9,6 +9,8 @@ import { Grid } from '@mui/material';
 import MapLoading from '../../components/map/MapLoading';
 import MapFilters from '../../components/map-filters/MapFilters';
 import API from '../../API/API.js';
+import { useNavigate } from 'react-router';
+import {UserRoles} from '../../lib/common/UserRoles'
 
 const HTBrowseHikes = (props) => {
     const [loading, setLoading] = useState(false)
@@ -99,6 +101,13 @@ const HTBrowseHikes = (props) => {
             setLoading(true)
         })
     }, [listOfHikes])
+
+
+    const navigate = useNavigate()
+    
+    if(props.user?.role !== UserRoles.PLATFORM_MANAGER) {
+        navigate('/unauthorized')
+    }
 
     return (
         <Grid container spacing={0} sx={{ backgroundColor: "#f2f2f2", minWidth: "100vw", width: "100%" }}>
