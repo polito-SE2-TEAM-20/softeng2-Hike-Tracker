@@ -54,6 +54,9 @@ export class AuthService {
       });
     }
 
+    const backendHost =
+      process.env.BACKEND_HOST || 'https://hiking-backend.germangorodnev.com';
+
     await this.mailService.sendMail({
       to: data.email,
       from: 'hikingofficial@protonmail.com',
@@ -61,7 +64,7 @@ export class AuthService {
       text:
         'Hi ' +
         data.firstName +
-        ', please confirm your e-mail clicking on this link: http://hiking-backend.germangorodnev.com/auth/verify/' +
+        `, please confirm your e-mail clicking on this link: ${backendHost}/auth/verify/` +
         randomHash,
     });
 

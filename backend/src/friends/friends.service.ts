@@ -76,5 +76,4 @@ export class FriendsService {
 
     return hike;
   }
-
 }

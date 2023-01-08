@@ -28,10 +28,7 @@ import { HikesService } from '@core/hikes/hikes.service';
 import { PointsService } from '@core/points/points.service';
 
 import { UserHikeTrackPointsService } from './user-hike-track-points.service';
-import {
-  StartHikeDto,
-  TrackPointDto,
-} from './user-hikes.dto';
+import { StartHikeDto, TrackPointDto } from './user-hikes.dto';
 import { UserHikeFull } from './user-hikes.interface';
 import { UserHikesService } from './user-hikes.service';
 
@@ -57,7 +54,9 @@ export class UserHikesController {
   async getReachedReferencePoints(
     @CurrentUser() user: UserContext,
   ): Promise<UserHikeFull> {
-    return await this.userHikeTrackPointsService.getReachedReferencePoints(user.id);
+    return await this.userHikeTrackPointsService.getReachedReferencePoints(
+      user.id,
+    );
   }
 
   @Get(':id')
@@ -260,5 +259,4 @@ export class UserHikesController {
 
     return await this.service.getFullUserHike(id);
   }
-
 }

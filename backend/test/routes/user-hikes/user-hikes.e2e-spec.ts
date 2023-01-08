@@ -422,70 +422,70 @@ describe('User Hikes (e2e)', () => {
       .send({
         hikeId: hike.id,
       })
-      .expect(200)
-  
-      await restService
+      .expect(200);
+
+    await restService
       .build(app, userTwo)
       .request()
       .post(`/user-hikes/${2}/track-point`)
       .send({
         pointId: points[0].id,
-        datetime
+        datetime,
       })
-      .expect(200)
+      .expect(200);
 
-      await restService
+    await restService
       .build(app, userTwo)
       .request()
       .post(`/user-hikes/${2}/track-point`)
       .send({
         pointId: points[1].id,
-        datetime
+        datetime,
       })
-      .expect(200)
+      .expect(200);
 
-      await restService
+    await restService
       .build(app, userTwo)
       .request()
       .get(`/user-hikes/reached-points`)
       .expect(200)
       .expect(({ body }) => {
-          expect(body.trackPoints).toMatchObject([{
-            "userHikeId": 2,
-            "pointId": points[0].id,
-            "index": expect.any(Number),
-            "datetime": expect.any(String),
-            "point": {
-              "id": points[0].id,
-              "type": points[0].type,
-              "position": {
-                  "type": points[0].position?.type,
-                  "coordinates": points[0].position?.coordinates
+        expect(body.trackPoints).toMatchObject([
+          {
+            userHikeId: 2,
+            pointId: points[0].id,
+            index: expect.any(Number),
+            datetime: expect.any(String),
+            point: {
+              id: points[0].id,
+              type: points[0].type,
+              position: {
+                type: points[0].position?.type,
+                coordinates: points[0].position?.coordinates,
               },
-              "address": points[0].address,
-              "name": points[0].name,
-              "altitude": points[0].altitude
-            }
+              address: points[0].address,
+              name: points[0].name,
+              altitude: points[0].altitude,
+            },
           },
           {
-            "userHikeId": 2,
-            "pointId": points[1].id,
-            "index": expect.any(Number),
-            "datetime": expect.any(String),
-            "point": {
-              "id": points[1].id,
-              "type": points[1].type,
-              "position": {
-                  "type": points[1].position?.type,
-                  "coordinates": points[1].position?.coordinates
+            userHikeId: 2,
+            pointId: points[1].id,
+            index: expect.any(Number),
+            datetime: expect.any(String),
+            point: {
+              id: points[1].id,
+              type: points[1].type,
+              position: {
+                type: points[1].position?.type,
+                coordinates: points[1].position?.coordinates,
               },
-              "address": points[1].address,
-              "name": points[1].name,
-              "altitude": points[1].altitude
-            }
-          }
+              address: points[1].address,
+              name: points[1].name,
+              altitude: points[1].altitude,
+            },
+          },
         ]);
       });
   });
-
 });

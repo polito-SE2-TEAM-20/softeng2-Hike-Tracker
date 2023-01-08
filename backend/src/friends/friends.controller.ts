@@ -21,5 +21,4 @@ export class FriendsController {
   async trackFriend(@Param('code') code: string): Promise<UserHikeFull> {
     return await this.friends.getFriendHike(code);
   }
-
 }

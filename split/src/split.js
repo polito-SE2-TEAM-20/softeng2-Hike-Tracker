@@ -205,11 +205,20 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
       lastName: "Gorodnev",
       role: 0
     };
+    
+    const friend = {
+      id: 6,
+      email: "francesco@friend.it",
+      password: "lqeodp",
+      firstName: "Francesco",
+      lastName: "Grande",
+      role: 1,
+    };
 
     const localGuide = {
       id: LOCAL_GUIDE_ID,
       email: "antonio@localguide.it",
-      password: "123456",
+      password: "qwerty",
       firstName: "Antonio",
       lastName: "Battipaglia",
       role: 2
@@ -218,7 +227,7 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
     const platformManager = {
       id: 3,
       email: "vincenzo@admin.it",
-      password: "123456",
+      password: "asdfgh",
       firstName: "vincenzo",
       lastName: "Sagristano",
       role: 3
@@ -227,7 +236,7 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
     const hutWorker = {
       id: 4,
       email: "erfan@hutworker.it",
-      password: "123456",
+      password: "098765",
       firstName: "Erfan",
       lastName: "Gholami",
       role: 4
@@ -236,7 +245,7 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
     const emergencyOperator = {
       id: 5,
       email: "laura@emergency.it",
-      password: "123456",
+      password: "hetise",
       firstName: "Laura",
       lastName: "Zurru",
       role: 5
@@ -247,7 +256,8 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
       hutWorker,
       emergencyOperator,
       hiker,
-      platformManager
+      platformManager,
+      friend,
     ].map(async ({ id, email, password, firstName, lastName, role }) => {
       const passwordHashed = await hash(password, HASH_ROUNDS);
       const verified = true;

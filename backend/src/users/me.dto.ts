@@ -9,7 +9,6 @@ export class MyTrackedHikesDto {
 }
 
 export class PlannedHikesDto {
-
-  @IsNumber({},{each: true})
+  @IsNumber({}, { each: true })
   plannedHikes?: number[];
 }

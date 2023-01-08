@@ -10,7 +10,11 @@ import { UsersStatsService } from './users-stats.service';
 import { UsersService } from './users.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User,Hike]), HikesModule, UserHikesModule],
+  imports: [
+    TypeOrmModule.forFeature([User, Hike]),
+    HikesModule,
+    UserHikesModule,
+  ],
   providers: [UsersService, UsersStatsService],
   controllers: [MeController],
   exports: [UsersService],

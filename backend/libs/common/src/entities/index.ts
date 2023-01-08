@@ -30,5 +30,5 @@ export const entities = [
   HutWorker,
   UserHike,
   UserHikeTrackPoint,
-  CodeHike
+  CodeHike,
 ];

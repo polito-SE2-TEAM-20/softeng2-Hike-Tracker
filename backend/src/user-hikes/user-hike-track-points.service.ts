@@ -1,11 +1,15 @@
+import { HttpException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { BaseCompositeKeyService, UserHikeTrackPoint, UserHike, Point } from '@app/common';
-import { HttpException, BadRequestException } from '@nestjs/common';
-import { UserHikesService } from './user-hikes.service';
-import { UserHikeFull } from './user-hikes.interface';
+import {
+  BaseCompositeKeyService,
+  UserHikeTrackPoint,
+  UserHike,
+} from '@app/common';
 
+import { UserHikeFull } from './user-hikes.interface';
+import { UserHikesService } from './user-hikes.service';
 
 export class UserHikeTrackPointsService extends BaseCompositeKeyService<
   UserHikeTrackPoint,
@@ -16,7 +20,7 @@ export class UserHikeTrackPointsService extends BaseCompositeKeyService<
     userHikeTrackPointsRepository: Repository<UserHikeTrackPoint>,
     @InjectRepository(UserHike)
     private userHikesRepository: Repository<UserHike>,
-    private userHikesService: UserHikesService
+    private userHikesService: UserHikesService,
   ) {
     super(UserHikeTrackPoint, {
       repository: userHikeTrackPointsRepository,
@@ -24,9 +28,7 @@ export class UserHikeTrackPointsService extends BaseCompositeKeyService<
     });
   }
 
-  async getReachedReferencePoints(
-    userId: number,
-  ): Promise<UserHikeFull> {
+  async getReachedReferencePoints(userId: number): Promise<UserHikeFull> {
     const userHike = await this.userHikesRepository
       .createQueryBuilder('uh')
       .where('uh.userId = :userId', { userId })

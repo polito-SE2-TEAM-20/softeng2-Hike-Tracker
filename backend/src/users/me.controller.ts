@@ -5,8 +5,8 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Param
 } from '@nestjs/common';
+import { Delete } from '@nestjs/common/decorators';
 import { find, map, prop, propEq } from 'ramda';
 import { In } from 'typeorm';
 
@@ -27,7 +27,6 @@ import { PreferencesDto } from './preferences.dto';
 import { UsersStatsService } from './users-stats.service';
 import { UserPerformance } from './users.schema';
 import { UsersService } from './users.service';
-import { Delete } from '@nestjs/common/decorators';
 
 @Controller('me')
 @AuthenticatedOnly()
@@ -131,7 +130,10 @@ export class MeController {
   @HikerOnly()
   @HttpCode(201)
   @Post('set_planned_hikes')
-  async setPlannedHikes(@CurrentUser() user: UserContext, @Body() body: PlannedHikesDto): Promise<Hike[]> {
+  async setPlannedHikes(
+    @CurrentUser() user: UserContext,
+    @Body() body: PlannedHikesDto,
+  ): Promise<Hike[]> {
     return await this.usersService.setPlannedHike(user.id, body);
   }
 
@@ -145,7 +147,10 @@ export class MeController {
   @HikerOnly()
   @HttpCode(204)
   @Delete('planned_hikes')
-  async deletePlannedHike(@CurrentUser() user: UserContext, @Body() body: PlannedHikesDto): Promise<void> {
-    return await this.usersService.removePlannedHike(user.id,body)
+  async deletePlannedHike(
+    @CurrentUser() user: UserContext,
+    @Body() body: PlannedHikesDto,
+  ): Promise<void> {
+    return await this.usersService.removePlannedHike(user.id, body);
   }
 }

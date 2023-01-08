@@ -27,24 +27,53 @@ $ git clone git@github.com:polito-SE2-TEAM-20/softeng2-Hike-Tracker.git
 ## Usage
 There are two ways for running our project: locally or using Docker images.
 
-#### Docker
+### Docker
 
 At this link you can find the Docker images for running HackTheHike:
 [https://hub.docker.com/r/germangorodnev/se2-team20](https://hub.docker.com/r/germangorodnev/se2-team20)
 
-#### Local
+All information required to run the project with docker is given there in `Installation` section.
+
+#### User credentials for docker
+- Email: german@hiker.it --- password: 123456 (HIKER)
+- Email: francesco@friend.it --- password: lqeodp (FRIEND)
+- Email: antonio@localguide.it --- password: qwerty (LOCAL GUIDE)
+- Email: vincenzo@admin.it --- password: asdfgh (PLATFORM MANAGER)
+- Email: erfan@hutworker.it --- password: 098765 (HUT WORKER)
+- Email: laura@emergency.it --- password: hetise (EMERGENCY OPERATOR)
+
+### Local
 
 Requirements:
 - `nodejs`
 - `npm` 
+- `postgresql`
 
+#### Backend setup
+- Make sure postgres is running
+- Create new database
+- Install postgis extension to it:
+```sh
+CREATE EXTENSION postgis;
+```
+- Execute: 
+```sh
+> cd backend
+> cp .env.example .env
+> npm install
+```
+- Put correct values into `backend/.env` file.
+
+To run backend, execute
+```sh
+> npm run start:dev
+```
+
+#### Frontend setup
 Execute the following commands to start using HackTheHike locally (the install commands will require some minutes):
 
 ```sh
-> cd server
-> npm install
-> npm start
-> cd client
+> cd front-end
 > npm install
 > npm start
 ```

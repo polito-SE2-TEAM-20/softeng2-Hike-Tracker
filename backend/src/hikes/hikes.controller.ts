@@ -656,9 +656,8 @@ export class HikesController {
   @HttpCode(200)
   async getMaxElapsedTime(
     @Param('id', ParseIdPipe()) id: ID,
-    @CurrentUser() user: UserContext
-  ):Promise<UserHike | string>{
-
+    @CurrentUser() user: UserContext,
+  ): Promise<UserHike | string> {
     //Count how many completed hikes has the user
     const userHikes = await this.dataSource.getRepository(UserHike).findBy({
       userId: user.id,
@@ -670,7 +669,6 @@ export class HikesController {
       hikeId: id,
       finishedAt: IsNull(),
     });
-    
 
     if (userHikes.length >= 30) {
       const completionTimes = userHikes.map((userHike) => {
@@ -679,12 +677,12 @@ export class HikesController {
           const startingTime = new Date(userHike.startedAt);
           const completionTime = endingTime.getTime() - startingTime.getTime();
           return completionTime;
-        }else{
-          throw new BadRequestException()
+        } else {
+          throw new BadRequestException();
         }
       });
 
-      completionTimes.sort((a,b) => a-b);
+      completionTimes.sort((a, b) => a - b);
       const ninentyPerc =
         completionTimes[Math.floor(completionTimes.length * 0.9)];
       if (ninentyPerc) {
@@ -748,11 +746,13 @@ export class HikesController {
       }
     }
 
-    const userHikeStarted = (await this.dataSource.getRepository(UserHike).findOneBy({
-      id: userHikeId?.id
-    }));
+    const userHikeStarted = await this.dataSource
+      .getRepository(UserHike)
+      .findOneBy({
+        id: userHikeId?.id,
+      });
 
-    return userHikeStarted || "Nothing to show";
+    return userHikeStarted || 'Nothing to show';
   }
 
   //Evaluate which popups should be shown and update the flag

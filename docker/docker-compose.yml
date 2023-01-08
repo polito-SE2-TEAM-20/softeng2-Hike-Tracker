@@ -3,11 +3,11 @@ services:
   frontend:
     image: ghcr.io/polito-se2-team-20/frontend:demo
     ports:
-        - "3600:3600"
+      - "3600:3600"
 
   backend:
     ports:
-        - "3500:3500"
+      - "3500:3500"
     image: ghcr.io/polito-se2-team-20/backend:demo
     env_file: .env
     environment:
@@ -19,7 +19,7 @@ services:
       - DB_PASSWORD=$DB_PASSWORD
       - DB_NAME=$DB_NAME
       - JWT_SECRET=$JWT_SECRET
-      - WEB_DOMAIN=$WEB_DOMAIN
+      - BACKEND_HOST=$BACKEND_HOST
       - SQL_LOGGING=$SQL_LOGGING
       - SYNCHRONIZE=$SYNCHRONIZE
       - MAILER_USER=$MAILER_USER

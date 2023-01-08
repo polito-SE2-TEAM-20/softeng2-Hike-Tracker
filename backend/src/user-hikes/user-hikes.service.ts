@@ -90,5 +90,4 @@ export class UserHikesService extends BaseService<UserHike> {
 
     return query;
   }
-
 }
