@@ -231,8 +231,8 @@ function App2() {
 				<Route path="/listofhikes" element={<HTListOfHikes user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
 				<Route path="/listofhuts" element={<HTListOfHuts user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
 				<Route path="/browsehikes" element={<HTBrowseHikes user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
-				<Route path="/login" element={<LoginForm login={doLogIn} user={user} logout={doLogOut} />} />
-				<Route path="/signup" element={<SignUpForm doRegister={doRegister} />} />
+				<Route path="/login" element={<LoginForm login={doLogIn} user={user?.user}logout={doLogOut} />} />
+				<Route path="/signup" element={<SignUpForm doRegister={doRegister} user={user?.user} />} />
 				<Route path="/newHut" element={<NewHutForm user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} addNewHut={API.addNewHut} />} />
 				<Route path="/myHikes" element={<MyHikesPage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} deleteHike={deleteHike} rowsAffected={rowsAffected} setRowsAffected={setRowsAffected} />} />
 				<Route path="/showhike/:hikeid" element={<ShowHike user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />

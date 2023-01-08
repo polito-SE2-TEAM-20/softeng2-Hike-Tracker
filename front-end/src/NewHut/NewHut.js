@@ -17,6 +17,8 @@ import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
 import API from '../API/API.js';
+import {UserRoles} from '../lib/common/UserRoles'
+
 
 
 import Alert from '@mui/material/Alert';
@@ -213,6 +215,11 @@ function NewHutForm(props) {
         throw new Error('Unknown step');
     }
   }
+
+  if (
+    props.user?.role !== UserRoles.LOCAL_GUIDE) {
+    navigate('/unauthorized')
+}
 
   return (
     <ThemeProvider theme={theme} >
