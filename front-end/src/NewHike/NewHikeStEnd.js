@@ -24,7 +24,6 @@ import API from '../API/API.js';
 
 function NewHikeStEnd(props) {
 
-	const navigate = useNavigate();
 	const [selectedFile, setSelectedFile] = useState(null);
 	const [fileContents, setFileContents] = useState(null);
 	const [isFilePicked, setIsFilePicked] = useState(false);
@@ -153,7 +152,7 @@ function NewHikeStEnd(props) {
 	};
 
 	useEffect(() => {
-		if (referencePoint.length !== 0 && referencePoint !== null && referencePoint !== '' && referencePoint !== {} && referencePoint !== undefined) {
+		if (referencePoint.length !== 0 && referencePoint !== null && referencePoint != '' && referencePoint != {} && referencePoint !== undefined) {
 			setNewReferencePoint(true);
 			setReferencePointLat(referencePoint.lat);
 			setReferencePointLon(referencePoint.lon);
@@ -310,7 +309,7 @@ function NewHikeStEnd(props) {
 		} else if (lengthStr === '' || lengthStr === null || lengthStr === undefined) {
 			setErrorMessage('The length cannot be empty');
 			setShow(true);
-		} else if (expectedTimeStr === null || expectedTimeStr === '' || expectedTimeStr === undefined || expectedTimeStr === 0) {
+		} else if (expectedTimeStr === null || expectedTimeStr === '' || expectedTimeStr === undefined || expectedTimeStr == 0) {
 			setErrorMessage('The time expected for the hike cannot be empty')
 			setShow(true);
 		} else if (ascentStr === '' || ascentStr === null || ascentStr === undefined) {

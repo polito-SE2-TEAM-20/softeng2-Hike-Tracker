@@ -48,7 +48,7 @@ const navigate = useNavigate();
         if (hikeCondition === '' || hikeCondition === null || hikeCondition === undefined) {
             setErrorMessage("specify a condition for the hike");
             setShow(true);
-        } else if ((hikeCondition === 1 || hikeCondition === 2 || hikeCondition === 3) && (cause === '' || cause === null || cause === undefined)) {
+        } else if ((hikeCondition == 1 || hikeCondition == 2 || hikeCondition == 3) && (cause === '' || cause === null || cause === undefined)) {
             setErrorMessage("specify a cause for the condition");
             setShow(true);
         } else {

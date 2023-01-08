@@ -488,11 +488,11 @@ async function modifyHutInformation(information, hutId) {
     });
 
     if (response.ok) {
-        const hutUpdated = response.json()
+        const hutUpdated = await response.json()
         return hutUpdated;
     } else {
         try {
-            const errDetail = response.json();
+            const errDetail = await response.json();
             throw errDetail.message;
         }
         catch (err) {
@@ -526,11 +526,11 @@ async function editHikeStartEndPoint(hikeId, startPoint, endPoint, referencePoin
     });
 
     if (response.ok) {
-        const hikeUpdate = response.json()
+        const hikeUpdate = await response.json()
         return hikeUpdate;
     } else {
         try {
-            const errDetail = response.json();
+            const errDetail = await response.json();
             throw errDetail.message;
         }
         catch (err) {
@@ -571,11 +571,11 @@ async function linkPointsToHike(hikeId, huts, parkingLots) {
     });
 
     if (response.ok) {
-        const hikeDetails = response.json()
+        const hikeDetails = await response.json()
         return hikeDetails;
     } else {
         try {
-            const errDetail = response.json();
+            const errDetail = await response.json();
             throw errDetail.message;
         }
         catch (err) {
@@ -615,11 +615,11 @@ async function updateHikeCondition(information, hikeId) {
     });
 
     if (response.ok) {
-        const hikeConditionUpdate = response.json()
+        const hikeConditionUpdate = await response.json()
         return hikeConditionUpdate;
     } else {
         try {
-            const errDetail = response.json();
+            const errDetail = await response.json();
             throw errDetail.message;
         }
         catch (err) {
@@ -646,11 +646,11 @@ async function startTracingkHike(hikeId) {
     });
 
     if (response.ok) {
-        const hikeTrackingDetails = response.json()
+        const hikeTrackingDetails = await response.json()
         return hikeTrackingDetails;
     } else {
         try {
-            const errDetail = response.json();
+            const errDetail = await response.json();
             throw errDetail.message;
         }
         catch (err) {
@@ -677,11 +677,11 @@ async function addPointToTracingkHike(hikeTrackId, pointId, dateTime) {
     });
 
     if (response.ok) {
-        const hikeTrackingDetails = response.json()
+        const hikeTrackingDetails = await response.json()
         return hikeTrackingDetails;
     } else {
         try {
-            const errDetail = response.json();
+            const errDetail = await response.json();
             throw errDetail.message;
         }
         catch (err) {
@@ -701,11 +701,11 @@ async function stopTrackingHike(hikeTrackId) {
     });
 
     if (response.ok) {
-        const hikeTrackingDetails = response.json()
+        const hikeTrackingDetails = await response.json()
         return hikeTrackingDetails;
     } else {
         try {
-            const errDetail = response.json();
+            const errDetail = await response.json();
             throw errDetail.message;
         }
         catch (err) {
@@ -725,11 +725,11 @@ async function getUserHikeTrackingDetails(hikeTrackId) {
     });
 
     if (response.ok) {
-        const hikeTrackingDetails = response.json()
+        const hikeTrackingDetails = await response.json()
         return hikeTrackingDetails;
     } else {
         try {
-            const errDetail = response.json();
+            const errDetail = await response.json();
             throw errDetail.message;
         }
         catch (err) {
@@ -764,11 +764,11 @@ async function getAllUserTrackingHikes(userHikeState) {
     });
 
     if (response.ok) {
-        const hikeTrackingDetails = response.json()
+        const hikeTrackingDetails = await response.json()
         return hikeTrackingDetails;
     } else {
         try {
-            const errDetail = response.json();
+            const errDetail = await response.json();
             throw errDetail.message;
         }
         catch (err) {
