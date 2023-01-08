@@ -12,6 +12,8 @@ import Alert from '@mui/material/Alert';
 import { PopupModifyHut } from './PopupModifyHut'
 import * as React from 'react';
 import { AddPictureCard, PictureCard } from "./PictureCard";
+import {UserRoles} from '../../lib/common/UserRoles'
+
 
 const Difficulty = (props) => {
     if (!props.loading) {
@@ -154,6 +156,11 @@ const EditHut = (props) => {
         const formData = new FormData()
         pictures.forEach(picture => formData.append("pictures", picture))
         API.setHutPictures({ 'hutID': hutid, 'pictures': formData })
+    }
+
+    if (
+        props.user?.role !== UserRoles.HUT_WORKER) {
+        navigate('/unauthorized')
     }
 
     return (

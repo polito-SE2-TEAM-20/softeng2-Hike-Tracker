@@ -17,7 +17,9 @@ import { Map } from "./Map";
 import HTNavbar from "../../components/HTNavbar/HTNavbar";
 import { PopupEditHike } from "./PopupEditHike";
 import { ErrorDialog } from "../../components/ErrorDialog/ErrorDialog";
+import { UserRoles } from '../../lib/common/UserRoles'
 
+import { useNavigate } from 'react-router';
 
 
 function EditHikePage(props) {
@@ -685,6 +687,12 @@ function EditHikePage(props) {
             }
         })
     }
+    const navigate = useNavigate();
+
+    if (
+        props.user?.role !== UserRoles.LOCAL_GUIDE) {
+        navigate('/unauthorized')
+      }
 
     return (
         <React.Fragment>

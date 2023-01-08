@@ -5,6 +5,8 @@ import { Grid, Typography } from '@mui/material';
 import API from '../../API/API.js';
 import HikeCard from '../../components/hike-card/HikeCard';
 import Skeleton from '@mui/material/Skeleton';
+import {UserRoles} from '../../lib/common/UserRoles'
+import { useNavigate } from 'react-router-dom';
 
 const HikeLoading = () => {
     return (
@@ -53,8 +55,12 @@ const SavedHikes = (props) => {
             })
             .catch((err) => { console.log(err) })
     }
+    const navigate = useNavigate();
 
-
+    if (
+        props.user?.role !== UserRoles.HIKER) {
+        navigate('/unauthorized')
+    }
 
     return (
         <>

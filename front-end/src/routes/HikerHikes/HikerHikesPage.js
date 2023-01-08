@@ -5,6 +5,8 @@ import { UserHikeState } from "../../lib/common/Hike"
 import HikeItem from "./HikeItem"
 import emptyStateImage from '../../Assets/empty-state.jpg'
 import HikeItemLoadingEffect from "../my-hikes/HikeItemLoadingEffect"
+import { useNavigate } from 'react-router';
+import { UserRoles } from '../../lib/common/UserRoles'
 
 function HikerHikesPage(props) {
 
@@ -26,7 +28,11 @@ function HikerHikesPage(props) {
         getHikes()
     }, [])
 
+    const navigate = useNavigate()
 
+    if (props.user?.role !== UserRoles.HIKER) {
+        navigate('/unauthorized')
+    }
 
     return (
         <>

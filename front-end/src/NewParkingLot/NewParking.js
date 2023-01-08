@@ -18,6 +18,8 @@ import Alert from '@mui/material/Alert';
 import login from '../Assets//login.jpg'; // Import using relative path
 import { useNavigate } from "react-router";
 import { Grid } from '@mui/material'
+import {UserRoles} from '../lib/common/UserRoles'
+
 
 function Copyright() {
   return (
@@ -109,7 +111,12 @@ function NewParking(props) {
         throw new Error('Unknown step');
     }
   }
+  
 
+  if (
+    props.user?.role !== UserRoles.LOCAL_GUIDE) {
+    navigate('/unauthorized')
+}
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

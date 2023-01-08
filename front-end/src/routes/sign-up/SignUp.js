@@ -16,6 +16,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SignUp.css'
 import API from '../../API/API.js';
+import {UserRoles} from '../../lib/common/UserRoles'
+
 
 function Copyright(props) {
   return (
@@ -100,6 +102,13 @@ function SignUpForm(props) {
     }
   }, [role])
 
+  if (props.user?.role === UserRoles.HIKER ||
+    props.user?.role === UserRoles.LOCAL_GUIDE ||
+    props.user?.role === UserRoles.PLATFORM_MANAGER ||
+    props.user?.role === UserRoles.HUT_WORKER ||
+    props.user?.role === UserRoles.EMERGENCY_OPERATOR) {
+    navigate('/')
+  }
 
   return (
 
