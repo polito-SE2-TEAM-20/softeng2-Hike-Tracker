@@ -315,7 +315,7 @@ function NewHikeStEnd(props) {
 		} else if (ascentStr == '' || ascentStr === null || ascentStr === undefined) {
 			setErrorMessage('The ascent for the hike cannot be empty');
 			setShow(true);
-		} else if (difficultyStr === '' || difficultyStr === null || difficultyStr === undefined) {
+		} else if (difficultyStr == '' || difficultyStr === null || difficultyStr === undefined) {
 			setErrorMessage('Choose a difficulty for this hike');
 			setShow(true);
 		} else if (description === '' || description === null || description === undefined) {
