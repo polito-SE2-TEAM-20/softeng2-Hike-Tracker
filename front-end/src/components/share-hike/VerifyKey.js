@@ -70,10 +70,14 @@ const VerifyKey = (props) => {
         submitCode(friendCode)
     }
 
-    const isDigitValid = digit => digit !== undefined && digit !== "" && digit.length !== 0
-    if (isDigitValid(code1) && isDigitValid(code2) && isDigitValid(code3) && isDigitValid(code4) && !sending) {
+    function setSendingAndReady() {
         setSending(true)
         setReady(true)
+    }
+
+    const isDigitValid = digit => digit !== undefined && digit !== "" && digit.length !== 0
+    if (isDigitValid(code1) && isDigitValid(code2) && isDigitValid(code3) && isDigitValid(code4) && !sending) {
+        setSendingAndReady()
     }
 
     /**
