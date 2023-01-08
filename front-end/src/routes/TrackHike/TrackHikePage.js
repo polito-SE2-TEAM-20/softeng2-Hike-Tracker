@@ -347,14 +347,6 @@ function TrackingHikePage(props) {
                 </Grid>
 
                 {
-                    trackingState === TrackingState.STARTED &&
-                    <Grid
-                        item>
-                        <ShareHike />
-                    </Grid>
-                }
-
-                {
                     showTurnOnLocatonDialog &&
                     <TurnOnLocationDialog
                         isOpen={showTurnOnLocatonDialog}
@@ -514,31 +506,45 @@ function RefPointPopUp(props) {
     return (
         <Grid
             container
+            flex
             display="column"
             justifyContent="center"
             alignItems="center">
             <Grid
-                item>
-                <Typography>{props.refPoint?.name}</Typography>
+                item
+                align="center"
+                xs={12}>
+                <Typography>{props.refPoint?.name}{haveBeenHere ? "\n\n" : ""}</Typography>
             </Grid>
 
             <Grid
-                item>
+                item
+                align="center"
+                xs={12}>
                 <Typography>Latitude: {props.refPoint?.position?.coordinates[0]}</Typography>
             </Grid>
             <Grid
-                item>
+                item
+                align="center"
+                xs={12}>
                 <Typography>Longitude: {props.refPoint?.position?.coordinates[0]}</Typography>
             </Grid>
 
             {
                 (props.trackingState !== TrackingState.NOT_STARTED && haveBeenHere) &&
-                <Typography>I was here on: {haveBeenHereTime}</Typography>
+                <Grid
+                    item
+                    align="center"
+                    xs={12}>
+                    <Typography>I was here on: {haveBeenHereTime}</Typography>
+                </Grid>
             }
             {
                 (props.trackingState === TrackingState.STARTED && !haveBeenHere) &&
                 <Grid
-                    item>
+                    item
+                    align="center"
+                    xs={12}>
                     <Button
                         onClick={() => props.handleCheckRefPoint(props.refPoint)}>I arrived HERE</Button>
                 </Grid>
