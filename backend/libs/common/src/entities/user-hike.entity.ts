@@ -1,3 +1,4 @@
+import { IPostgresInterval } from 'postgres-interval';
 import {
   Column,
   CreateDateColumn,
@@ -45,7 +46,7 @@ export class UserHike {
     type: 'interval',
     nullable: true, //This should be changed, it's just for testing
   })
-  maxElapsedTime?: Date;
+  maxElapsedTime?: IPostgresInterval | null;
 
   @Column({
     type: 'timestamp with time zone',
