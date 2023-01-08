@@ -7,25 +7,46 @@ const axios = require('axios').default;
 
 const pipeline = util.promisify(stream.pipeline);
 
-const { pictureNames, width, height } = require('./demo.json');
+const { houses, indoors, width, height } = require('./demo.json');
 
 (async () => {
   try {
-    for (let i = 0; i < pictureNames.length; ++i) {
-      const { data: imageStream } = await axios.get(
-        `https://api.lorem.space/image/house?w=${width}&h=${height}`,
-        {
-          responseType: 'stream',
-        },
-      );
+    await Promise.all([
+      (async () => {
+        for (let i = 0; i < houses.length; ++i) {
+          const { data: imageStream } = await axios.get(
+            `https://api.lorem.space/image/house?w=${width}&h=${height}`,
+            {
+              responseType: 'stream',
+            },
+          );
 
-      await pipeline(
-        imageStream,
-        fs.createWriteStream(
-          path.join(__dirname, '../uploads/images', pictureNames[i]),
-        ),
-      );
-    }
+          await pipeline(
+            imageStream,
+            fs.createWriteStream(
+              path.join(__dirname, '../uploads/images', houses[i]),
+            ),
+          );
+        }
+      })(),
+      (async () => {
+        for (let i = 0; i < indoors.length; ++i) {
+          const { data: imageStream } = await axios.get(
+            `https://api.lorem.space/image/furniture?w=300&h=300`,
+            {
+              responseType: 'stream',
+            },
+          );
+
+          await pipeline(
+            imageStream,
+            fs.createWriteStream(
+              path.join(__dirname, '../uploads/images', indoors[i]),
+            ),
+          );
+        }
+      })(),
+    ]);
 
     process.exit(0);
   } catch (error) {

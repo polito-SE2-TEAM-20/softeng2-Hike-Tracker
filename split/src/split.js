@@ -162,11 +162,13 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
   const usersSql = await prepareUsersSql();
   const hikesSql = prepareHikesSql(allHikesSaved);
 
-  const pictureNames = Array(30).fill(0).map(v => `${faker.datatype.uuid()}.jpg`);
+  const houses = Array(20).fill(0).map(v => `${faker.datatype.uuid()}.jpg`);
+  const indoors = Array(20).fill(0).map(v => `${faker.datatype.uuid()}.jpg`);
 
   // prepare demo.json file
   writeFileSync(path.join('./result/demo.json'), JSON.stringify({
-    pictureNames,
+    houses,
+    indoors,
     width: 500,
     height: 500, 
   }))
@@ -177,7 +179,7 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
     schemaSql,
     usersSql,
     hikesSql,
-    prepareHutsSql(pictureNames),
+    prepareHutsSql(houses, indoors),
     await prepareParkingLotsSql()
   ].join('\n'));
 
@@ -469,10 +471,12 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
     return sql;
   }
 
-  function prepareHutsSql(imagesPool) {
+  function prepareHutsSql(houses, indoors) {
     const hutsAll = JSON.parse(readFileSync('./source/huts.json').toString());
     const everyNth = 15;
     const huts = hutsAll.filter((e, i) => i % everyNth === everyNth - 1);
+
+    const toStatic = img => `/static/images/${img}`;
 
     // generate random images pool, they will be downloaded on backend build   
     const hutsSql = huts.map(hut => {
@@ -480,11 +484,12 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
       const address = other.map(v => v.trim()).filter(v => !!v).join(', ');
 
       const workingTimeStart = faker.datatype.number({ min: 1, max: 9 });
-      const workingTimeEnd = faker.datatype.number({ min: workingTimeStart + 6, max: 23 });
+      const workingTimeEnd = faker.datatype.number({ min: 18, max: 23 });
       
-      const pictures = shuffle(clone(imagesPool)).slice(0, 5).map(img => `/static/images/${img}`);
+      const mainPicture = toStatic(shuffle(clone(houses))[0]);
+      const indoorPics = shuffle(clone(indoors)).slice(0, 4).map(toStatic);
 
-      console.log(pictures);
+      const pictures = [mainPicture, ...indoorPics];
 
       return `
       select public."insert_hut"(

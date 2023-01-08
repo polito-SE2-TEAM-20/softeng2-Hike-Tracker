@@ -14,7 +14,7 @@ cd result
 zip -r -q -D "../$UPLOADS_ZIP" *
 cd ..
 # move to backend folder
-cp "./result/$UPLOADS_ZIP" "../backend/demo/$UPLOADS_ZIP"
+cp "$UPLOADS_ZIP" "../backend/demo/$UPLOADS_ZIP"
 cp ./result/demo.json "../backend/demo/demo.json"
 
 rm $UPLOADS_ZIP
