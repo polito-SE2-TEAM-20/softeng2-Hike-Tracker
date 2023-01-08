@@ -61,12 +61,12 @@ const GPX_TAG = `<gpx ${GPX_XMLNS} ${GPX_VERSION} ${GPX_CREATOR}>`;
 
       let length = gpxData.trk.length ? parseFloat(gpxData.trk.length.replace(/,/g, '.')) : NaN;
       if (Number.isNaN(length)) {
-        length = faker.datatype.float({ precision: 0.1, min: 3, max: 10 });
+        length = faker.datatype.float({ precision: 0.1, min: 3, max: 10 }) * 1000;
       }
 
       let ascent = gpxData.trk.ascent ? parseFloat(gpxData.trk.ascent.replace(/,/g, '.')) : NaN;
       if (Number.isNaN(ascent)) {
-        ascent = faker.datatype.float({ precision: 0.1, min: 5, max: 30 });
+        ascent = faker.datatype.float({ precision: 0.1, min: 50, max: 940 });
       }
 
       // save gpx
