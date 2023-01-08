@@ -29,7 +29,7 @@
 - Route `/hutWorkerHuts`: lists all the hut owned by the logged hut worker.
 - Route `/edithut/:hutid`: in this page the hut worker can edit all the information about their hut.
 - Route `/hutWorkerHuts/linkedHikes`: in this page there is a list of all the hikes linked to a certain hut in which the hut worker can edit all the conditions for each hike.
-- Route `/trackhike/:hikeid`: 
+- Route `/trackhike/:hikeid`: in this page the user can track their hikes and share the code to their friends in order to let them know how far they went.
 <Route path="" element={<TrackingHikePage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} setStarted={setStarted} started={started} />} />
 <Route path="/modifyHikeCondition/:hikeid" element={<HikeCondition user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} updateHikeCondition={API.updateHikeCondition} />} />
 <Route path="/hikerhikes" element={<HikerHikesPage user={user?.user} isLoggedIn={loggedIn} doLogOut={doLogOut} />} />
