@@ -39,7 +39,7 @@ export const WeatherPopup = (props) => {
                 onClose={handleClose}
                 aria-describedby="alert-dialog-slide-description"
             >
-                <DialogTitle>{"Hike correctly added"}</DialogTitle>
+                <DialogTitle>{"Weather alert correctly added"}</DialogTitle>
                 <DialogActions>
                     <Grid container spacing={1}>
                         <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{display: "flex", justifyContent: "center"}}>
