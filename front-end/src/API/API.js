@@ -400,7 +400,7 @@ const getPreferences = async () => {
         const preferences = await response.json()
         return preferences
     } else if (response.status === 404) {
-        return {}
+        return null
     } else {
         const errDetail = await response.json()
         throw errDetail.message

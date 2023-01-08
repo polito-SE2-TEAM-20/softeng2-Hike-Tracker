@@ -28,7 +28,7 @@ const HTMainPage = (props) => {
     const navigate = useNavigate()
     const [listOfHikes, setListOfHikes] = useState([])
     const [loaded, setLoading] = useState(false)
-    const [preferences, setPreferences] = useState({})
+    const [preferences, setPreferences] = useState(null)
 
     useEffect(() => {
         let tmpPref = {}
@@ -36,19 +36,26 @@ const HTMainPage = (props) => {
             tmpPref = await API.getPreferences()
         }
         getPreferences().then(() => {
-            console.log(tmpPref)
             setPreferences(tmpPref)
+            if (preferences !== null) {
+                getHikes().then(() => {
+                    setListOfHikes(loh)
+                    setLoading(true)
+                });
+            } else setLoading(true)
         })
 
         let loh = []
         const getHikes = async () => {
             loh = await API.getHikesBasedOnPreferences()
         }
-        getHikes().then(() => {
-            setListOfHikes(loh)
-            setLoading(true)
-        });
+        
     }, [])
+
+    useEffect(() => {
+        console.log(loaded)
+        console.log(preferences)
+    }, [loaded, preferences])
 
     return (
         <div style={{ backgroundColor: "#1a1a1a", height: "100%", minHeight: "100vh", paddingBottom: "5px" }}>
@@ -69,7 +76,7 @@ const HTMainPage = (props) => {
                                 <Grid container item xs={12} sm={12} md={2} lg={2} xl={2} columns={3}>
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12} sx={{ marginBottom: "25px", display: "flex", justifyContent: { xs: "center", sm: "center", md: "left", lg: "left", xl: "left" }, marginLeft: { xs: "none", sm: "none", md: "48px", lg: "48px", xl: "48px" } }}>
                                         {
-                                            loaded && Object.keys(preferences).length !== 0 ?
+                                            loaded && preferences != null && Object.keys(preferences).length !== 0 ?
                                                 <Typography
                                                     variant="h2"
                                                     className="unselectable"
@@ -151,7 +158,7 @@ const HTMainPage = (props) => {
                                         </> : <></>
                                     }
                                     {
-                                        loaded && Object.keys(preferences).length === 0 ?
+                                        loaded && preferences == null ?
                                             <Grid container item xs={12} sm={12} md={12} lg={12} xl={12} sx={{
                                                 marginLeft: { xs: "none", sm: "none", md: "48px", lg: "48px", xl: "48px" },
                                                 display: { xs: "flex", sm: "flex", md: "flex", lg: "flex", xl: "flex" },
@@ -213,7 +220,7 @@ const HTMainPage = (props) => {
                                             </>
                                     }
                                     {
-                                        loaded && Object.keys(preferences).length !== 0 ?
+                                        loaded && preferences != null && Object.keys(preferences).length !== 0 ?
                                             listOfHikes.length === 0 ?
                                                 <Grid item>
                                                     <Typography
@@ -268,7 +275,7 @@ const HTMainPage = (props) => {
                                     }
                                     <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                                         {
-                                            listOfHikes.length > 6 && Object.keys(preferences).length !== 0 ?
+                                            listOfHikes.length > 6 && preferences != null && Object.keys(preferences).length !== 0 ?
                                                 <div style={{ marginTop: "28px", display: "flex", justifyContent: "center" }}>
                                                     <Button variant="outlined"
                                                         textDecoration="none"
