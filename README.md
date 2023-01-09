@@ -84,12 +84,12 @@ Execute the following commands to start using HackTheHike locally (the install c
 > npm start
 ```
 
-## Screenshot
+### Production
+You can access deployed up-to-date version of the application on https://hiking.germangorodnev.com/
 
-![Screenshot](./front-end/src/extra/screenProj.png)
+#### User Credentials
 
-## User Credentials
-
+They only work on production environment
 - Email: provaMary@gmail.com --- password: qwertyMary (LOCAL GUIDE)
 - Email: provaMark@gmail.com --- password: qwertyMark (LOCAL GUIDE)
 - Email: provaMike@gmail.com --- password: qwertyMike (LOCAL GUIDE)
@@ -100,3 +100,7 @@ Execute the following commands to start using HackTheHike locally (the install c
 - Email: provaAdam@gmail.com --- password: qwertyAdam (HIKER)
 - Email: provaPeter@gmail.com --- password: qwertyPeter (HIKER)
 - Email: premierensp@gmail.com --- password: qwerty (PLATFORM MANAGER)
+
+## Screenshot
+
+![Screenshot](./front-end/src/extra/screenProj.png)
