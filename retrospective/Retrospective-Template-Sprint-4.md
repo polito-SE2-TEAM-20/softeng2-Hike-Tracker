@@ -74,9 +74,9 @@ total tasks: 44
 - Technical Debt management:
   - Total hours estimated: 1h45m 
   - Total hours spent: 1h30m
-  - Hours estimated for remediation by SonarQube
-  - Hours estimated for remediation by SonarQube only for the selected and planned issues 
-  - Hours spent on remediation 
+  - Hours estimated for remediation by SonarQube: 2h2min
+  - Hours estimated for remediation by SonarQube only for the selected and planned issues: 2h2min 
+  - Hours spent on remediation: 1h30min
   - debt ratio (as reported by SonarQube under "Measures-Maintainability")
     - Frontend: 0.9% (Grade A)
     - Backend: 0.2% (Grade A)
